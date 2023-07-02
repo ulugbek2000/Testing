@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\LessonController;
+use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SessionController;
 use App\Http\Controllers\TopicController;
 use App\Http\Controllers\UsersController;
@@ -10,6 +11,7 @@ use App\Http\Controllers\UserWalletController;
 use App\Models\UserTransaction;
 use App\Models\UserWallet;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -82,3 +84,12 @@ Route::get('transactions/{id}', [UserTransactionController::class, 'show']);
 Route::put('transactionupdate/{id}', [UserTransactionController::class, 'update']);
 Route::delete('transactiondelete/{id}', [UserTransactionController::class, 'destroy']);
 //End Transaction
+
+//Start Role
+Auth::routes();
+Route::get('role', [RoleController::class, 'index']);
+Route::post('role', [RoleController::class, 'store']);
+Route::get('role/{id}', [RoleController::class, 'show']);
+Route::put('role/{id}', [RoleController::class, 'update']);
+Route::delete('role/{id}', [RoleController::class, 'destroy']);
+//End Role
