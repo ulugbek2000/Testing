@@ -1,9 +1,6 @@
 <?php declare(strict_types=1);
-
 namespace App\Enums;
-
 use Illuminate\Validation\Rules\Enum;
-
 /**
  * @method static static CASH()
  * @method static static MOBILE()
@@ -15,4 +12,4 @@ final class   TransactionStatus extends Enum
     const Success = 'success';
     const Fail = 'fail';
     const Processing = 'processing';
-}
+} 

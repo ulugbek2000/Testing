@@ -1,27 +1,30 @@
 <?php
+
 namespace App\Http\Controllers;
+
 use App\Models\Course;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Str;
 use app\Http\Requests\CourseStoreRequest;
 use Nette\Utils\Random;
+
 class CourseController extends Controller
 {
-    function __construct()
-    {
-        $this->middleware('permission:role-list|role-create|role-edit|role-delete', ['only' => ['index', 'store']]);
-        $this->middleware('permission:role-create', ['only' => ['create', 'store']]);
-        $this->middleware('permission:role-edit', ['only' => ['edit', 'update']]);
-        $this->middleware('permission:role-delete', ['only' => ['destroy']]);
-    }
+    // function __construct()
+    // {
+    //     $this->middleware('course');
+    // }
     /**
      * Display a listing of the resource.
      */
-    /*  */
-    public function index()
+    public function index(Request $request)
     {
         // All Courses
+        $perPage = $request->input('per_page', 2);
         $courses = Course::all();
+        $courses = Course::paginate($perPage);
+        $courses->setPath(url('/api/courses'));
         // Return Json Response
         return response()->json([
             'courses' => $courses
