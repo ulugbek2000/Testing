@@ -11,7 +11,7 @@ use App\Traits\HasRolesAndPermissions;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Spatie\Permission\Traits\HasRoles;
 
-class Users extends Authenticatable
+class User extends Authenticatable
 {
     use  HasApiTokens, HasFactory;
 
