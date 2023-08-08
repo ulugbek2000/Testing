@@ -8,6 +8,7 @@ use App\Models\Users;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Foundation\Auth\User;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 
 class UserSeeder extends Seeder
@@ -40,7 +41,7 @@ class UserSeeder extends Seeder
             [
                 'name' => 'Admin',
                 'email' => 'admin@lms.com',
-                'password' => Password::hash('password')
+                'password' => Hash::make('password')
             ]
             );
             $user->assignRole('admin');
