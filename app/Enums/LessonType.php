@@ -9,7 +9,7 @@ use Illuminate\Validation\Rules\Enum;
  * @method static static MOBILE()
  * @method static static ONLINE()
  */
-final class   TransactionType extends Enum
+final class   LessonType extends Enum
 {
     const Doc = 'doc';
     const Video = 'video';

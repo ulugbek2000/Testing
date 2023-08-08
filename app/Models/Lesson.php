@@ -12,6 +12,11 @@ class Lesson extends Model
         'topic_id',
         'name',
         'duration',
-        'type'
+        'type',
     ];
+    // protected   $type = ['video', 'doc', 'audio', 'text', 'image', 'quiz'];
+    public function topic()
+    {
+        return $this->hasOne(Topic::class);
+    }
 }

@@ -7,12 +7,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use App\Traits\HasRolesAndPermissions;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 
 class Users extends Authenticatable
 {
-    use HasFactory;
+    use  HasApiTokens, HasFactory;
 
-    use HasApiTokens, Notifiable;
+    use Notifiable, HasRolesAndPermissions;
 
     /**
      * The attributes that are mass assignable.
@@ -31,7 +33,10 @@ class Users extends Authenticatable
         'two_factor_confirmed_at',
         'remember_token'
     ];
-
+    public function courses()
+    {
+        return $this->belongsToMany(Course::class);
+    }
 
     /**
      * The attributes that should be hidden for serialization.
@@ -52,6 +57,4 @@ class Users extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
-
-    
 }

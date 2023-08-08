@@ -11,18 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        try {
-            if (!Schema::hasTable('topics')) 
+        if (!Schema::hasTable('topics'))
             Schema::create('topics', function (Blueprint $table) {
-                $table->increments('id');  
+                $table->id();
                 $table->foreignId('course_id')->references('id')->on('courses')->onDelete('cascade');
                 $table->string('name')->nullable();
                 $table->timestamps();
                 $table->softDeletes();
             });
-        } catch (\Throwable $th) {
-            //throw $th;
-        }
     }
 
     /**

@@ -12,17 +12,16 @@ return new class extends Migration
     public function up(): void
     {
         try {
-            if (!Schema::hasTable('sessions')) 
-            Schema::create('sessions', function (Blueprint $table) {
-                $table->increments('id');
-                $table->foreignId('user_id')->references('id')->on('users')->onDelete('cascade');
-                $table->string('ip_address', '45')->nullable();
-                $table->text('user_agent')->nullable();
-                $table->longText('payload')->nullable();
-                $table->integer('last_activity');
-                $table->timestamps();
-
-            });
+            if (!Schema::hasTable('sessions'))
+                Schema::create('sessions', function (Blueprint $table) {
+                    $table->increments('id');
+                    $table->foreignId('user_id')->references('id')->on('users')->onDelete('cascade');
+                    $table->string('ip_address', '45')->nullable();
+                    $table->text('user_agent')->nullable();
+                    $table->longText('payload')->nullable();
+                    $table->integer('last_activity');
+                    $table->timestamps();
+                });
         } catch (\Throwable $th) {
             //throw $th;
         }
