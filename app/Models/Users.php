@@ -9,12 +9,13 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use App\Traits\HasRolesAndPermissions;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Spatie\Permission\Traits\HasRoles;
 
 class Users extends Authenticatable
 {
     use  HasApiTokens, HasFactory;
 
-    use Notifiable, HasRolesAndPermissions;
+    use Notifiable, HasRoles;
 
     /**
      * The attributes that are mass assignable.
@@ -57,4 +58,5 @@ class Users extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
 }
