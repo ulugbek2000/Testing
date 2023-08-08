@@ -12,14 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         try {
-            if (!Schema::hasTable('user_wallets')) 
-            Schema::create('user_wallets', function (Blueprint $table) {
-                $table->increments('id');
-                $table->foreignId('user_id')->references('id')->on('users')->onDelete('cascade');
-                $table->decimal('balance',10,2);
-                $table->timestamps();
-                $table->softDeletes();
-            });
+            if (!Schema::hasTable('user_wallets'))
+                Schema::create('user_wallets', function (Blueprint $table) {
+                    $table->increments('id');
+                    $table->foreignId('user_id')->references('id')->on('users')->onDelete('cascade');
+                    $table->decimal('balance', 10, 2);
+                    $table->timestamps();
+                    $table->softDeletes();
+                });
         } catch (\Throwable $th) {
             //throw $th;
         }

@@ -11,16 +11,21 @@ return new class extends Migration
      */
     public function up(): void
     {
-        if (!Schema::hasTable('courses')) 
-        Schema::create('courses', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('name');
-            $table->string('slug')->nullable();
-            $table->text('description')->nullable();
-            $table->decimal('price',10,2);
-            $table->timestamps();
-            $table->softDeletes();
-        });
+        if (!Schema::hasTable('courses'))
+            Schema::create('courses', function (Blueprint $table) {
+                $table->id();
+                $table->string('logo');
+                $table->string('name');
+                $table->string('short_description');
+                $table->string('quantity_lessons');
+                $table->string('hours_lessons');
+                $table->text('description');
+                $table->string('video');
+                $table->decimal('price', 10, 2);
+                $table->boolean('has_certificate')->default(false);
+                $table->timestamps();
+                $table->softDeletes();
+            });
     }
 
     /**

@@ -9,11 +9,29 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Course extends Model
 {
     use HasFactory, SoftDeletes;
-    
+
+
     protected $fillable = [
+        'logo',
         'name',
-        'slug',
+        'short_description',
+        'quantity_lessons',
+        'hours_lessons',
         'description',
+        'video',
+        'has_certificate',
         'price'
     ];
+    public function users()
+    {
+        return $this->belongsToMany(Users::class);
+    }
+    public function topics()
+    {
+        return $this->hasMany(Topic::class);
+    }
+    public function hasCertificate()
+    {
+        return $this->has_certificate !== null;
+    }
 }

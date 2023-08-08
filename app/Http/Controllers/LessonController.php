@@ -3,17 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Lesson;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 
 class LessonController extends Controller
 {
-  /*   function __construct()
-    {
-        $this->middleware('permission:role-list|role-create|role-edit|role-delete', ['only' => ['index', 'store']]);
-        $this->middleware('permission:role-create', ['only' => ['create', 'store']]);
-        $this->middleware('permission:role-edit', ['only' => ['edit', 'update']]);
-        $this->middleware('permission:role-delete', ['only' => ['destroy']]);
-    } */
     /**
      * Display a listing of the resource.
      */
@@ -26,7 +20,6 @@ class LessonController extends Controller
             'lessons' => $lessons
         ], 200);
     }
-
     /**
      * Show the form for creating a new resource.
      */
@@ -42,27 +35,30 @@ class LessonController extends Controller
     {
         try {
             //Create Lesson
-
+            $request->validate([
+                'topic_id' => 'required',
+                'name' => 'required|string',
+                'duration' => 'required',
+                'type' => 'required|mimes:mp4,mov,avi,mpeg,mkv,doc',
+            ]);
+            $lesson = new Lesson();
             $data = [
                 'topic_id' => $request->topic_id,
                 'name' => $request->name,
                 'duration' => $request->duration,
-                'type' => $request->type
             ];
-
-            Lesson::create($data);
-
+            $lesson->type = $request->input('type');
+            Lesson::create($data, $lesson);
             return response()->json([
                 'message' => "Lesson succefully created."
             ], 200);
         } catch (\Exception $e) {
-            //Return response Json
+            /*Return response Json */
             return response()->json([
                 'message' => $e,
             ], 500);
         }
     }
-
     /**
      * Display the specified resource.
      */
@@ -80,7 +76,6 @@ class LessonController extends Controller
             'lessons' => $lesson
         ], 200);
     }
-
     /**
      * Show the form for editing the specified resource.
      */
@@ -88,25 +83,33 @@ class LessonController extends Controller
     {
         //
     }
-
     /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, string $id)
     {
+        $validator = Validator::make($request->all(),[
+            'topic_id' => 'integer',
+            'name' => 'string',
+            'duration' => 'integer',
+            'type' => 'mimes:mp4,mov,avi,mpeg,mkv,doc',
+        ]);
         try {
             //find course
             $lesson = Lesson::find($id);
-            if (!$lesson) {
-                return response()->json([
-                    'message' => 'Lesson not found!!'
-                ], 404);
+            if ($validator->fails()) {
+                return response()->json(['error' => $validator->errors()], 400);
             }
+            // if (!$lesson) {
+            //     return response()->json([
+            //         'message' => 'Lesson not found!!'
+            //     ], 404);
+            // }
             $data = [
                 $lesson->topic_id = $request->topic_id,
                 $lesson->name = $request->name,
                 $lesson->duration = $request->duration,
-                $lesson->type = $request->type,
+                $lesson->update(['type' => 'type']),
             ];
             $lesson->save($data);
             //Return Json Response
@@ -120,7 +123,6 @@ class LessonController extends Controller
             ], 500);
         }
     }
-
     /**
      * Remove the specified resource from storage.
      */

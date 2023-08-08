@@ -7,7 +7,10 @@ use Illuminate\Http\Request;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Str;
 use app\Http\Requests\CourseStoreRequest;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 use Nette\Utils\Random;
+use Symfony\Contracts\Service\Attribute\Required;
 
 class CourseController extends Controller
 {
@@ -42,12 +45,29 @@ class CourseController extends Controller
      */
     public function store(Request $request)
     {
+        $request->validate([
+            'logo' => 'required|image',
+            'name' => 'required|string',
+            'short_description' => 'required|string|max:255',
+            'quantity_lessons' => 'required',
+            'hours_lessons' => 'required',
+            'description' => 'required|max:255',
+            'video' => 'required|mimes:mp4,mov,avi,mpeg,mkv',
+            'price' => 'required',
+        ]);
+        $logo = $request->file('logo')->store('images', 'public');
+        $video = $request->file('video')->store('videos', 'public'); // Сохранение видео в папку storage/app/public/videos
         try {
             $data = [
+                'logo' => $logo,
                 'name' => $request->name,
-                'slug' => $request->slug,
+                'short_description' => $request->short_description,
+                'quantity_lessons' => $request->quantity_lessons,
+                'hours_lessons' => $request->hours_lessons,
                 'description' => $request->description,
-                'price' => $request->price
+                'video' => $video,
+                'has_certificate' => $request->has_certificate,
+                'price' => $request->price,
             ];
             Course::create($data);
             return response()->json([
@@ -87,26 +107,44 @@ class CourseController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $id, \Exception $e)
     {
+        // $request->validate
+        $validator = Validator::make($request->all(),[
+            'logo' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
+            'name' => 'string|max:255',
+            'short_description' => 'string|max:255',
+            'quantity_lessons' => 'string',
+            'hours_lessons' => 'string',
+            'description' => 'string|max:255',
+            'video' => 'mimes:mp4,mov,avi,mpeg,mkv,max:2048',
+            'price' => 'string|max:255',
+        ]);
         try {
             //find course
             $course = Course::find($id);
-            if (!$course) {
-                return response()->json([
-                    'message' => 'Course not found!!'
-                ], 404);
+            if ($validator->fails()) {
+                return response()->json(['error' => $validator->errors()], 400);
             }
+            // if (!$course) {
+            //     return response()->json([
+            //         'message' => 'Course not found!!'
+            //     ], 404);
+            // }
             $data = [
+                $course->logo = $request->logo,
                 $course->name = $request->name,
-                $course->slug = $request->slug,
+                $course->short_description = $request->short_description,
+                $course->quantity_lessons = $request->quantity_lessons,
+                $course->hours_lessons = $request->hours_lessons,
                 $course->description = $request->description,
-                $course->price = $request->price,
+                $course->video = $request->video,
+                $course->price = $request->price,  
             ];
             $course->save($data);
             //Return Json Response
             return response()->json([
-                'message' => "course succefully updated."
+                'message' => "Course succefully updated."
             ], 200);
         } catch (\Exception $e) {
             //Return Json Response

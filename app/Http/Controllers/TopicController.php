@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Topic;
+use Exception;
 use Illuminate\Http\Request;
 
 class TopicController extends Controller
@@ -87,14 +88,19 @@ class TopicController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $id, \Exception $e )
     {
+         $data = [
+                'id' => $request->id,
+                'course_id' => $request->course_id,
+                'name' => $request->name,
+            ];
         try {
             //find topic
             $topic = Topic::find($id);
             if (!$topic) {
                 return response()->json([
-                    'message' => 'Topic not found!!'
+                    'message' => $e
                 ], 404);
             }
             $data = [

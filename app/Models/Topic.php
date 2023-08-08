@@ -8,9 +8,17 @@ use Illuminate\Database\Eloquent\Model;
 class Topic extends Model
 {
     use HasFactory;
+
     protected $fillable = [
         'course_id',
         'name'
     ];
 
+    function lessons() {
+        return $this->hasMany(Lesson::class);
+    }
+
+    function course() {
+        return $this->belongsTo(Course::class, 'course_id', 'id');
+    }
 }

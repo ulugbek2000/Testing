@@ -15,16 +15,15 @@ return new class extends Migration
         try {
             if (!Schema::hasTable('lessons'))
                 Schema::create('lessons', function (Blueprint $table) {
-                    $table->increments('id');
+                    $table->id();
                     $table->foreignId('topic_id')->references('id')->on('topics')->onDelete('cascade');
                     $table->string('name');
                     $table->integer('duration');
-                    // $table->enum('type', TransactionType::getValues())->default(TransactionType::CASH());
-                    $table->enum('type', ['doc', 'video', 'audio', 'text', 'image', 'quiz']);
+                    $table->enum('type', ['video', 'doc',  'audio', 'text', 'image', 'quiz']);
                     $table->timestamps();
                     $table->softDeletes();
                 });
-        } catch (\Throwable $th) {
+        } catch (\Exception $e) {
             //throw $th;
         }
     }
