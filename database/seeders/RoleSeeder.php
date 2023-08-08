@@ -13,13 +13,20 @@ class RoleSeeder extends Seeder
      */
     public function run(): void
     {
-        $manager = new Role();
-        $manager->name = 'Project Manager';
-        $manager->slug = 'project-manager';
-        $manager->save();
-        $developer = new Role();
-        $developer->name = 'Web Developer';
-        $developer->slug = 'web-developer';
-        $developer->save();
+        // $manager = new Role();
+        // $manager->name = 'Project Manager';
+        // $manager->slug = 'project-manager';
+        // $manager->save();
+        // $developer = new Role();
+        // $developer->name = 'Web Developer';
+        // $developer->slug = 'web-developer';
+        // $developer->save();
+
+        foreach(['admin','teacher','student'] as $role){
+            Role::create([
+                'name' => $role,
+                'guard_name' => 'web'
+            ]);
+        }
     }
 }
