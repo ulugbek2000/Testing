@@ -2,25 +2,25 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Users;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class UsersController extends Controller
 {
-   /*  function __construct()
+    function __construct()
     {
         $this->middleware('permission:role-list|role-create|role-edit|role-delete', ['only' => ['index', 'store']]);
         $this->middleware('permission:role-create', ['only' => ['create', 'store']]);
         $this->middleware('permission:role-edit', ['only' => ['edit', 'update']]);
         $this->middleware('permission:role-delete', ['only' => ['destroy']]);
-    } */
+    }
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
         //All Users
-        $users = Users::all();
+        $users = User::all();
         // Return Json Response
         return response()->json([
             'users' => $users
@@ -54,7 +54,7 @@ class UsersController extends Controller
                 'remember_token' => $request->remember_token
 
             ];
-            Users::create($data);
+            User::create($data);
             return response()->json([
                 'message' => "User succefully created."
             ], 200);
@@ -72,7 +72,7 @@ class UsersController extends Controller
     public function show($id)
     {
         //User detail
-        $user = Users::find($id);
+        $user = User::find($id);
         if (!$user) {
             return response()->json([
                 'message' => 'User not found.'
@@ -99,7 +99,7 @@ class UsersController extends Controller
     {
         try {
             //find user
-            $user = Users::find($id);
+            $user = User::find($id);
             if (!$user) {
                 return response()->json([
                     'message' => 'User not found!!'
@@ -128,7 +128,7 @@ class UsersController extends Controller
      */
     public function destroy($id)
     {
-        $user = Users::find($id);
+        $user = User::find($id);
         if (!$user) {
             return response()->json([
                 'message' => 'User not found.'

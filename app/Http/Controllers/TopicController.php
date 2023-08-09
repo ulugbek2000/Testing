@@ -53,9 +53,7 @@ class TopicController extends Controller
             ], 200);
         } catch (\Exception $e) {
             //Return response Json
-            return response()->json([
-                'message' => $e,
-            ], 500);
+            return response()->json([], 500);
         }
     }
 
@@ -88,13 +86,13 @@ class TopicController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id, \Exception $e )
+    public function update(Request $request, $id, \Exception $e)
     {
-         $data = [
-                'id' => $request->id,
-                'course_id' => $request->course_id,
-                'name' => $request->name,
-            ];
+        $data = [
+            'id' => $request->id,
+            'course_id' => $request->course_id,
+            'name' => $request->name,
+        ];
         try {
             //find topic
             $topic = Topic::find($id);

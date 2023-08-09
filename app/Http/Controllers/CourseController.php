@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use Spatie\Sluggable\HasSlug;
+use Spatie\Sluggable\SlugOptions;
 use App\Models\Course;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\Paginator;
@@ -14,10 +16,26 @@ use Symfony\Contracts\Service\Attribute\Required;
 
 class CourseController extends Controller
 {
+
+    // use HasSlug;
+
     // function __construct()
     // {
     //     $this->middleware('course');
     // }
+
+
+
+    /**
+     * Get the options for generating the slug.
+     */
+    // public function getSlugOptions(): SlugOptions
+    // {
+    //     return SlugOptions::create()
+    //         ->generateSlugsFrom('name')
+    //         ->saveSlugsTo('slug');
+    // }
+
     /**
      * Display a listing of the resource.
      */
@@ -48,7 +66,7 @@ class CourseController extends Controller
         $request->validate([
             'logo' => 'required|image',
             'name' => 'required|string',
-            'short_description' => 'required|string|max:255',
+            'slug' => 'required|string|max:255',
             'quantity_lessons' => 'required',
             'hours_lessons' => 'required',
             'description' => 'required|max:255',
@@ -61,7 +79,7 @@ class CourseController extends Controller
             $data = [
                 'logo' => $logo,
                 'name' => $request->name,
-                'short_description' => $request->short_description,
+                'slug' => $request->slug,
                 'quantity_lessons' => $request->quantity_lessons,
                 'hours_lessons' => $request->hours_lessons,
                 'description' => $request->description,
@@ -110,10 +128,10 @@ class CourseController extends Controller
     public function update(Request $request, $id, \Exception $e)
     {
         // $request->validate
-        $validator = Validator::make($request->all(),[
+        $validator = Validator::make($request->all(), [
             'logo' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
             'name' => 'string|max:255',
-            'short_description' => 'string|max:255',
+            'slug' => 'string|max:255',
             'quantity_lessons' => 'string',
             'hours_lessons' => 'string',
             'description' => 'string|max:255',
@@ -134,12 +152,12 @@ class CourseController extends Controller
             $data = [
                 $course->logo = $request->logo,
                 $course->name = $request->name,
-                $course->short_description = $request->short_description,
+                $course->slug = $request->slug,
                 $course->quantity_lessons = $request->quantity_lessons,
                 $course->hours_lessons = $request->hours_lessons,
                 $course->description = $request->description,
                 $course->video = $request->video,
-                $course->price = $request->price,  
+                $course->price = $request->price,
             ];
             $course->save($data);
             //Return Json Response

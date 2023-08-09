@@ -16,7 +16,7 @@ return new class extends Migration
                 $table->id();
                 $table->string('logo');
                 $table->string('name');
-                $table->string('short_description');
+                $table->string('slug');
                 $table->string('quantity_lessons');
                 $table->string('hours_lessons');
                 $table->text('description');

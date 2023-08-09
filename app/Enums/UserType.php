@@ -1,5 +1,7 @@
-<?php 
-declare (strict_types=1);
+<?php
+
+declare(strict_types=1);
+
 namespace App\Enums;
 
 use Illuminate\Validation\Rules\Enum;
@@ -9,9 +11,9 @@ use Illuminate\Validation\Rules\Enum;
  * @method static static MOBILE()
  * @method static static ONLINE()
  */
-final class  TransactionMethod extends Enum
+final class   UserType extends Enum
 {
-    const Cash = 'cash';
-    const Mobile = 'mobile';
-    const Online = 'online';
+    const Admin = 'admin';
+    const Teacher = 'teacher';
+    const Student = 'student';
 }
