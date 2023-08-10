@@ -65,13 +65,13 @@ class CourseController extends Controller
         $video = $request->file('video')->store('videos', 'public'); // Сохранение видео в папку storage/app/public/videos
         try {
             $data = [
-                'logo' => storage_path($logo),
+                'logo' => Storage::url($logo),
                 'name' => $request->name,
                 'slug' => $request->slug,
                 'quantity_lessons' => $request->quantity_lessons,
                 'hours_lessons' => $request->hours_lessons,
                 'description' => $request->description,
-                'video' => storage_path($video),
+                'video' => Storage::url($video),
                 'has_certificate' => $request->has_certificate,
                 'price' => $request->price,
             ];
