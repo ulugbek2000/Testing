@@ -37,7 +37,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 // Route::delete('coursedelete/{id}', [CourseController::class, 'destroy']);
 
 Route::resource('course', CourseController::class);
-//End Courses
+//End Courses4
 
 //Start Topics
 Route::get('topics', [TopicController::class, 'index']);

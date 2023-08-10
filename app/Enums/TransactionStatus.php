@@ -2,9 +2,10 @@
 namespace App\Enums;
 use Illuminate\Validation\Rules\Enum;
 /**
- * @method static static CASH()
- * @method static static MOBILE()
- * @method static static ONLINE()
+ * @method static static PANDING()
+ * @method static static SUCCESS()
+ * @method static static FAIL()
+ * @method static static PROCESSING()
  */
 final class   TransactionStatus extends Enum
 {

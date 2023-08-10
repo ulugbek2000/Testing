@@ -19,12 +19,17 @@ class Course extends Model
         'quantity_lessons',
         'hours_lessons',
         'description',
+        'duration',
+        'duration_type',
         'video',
         'has_certificate',
         'price'
     ];
+    protected $duration = [
+        'duration_type' => DurationType::class,
+    ];
 
-      /**
+    /**
      * Get the options for generating the slug.
      */
     public function getSlugOptions(): SlugOptions
@@ -34,14 +39,18 @@ class Course extends Model
             ->saveSlugsTo('slug');
     }
 
+
+
     public function users()
     {
         return $this->belongsToMany(Users::class);
     }
+
     public function topics()
     {
         return $this->hasMany(Topic::class);
     }
+
     public function hasCertificate()
     {
         return $this->has_certificate !== null;

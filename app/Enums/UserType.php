@@ -7,9 +7,9 @@ namespace App\Enums;
 use Illuminate\Validation\Rules\Enum;
 
 /**
- * @method static static CASH()
- * @method static static MOBILE()
- * @method static static ONLINE()
+ * @method static static ADMIN()
+ * @method static static TEACHER()
+ * @method static static STUDENT()
  */
 final class   UserType extends Enum
 {

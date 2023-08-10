@@ -22,6 +22,8 @@ return new class extends Migration
                 $table->text('description');
                 $table->string('video');
                 $table->decimal('price', 10, 2);
+                $table->integer('duration');
+                $table->string('duration_type');
                 $table->boolean('has_certificate')->default(false);
                 $table->timestamps();
                 $table->softDeletes();

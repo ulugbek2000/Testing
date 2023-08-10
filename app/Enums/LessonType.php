@@ -6,9 +6,12 @@ namespace App\Enums;
 use Illuminate\Validation\Rules\Enum;
 
 /**
- * @method static static CASH()
- * @method static static MOBILE()
- * @method static static ONLINE()
+ * @method static static DOC()
+ * @method static static VIDEO()
+ * @method static static AUDIO()
+ * @method static static TEXT()
+ * @method static static IMAGE()
+ * @method static static QUIZ()
  */
 final class   LessonType extends Enum
 {

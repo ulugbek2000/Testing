@@ -1,12 +1,14 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Models\Course;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Str;
 use app\Http\Requests\CourseStoreRequest;
 use App\Http\Resources\CourseResource;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Nette\Utils\Random;
@@ -22,7 +24,7 @@ class CourseController extends Controller
 
 
 
-  
+
 
     /**
      * Display a listing of the resource.
@@ -52,7 +54,6 @@ class CourseController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-
     public function store(Request $request)
     {
         $request->validate([
@@ -62,6 +63,8 @@ class CourseController extends Controller
             'quantity_lessons' => 'required',
             'hours_lessons' => 'required',
             'description' => 'required|max:255',
+            'duration' => 'required|integer',
+            'duration_type' => 'required',
             'video' => 'required|mimes:mp4,mov,avi,mpeg,mkv',
             'price' => 'required',
         ]);
@@ -75,6 +78,8 @@ class CourseController extends Controller
                 'quantity_lessons' => $request->quantity_lessons,
                 'hours_lessons' => $request->hours_lessons,
                 'description' => $request->description,
+                'duration' => $request->duration,
+                'duration_type' => $request->duration_type,
                 'video' => Storage::url($video),
                 'has_certificate' => $request->has_certificate,
                 'price' => $request->price,
@@ -129,6 +134,7 @@ class CourseController extends Controller
             'quantity_lessons' => 'string',
             'hours_lessons' => 'string',
             'description' => 'string|max:255',
+            'duration' => 'required|integer',
             'video' => 'mimes:mp4,mov,avi,mpeg,mkv,max:2048',
             'price' => 'string|max:255',
         ]);
@@ -150,6 +156,7 @@ class CourseController extends Controller
                 $course->quantity_lessons = $request->quantity_lessons,
                 $course->hours_lessons = $request->hours_lessons,
                 $course->description = $request->description,
+                $course->duration = $request->duration,
                 $course->video = $request->video,
                 $course->price = $request->price,
             ];
