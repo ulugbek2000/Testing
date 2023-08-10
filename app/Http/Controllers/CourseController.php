@@ -1,9 +1,6 @@
 <?php
 
 namespace App\Http\Controllers;
-
-use Spatie\Sluggable\HasSlug;
-use Spatie\Sluggable\SlugOptions;
 use App\Models\Course;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\Paginator;
@@ -17,8 +14,6 @@ use Symfony\Contracts\Service\Attribute\Required;
 class CourseController extends Controller
 {
 
-    // use HasSlug;
-
     // function __construct()
     // {
     //     $this->middleware('course');
@@ -26,15 +21,7 @@ class CourseController extends Controller
 
 
 
-    /**
-     * Get the options for generating the slug.
-     */
-    // public function getSlugOptions(): SlugOptions
-    // {
-    //     return SlugOptions::create()
-    //         ->generateSlugsFrom('name')
-    //         ->saveSlugsTo('slug');
-    // }
+  
 
     /**
      * Display a listing of the resource.
