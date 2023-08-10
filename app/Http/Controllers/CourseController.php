@@ -29,7 +29,7 @@ class CourseController extends Controller
      */
     public function index(Request $request)
     {
-        $paginate = $request->paginate ?? 12;
+        $per_page = $request->per_page ?? 12;
         // All Courses
         // $perPage = $request->input('per_page', 2);
         // $courses = Course::all();
@@ -40,7 +40,7 @@ class CourseController extends Controller
         //     'courses' => $courses
         // ], 200);
 
-        return CourseResource::collection(Course::paginate($paginate));
+        return CourseResource::collection(Course::paginate($per_page));
     }
     /**
      * Show the form for creating a new resource.
