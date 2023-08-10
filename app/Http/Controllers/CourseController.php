@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Str;
 use app\Http\Requests\CourseStoreRequest;
+use App\Http\Resources\CourseResource;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Nette\Utils\Random;
@@ -28,15 +29,18 @@ class CourseController extends Controller
      */
     public function index(Request $request)
     {
+        $paginate = $request->paginate ?? 12;
         // All Courses
-        $perPage = $request->input('per_page', 2);
-        $courses = Course::all();
-        $courses = Course::paginate($perPage);
-        $courses->setPath(url('/api/courses'));
-        // Return Json Response
-        return response()->json([
-            'courses' => $courses
-        ], 200);
+        // $perPage = $request->input('per_page', 2);
+        // $courses = Course::all();
+        // $courses = Course::paginate($perPage);
+        // $courses->setPath(url('/api/courses'));
+        // // Return Json Response
+        // return response()->json([
+        //     'courses' => $courses
+        // ], 200);
+
+        return CourseResource::collection(Course::paginate($paginate));
     }
     /**
      * Show the form for creating a new resource.
