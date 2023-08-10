@@ -64,7 +64,7 @@ class CourseController extends Controller
 
     public function store(Request $request)
     {
-        dd($request->getall());
+        dd($request->all());
         $request->validate([
             'logo' => 'required|image',
             'name' => 'required|string',
