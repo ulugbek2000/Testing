@@ -19,11 +19,11 @@ return new class extends Migration
                 $table->string('slug');
                 $table->string('quantity_lessons');
                 $table->string('hours_lessons');
-                $table->text('description');
+                $table->text('short_description');
                 $table->string('video');
-                $table->decimal('price', 10, 2);
-                $table->integer('duration');
-                $table->string('duration_type');
+                // $table->decimal('price', 10, 2);
+                // $table->integer('duration');
+                // $table->string('duration_type');
                 $table->boolean('has_certificate')->default(false);
                 $table->timestamps();
                 $table->softDeletes();

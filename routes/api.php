@@ -30,14 +30,15 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 //Start Courses
-// Route::get('courses', [CourseController::class, 'index']);
-// Route::get('courses/{id}', [CourseController::class, 'show']);
+// Route::get('course', [CourseController::class, 'index']);
+// Route::get('course/{id}', [CourseController::class, 'show']);
 // Route::post('course', [CourseController::class, 'store']);
 // Route::put('courseupdate/{id}', [CourseController::class, 'update']);
 // Route::delete('coursedelete/{id}', [CourseController::class, 'destroy']);
+Route::post('studentcourse',[CourseController::class,'enrollStudent']);
 
 Route::resource('course', CourseController::class);
-//End Courses4
+//End Courses
 
 //Start Topics
 Route::get('topics', [TopicController::class, 'index']);

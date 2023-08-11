@@ -18,16 +18,14 @@ class Course extends Model
         'slug',
         'quantity_lessons',
         'hours_lessons',
-        'description',
-        'duration',
-        'duration_type',
+        'short_description',
+        // 'duration',
+        // 'duration_type',
         'video',
         'has_certificate',
-        'price'
+        // 'price'
     ];
-    protected $duration = [
-        'duration_type' => DurationType::class,
-    ];
+
 
     /**
      * Get the options for generating the slug.
@@ -51,8 +49,18 @@ class Course extends Model
         return $this->hasMany(Topic::class);
     }
 
+    public function courseDescriptions()
+    {
+        return $this->hasMany(CourseDescriptions::class);
+    }
+
     public function hasCertificate()
     {
         return $this->has_certificate !== null;
+    }
+
+    public function students()
+    {
+        return $this->belongsToMany(User::class, 'course_user');
     }
 }

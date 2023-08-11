@@ -15,8 +15,7 @@ class Lesson extends Model
         'type',
     ];
     // protected   $type = ['video', 'doc', 'audio', 'text', 'image', 'quiz'];
-    public function topic()
-    {
-        return $this->hasOne(Topic::class);
+    function topic() {
+        return $this->belongsTo(topic::class, 'topic_id', 'id');
     }
 }

@@ -8,6 +8,7 @@ use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Str;
 use app\Http\Requests\CourseStoreRequest;
 use App\Http\Resources\CourseResource;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
@@ -56,17 +57,18 @@ class CourseController extends Controller
      */
     public function store(Request $request)
     {
+
         $request->validate([
             'logo' => 'required|image',
             'name' => 'required|string',
             'slug' => 'required|string|max:255',
             'quantity_lessons' => 'required',
             'hours_lessons' => 'required',
-            'description' => 'required|max:255',
-            'duration' => 'required|integer',
-            'duration_type' => 'required',
+            'short_description' => 'required|max:255',
+            // 'duration' => 'required|integer',
+            // 'duration_type' => 'required',
             'video' => 'required|mimes:mp4,mov,avi,mpeg,mkv',
-            'price' => 'required',
+            // 'price' => 'required',
         ]);
         $logo = $request->file('logo')->store('images', 'public');
         $video = $request->file('video')->store('videos', 'public'); // Сохранение видео в папку storage/app/public/videos
@@ -77,12 +79,12 @@ class CourseController extends Controller
                 'slug' => $request->slug,
                 'quantity_lessons' => $request->quantity_lessons,
                 'hours_lessons' => $request->hours_lessons,
-                'description' => $request->description,
-                'duration' => $request->duration,
-                'duration_type' => $request->duration_type,
+                'short_description' => $request->short_description,
+                // 'duration' => $request->duration,
+                // 'duration_type' => $request->duration_type,
                 'video' => Storage::url($video),
                 'has_certificate' => $request->has_certificate,
-                'price' => $request->price,
+                // 'price' => $request->price,
             ];
             Course::create($data);
             return response()->json([
@@ -127,40 +129,37 @@ class CourseController extends Controller
     public function update(Request $request, $id, \Exception $e)
     {
         // $request->validate
-        $validator = Validator::make($request->all(), [
-            'logo' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
+       $validateData
+        =  $request->validate([
             'name' => 'string|max:255',
             'slug' => 'string|max:255',
             'quantity_lessons' => 'string',
             'hours_lessons' => 'string',
-            'description' => 'string|max:255',
-            'duration' => 'required|integer',
-            'video' => 'mimes:mp4,mov,avi,mpeg,mkv,max:2048',
-            'price' => 'string|max:255',
+            'short_description' => 'string|max:255',
         ]);
+        $course = Course::find($id);
+        if ($request->hasFile('logo')) {
+            $imagePath = $request->file('logo')->store('storage', 'public');
+            $course->logo = $imagePath;
+        }
+       
         try {
+         
             //find course
-            $course = Course::find($id);
-            if ($validator->fails()) {
-                return response()->json(['error' => $validator->errors()], 400);
-            }
-            // if (!$course) {
-            //     return response()->json([
-            //         'message' => 'Course not found!!'
-            //     ], 404);
-            // }
-            $data = [
-                $course->logo = $request->logo,
-                $course->name = $request->name,
-                $course->slug = $request->slug,
-                $course->quantity_lessons = $request->quantity_lessons,
-                $course->hours_lessons = $request->hours_lessons,
-                $course->description = $request->description,
-                $course->duration = $request->duration,
-                $course->video = $request->video,
-                $course->price = $request->price,
-            ];
-            $course->save($data);
+            // $data = [
+ 
+                //     $course->name = $request->name,
+            //     $course->slug = $request->slug,
+            //     $course->quantity_lessons = $request->quantity_lessons,
+            //     $course->hours_lessons = $request->hours_lessons,
+            //     $course->short_description = $request->short_description,
+            //     // $course->duration = $request->duration,
+            //     // $course->price = $request->price,
+            // ];
+            
+            // dd($data);
+
+            $course->save($data,$course);
             //Return Json Response
             return response()->json([
                 'message' => "Course succefully updated."
@@ -187,5 +186,37 @@ class CourseController extends Controller
         return response()->json([
             'message' => "Course succefully deleted."
         ], 200);
+    }
+
+    //Add student in courses
+    public function enrollStudent(Request $request, $courseId, $studentId)
+    {
+        $course = Course::findOrFail($courseId);
+        $student = User::findOrFail($studentId);
+        // try {
+        //     $data = [
+        //         'name' => $request->name,
+        //         'email' => $request->email,
+        //         'phone' => $request->phone,
+        //         'password' => $request->password,
+        //     ];
+        //     User::create($data);
+        //     return response()->json([
+        //         'message' => "Student succefully created."
+        //     ], 200);
+        // } catch (\Exception $e) {
+        //     //Return response Json
+        //     return response()->json([
+        //         'message' => $e,
+        //     ], 500);
+        // }
+
+        $course->students()->attach($student);
+
+        return redirect()->route('courses.show', $courseId)->with('success', 'Студент успешно записан на курс.');
+        //     return response()->json([
+        //         'message' => "Student succefully added."
+        //     ], 200);
+        // }
     }
 }
