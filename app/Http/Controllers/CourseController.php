@@ -126,44 +126,60 @@ class CourseController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id, \Exception $e)
+    public function update(Request $request, $id)
     {
         // $request->validate
-       $validateData
-        =  $request->validate([
-            'name' => 'string|max:255',
-            'slug' => 'string|max:255',
-            'quantity_lessons' => 'string',
-            'hours_lessons' => 'string',
-            'short_description' => 'string|max:255',
-        ]);
-        $course = Course::find($id);
-        if ($request->hasFile('logo')) {
-            $imagePath = $request->file('logo')->store('storage', 'public');
-            $course->logo = $imagePath;
-        }
-       
-        try {
-         
-            //find course
-            // $data = [
- 
-                //     $course->name = $request->name,
-            //     $course->slug = $request->slug,
-            //     $course->quantity_lessons = $request->quantity_lessons,
-            //     $course->hours_lessons = $request->hours_lessons,
-            //     $course->short_description = $request->short_description,
-            //     // $course->duration = $request->duration,
-            //     // $course->price = $request->price,
-            // ];
-            
-            // dd($data);
 
-            $course->save($data,$course);
-            //Return Json Response
-            return response()->json([
-                'message' => "Course succefully updated."
-            ], 200);
+
+        try {
+
+            $course = Course::find($id);
+
+            // $request->validate([
+            //     'name' => 'string|max:255',
+            //     'slug' => 'string|max:255',
+            //     'quantity_lessons' => 'string',
+            //     'hours_lessons' => 'string',
+            //     'short_description' => 'string|max:255',
+            //     'logo' => 'image|mimes:jpeg,png,jpg,gif,mov',
+            //     'video' => 'mimetypes:video/mp4|max:100000',
+            // ]);
+            if (!$course) {
+                return response()->json(['message' => 'Course not found'], 404);
+            }
+
+            if ($request->logo) {
+                $storage = Storage::disk('public');
+                // Delete the old image file if it exists
+                if ($storage->exists($course->logo)) {
+                    $storage->delete($course->logo);
+                }
+                //Image name
+                $imageName = Str::random(32) . "." . $request->logo->getClientOriginalExtension();
+                $course->logo = $imageName;
+                //Image save
+                $storage->put($imageName, file_get_contents($request->logo));
+            }
+
+            // Handle video file update
+            if ($request->hasFile('video')) {
+                // Delete old video file if needed
+                 Storage::delete($course->video);
+
+                // Upload and store new video file
+                $path = $request->file('video')->store('videos');
+
+                // Update the file path in the video model
+                $course->video = $path;
+            }
+
+            $course->name = $request->name;
+            $course->slug = $request->slug;
+            $course->quantity_lessons = $request->quantity_lessons;
+            $course->hours_lessons = $request->hours_lessons;
+            $course->short_description = $request->short_description;
+            $course->save();
+            return response()->json(['message' => 'Course updated successfully']);
         } catch (\Exception $e) {
             //Return Json Response
             return response()->json([
