@@ -178,6 +178,7 @@ class CourseController extends Controller
             $course->quantity_lessons = $request->quantity_lessons;
             $course->hours_lessons = $request->hours_lessons;
             $course->short_description = $request->short_description;
+            $course->has_certificate = $request->has_certificate;
             $course->save();
             return response()->json(['message' => 'Course updated successfully']);
         } catch (\Exception $e) {
