@@ -128,20 +128,16 @@ class CourseController extends Controller
      */
     public function update(Request $request, Course $course)
     {
-        // $request->validate
 
-
-        try {
-
-            // $request->validate([
-            //     'name' => 'string|max:255',
-            //     'slug' => 'string|max:255',
-            //     'quantity_lessons' => 'string',
-            //     'hours_lessons' => 'string',
-            //     'short_description' => 'string|max:255',
-            //     'logo' => 'image|mimes:jpeg,png,jpg,gif,mov',
-            //     'video' => 'mimetypes:video/mp4|max:100000',
-            // ]);
+            $request->validate([
+                'name' => 'required|string|max:255',
+                'slug' => 'required|string|max:255',
+                'quantity_lessons' => 'required|string',
+                'hours_lessons' => 'required|string',
+                'short_description' => 'required|string|max:255',
+                'logo' => 'required|image|mimes:jpeg,png,jpg,gif,mov',
+                'video' => 'required|mimetypes:video/mp4|max:100000',
+            ]);
         
 
             if ($request->logo) {
@@ -152,7 +148,7 @@ class CourseController extends Controller
                 }
                 //Image name
                 $imageName = Str::random(32) . "." . $request->logo->getClientOriginalExtension();
-                $course->logo = $imageName;
+                // $course->logo = $imageName;
                 //Image save
                 $storage->put($imageName, file_get_contents($request->logo));
             }
@@ -163,27 +159,28 @@ class CourseController extends Controller
                  Storage::delete($course->video);
 
                 // Upload and store new video file
-                $path = $request->file('video')->store('videos');
+                $videopath = $request->file('video')->store('videos');
 
                 // Update the file path in the video model
-                $course->video = $path;
+                // $course->video = $path;
             }
 
-            $course->name = $request->name;
-            $course->slug = $request->slug;
-            $course->quantity_lessons = $request->quantity_lessons;
-            $course->hours_lessons = $request->hours_lessons;
-            $course->short_description = $request->short_description;
-            $course->has_certificate = $request->has_certificate;
-            $course->save();
+            $data = array_merge($request->only([
+                'name', 'slug',
+                'quantity_lessons',
+                'hours_lessons',
+                'short_description'
+            ]), [$videopath , $imageName]);
+
+            $course->update($data);
+            // $course->name = $request->name;
+            // $course->slug = $request->slug;
+            // $course->quantity_lessons = $request->quantity_lessons;
+            // $course->hours_lessons = $request->hours_lessons;
+            // $course->short_description = $request->short_description;
+            // $course->has_certificate = $request->has_certificate;
+            // $course->save();
             return response()->json(['message' => 'Course updated successfully']);
-        } catch (\Exception $e) {
-            //Return Json Response
-            return response()->json([
-                'message' => $e,
-            ], 500);
-            // $data = array_merge()
-        }
     }
     /**
      * Remove the specified resource from storage.
