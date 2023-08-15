@@ -11,7 +11,7 @@ class Topic extends Model
 
     protected $fillable = [
         'course_id',
-        'name'
+        'topic_name'
     ];
 
     function lessons() {

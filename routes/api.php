@@ -31,17 +31,17 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 //Start Courses
 Route::get('course', [CourseController::class, 'index']);
-Route::get('course/{id}', [CourseController::class, 'show']);
+Route::get('course/{course}', [CourseController::class, 'show']);
 Route::post('course', [CourseController::class, 'store']);
-Route::put('course/{id}', [CourseController::class, 'update']);
-Route::delete('course/{id}', [CourseController::class, 'destroy']);
-Route::post('studentcourse',[CourseController::class,'enrollStudent']);
+Route::put('course/{course}', [CourseController::class, 'update']);
+Route::delete('course/{course}', [CourseController::class, 'destroy']);
+Route::post('studentcourse/{course}/{user}',[CourseController::class,'enrollStudent']);
 
 // Route::resource('course', CourseController::class);
 //End Courses
 
 //Start Topics
-Route::get('topics', [TopicController::class, 'index']);
+Route::get('course/{course}/topics', [TopicController::class, 'index']);
 Route::get('topics/{id}', [TopicController::class, 'show']);
 Route::post('topics', [TopicController::class, 'store']);
 Route::put('topicupdate/{id}', [TopicController::class, 'update']);

@@ -15,7 +15,7 @@ return new class extends Migration
             Schema::create('topics', function (Blueprint $table) {
                 $table->id();
                 $table->foreignId('course_id')->references('id')->on('courses')->onDelete('cascade');
-                $table->string('name')->nullable();
+                $table->string('topic_name')->nullable();
                 $table->timestamps();
                 $table->softDeletes();
             });

@@ -119,21 +119,19 @@ class CourseController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Course $course)
     {
         //
     }
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Course $course)
     {
         // $request->validate
 
 
         try {
-
-            $course = Course::find($id);
 
             // $request->validate([
             //     'name' => 'string|max:255',
@@ -144,9 +142,7 @@ class CourseController extends Controller
             //     'logo' => 'image|mimes:jpeg,png,jpg,gif,mov',
             //     'video' => 'mimetypes:video/mp4|max:100000',
             // ]);
-            if (!$course) {
-                return response()->json(['message' => 'Course not found'], 404);
-            }
+        
 
             if ($request->logo) {
                 $storage = Storage::disk('public');
@@ -186,19 +182,15 @@ class CourseController extends Controller
             return response()->json([
                 'message' => $e,
             ], 500);
+            // $data = array_merge()
         }
     }
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Course $course)
     {
-        $course = Course::find($id);
-        if (!$course) {
-            return response()->json([
-                'message' => 'Course not found.'
-            ], 404);
-        }
+      
         $course->delete();
         return response()->json([
             'message' => "Course succefully deleted."
@@ -206,10 +198,10 @@ class CourseController extends Controller
     }
 
     //Add student in courses
-    public function enrollStudent(Request $request, $courseId, $studentId)
+    public function enrollStudent(Request $request, Course $course, User $user)
     {
-        $course = Course::findOrFail($courseId);
-        $student = User::findOrFail($studentId);
+    //     $course = Course::findOrFail($courseId);
+    //     $student = User::findOrFail($studentId);
         // try {
         //     $data = [
         //         'name' => $request->name,
@@ -228,9 +220,9 @@ class CourseController extends Controller
         //     ], 500);
         // }
 
-        $course->students()->attach($student);
+        $course->students()->attach($user);
 
-        return redirect()->route('courses.show', $courseId)->with('success', 'Студент успешно записан на курс.');
+        return redirect()->route('courses.show', $course)->with('success', 'Студент успешно записан на курс.');
         //     return response()->json([
         //         'message' => "Student succefully added."
         //     ], 200);

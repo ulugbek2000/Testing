@@ -2,31 +2,23 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Course;
 use App\Models\Topic;
 use Exception;
 use Illuminate\Http\Request;
 
 class TopicController extends Controller
 {
-    /* function __construct()
-    {
-        $this->middleware('permission:role-list|role-create|role-edit|role-delete', ['only' => ['index', 'store']]);
-        $this->middleware('permission:role-create', ['only' => ['create', 'store']]);
-        $this->middleware('permission:role-edit', ['only' => ['edit', 'update']]);
-        $this->middleware('permission:role-delete', ['only' => ['destroy']]);
-    } */
     /**
      * Display a listing of the resource.
      */
-    public function index()
+
+    public function index(Course $course)
     {
-        // All Topics
-        $topics = Topic::all();
-        // Return Json Response
-        return response()->json([
-            'topics' => $topics
-        ], 200);
+        $topics = $course->topics;
+        return response()->json($topics);
     }
+
 
     /**
      * Show the form for creating a new resource.
@@ -45,7 +37,7 @@ class TopicController extends Controller
             $data = [
                 'id' => $request->id,
                 'course_id' => $request->course_id,
-                'name' => $request->name,
+                'topic_name' => $request->topic_name,
             ];
             Topic::create($data);
             return response()->json([
