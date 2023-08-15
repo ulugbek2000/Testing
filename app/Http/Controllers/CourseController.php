@@ -129,59 +129,48 @@ class CourseController extends Controller
     public function update(Request $request, Course $course)
     {
 
-        dd($request->all());
-            $request->validate([
-                'name' => 'required|string|max:255',
-                'slug' => 'required|string|max:255',
-                'quantity_lessons' => 'required|string',
-                'hours_lessons' => 'required|string',
-                'short_description' => 'required|string|max:255',
-                'logo' => 'required|image|mimes:jpeg,png,jpg,gif,mov',
-                'video' => 'required|mimetypes:video/mp4|max:100000',
-            ]);
-        
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'slug' => 'required|string|max:255',
+            'quantity_lessons' => 'required|string',
+            'hours_lessons' => 'required|string',
+            'short_description' => 'required|string|max:255',
+            'logo' => 'image|mimes:jpeg,png,jpg,gif,mov',
+            'video' => 'mimetypes:video/mp4|max:102400',
+        ]);
 
-            if ($request->logo) {
-                $storage = Storage::disk('public');
-                // Delete the old image file if it exists
-                if ($storage->exists($course->logo)) {
-                    $storage->delete($course->logo);
-                }
-                //Image name
-                $imageName = Str::random(32) . "." . $request->logo->getClientOriginalExtension();
-                // $course->logo = $imageName;
-                //Image save
-                $storage->put($imageName, file_get_contents($request->logo));
+        $logopath = "";
+        $videopath = "";
+
+
+        if ($request->logo) {
+            $storage = Storage::disk('public');
+            // Delete the old image file if it exists
+            if ($storage->exists($course->logo)) {
+                $storage->delete($course->logo);
             }
+            //Image name
+            $logopath = Str::random(32) . "." . $request->logo->getClientOriginalExtension();
+            //Image save
+            $storage->put($logopath, file_get_contents($request->logo));
+        }
 
-            // Handle video file update
-            if ($request->hasFile('video')) {
-                // Delete old video file if needed
-                 Storage::delete($course->video);
+        // Handle video file update
+        if ($request->hasFile('video')) {
+            // Delete old video file if needed
+            Storage::delete($course->video);
 
-                // Upload and store new video file
-                $videopath = $request->file('video')->store('videos');
+            // Upload and store new video file
+            $videopath = $request->file('video')->store('videos');
+        }
+        $data = array_merge($request->only(['name', 'slug', 'short_description', 'quantity_lessons', 'hours_lessons', 'has_certificate']), [
+            'logo' => $logopath,
+            'video' => $videopath,
+        ]);
 
-                // Update the file path in the video model
-                // $course->video = $path;
-            }
+        $course->update($data);
 
-            $data = array_merge($request->only([
-                'name', 'slug',
-                'quantity_lessons',
-                'hours_lessons',
-                'short_description'
-            ]), [$videopath , $imageName]);
-
-            $course->update($data);
-            // $course->name = $request->name;
-            // $course->slug = $request->slug;
-            // $course->quantity_lessons = $request->quantity_lessons;
-            // $course->hours_lessons = $request->hours_lessons;
-            // $course->short_description = $request->short_description;
-            // $course->has_certificate = $request->has_certificate;
-            // $course->save();
-            return response()->json(['message' => 'Course updated successfully']);
+        return response()->json(['message' => 'Course updated successfully'], 200);
     }
     /**
      * Remove the specified resource from storage.
