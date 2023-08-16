@@ -80,11 +80,7 @@ class TopicController extends Controller
      */
     public function update(Request $request, $id, \Exception $e)
     {
-        $data = [
-            'id' => $request->id,
-            'course_id' => $request->course_id,
-            'name' => $request->name,
-        ];
+        
         try {
             //find topic
             $topic = Topic::find($id);
@@ -93,9 +89,10 @@ class TopicController extends Controller
                     'message' => $e
                 ], 404);
             }
-            $data = [
-                $topic->name = $request->name,
-                $topic->course_id = $request->course_id,
+            $topic = [
+                'id' => $request->id,
+                'course_id' => $request->course_id,
+                'name' => $request->name,
             ];
             $topic->save($data);
             //Return Json Response

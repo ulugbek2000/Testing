@@ -142,7 +142,6 @@ class CourseController extends Controller
         $logopath = "";
         $videopath = "";
 
-
         if ($request->logo) {
             $storage = Storage::disk('public');
             // Delete the old image file if it exists
@@ -177,7 +176,6 @@ class CourseController extends Controller
      */
     public function destroy(Course $course)
     {
-      
         $course->delete();
         return response()->json([
             'message' => "Course succefully deleted."
@@ -187,32 +185,30 @@ class CourseController extends Controller
     //Add student in courses
     public function enrollStudent(Request $request, Course $course, User $user)
     {
-    //     $course = Course::findOrFail($courseId);
-    //     $student = User::findOrFail($studentId);
-        // try {
-        //     $data = [
-        //         'name' => $request->name,
-        //         'email' => $request->email,
-        //         'phone' => $request->phone,
-        //         'password' => $request->password,
-        //     ];
-        //     User::create($data);
-        //     return response()->json([
-        //         'message' => "Student succefully created."
-        //     ], 200);
-        // } catch (\Exception $e) {
-        //     //Return response Json
-        //     return response()->json([
-        //         'message' => $e,
-        //     ], 500);
-        // }
+        $course = Course::findOrFail($course);
+        $user = User::findOrFail($user);
+        try {
+            $data = [
+                'name' => $request->name,
+                'email' => $request->email,
+                'phone' => $request->phone,
+                'password' => $request->password,
+            ];
+            User::create($data);
+            return response()->json([
+                'message' => "Student succefully created."
+            ], 200);
+        } catch (\Exception $e) {
+            //Return response Json
+            return response()->json([
+                'message' => $e,
+            ], 500);
+        }
 
         $course->students()->attach($user);
-
-        return redirect()->route('courses.show', $course)->with('success', 'Студент успешно записан на курс.');
-        //     return response()->json([
-        //         'message' => "Student succefully added."
-        //     ], 200);
-        // }
+        // return redirect()->route('courses.show', $course)->with('success', 'Студент успешно записан на курс.');
+        return response()->json([
+            'message' => "Student succefully added."
+        ], 200);
     }
 }
