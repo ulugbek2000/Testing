@@ -52,15 +52,8 @@ class TopicController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show($id)
+    public function show(Topic $topic)
     {
-        //Topic detail
-        $topic = Topic::find($id);
-        if (!$topic) {
-            return response()->json([
-                'message' => 'Course not found.'
-            ], 404);
-        }
         // Return Json Response
         return response()->json([
             'topics' => $topic
@@ -70,7 +63,7 @@ class TopicController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Topic $topic)
     {
         //
     }
@@ -78,46 +71,26 @@ class TopicController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id, \Exception $e)
+    public function update(Request $request, Topic $topic)
     {
         
-        try {
-            //find topic
-            $topic = Topic::find($id);
-            if (!$topic) {
-                return response()->json([
-                    'message' => $e
-                ], 404);
-            }
-            $topic = [
-                'id' => $request->id,
-                'course_id' => $request->course_id,
-                'name' => $request->name,
-            ];
-            $topic->save($data);
-            //Return Json Response
-            return response()->json([
-                'message' => "Topic succefully updated."
-            ], 200);
-        } catch (\Exception $e) {
-            //Return Json Response
-            return response()->json([
-                'message' => $e,
-            ], 500);
-        }
+        $request->validate([
+            'topic_name' => 'string|max:255',
+            'course_id' => 'required|integer'
+        ]);
+
+        $topic->update($request->only(['topic_name','course_id']));
+        //Return Json Response
+        return response()->json([
+            'message' => "Topic succefully updated."
+        ], 200);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Topic $topic)
     {
-        $topic = Topic::find($id);
-        if (!$topic) {
-            return response()->json([
-                'message' => 'Topic not found.'
-            ], 404);
-        }
         $topic->delete();
         return response()->json([
             'message' => "Topic succefully deleted."

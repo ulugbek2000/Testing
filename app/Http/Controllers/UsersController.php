@@ -2,18 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Course;
 use App\Models\User;
 use Illuminate\Http\Request;
 
 class UsersController extends Controller
 {
-    function __construct()
-    {
-        $this->middleware('permission:role-list|role-create|role-edit|role-delete', ['only' => ['index', 'store']]);
-        $this->middleware('permission:role-create', ['only' => ['create', 'store']]);
-        $this->middleware('permission:role-edit', ['only' => ['edit', 'update']]);
-        $this->middleware('permission:role-delete', ['only' => ['destroy']]);
-    }
+    // function __construct()
+    // {
+    //     $this->middleware('permission:role-list|role-create|role-edit|role-delete', ['only' => ['index', 'store']]);
+    //     $this->middleware('permission:role-create', ['only' => ['create', 'store']]);
+    //     $this->middleware('permission:role-edit', ['only' => ['edit', 'update']]);
+    //     $this->middleware('permission:role-delete', ['only' => ['destroy']]);
+    // }
     /**
      * Display a listing of the resource.
      */
@@ -40,30 +41,7 @@ class UsersController extends Controller
      */
     public function store(Request $request)
     {
-        try {
-            $data = [
-                'name' => $request->name,
-                'email' => $request->email,
-                'phone' => $request->phone,
-                'password' => $request->password,
-                'email_verified_at' => $request->email_verified_at,
-                'phone_verified_at' => $request->phone_verified_at,
-                'two_factor_secret' => $request->two_factor_secret,
-                'two_factor_recovery_codes' => $request->two_factor_recovery_codes,
-                'two_factor_confirmed_at' => $request->two_factor_confirmed_at,
-                'remember_token' => $request->remember_token
-
-            ];
-            User::create($data);
-            return response()->json([
-                'message' => "User succefully created."
-            ], 200);
-        } catch (\Exception $e) {
-            //Return response Json
-            return response()->json([
-                'message' => $e,
-            ], 500);
-        }
+     
     }
 
     /**
@@ -139,4 +117,34 @@ class UsersController extends Controller
             'message' => "User succefully deleted."
         ], 200);
     }
+    
+    // //Add student in courses
+    // public function enrollStudent(Request $request, Course $course, User $user)
+    // {
+    //     $course = Course::findOrFail($course);
+    //     $user = User::findOrFail($user);
+    //     try {
+    //         $data = [
+    //             'name' => $request->name,
+    //             'email' => $request->email,
+    //             'phone' => $request->phone,
+    //             'password' => $request->password,
+    //         ];
+    //         User::create($data);
+    //         return response()->json([
+    //             'message' => "Student succefully created."
+    //         ], 200);
+    //     } catch (\Exception $e) {
+    //         //Return response Json
+    //         return response()->json([
+    //             'message' => $e,
+    //         ], 500);
+    //     }
+
+    //     $course->students()->attach($user);
+    //     // return redirect()->route('courses.show', $course)->with('success', 'Студент успешно записан на курс.');
+    //     return response()->json([
+    //         'message' => "Student succefully added."
+    //     ], 200);
+    // }
 }

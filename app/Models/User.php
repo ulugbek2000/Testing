@@ -36,9 +36,13 @@ class User extends Authenticatable
     ];
     public function courses()
     {
-        return $this->belongsToMany(Course::class, 'course_user');
+        return $this->hasManyThrough(Course::class, UserCourse::class);
     }
 
+    public function role()
+    {
+        return $this->belongsTo(Role::class);
+    }
     /**
      * The attributes that should be hidden for serialization.
      *
@@ -58,5 +62,4 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
-
 }

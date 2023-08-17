@@ -35,17 +35,17 @@ Route::get('course/{course}', [CourseController::class, 'show']);
 Route::post('course', [CourseController::class, 'store']);
 Route::put('course/{course}', [CourseController::class, 'update']);
 Route::delete('course/{course}', [CourseController::class, 'destroy']);
-Route::post('studentcourse/{course}/{user}',[CourseController::class,'enrollStudent']);
+Route::post('enroll/{course}/{user}', [CourseController::class, 'enroll']);
 
 // Route::resource('course', CourseController::class);
 //End Courses
 
 //Start Topics
 Route::get('course/{course}/topics', [TopicController::class, 'index']);
-Route::get('topics/{id}', [TopicController::class, 'show']);
-Route::post('topics', [TopicController::class, 'store']);
-Route::put('topicupdate/{id}', [TopicController::class, 'update']);
-Route::delete('topicdelete/{id}', [TopicController::class, 'destroy']);
+Route::get('topic/{topic}', [TopicController::class, 'show']);
+Route::post('topic', [TopicController::class, 'store']);
+Route::put('topic/{topic}', [TopicController::class, 'update']);
+Route::delete('topic/{topic}', [TopicController::class, 'destroy']);
 //End Topics
 
 //Start Lessons
@@ -59,9 +59,10 @@ Route::delete('lessondelete/{id}', [LessonController::class, 'destroy']);
 //Start Users
 Route::get('users', [UsersController::class, 'index']);
 Route::get('user/{id}', [UsersController::class, 'show']);
-Route::post('users', [UsersController::class, 'store']);
+// Route::post('users', [UsersController::class, 'store']);
 Route::put('usersupdate/{id}', [UsersController::class, 'update']);
 Route::delete('usersdelete/{id}', [UsersController::class, 'destroy']);
+
 //End Users
 
 //Start Sessons
@@ -96,4 +97,3 @@ Route::get('role/{id}', [RoleController::class, 'show']);
 Route::put('role/{id}', [RoleController::class, 'update']);
 Route::delete('role/{id}', [RoleController::class, 'destroy']);
 //End Role
-

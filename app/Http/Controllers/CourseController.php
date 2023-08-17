@@ -9,6 +9,7 @@ use Illuminate\Support\Str;
 use app\Http\Requests\CourseStoreRequest;
 use App\Http\Resources\CourseResource;
 use App\Models\User;
+use App\Models\UserCourse;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
@@ -169,7 +170,7 @@ class CourseController extends Controller
 
         $course->update($data);
 
-        return response()->json(['message' => 'Course updated successfully'], 200);
+        return response()->json(['message' => 'Course updated successfuly'], 200);
     }
     /**
      * Remove the specified resource from storage.
@@ -178,37 +179,21 @@ class CourseController extends Controller
     {
         $course->delete();
         return response()->json([
-            'message' => "Course succefully deleted."
+            'message' => "Course successfuly deleted."
         ], 200);
     }
 
-    //Add student in courses
-    public function enrollStudent(Request $request, Course $course, User $user)
-    {
-        $course = Course::findOrFail($course);
-        $user = User::findOrFail($user);
-        try {
-            $data = [
-                'name' => $request->name,
-                'email' => $request->email,
-                'phone' => $request->phone,
-                'password' => $request->password,
-            ];
-            User::create($data);
-            return response()->json([
-                'message' => "Student succefully created."
-            ], 200);
-        } catch (\Exception $e) {
-            //Return response Json
-            return response()->json([
-                'message' => $e,
-            ], 500);
-        }
-
-        $course->students()->attach($user);
-        // return redirect()->route('courses.show', $course)->with('success', 'Студент успешно записан на курс.');
+    public function enroll(Request $request, Course $course, User $user) {
+        $userCourse = UserCourse::firstOrCreate([
+            'user_id' => $user->id,
+            'course_id' => $course->id
+        ],[
+            'user_id' => $user->id,
+            'course_id' => $course->id
+        ]);
         return response()->json([
-            'message' => "Student succefully added."
+            'message' => $userCourse->wasRecentlyCreated ? "Student enrolled to course successfuly." : "Student already enrolled!"
         ], 200);
     }
+
 }

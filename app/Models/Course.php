@@ -41,7 +41,7 @@ class Course extends Model
 
     public function users()
     {
-        return $this->belongsToMany(Users::class);
+        return $this->hasMany(Users::class);
     }
 
     public function topics()
@@ -61,6 +61,6 @@ class Course extends Model
 
     public function students()
     {
-        return $this->belongsToMany(User::class, 'course_user');
+        return $this->hasManyThrough(User::class, UserCourse::class, 'course_id', 'id');
     }
 }
