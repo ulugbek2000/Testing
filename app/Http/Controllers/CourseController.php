@@ -136,12 +136,12 @@ class CourseController extends Controller
             'quantity_lessons' => 'required|string',
             'hours_lessons' => 'required|string',
             'short_description' => 'required|string|max:255',
-            'logo' => 'image|mimes:jpeg,png,jpg,gif,mov',
-            'video' => 'mimetypes:video/mp4|max:102400',
+            'logo' => 'required|image|mimes:jpeg,png,jpg,gif,mov',
+            'video' => 'required|mimes:mp4,mov,avi,mpeg,mkv,max:102400',
         ]);
 
-        $logopath = "";
-        $videopath = "";
+        // $logopath = "";
+        // $videopath = "";
 
         if ($request->logo) {
             $storage = Storage::disk('public');

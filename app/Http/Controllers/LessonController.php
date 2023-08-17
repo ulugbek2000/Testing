@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Enums\LessonType;
+use App\Enums\LessonTypes;
 use App\Models\Lesson;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rules\Enum;
 
 class LessonController extends Controller
@@ -40,11 +42,12 @@ class LessonController extends Controller
             $request->validate([
                 'topic_id' => 'required',
                 'name' => 'required|string',
+                'cover' => 'image|mimes:jpeg,png,jpg,gif,mov',
                 'content' => 'required|mimes:mp4,mov,avi,mpeg,mkv,doc'
             ]);
+            $cover = $request->file('cover')->store('images', 'public');
 
-
-            if (in_array($request->type, [LessonType::Video, LessonType::Audio]) && $request->hasFile('content')) {
+            if (in_array($request->type, [LessonTypes::Video, LessonTypes::Audio]) && $request->hasFile('content')) {
                 // Upload and store new video file
                 $filePath = $request->file('content')->store('lessonContent');
             }
@@ -52,7 +55,8 @@ class LessonController extends Controller
             $data = [
                 'topic_id' => $request->topic_id,
                 'name' => $request->name,
-                'content' => in_array($request->type, [LessonType::Video, LessonType::Audio]) ? $filePath : $request->content,
+                'cover' => Storage::url($cover),
+                'content' => in_array($request->type, [LessonTypes::Video, LessonTypes::Audio]) ? $filePath : $request->content,
                 'type' => $request->type,
             ];
 
