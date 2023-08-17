@@ -1,7 +1,10 @@
 <?php
 
+use App\Enums\LessonType;
+use App\Enums\LessonTypes;
 use App\Enums\TransactionType;
 use Illuminate\Database\Migrations\Migration;
+use Spatie\Enum\Enum;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
@@ -18,8 +21,9 @@ return new class extends Migration
                     $table->id();
                     $table->foreignId('topic_id')->references('id')->on('topics')->onDelete('cascade');
                     $table->string('name');
-                    $table->integer('duration');
-                    $table->enum('type', ['video', 'doc',  'audio', 'text', 'image', 'quiz']);
+                    $table->text('content');
+                    $table->string('cover');
+                    $table->enum('type',LessonTypes::getValues());
                     $table->timestamps();
                     $table->softDeletes();
                 });

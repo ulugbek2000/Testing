@@ -14,13 +14,13 @@ return new class extends Migration
         if (!Schema::hasTable('courses'))
             Schema::create('courses', function (Blueprint $table) {
                 $table->id();
-                $table->string('logo');
+                $table->string('logo')->nullable();
                 $table->string('name');
                 $table->string('slug');
                 $table->string('quantity_lessons');
                 $table->string('hours_lessons');
                 $table->text('short_description');
-                $table->string('video');
+                $table->string('video')->nullable();
                 // $table->decimal('price', 10, 2);
                 // $table->integer('duration');
                 // $table->string('duration_type');

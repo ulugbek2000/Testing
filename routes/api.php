@@ -49,11 +49,11 @@ Route::delete('topic/{topic}', [TopicController::class, 'destroy']);
 //End Topics
 
 //Start Lessons
-Route::get('lessons', [LessonController::class, 'index']);
-Route::get('lessons/{id}', [LessonController::class, 'show']);
-Route::post('lessons', [LessonController::class, 'store']);
-Route::put('lessonupdate/{id}', [LessonController::class, 'update']);
-Route::delete('lessondelete/{id}', [LessonController::class, 'destroy']);
+Route::get('lesson', [LessonController::class, 'index']);
+Route::get('lesson/{lesson}', [LessonController::class, 'show']);
+Route::post('lesson', [LessonController::class, 'store']);
+Route::put('lesson/{lesson}', [LessonController::class, 'update']);
+Route::delete('lesson/{lesson}', [LessonController::class, 'destroy']);
 //End Lessons
 
 //Start Users

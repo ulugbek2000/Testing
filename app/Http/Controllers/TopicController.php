@@ -27,7 +27,6 @@ class TopicController extends Controller
     {
         //
     }
-
     /**
      * Store a newly created resource in storage.
      */
@@ -73,13 +72,13 @@ class TopicController extends Controller
      */
     public function update(Request $request, Topic $topic)
     {
-        
+
         $request->validate([
             'topic_name' => 'string|max:255',
             'course_id' => 'required|integer'
         ]);
 
-        $topic->update($request->only(['topic_name','course_id']));
+        $topic->update($request->only(['topic_name', 'course_id']));
         //Return Json Response
         return response()->json([
             'message' => "Topic succefully updated."

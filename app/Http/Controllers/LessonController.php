@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\LessonType;
 use App\Models\Lesson;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rules\Enum;
 
 class LessonController extends Controller
 {
@@ -38,17 +40,24 @@ class LessonController extends Controller
             $request->validate([
                 'topic_id' => 'required',
                 'name' => 'required|string',
-                'duration' => 'required',
-                'type' => 'required|mimes:mp4,mov,avi,mpeg,mkv,doc',
+                'content' => 'required|mimes:mp4,mov,avi,mpeg,mkv,doc'
             ]);
-            $lesson = new Lesson();
+
+
+            if (in_array($request->type, [LessonType::Video, LessonType::Audio]) && $request->hasFile('content')) {
+                // Upload and store new video file
+                $filePath = $request->file('content')->store('lessonContent');
+            }
+
             $data = [
                 'topic_id' => $request->topic_id,
                 'name' => $request->name,
-                'duration' => $request->duration,
+                'content' => in_array($request->type, [LessonType::Video, LessonType::Audio]) ? $filePath : $request->content,
+                'type' => $request->type,
             ];
-            $lesson->type = $request->input('type');
-            Lesson::create($data, $lesson);
+
+            Lesson::create($data);
+
             return response()->json([
                 'message' => "Lesson succefully created."
             ], 200);
@@ -62,15 +71,8 @@ class LessonController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Lesson $lesson)
     {
-        //Lesson detail
-        $lesson = Lesson::find($id);
-        if (!$lesson) {
-            return response()->json([
-                'message' => 'Lesson not found.'
-            ], 404);
-        }
         // Return Json Response
         return response()->json([
             'lessons' => $lesson
@@ -79,61 +81,36 @@ class LessonController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Lesson $lesson)
     {
         //
     }
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Lesson $lesson)
     {
-        $validator = Validator::make($request->all(),[
+        $validator = Validator::make($request->all(), [
             'topic_id' => 'integer',
             'name' => 'string',
-            'duration' => 'integer',
             'type' => 'mimes:mp4,mov,avi,mpeg,mkv,doc',
         ]);
-        try {
-            //find course
-            $lesson = Lesson::find($id);
-            if ($validator->fails()) {
-                return response()->json(['error' => $validator->errors()], 400);
-            }
-            // if (!$lesson) {
-            //     return response()->json([
-            //         'message' => 'Lesson not found!!'
-            //     ], 404);
-            // }
-            $data = [
-                $lesson->topic_id = $request->topic_id,
-                $lesson->name = $request->name,
-                $lesson->duration = $request->duration,
-                $lesson->update(['type' => 'type']),
-            ];
-            $lesson->save($data);
-            //Return Json Response
-            return response()->json([
-                'message' => "Lesson succefully updated."
-            ], 200);
-        } catch (\Exception $e) {
-            //Return Json Response
-            return response()->json([
-                'message' => $e,
-            ], 500);
-        }
+        $data = [
+            $lesson->topic_id = $request->topic_id,
+            $lesson->name = $request->name,
+            $lesson->update(['type' => 'type']),
+        ];
+        $lesson->save($data);
+        //Return Json Response
+        return response()->json([
+            'message' => "Lesson succefully updated."
+        ], 200);
     }
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Lesson $lesson)
     {
-        $lesson = Lesson::find($id);
-        if (!$lesson) {
-            return response()->json([
-                'message' => 'Lesson not found.'
-            ], 404);
-        }
         $lesson->delete();
         return response()->json([
             'message' => "Lesson succefully deleted."

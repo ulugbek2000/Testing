@@ -11,10 +11,10 @@ class Lesson extends Model
     protected $fillable = [
         'topic_id',
         'name',
-        'duration',
+        'content',
         'type',
     ];
-    // protected   $type = ['video', 'doc', 'audio', 'text', 'image', 'quiz'];
+    // protected   $type = ['video','audio', 'text'];
     function topic() {
         return $this->belongsTo(topic::class, 'topic_id', 'id');
     }
