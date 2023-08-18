@@ -49,7 +49,7 @@ Route::delete('topic/{topic}', [TopicController::class, 'destroy']);
 //End Topics
 
 //Start Lessons
-Route::get('lesson', [LessonController::class, 'index']);
+Route::get('topic/{topic}/lessons', [LessonController::class, 'index']);
 Route::get('lesson/{lesson}', [LessonController::class, 'show']);
 Route::post('lesson', [LessonController::class, 'store']);
 Route::put('lesson/{lesson}', [LessonController::class, 'update']);

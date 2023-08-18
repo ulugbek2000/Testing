@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Enums\LessonType;
 use App\Enums\LessonTypes;
 use App\Models\Lesson;
+use App\Models\Topic;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -15,14 +16,10 @@ class LessonController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Topic $topic)
     {
-        // All Lesons
-        $lessons = Lesson::all();
-        // Return Json Response
-        return response()->json([
-            'lessons' => $lessons
-        ], 200);
+        $lessons = $topic->lessons;
+        return response()->json($lessons);
     }
     /**
      * Show the form for creating a new resource.
@@ -94,17 +91,21 @@ class LessonController extends Controller
      */
     public function update(Request $request, Lesson $lesson)
     {
-        $validator = Validator::make($request->all(), [
-            'topic_id' => 'integer',
+ 
+        $request->validate([
+            'topic_id' => 'required|integer',
             'name' => 'string',
-            'type' => 'mimes:mp4,mov,avi,mpeg,mkv,doc',
+            'cover' => 'image|mimes:jpeg,png,jpg,gif,mov',
+            'content' => in_array($request->type, [LessonTypes::Video, LessonTypes::Audio]) ? $filePath : $request->content,
         ]);
-        $data = [
-            $lesson->topic_id = $request->topic_id,
-            $lesson->name = $request->name,
-            $lesson->update(['type' => 'type']),
-        ];
-        $lesson->save($data);
+        if (!in_array($request->type,[])) {
+            return new \InvalidArgumentException('Invalid lesson type.');
+        }
+
+        $this->type = $newType;
+        $this->save();
+    
+        $lesson->update($request->only(['topic_id', 'name', 'cover', 'content', 'type']));
         //Return Json Response
         return response()->json([
             'message' => "Lesson succefully updated."
