@@ -77,24 +77,24 @@ class LessonController extends Controller
         // }
 
 
-        $type = $request->input('type');
-        $сontent = $request->input('content');
+        // $type = $request->input('type');
+        // $сontent = $request->input('content');
         
 
         $lesson = new Lesson();
-        $lesson->type = $type;
+        // $lesson->type = $type;
 
-        if ($type === 'text') {
-            $lesson->content = $сontent;
-        } elseif ($type === 'video' || $type === 'audio') {
-            $filePath = $request->file('content')->store('lessonContent');
-        }
+        // if ($type === 'text') {
+        //     $lesson->content = $сontent;
+        // } elseif ($type === 'video' || $type === 'audio') {
+        //     $filePath = $request->file('content')->store('lessonContent');
+        // }
         $data = [
                     'topic_id' => $request->topic_id,
                     'name' => $request->name,
                     // 'cover' => Storage::url($cover),
-                    'content' => in_array($request->type, [LessonTypes::Video, LessonTypes::Audio]) ? $filePath : $request->content,
-                    'type' => $request->type,
+                    // 'content' => in_array($request->type, [LessonTypes::Video, LessonTypes::Audio]) ? $filePath : $request->content,
+                    // 'type' => $request->type,
                 ];
         Lesson::create($data);
 

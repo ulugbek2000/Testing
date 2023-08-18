@@ -15,17 +15,17 @@ class Lesson extends Model
         'content',
         'type',
     ];
-    public function setType($newType)
-    {
-        if (in_array([LessonTypes::Text()]) ) {
-            return new \InvalidArgumentException('Invalid lesson type.');
-        }
+    // public function setType($newType)
+    // {
+    //     if (in_array([LessonTypes::Text()]) ) {
+    //         return new \InvalidArgumentException('Invalid lesson type.');
+    //     }
 
-        $this->attributes['type'] = $newType;
-        if ($newType === 'text') {
-            $this->setAttribute('type', 'string');
-        }
-    }
+    //     $this->attributes['type'] = $newType;
+    //     if ($newType === 'text') {
+    //         $this->setAttribute('type', 'string');
+    //     }
+    // }
     // protected   $type = ['video','audio', 'text'];
     function topic() {
         return $this->belongsTo(topic::class, 'topic_id', 'id');

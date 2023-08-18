@@ -21,9 +21,9 @@ return new class extends Migration
                     $table->id();
                     $table->foreignId('topic_id')->references('id')->on('topics')->onDelete('cascade');
                     $table->string('name');
-                    $table->text('content');
-                    $table->string('cover');
-                    $table->enum('type',LessonTypes::getValues());
+                    // $table->text('content');
+                    // $table->string('cover');
+                    // $table->enum('type',LessonTypes::getValues());
                     $table->timestamps();
                     $table->softDeletes();
                 });
