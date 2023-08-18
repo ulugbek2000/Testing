@@ -12,7 +12,7 @@ class Lesson extends Model
     protected $fillable = [
         'topic_id',
         'name',
-        // 'cover',
+        'cover',
         'content',
         'type',
     ];
@@ -27,6 +27,12 @@ class Lesson extends Model
             $this->setAttribute('type', 'string');
         }
     }
+
+    public function updateLesson($data)
+    {
+        $this->update($data);
+    }
+
     // protected   $type = ['video', 'audio', 'text'];
     function topic()
     {

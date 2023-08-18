@@ -34,69 +34,34 @@ class LessonController extends Controller
      */
     public function store(Request $request, Lesson $lesson)
     {
-        // try {
-        //Create Lesson
-        // $request->validate([
-        //     'topic_id' => 'required|integer',
-        //     'name' => 'required|string',
-        //     // 'cover' => 'image|mimes:jpeg,png,jpg,gif,mov',
-        //     'content' => 'mimes:mp4,mov,avi,mpeg,mkv,doc'
-        // ]);
-
-
-        //     $cover = $request->file('cover')->store('cover', 'public');
-
-        //     if (in_array($request->type, [LessonTypes::Video, LessonTypes::Audio]) && $request->hasFile('content')) {
-        //         // Upload and store new video file
-        //         $filePath = $request->file('content')->store('lessonContent');
-        //     }
-        //     if (!$filePath) {
-        //         $newLessonType = LessonTypes::Text; // Это значение будет "text"
-        //         $lesson->type = $newLessonType;
-        //         $lesson->save();
-        //     }
-
-        //     $data = [
-        //         'topic_id' => $request->topic_id,
-        //         'name' => $request->name,
-        //         'cover' => Storage::url($cover),
-        //         'content' => in_array($request->type, [LessonTypes::Video, LessonTypes::Audio]) ? $filePath : $request->content,
-        //         'type' => $request->type,
-        //     ];
-
-        //     Lesson::create($data);
-
-        //     return response()->json([
-        //         'message' => "Lesson succefully created."
-        //     ], 200);
-        // } catch (\Exception $e) {
-        //     /*Return response Json */
-        //     return response()->json([
-        //         'message' => $e,
-        //     ], 500);
-        // }
+        $request->validate([
+            'topic_id' => 'integer',
+            'name' => 'string',
+            'cover' => 'image|mimes:jpeg,png,jpg,gif,mov',
+        ]);
 
         $type = $request->input('type');
         $сontent = $request->input('content');
-        
+        $cover = $request->file('cover')->store('cover', 'public');
+
         $lesson = new Lesson();
         $lesson->type = $type;
-            
+
         if ($type === 'text') {
             $lesson->content = $сontent;
         } elseif ($type === 'video' || $type === 'audio') {
             $filePath = $request->file('content')->store('lessonContent');
         }
         $data = [
-                    'topic_id' => $request->topic_id,
-                    'name' => $request->name,
-                    // 'cover' => Storage::url($cover),
-                    'content' => in_array($request->type, [LessonTypes::Video, LessonTypes::Audio]) ? $filePath : $request->content,
-                    'type' => $request->type,
-                ];
+            'topic_id' => $request->topic_id,
+            'name' => $request->name,
+            'cover' => Storage::url($cover),
+            'content' => in_array($request->type, [LessonTypes::Video, LessonTypes::Audio]) ? $filePath : $request->content,
+            'type' => $request->type,
+        ];
         Lesson::create($data);
 
-        return response()->json('Lesson created successfully.');
+        return response()->json(['message' => 'Lesson created successfully.']);
     }
     /**
      * Display the specified resource.
@@ -124,7 +89,7 @@ class LessonController extends Controller
             'topic_id' => 'integer',
             'name' => 'string',
             'cover' => 'image|mimes:jpeg,png,jpg,gif,mov',
-            'content' => 'mimes:mp4,mov,avi,mpeg,mkv,doc'
+            // 'content' => 'mimes:mp4,mov,avi,mpeg,mkv,doc'
         ]);
 
         if ($request->hasFile('cover')) {
@@ -132,12 +97,17 @@ class LessonController extends Controller
             Storage::delete($lesson->cover);
             // Upload and store new cover file
             $coverpath = $request->file('cover')->store('images');
+        } else {
+            $coverpath = $lesson->cover;
         }
-        $data = array_merge($request->only(['name', 'content', 'topic_id', 'lesson_types']), [
+
+        $data = array_merge($request->only(['name', 'type', 'topic_id', 'content']),[
             'cover' => $coverpath,
         ]);
-        $lesson->update($data);
-        return response()->json(['message' => 'Course updated successfuly'], 200);
+
+        $lesson->updateLesson($data);
+
+        return response()->json(['message' => 'Lesson updated successfully']);
     }
     /**
      * Remove the specified resource from storage.
