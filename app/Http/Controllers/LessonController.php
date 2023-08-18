@@ -89,7 +89,7 @@ class LessonController extends Controller
             'topic_id' => 'integer',
             'name' => 'string',
             'cover' => 'image|mimes:jpeg,png,jpg,gif,mov',
-            // 'content' => 'mimes:mp4,mov,avi,mpeg,mkv,doc'
+             'content' => 'nullable'
         ]);
 
         if ($request->hasFile('cover')) {
@@ -101,10 +101,25 @@ class LessonController extends Controller
             $coverpath = $lesson->cover;
         }
 
-        $data = array_merge($request->only(['name', 'type', 'topic_id', 'content']),[
+        if( $request->type == LessonTypes::Video ||  $request->type == LessonTypes::Audio){
+            if ($request->hasFile('content')) {
+                // Delete old cover file if needed
+                Storage::delete($lesson->content);
+                // Upload and store new cover file
+                $content = $request->file('content')->store('content','public');
+            } else {
+                $content = $lesson->content;
+            }
+        }else{
+            $content = $request->content;
+        }
+
+        $data = array_merge($request->only(['name', 'type', 'topic_id','content' ]),[
             'cover' => $coverpath,
+            'content' => $content
         ]);
 
+      
         $lesson->updateLesson($data);
 
         return response()->json(['message' => 'Lesson updated successfully']);
