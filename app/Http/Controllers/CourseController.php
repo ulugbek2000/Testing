@@ -140,22 +140,6 @@ class CourseController extends Controller
             'video' => 'mimes:mp4,mov,avi,mpeg,mkv,max:102400',
         ]);
 
-        // $logopath = "";
-        // $videopath = "";
-
-        // if ($request->logo) {
-        // $storage = Storage::disk('public');
-        // // Delete the old image file if it exists
-        // if ($storage->exists($course->logo)) {
-        //     $storage->delete($course->logo);
-        // }
-        // //Image name
-        // $logopath = Str::random(32) . "." . $request->logo->getClientOriginalExtension();
-        // //Image save
-        // $storage->put($logopath, file_get_contents($request->logo));
-        // }
-
-
         if ($request->hasFile('logo')) {
             // Delete old video file if needed
             Storage::delete($course->logo);
@@ -163,12 +147,10 @@ class CourseController extends Controller
             // Upload and store new video file
             $logopath = $request->file('logo')->store('images');
         }
-
         // Handle video file update
         if ($request->hasFile('video')) {
             // Delete old video file if needed
             Storage::delete($course->video);
-
             // Upload and store new video file
             $videopath = $request->file('video')->store('videos');
         }
