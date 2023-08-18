@@ -143,7 +143,7 @@ class CourseController extends Controller
             // Delete old logo file if needed
             Storage::delete($course->logo);
             // Upload and store new logo file
-            $logopath = $request->file('logo')->store('images','public');
+            $logopath = $request->file('logo')->store('images','storage');
         }else{
             $logopath = $course->logo;
         }
@@ -152,7 +152,7 @@ class CourseController extends Controller
             // Delete old video file if needed
             Storage::delete($course->video);
             // Upload and store new video file
-            $videopath = $request->file('video')->store('videos','public');
+            $videopath = $request->file('video')->store('videos','storage');
         }else{
             $videopath = $course->video;
         }
