@@ -39,7 +39,7 @@ class LessonController extends Controller
             'name' => 'string',
             'cover' => 'image|mimes:jpeg,png,jpg,gif,mov',
         ]);
-        dd()->response()->json($request);
+        // dd()->response()->json($request);
         $type = $request->input('type');
         $сontent = $request->input('content');
         $cover = $request->file('cover')->store('cover', 'public');
