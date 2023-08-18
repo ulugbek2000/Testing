@@ -5,9 +5,9 @@ namespace App\Enums;
 use BenSampo\Enum\Enum;
 
 /**
- * @method static static OptionOne()
- * @method static static OptionTwo()
- * @method static static OptionThree()
+ * @method static static Video()
+ * @method static static Audio()
+ * @method static static Text()
  */
 final class LessonTypes extends Enum
 {
@@ -19,7 +19,7 @@ final class LessonTypes extends Enum
     {
         if (array_key_exists('lesson_types', $attributes)) {
             if (!in_array($attributes['lesson_types'], [self::Video, self::Audio, self::Text])) {
-                throw new \InvalidArgumentException("Invalid lesson type");
+                return new \InvalidArgumentException("Invalid lesson type");
             }
         }
 

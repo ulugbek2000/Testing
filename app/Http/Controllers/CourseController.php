@@ -129,7 +129,6 @@ class CourseController extends Controller
      */
     public function update(Request $request, Course $course)
     {
-
         $request->validate([
             'name' => 'required|string|max:255',
             'slug' => 'required|string|max:255',
@@ -139,12 +138,10 @@ class CourseController extends Controller
             'logo' => 'image|mimes:jpeg,png,jpg,gif,mov',
             'video' => 'mimes:mp4,mov,avi,mpeg,mkv,max:102400',
         ]);
-
         if ($request->hasFile('logo')) {
-            // Delete old video file if needed
+            // Delete old logo file if needed
             Storage::delete($course->logo);
-
-            // Upload and store new video file
+            // Upload and store new logo file
             $logopath = $request->file('logo')->store('images');
         }
         // Handle video file update
