@@ -129,7 +129,7 @@ class CourseController extends Controller
      */
     public function update(Request $request, Course $course)
     {
-        dd($request->all());
+        return response()->json($request->all());
         $request->validate([
             'name' => 'required|string|max:255',
             'slug' => 'required|string|max:255',
