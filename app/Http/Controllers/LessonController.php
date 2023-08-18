@@ -39,7 +39,7 @@ class LessonController extends Controller
             $request->validate([
                 'topic_id' => 'required',
                 'name' => 'required|string',
-                'cover' => 'image|mimes:jpeg,png,jpg,gif,mov',
+                'cover' => 'required|image|mimes:jpeg,png,jpg,gif,mov',
                 'content' => 'required|mimes:mp4,mov,avi,mpeg,mkv,doc'
             ]);
             $cover = $request->file('cover')->store('images', 'public');
@@ -91,25 +91,33 @@ class LessonController extends Controller
      */
     public function update(Request $request, Lesson $lesson)
     {
- 
-        $request->validate([
-            'topic_id' => 'required|integer',
-            'name' => 'string',
-            'cover' => 'image|mimes:jpeg,png,jpg,gif,mov',
-            'content' => in_array($request->type, [LessonTypes::Video, LessonTypes::Audio]) ? $filePath : $request->content,
-        ]);
-        if (!in_array($request->type,[])) {
-            return new \InvalidArgumentException('Invalid lesson type.');
-        }
-
-        $this->type = $newType;
-        $this->save();
+        $lessonType = $request->input('lesson_types');
+        $name = $request->input('name');
+        $content = $request->input('content');
+        $topic_id = $request->input('topic_id');
+        $cover = $request->input('cover');
     
-        $lesson->update($request->only(['topic_id', 'name', 'cover', 'content', 'type']));
-        //Return Json Response
-        return response()->json([
-            'message' => "Lesson succefully updated."
-        ], 200);
+        $attributes = [];
+    
+        if ($lessonType !== null) {
+            $attributes['lesson_types'] = $lessonType;
+        }
+        if ($name !== null) {
+            $attributes['name'] = $name;
+        }
+        if ($content !== null) {
+            $attributes['content'] = $content;
+        }
+        if ($topic_id !== null) {
+            $attributes['topic_id'] = $topic_id;
+        }
+        if ($cover !== null) {
+            $attributes['cover'] = $cover;
+        }
+    
+        $lesson->update($attributes);
+    
+        return response()->json(['message' => 'Lesson updated successfully']);
     }
     /**
      * Remove the specified resource from storage.
