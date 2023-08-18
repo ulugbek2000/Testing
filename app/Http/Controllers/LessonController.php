@@ -39,7 +39,7 @@ class LessonController extends Controller
             $request->validate([
                 'topic_id' => 'required|integer',
                 'name' => 'required|string',
-                'cover' => 'required|image|mimes:jpeg,png,jpg,gif,mov',
+                'cover' => 'image|mimes:jpeg,png,jpg,gif,mov',
                 'content' => 'required|mimes:mp4,mov,avi,mpeg,mkv,doc'
             ]);
             $cover = $request->file('cover')->store('cover', 'public');
