@@ -97,7 +97,7 @@ class LessonController extends Controller
             'cover' => 'image|mimes:jpeg,png,jpg,gif,mov',
             'content' => 'mimes:mp4,mov,avi,mpeg,mkv,doc'
         ]);
- `
+ 
         if ($request->hasFile('cover')) {
             $cover = $request->file('cover')->store('images');
         }
