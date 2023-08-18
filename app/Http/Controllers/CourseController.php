@@ -135,14 +135,16 @@ class CourseController extends Controller
             'quantity_lessons' => 'required|string',
             'hours_lessons' => 'required|string',
             'short_description' => 'required|string|max:255',
-            'logo' => 'image|mimes:jpeg,png,jpg,gif,mov',
-            'video' => 'mimes:mp4,mov,avi,mpeg,mkv,max:102400',
+            'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,mov',
+            'video' => 'nullable|mimes:mp4,mov,avi,mpeg,mkv,max:102400',
         ]);
         if ($request->hasFile('logo')) {
             // Delete old logo file if needed
             Storage::delete($course->logo);
             // Upload and store new logo file
             $logopath = $request->file('logo')->store('images');
+        }else{
+            $logopath = $course->logo;
         }
         // Handle video file update
         if ($request->hasFile('video')) {
@@ -150,6 +152,8 @@ class CourseController extends Controller
             Storage::delete($course->video);
             // Upload and store new video file
             $videopath = $request->file('video')->store('videos');
+        }else{
+            $videopath = $course->video;
         }
         $data = array_merge($request->only(['name', 'slug', 'short_description', 'quantity_lessons', 'hours_lessons', 'has_certificate']), [
             'logo' => $logopath,
