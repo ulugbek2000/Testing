@@ -129,6 +129,7 @@ class CourseController extends Controller
      */
     public function update(Request $request, Course $course)
     {
+        dd($request->all());
         $request->validate([
             'name' => 'required|string|max:255',
             'slug' => 'required|string|max:255',
@@ -161,6 +162,8 @@ class CourseController extends Controller
         ]);
 
         $course->update($data);
+
+        dd($request->all());
 
         return response()->json(['message' => 'Course updated successfuly'], 200);
     }
