@@ -14,6 +14,7 @@ class Lesson extends Model
         'name',
         'cover',
         'content',
+        'duration',
         'type',
     ];
     public function setType($newType)

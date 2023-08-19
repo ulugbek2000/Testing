@@ -38,6 +38,7 @@ class LessonController extends Controller
             'topic_id' => 'integer',
             'name' => 'string',
             'cover' => 'image|mimes:jpeg,png,jpg,gif,mov',
+            'duration' => 'string'
         ]);
         // dd()->response()->json($request);
         $type = $request->input('type');
@@ -56,9 +57,11 @@ class LessonController extends Controller
             'topic_id' => $request->topic_id,
             'name' => $request->name,
             'cover' => Storage::url($cover),
+            'duration' => $request->duration,
             'content' => in_array($request->type, [LessonTypes::Video, LessonTypes::Audio]) ? $filePath : $request->content,
             'type' => $request->type,
         ];
+
         Lesson::create($data);
 
         return response()->json(['message' => 'Lesson created successfully.']);
@@ -89,37 +92,39 @@ class LessonController extends Controller
             'topic_id' => 'integer',
             'name' => 'string',
             'cover' => 'image|mimes:jpeg,png,jpg,gif,mov',
-             'content' => 'nullable'
+            'duration' => 'string',
+            'content' => 'nullable'
+
         ]);
 
         if ($request->hasFile('cover')) {
             // Delete old cover file if needed
             Storage::delete($lesson->cover);
             // Upload and store new cover file
-            $coverpath = $request->file('cover')->store('cover','public');
+            $coverpath = $request->file('cover')->store('cover', 'public');
         } else {
             $coverpath = $lesson->cover;
         }
 
-        if( $request->type == LessonTypes::Video ||  $request->type == LessonTypes::Audio){
+        if ($request->type == LessonTypes::Video ||  $request->type == LessonTypes::Audio) {
             if ($request->hasFile('content')) {
                 // Delete old cover file if needed
                 Storage::delete($lesson->content);
                 // Upload and store new cover file
-                $content = $request->file('content')->store('content','public');
+                $content = $request->file('content')->store('content', 'public');
             } else {
                 $content = $lesson->content;
             }
-        }else{
+        } else {
             $content = $request->content;
         }
 
-        $data = array_merge($request->only(['name', 'type', 'topic_id','content' ]),[
+        $data = array_merge($request->only(['name', 'type', 'topic_id', 'duration', 'content']), [
             'cover' => $coverpath,
             'content' => $content
         ]);
 
-      
+
         $lesson->updateLesson($data);
 
         return response()->json(['message' => 'Lesson updated successfully']);
