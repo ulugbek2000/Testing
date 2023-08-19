@@ -38,7 +38,7 @@ class LessonController extends Controller
             'topic_id' => 'integer',
             'name' => 'string',
             'cover' => 'image|mimes:jpeg,png,jpg,gif,mov',
-            'duration' => 'string'
+            'duration' => 'string|nullable'
         ]);
         // dd()->response()->json($request);
         $type = $request->input('type');
@@ -92,7 +92,7 @@ class LessonController extends Controller
             'topic_id' => 'integer',
             'name' => 'string',
             'cover' => 'image|mimes:jpeg,png,jpg,gif,mov',
-            'duration' => 'string',
+            'duration' => 'string|nullable',
             'content' => 'nullable'
 
         ]);
