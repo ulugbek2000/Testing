@@ -122,7 +122,7 @@ class LessonController extends Controller
         ]);
 
 
-        $lesson->updateLesson($data);
+        $lesson->update($data);
 
         return response()->json(['message' => 'Lesson updated successfully']);
     }

@@ -29,10 +29,10 @@ class Lesson extends Model
         }
     }
 
-    public function updateLesson($data)
-    {
-        $this->update($data);
-    }
+    // public function updateLesson($data)
+    // {
+    //     $this->update($data);
+    // }
 
     // protected   $type = ['video', 'audio', 'text'];
     function topic()
