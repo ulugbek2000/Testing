@@ -19,7 +19,7 @@ class Lesson extends Model
     ];
     public function setType($newType)
     {
-        if (in_array([LessonTypes::Text()])) {
+        if (in_array([LessonTypes::Text])) {
             return new \InvalidArgumentException('Invalid lesson type.');
         }
 
@@ -29,10 +29,10 @@ class Lesson extends Model
         }
     }
 
-    // public function updateLesson($data)
-    // {
-    //     $this->update($data);
-    // }
+    public function updateLesson($data)
+    {
+        $this->update($data);
+    }
 
     // protected   $type = ['video', 'audio', 'text'];
     function topic()
