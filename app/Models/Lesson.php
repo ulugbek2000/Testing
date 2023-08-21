@@ -31,7 +31,7 @@ class Lesson extends Model
 
     public function updateLesson($data)
     {
-        return $this->update($data);
+        $this->update($data);
     }
 
     // protected   $type = ['video', 'audio', 'text'];

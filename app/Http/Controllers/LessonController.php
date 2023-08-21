@@ -115,6 +115,8 @@ class LessonController extends Controller
             } else {
                 $content = $lesson->content;
             }
+        } else {
+            $content = $request->content;
         }
         $data = array_merge($request->only(['name', 'type', 'topic_id', 'duration', 'content']), [
             'cover' => $coverpath,
