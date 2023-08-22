@@ -125,9 +125,9 @@ class LessonController extends Controller
             'content' => $content
         ]);
 
-        // $lesson->update($data);
+        $lesson->update($data);
 
-        return response()->json($data);
+        // return response()->json($data);
 
         return response()->json(['message' => 'Lesson updated successfully']);
     }
