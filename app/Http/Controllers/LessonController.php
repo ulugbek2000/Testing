@@ -91,14 +91,13 @@ class LessonController extends Controller
      */
     public function update(Request $request, Lesson $lesson)
     {
-        return response()->json([$request->all(), $request->hasFile('cover')]);
         $request->validate([
             'topic_id' => 'integer',
             'name' => 'string',
             'cover' => 'nullable|image|mimes:jpeg,png,jpg,gif,mov',
             'duration' => 'string|nullable',
-            'content' => 'nullable'
-
+            'content' => 'nullable',
+            // 'type' =>  [new Enum(LessonTypes::class)]
         ]);
 
         if ($request->hasFile('cover')) {
@@ -122,13 +121,13 @@ class LessonController extends Controller
         } else {
             $content = $request->content;
         }
-        $data = array_merge($request->only(['name', 'type', 'topic_id', 'duration', 'content']), [
+        $data = array_merge($request->only(['name', 'type', 'topic_id', 'duration']), [
             'cover' => $coverpath,
             'content' => $content
         ]);
 
 
-        $lesson->updateLesson($data);
+        $lesson->update($data);
 
         return response()->json(['message' => 'Lesson updated successfully']);
     }

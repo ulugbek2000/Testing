@@ -19,22 +19,6 @@ class Lesson extends Model
         'duration',
         'type'
     ];
-    public function setType($newType)
-    {
-        if (array([LessonTypes::Text])) {
-            return new \InvalidArgumentException('Invalid lesson type.');
-        }
-
-        $this->attributes['type'] = $newType;
-        if ($newType === 'text') {
-            $this->setAttribute('type', 'string');
-        }
-    }
-
-    public function updateLesson($data)
-    {
-        $this->update($data);
-    }
 
     function topic()
     {
