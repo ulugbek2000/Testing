@@ -5,6 +5,8 @@ namespace App\Models;
 use App\Enums\LessonTypes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+// use App\Enums\;
+
 
 class Lesson extends Model
 {
@@ -15,11 +17,11 @@ class Lesson extends Model
         'cover',
         'content',
         'duration',
-        'type',
+        'type'
     ];
     public function setType($newType)
     {
-        if (in_array([LessonTypes::Text])) {
+        if (array([LessonTypes::Text])) {
             return new \InvalidArgumentException('Invalid lesson type.');
         }
 
@@ -34,9 +36,8 @@ class Lesson extends Model
         $this->update($data);
     }
 
-    // protected   $type = ['video', 'audio', 'text'];
     function topic()
     {
-        return $this->belongsTo(topic::class, 'topic_id', 'id');
+        return $this->belongsTo(Topic::class, 'topic_id', 'id');
     }
 }

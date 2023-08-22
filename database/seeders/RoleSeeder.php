@@ -14,11 +14,14 @@ class RoleSeeder extends Seeder
      */
     public function run(): void
     {
-        foreach(UserType::getValues() as $role){
-            Role::create([
-                'name' => $role,
-                'guard_name' => 'web'
-            ]);
-        }
+     
+            Role::create(['name' => UserType::Admin]);
+            Role::create(['name' => UserType::Teacher]);
+            Role::create(['name' => UserType::Student]);
+        
+    }
+    public function down()
+    {
+        Role::whereIn('name', [UserType::Admin, UserType::Teacher, UserType::Student])->delete();
     }
 }

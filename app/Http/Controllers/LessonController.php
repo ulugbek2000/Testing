@@ -10,6 +10,9 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rules\Enum;
+use Symfony\Contracts\Service\Attribute\Required;
+use Nette\Utils\Random;
+use Carbon\Carbon;
 
 class LessonController extends Controller
 {
@@ -91,7 +94,7 @@ class LessonController extends Controller
         $request->validate([
             'topic_id' => 'integer',
             'name' => 'string',
-            'cover' => 'image|mimes:jpeg,png,jpg,gif,mov',
+            'cover' => 'nullable|image|mimes:jpeg,png,jpg,gif,mov',
             'duration' => 'string|nullable',
             'content' => 'nullable'
 

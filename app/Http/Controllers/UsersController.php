@@ -2,19 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\UserType;
+use App\Http\Middleware\CheckUserRole;
 use App\Models\Course;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Spatie\Permission\Models\Role;
 
 class UsersController extends Controller
 {
-    // function __construct()
-    // {
-    //     $this->middleware('permission:role-list|role-create|role-edit|role-delete', ['only' => ['index', 'store']]);
-    //     $this->middleware('permission:role-create', ['only' => ['create', 'store']]);
-    //     $this->middleware('permission:role-edit', ['only' => ['edit', 'update']]);
-    //     $this->middleware('permission:role-delete', ['only' => ['destroy']]);
-    // }
+    public function __construct()
+    {
+        $this->middleware(CheckUserRole::class);
+    }
     /**
      * Display a listing of the resource.
      */
@@ -39,9 +40,39 @@ class UsersController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request, User $user)
     {
-     
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|min:8|confirmed|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/',
+            'phone' => 'required|string'
+        ]);
+        // dd()->response()->json($request);
+        $type = $request->input('type');
+        $сontent = $request->input('content');
+        $cover = $request->file('cover')->store('cover', 'public');
+
+        $lesson = new User();
+        $lesson->type = $type;
+
+        if ($type === 'text') {
+            $lesson->content = $сontent;
+        } elseif ($type === 'video' || $type === 'audio') {
+            $filePath = $request->file('content')->store('lessonContent');
+        }
+        $data = [
+            'topic_id' => $request->topic_id,
+            'name' => $request->name,
+            'cover' => Storage::url($cover),
+            'duration' => $request->duration,
+            'content' => in_array($request->type, [UserType::Video, LessonTypes::Audio]) ? $filePath : $request->content,
+            'type' => $request->type,
+        ];
+
+        User::create($data);
+
+        return response()->json(['message' => 'Lesson created successfully.']);
     }
 
     /**
@@ -104,9 +135,8 @@ class UsersController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id)
+    public function destroy(User $user)
     {
-        $user = User::find($id);
         if (!$user) {
             return response()->json([
                 'message' => 'User not found.'
@@ -117,6 +147,50 @@ class UsersController extends Controller
             'message' => "User succefully deleted."
         ], 200);
     }
-    
-  
+
+    public function assignRoleToUser($userId, $userType)
+    {
+        $user = User::find($userId);
+
+        if (!$user) {
+            return response()->json(['error' => 'User not found'], 404);
+        }
+
+        if ($userType === UserType::Admin) {
+            $roleName = UserType::Admin;
+        } elseif ($userType === UserType::Teacher) {
+            $roleName = UserType::Teacher;
+        } elseif ($userType === UserType::Student) {
+            $roleName = UserType::Student;
+        } else {
+            return response()->json(['error' => 'Invalid user type'], 400);
+        }
+
+        $role = Role::where('name', $roleName)->first();
+
+        if (!$role) {
+            return response()->json(['error' => 'Role not found'], 404);
+        }
+
+        $user->assignRole($role);
+
+        return response()->json(['message' => 'Role assigned successfully']);
+    }
+
+
+
+    public function showUserRole(User $user)
+    {
+        if ($user) {
+            $role = $user->roles->first();
+
+            if ($role) {
+                return response()->json(['role' => $role->name]);
+            } else {
+                return response()->json(['error' => 'User has no role'], 404);
+            }
+        } else {
+            return response()->json(['error' => 'User not found'], 404);
+        }
+    }
 }

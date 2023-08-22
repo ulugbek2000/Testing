@@ -23,7 +23,7 @@ return new class extends Migration
                     $table->string('name');
                     $table->text('content');
                     $table->string('duration')->nullable();
-                    $table->string('cover');
+                    $table->string('cover')->nullable();
                     $table->enum('type',LessonTypes::getValues());
                     $table->timestamps();
                     $table->softDeletes();

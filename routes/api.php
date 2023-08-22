@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CourseController;
+use App\Http\Controllers\CourseSkillsController;
 use App\Http\Controllers\LessonController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SessionController;
@@ -56,12 +57,21 @@ Route::put('lesson/{lesson}', [LessonController::class, 'update']);
 Route::delete('lesson/{lesson}', [LessonController::class, 'destroy']);
 //End Lessons
 
+//Start CourseSkills
+Route::get('course/{course}/skill', [CourseSkillsController::class, 'index']);
+// Route::get('skill/{lesson}', [LessonController::class, 'show']);
+Route::post('skill', [CourseSkillsController::class, 'store']);
+Route::put('skill/{skill}', [CourseSkillsController::class, 'update']);
+Route::delete('skill/{skill}', [CourseSkillsController::class, 'destroy']);
+//End CourseSkills
+
 //Start Users
 Route::get('users', [UsersController::class, 'index']);
-Route::get('user/{id}', [UsersController::class, 'show']);
-// Route::post('users', [UsersController::class, 'store']);
-Route::put('usersupdate/{id}', [UsersController::class, 'update']);
-Route::delete('usersdelete/{id}', [UsersController::class, 'destroy']);
+Route::get('user/{users}', [UsersController::class, 'show']);
+Route::post('users', [UsersController::class, 'store']);
+Route::put('users/{users}', [UsersController::class, 'update']);
+Route::delete('users/{users}', [UsersController::class, 'destroy']);
+Route::get('/users/{users}/role', [UsersController::class, 'showUserRole']);
 
 //End Users
 

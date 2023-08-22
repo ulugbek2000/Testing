@@ -63,4 +63,8 @@ class Course extends Model
     {
         return $this->hasManyThrough(User::class, UserCourse::class, 'course_id', 'id');
     }
+    public function courseSkills()
+    {
+        return $this->hasMany(CourseSkills::class);
+    }
 }
