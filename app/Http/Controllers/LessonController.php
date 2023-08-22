@@ -91,7 +91,7 @@ class LessonController extends Controller
      */
     public function update(Request $request, Lesson $lesson)
     {
-        return response()->json($request->all());
+        return response()->json([$request->all(), $request->hasFile('cover')]);
         $request->validate([
             'topic_id' => 'integer',
             'name' => 'string',
