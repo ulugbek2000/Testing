@@ -100,24 +100,22 @@ class LessonController extends Controller
             // 'type' =>  [new Enum(LessonTypes::class)]
         ]);
 
+        $coverpath = $lesson->cover;
+        $content = $lesson->content;
+
         if ($request->hasFile('cover')) {
             // Delete old cover file if needed
             Storage::delete($lesson->cover);
             // Upload and store new cover file
             $coverpath = $request->file('cover')->store('cover', 'public');
-        } else {
-            $coverpath = $lesson->cover;
         }
-
         if ($request->type == LessonTypes::Video ||  $request->type == LessonTypes::Audio) {
             if ($request->hasFile('content')) {
                 // Delete old cover file if needed
                 Storage::delete($lesson->content);
                 // Upload and store new cover file
                 $content = $request->file('content')->store('content', 'public');
-            } else {
-                $content = $lesson->content;
-            }
+            } 
         } else {
             $content = $request->content;
         }
