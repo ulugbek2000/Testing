@@ -100,14 +100,14 @@ class LessonController extends Controller
             // 'type' =>  [new Enum(LessonTypes::class)]
         ]);
 
-        if ($request->hasFile('cover')) {
-            // Delete old cover file if needed
-            Storage::delete($lesson->cover);
-            // Upload and store new cover file
-            $coverpath = $request->file('cover')->store('cover', 'public');
-        } else {
-            $coverpath = $lesson->cover;
-        }
+        // if ($request->hasFile('cover')) {
+        //     // Delete old cover file if needed
+        //     Storage::delete($lesson->cover);
+        //     // Upload and store new cover file
+        //     $coverpath = $request->file('cover')->store('cover', 'public');
+        // } else {
+        //     $coverpath = $lesson->cover;
+        // }
 
         if ($request->type == LessonTypes::Video ||  $request->type == LessonTypes::Audio) {
             if ($request->hasFile('content')) {
@@ -121,11 +121,11 @@ class LessonController extends Controller
         } else {
             $content = $request->content;
         }
+
         $data = array_merge($request->only(['name', 'type', 'topic_id', 'duration']), [
-            'cover' => $coverpath,
+            'cover' => 'coverpath',
             'content' => $content
         ]);
-
 
         $lesson->update($data);
 
