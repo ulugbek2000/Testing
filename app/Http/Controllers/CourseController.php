@@ -129,7 +129,6 @@ class CourseController extends Controller
      */
     public function update(Request $request, Course $course)
     {
-        // return response()->json($request->all());
         $request->validate([
             'name' => 'required|string|max:255',
             'slug' => 'required|string|max:255',
@@ -143,8 +142,8 @@ class CourseController extends Controller
             // Delete old logo file if needed
             Storage::delete($course->logo);
             // Upload and store new logo file
-            $logopath = $request->file('logo')->store('images','public');
-        }else{
+            $logopath = $request->file('logo')->store('images', 'public');
+        } else {
             $logopath = $course->logo;
         }
         // Handle video file update
@@ -152,8 +151,8 @@ class CourseController extends Controller
             // Delete old video file if needed
             Storage::delete($course->video);
             // Upload and store new video file
-            $videopath = $request->file('video')->store('videos','public');
-        }else{
+            $videopath = $request->file('video')->store('videos', 'public');
+        } else {
             $videopath = $course->video;
         }
         $data = array_merge($request->only(['name', 'slug', 'short_description', 'quantity_lessons', 'hours_lessons', 'has_certificate']), [
@@ -162,8 +161,6 @@ class CourseController extends Controller
         ]);
 
         $course->update($data);
-
-        // dd($request->all());
 
         return response()->json(['message' => 'Course updated successfuly'], 200);
     }

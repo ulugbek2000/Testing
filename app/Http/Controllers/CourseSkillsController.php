@@ -14,8 +14,8 @@ class CourseSkillsController extends Controller
      */
     public function index(Course $course)
     {
-        $skills = $course->skills;
-        return response()->json($skills);
+        $courseSkills = $course->courseSkills;
+        return response()->json($courseSkills);
     }
 
     /**
@@ -33,13 +33,14 @@ class CourseSkillsController extends Controller
     {
         $request->validate([
             'name' => 'required|string',
-            'icon' => 'required|image|mimes:jpeg,png,jpg,gif,mov',
-            'description' => 'required|string|max:255'
+            'icon' => 'nullable|image|mimes:jpeg,png,jpg,gif,mov',
+            'description' => 'required|string|max:255',
+            'course_id' => 'required|integer',
         ]);
         $icon = $request->file('icon')->store('icon', 'public');
         try {
             $data = [
-                'id' => $request->id,
+                // 'id' => $request->id,
                 'name' => $request->name,
                 'icon' => Storage::url($icon),
                 'course_id' => $request->course_id,
@@ -58,7 +59,7 @@ class CourseSkillsController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(CourseSkills $course)
     {
         //
     }
@@ -66,7 +67,7 @@ class CourseSkillsController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(CourseSkills $course)
     {
         //
     }
@@ -74,16 +75,40 @@ class CourseSkillsController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, CourseSkills $courseSkills)
     {
-        //
+        $request->validate([
+            'name' => 'string',
+            'icon' => 'nullable|image|mimes:jpeg,png,jpg,gif,mov',
+            'description' => 'string|max:255',
+            'course_id' => 'required|integer',
+        ]);
+        if ($request->hasFile('icon')) {
+            // Delete old icon file if needed
+           if (Storage::exists($courseSkills->icon)) {
+            Storage::delete($courseSkills->icon);
+           } 
+            
+            // Upload and store new icon file
+            $iconpath = $request->file('icon')->store('icon', 'public');
+        } else {
+            $iconpath = $courseSkills->icon;
+        }
+        $data = array_merge($request->only(['name', 'description', 'course_id']), [
+            'icon' => $iconpath,
+        ]);
+        $courseSkills->update($data);
+        return response()->json(['message' => 'Skill updated successfuly'], 200);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(CourseSkills $courseSkills)
     {
-        //
+        $courseSkills->delete();
+        return response()->json([
+            'message' => "Skill successfuly deleted."
+        ], 200);
     }
 }

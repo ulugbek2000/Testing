@@ -49,11 +49,6 @@ class Course extends Model
         return $this->hasMany(Topic::class);
     }
 
-    public function courseDescriptions()
-    {
-        return $this->hasMany(CourseDescriptions::class);
-    }
-
     public function hasCertificate()
     {
         return $this->has_certificate !== null;

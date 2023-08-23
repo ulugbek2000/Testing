@@ -59,10 +59,9 @@ Route::delete('lesson/{lesson}', [LessonController::class, 'destroy']);
 
 //Start CourseSkills
 Route::get('course/{course}/skill', [CourseSkillsController::class, 'index']);
-// Route::get('skill/{lesson}', [LessonController::class, 'show']);
 Route::post('skill', [CourseSkillsController::class, 'store']);
-Route::put('skill/{skill}', [CourseSkillsController::class, 'update']);
-Route::delete('skill/{skill}', [CourseSkillsController::class, 'destroy']);
+Route::put('skill/{courseSkills}', [CourseSkillsController::class, 'update']);
+Route::delete('skill/{courseSkills}', [CourseSkillsController::class, 'destroy']);
 //End CourseSkills
 
 //Start Users
