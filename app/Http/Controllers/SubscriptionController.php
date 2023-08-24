@@ -8,6 +8,7 @@ use App\Models\Course;
 use App\Models\Subscription;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rules\Enum;
+use Ramsey\Uuid\Uuid;
 
 class SubscriptionController extends Controller
 {
@@ -41,7 +42,10 @@ class SubscriptionController extends Controller
             'course_id' =>  'required|numeric',
             'description' => 'required',
         ]);
+        // $descriptions = [];
+        $uuid = Uuid::uuid4();
         $data = [
+            'uuid'=>$uuid->toString(),
             'name' => $request->name,
             'price'    => $request->price,
             'duration' => $request->duration,
@@ -49,6 +53,7 @@ class SubscriptionController extends Controller
             'course_id' => $request->course_id,
             'description' => json_encode($request->description), // Преобразование массива в JSON-строку
         ];
+        
         Subscription::create($data);
         return response()->json(['message' => 'Subscription created successfully.']);
     }
@@ -83,11 +88,11 @@ class SubscriptionController extends Controller
         ]);
         if (isset($data['description'])) {
             // Преобразование описания в JSON-строку
-            $data['name'] = json_encode($data['name']);
-            $data['price'] = json_encode($data['price']);
-            $data['duration'] = json_encode($data['duration']);
-            $data['duration_type'] = json_encode($data['duration_type']);
-            $data['course_id'] = json_encode($data['course_id']);
+            $data['name'] = ($data['name']);
+            $data['price'] = ($data['price']);
+            $data['duration'] = ($data['duration']);
+            $data['duration_type'] = ($data['duration_type']);
+            $data['course_id'] = ($data['course_id']);
             $data['description'] = json_encode($data['description']);
 
             // Объединение текущих данных с новыми данными
