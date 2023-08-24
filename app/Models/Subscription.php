@@ -24,7 +24,7 @@ class Subscription extends Model
     {
         return $this->belongsTo(Course::class, 'course_id', 'id');
     }
-    public function descriptions()
+    public function description()
     {
         return $this->hasMany(Description::class);
     }
