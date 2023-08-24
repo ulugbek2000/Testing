@@ -14,14 +14,18 @@ class Subscription extends Model
         'duration',
         'duration_type',
         'course_id',
-        'description'
     ];
 
     protected $casts = [
         'description' => 'array', // Определите, что поле 'description' должно быть массивом
     ];
 
-    public function course(){
-        return $this->belongsTo(Course::class , 'course_id', 'id');
+    public function course()
+    {
+        return $this->belongsTo(Course::class, 'course_id', 'id');
+    }
+    public function descriptions()
+    {
+        return $this->hasMany(Description::class);
     }
 }

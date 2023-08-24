@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Enums\DurationType;
 use App\Enums\SubscriptionType;
 use App\Models\Course;
+use App\Models\Description;
 use App\Models\Subscription;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rules\Enum;
@@ -17,7 +18,7 @@ class SubscriptionController extends Controller
      */
     public function index(Course $course)
     {
-        $subscriptions = $course->subscriptions;
+        $subscriptions = $course->subscriptions()->with('descriptions')->get();
         return response()->json($subscriptions);
     }
 
@@ -26,37 +27,81 @@ class SubscriptionController extends Controller
      */
     public function create()
     {
-        //
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+
+    public function store(Request $request, Subscription $subscription)
     {
-        $request->validate([
+        $data = $request->validate([
             'name' => 'required|string',
+            'price' => 'required|numeric',
+            'duration' => 'required|numeric',
+            'duration_type' => 'required|string',
+            'course_id' => 'required|numeric',
+            'description' => 'array', // Массив описаний
+        ]);
+
+        $subscription = Subscription::create([
+            'name' => $data['name'],
+            'price' => $data['price'],
+            'duration' => $data['duration'],
+            'duration_type' => $data['duration_type'],
+            'course_id' => $data['course_id'],
+        ]);
+
+        // $subscription = Subscription::findOrFail($subscription);
+
+        if (isset($data['description'])) {
+            foreach ($data['description'] as $descriptionData) {
+                Description::create([
+                    'subscription_id' => $subscription->id,
+                    'description' => $descriptionData['description'],
+                ]);
+            }
+        }
+
+        return response()->json(['message' => 'Subscription created successfully']);
+    }
+
+    /*  public function store(Request $request)
+    {
+        $data = $request->validate([
+            'description' => 'required',
+            'name' => 'required|string',
+            'subscription_id' => 'array',
             'price' => 'required|integer',
             'duration' => 'required|numeric',
             'duration_type' => 'required|string',
             'course_id' =>  'required|numeric',
-            'description' => 'required',
         ]);
-        // $descriptions = [];
-        $uuid = Uuid::uuid4();
+
+        $descriptions = [];
+        foreach ($data['description'] as $descriptionData) {
+            $description = Description::create([
+                'description' => $descriptionData['description'],
+                'subscription_id' => $descriptionData['subscription_id'],
+            ]);
+            $descriptions[] = $description;
+        }
+
+
+
         $data = [
-            'uuid'=>$uuid->toString(),
             'name' => $request->name,
             'price'    => $request->price,
             'duration' => $request->duration,
             'duration_type'  => $request->duration_type,
             'course_id' => $request->course_id,
-            'description' => json_encode($request->description), // Преобразование массива в JSON-строку
         ];
-        
+
         Subscription::create($data);
-        return response()->json(['message' => 'Subscription created successfully.']);
+
+        return response()->json(['message' => 'Subscription created successfully']);
     }
+ */
     /**
      * Display the specified resource.
      */

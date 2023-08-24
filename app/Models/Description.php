@@ -1,0 +1,24 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class Description extends Model
+{
+    use HasFactory;
+    protected $fillable = [
+        'description',
+        'subscription_id',
+        'course_id'
+    ];
+    public function subscription()
+    {
+        return $this->belongsTo(Subscription::class);
+    }
+    public function course()
+    {
+        return $this->belongsTo(Course::class);
+    }
+}
