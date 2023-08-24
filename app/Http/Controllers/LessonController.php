@@ -115,7 +115,7 @@ class LessonController extends Controller
                 Storage::delete($lesson->content);
                 // Upload and store new cover file
                 $content = $request->file('content')->store('content', 'public');
-            } 
+            }
         } else {
             $content = $request->content;
         }

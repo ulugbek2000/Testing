@@ -5,6 +5,7 @@ use App\Http\Controllers\CourseSkillsController;
 use App\Http\Controllers\LessonController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SessionController;
+use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\TopicController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\UserTransactionController;
@@ -63,6 +64,13 @@ Route::post('skill', [CourseSkillsController::class, 'store']);
 Route::put('skill/{courseSkills}', [CourseSkillsController::class, 'update']);
 Route::delete('skill/{courseSkills}', [CourseSkillsController::class, 'destroy']);
 //End CourseSkills
+
+//Start SubscriptionCourse
+Route::get('course/{course}/subscriptions', [SubscriptionController::class, 'index']);
+Route::post('subscription', [SubscriptionController::class, 'store']);
+Route::put('subscription/{subscription}', [SubscriptionController::class, 'update']);
+Route::delete('subscription/{subscription}', [SubscriptionController::class, 'destroy']);
+//End SubscriptionCourse
 
 //Start Users
 Route::get('users', [UsersController::class, 'index']);
