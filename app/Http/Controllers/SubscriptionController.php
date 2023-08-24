@@ -18,7 +18,7 @@ class SubscriptionController extends Controller
      */
     public function index(Course $course)
     {
-        $subscriptions = $course->subscriptions()->with('descriptions')->get();
+        $subscriptions = $course->subscription()->with('description')->get();
         return response()->json($subscriptions);
     }
 
