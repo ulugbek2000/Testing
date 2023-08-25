@@ -104,26 +104,39 @@ class SubscriptionController extends Controller
         // Обновите другие поля, если необходимо
 
         Description::where('subscription_id', $subscriptionId)->delete();
-        
-    // Обновление или создание описаний
-    if ($request->has('description')) {
-        foreach ($request->input('description') as $descriptionData) {
-            if (isset($descriptionData['id'])) {
-                // Если есть id, ищем описание по id и обновляем
+
+    // // Обновление или создание описаний
+    // if ($request->has('description')) {
+    //     foreach ($request->input('description') as $descriptionData) {
+    //         if (isset($descriptionData['id'])) {
+    //             // Если есть id, ищем описание по id и обновляем
+    //             $description = Description::find($descriptionData['id']);
+    //             if ($description) {
+    //                 $description->description = $descriptionData['description'];
+    //                 $description->save();
+    //             }
+    //         } else {
+    //             // Если нет id, создаем новое описание
+    //             Description::create([
+    //                 'description' => $descriptionData['description'],
+    //                 'subscription_id' => $subscriptionId,
+    //             ]);
+    //         }
+    //     }
+    // }
+
+
+        // Обновление описаний
+        if ($request->has('description')) {
+            foreach ($request->input('description') as $descriptionData) {
                 $description = Description::find($descriptionData['id']);
                 if ($description) {
                     $description->description = $descriptionData['description'];
                     $description->save();
                 }
-            } else {
-                // Если нет id, создаем новое описание
-                Description::create([
-                    'description' => $descriptionData['description'],
-                    'subscription_id' => $subscriptionId,
-                ]);
             }
         }
-    }
+    
     return response()->json(['message'=>'Description succesfully updated']);
     }
 
