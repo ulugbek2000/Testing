@@ -66,42 +66,6 @@ class SubscriptionController extends Controller
         return response()->json(['message' => 'Subscription created successfully']);
     }
 
-    /*  public function store(Request $request)
-    {
-        $data = $request->validate([
-            'description' => 'required',
-            'name' => 'required|string',
-            'subscription_id' => 'array',
-            'price' => 'required|integer',
-            'duration' => 'required|numeric',
-            'duration_type' => 'required|string',
-            'course_id' =>  'required|numeric',
-        ]);
-
-        $descriptions = [];
-        foreach ($data['description'] as $descriptionData) {
-            $description = Description::create([
-                'description' => $descriptionData['description'],
-                'subscription_id' => $descriptionData['subscription_id'],
-            ]);
-            $descriptions[] = $description;
-        }
-
-
-
-        $data = [
-            'name' => $request->name,
-            'price'    => $request->price,
-            'duration' => $request->duration,
-            'duration_type'  => $request->duration_type,
-            'course_id' => $request->course_id,
-        ];
-
-        Subscription::create($data);
-
-        return response()->json(['message' => 'Subscription created successfully']);
-    }
- */
     /**
      * Display the specified resource.
      */
@@ -121,7 +85,7 @@ class SubscriptionController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Subscription $subscription)
+    public function update(Request $request, $subscriptionId)
     {
         $data = $request->validate([
             'name' => 'required|string',
@@ -131,21 +95,23 @@ class SubscriptionController extends Controller
             'course_id' =>  'required|integer',
             'description' => 'required',
         ]);
-        if (isset($data['description'])) {
-            // Преобразование описания в JSON-строку
-            $data['name'] = ($data['name']);
-            $data['price'] = ($data['price']);
-            $data['duration'] = ($data['duration']);
-            $data['duration_type'] = ($data['duration_type']);
-            $data['course_id'] = ($data['course_id']);
-            $data['description'] = json_encode($data['description']);
+        $subscription = Subscription::findOrFail($subscriptionId);
+        $subscription->name = $request->input('name');
+        $subscription->price = $request->input('price');
+        $subscription->duration = $request->input('duration');
+        $subscription->duration_type = $request->input('duration_type');
+        $subscription->course_id = $request->input('course_id');
+        // Обновите другие поля, если необходимо
 
-            // Объединение текущих данных с новыми данными
-            $subscription->update(array_merge($subscription->toArray(), $data));
-        } else {
-            // Если описание не передано, обновить только другие данные
-            $subscription->update($data);
+        // Обновление описания, если есть
+        if ($request->has('descriptions')) {
+            $descriptionData = $request->input('descriptions');
+            $description = Description::findOrFail($descriptionData['id']);
+            $description->description = $descriptionData['descriptions'];
+            $description->save();
         }
+        $subscription->save();
+
         return response()->json(['message' => 'Subscription updated successfully']);
     }
 

@@ -68,7 +68,7 @@ Route::delete('skill/{courseSkills}', [CourseSkillsController::class, 'destroy']
 //Start SubscriptionCourse
 Route::get('course/{course}/subscriptions', [SubscriptionController::class, 'index']);
 Route::post('subscription', [SubscriptionController::class, 'store']);
-Route::put('subscription/{subscription}', [SubscriptionController::class, 'update']);
+Route::put('subscription/{subscription_id}', [SubscriptionController::class, 'update']);
 Route::delete('subscription/{subscription}', [SubscriptionController::class, 'destroy']);
 //End SubscriptionCourse
 
