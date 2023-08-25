@@ -107,7 +107,7 @@ class SubscriptionController extends Controller
         if ($request->has('description')) {
             foreach ($request->input('description') as $descriptionData) {
                 $description = Description::findOrFail($descriptionData['id']);
-                if ($description) {
+                if ($description or !$description) {
                     $description->description = $descriptionData['description'];
                     $description->save();
                 }
