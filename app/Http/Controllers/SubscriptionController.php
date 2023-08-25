@@ -113,7 +113,7 @@ class SubscriptionController extends Controller
                     $description = Description::find($descriptionData['id']);
                     if ($description) {
                         $description->description = $descriptionData['description'];
-                        // Не обновляйте айди описания здесь
+                        $description->id = $descriptionData['id'];
                         $description->save();
                     }
                 } else {
