@@ -119,7 +119,7 @@ class SubscriptionController extends Controller
                 // Если нет id, создаем новое описание
                 Description::create([
                     'description' => $descriptionData['description'],
-                    'subscription_id' => $subscription,
+                    'subscription_id' => $subscription['subscription_id'],
                 ]);
             }
         }
