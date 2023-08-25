@@ -101,6 +101,7 @@ class SubscriptionController extends Controller
         $subscription->duration = $request->input('duration');
         $subscription->duration_type = $request->input('duration_type');
         $subscription->course_id = $request->input('course_id');
+        $subscription->save();
         // Обновите другие поля, если необходимо
 
         Description::where('subscription_id', $subscriptionId)->delete();
