@@ -87,7 +87,7 @@ class SubscriptionController extends Controller
      */
     public function update(Request $request, $subscriptionId)
     {
-       
+
         $data = $request->validate([
             'name' => 'required|string',
             'price' => 'required|integer',
@@ -104,32 +104,33 @@ class SubscriptionController extends Controller
         $subscription->course_id = $request->input('course_id');
         $subscription->save();
         // Обновите другие поля, если необходимо
-        return response()->json($request);
         Description::where('subscription_id', $subscriptionId)->delete();
 
-    // Обновление или создание описаний
-    if ($request->has('description')) {
-        foreach ($request->input('description') as $descriptionData) {
-            if (isset($descriptionData['id'])) {
-                // Если есть id, ищем описание по id и обновляем
-                $description = Description::find($descriptionData['id']);
-                if ($description) {
-                    $description->description = $descriptionData['description'];
-                    $description->save();
+        // Обновление или создание описаний
+        if ($request->has('description')) {
+        
+return response()->json($request);
+            foreach ($request->input('description') as $descriptionData) {
+                if (isset($descriptionData['id'])) {
+                    // Если есть id, ищем описание по id и обновляем
+                    $description = Description::find($descriptionData['id']);
+                    if ($description) {
+                        $description->description = $descriptionData['description'];
+                        $description->save();
+                    }
+                } else {
+                    // Если нет id, создаем новое описание
+                    Description::create([
+                        'description' => $descriptionData['description'],
+                        'subscription_id' => $subscriptionId,
+                    ]);
                 }
-            } else {
-                // Если нет id, создаем новое описание
-                Description::create([
-                    'description' => $descriptionData['description'],
-                    'subscription_id' => $subscriptionId,
-                ]);
             }
         }
-    }
 
-    
-    
-    return response()->json(['message'=>'Description succesfully updated']);
+
+
+        return response()->json(['message' => 'Description succesfully updated']);
     }
 
     /**
