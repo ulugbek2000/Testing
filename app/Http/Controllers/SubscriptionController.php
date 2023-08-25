@@ -87,7 +87,7 @@ class SubscriptionController extends Controller
      */
     public function update(Request $request, $subscriptionId)
     {
-        return response()->json();
+       
         $data = $request->validate([
             'name' => 'required|string',
             'price' => 'required|integer',
@@ -104,7 +104,7 @@ class SubscriptionController extends Controller
         $subscription->course_id = $request->input('course_id');
         $subscription->save();
         // Обновите другие поля, если необходимо
-
+        return response()->json($subscription);
         Description::where('subscription_id', $subscriptionId)->delete();
 
     // Обновление или создание описаний
