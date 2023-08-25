@@ -104,9 +104,9 @@ class SubscriptionController extends Controller
         // Обновите другие поля, если необходимо
 
         // Обновление описания, если есть
-        if ($request->has('descriptions')) {
-            $descriptionData = $request->input('descriptions');
-            $description = Description::findOrFail($descriptionData['id']);
+        if ($request->has('description')) {
+            $descriptionData = $request->input('description');
+            $description = Description::findOrFail($descriptionData['id']); 
             $description->description = $descriptionData['descriptions'];
             $description->save();
         }
