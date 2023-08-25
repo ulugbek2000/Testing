@@ -88,45 +88,45 @@ class SubscriptionController extends Controller
     public function update(Request $request, $subscriptionId)
     {
 
-        $data = $request->validate([
-            'name' => 'required|string',
-            'price' => 'required|integer',
-            'duration' => 'required|numeric',
-            'duration_type' => 'required|string',
-            'course_id' =>  'required|integer',
-            'description' => 'required',
-        ]);
-        $subscription = Subscription::find($subscriptionId);
-        $subscription->name = $request->input('name');
-        $subscription->price = $request->input('price');
-        $subscription->duration = $request->input('duration');
-        $subscription->duration_type = $request->input('duration_type');
-        $subscription->course_id = $request->input('course_id');
-        $subscription->save();
-        // Обновите другие поля, если необходимо
-        Description::where('subscription_id', $subscriptionId)->delete();
+        // $data = $request->validate([
+        //     'name' => 'required|string',
+        //     'price' => 'required|integer',
+        //     'duration' => 'required|numeric',
+        //     'duration_type' => 'required|string',
+        //     'course_id' =>  'required|integer',
+        //     'description' => 'required',
+        // ]);
+        // $subscription = Subscription::find($subscriptionId);
+        // $subscription->name = $request->input('name');
+        // $subscription->price = $request->input('price');
+        // $subscription->duration = $request->input('duration');
+        // $subscription->duration_type = $request->input('duration_type');
+        // $subscription->course_id = $request->input('course_id');
+        // $subscription->save();
+        // // Обновите другие поля, если необходимо
+        // Description::where('subscription_id', $subscriptionId)->delete();
 
-        // Обновление или создание описаний
-        if ($request->has('description')) {
+        // // Обновление или создание описаний
+        // if ($request->has('description')) {
         
 
-            foreach ($request->input('description') as $descriptionData) {
-                if (isset($descriptionData['id'])) {
-                    // Если есть id, ищем описание по id и обновляем
-                    $description = Description::find($descriptionData['id']);
-                    if ($description) {
-                        $description->description = $descriptionData['description'];
-                        $description->save();
-                    }
-                } else {
-                    // Если нет id, создаем новое описание
-                    Description::create([
-                        'description' => $descriptionData['description'],
-                        'subscription_id' => $subscriptionId,
-                    ]);
-                }
-            }
-        }
+        //     foreach ($request->input('description') as $descriptionData) {
+        //         if (isset($descriptionData['id'])) {
+        //             // Если есть id, ищем описание по id и обновляем
+        //             $description = Description::find($descriptionData['id']);
+        //             if ($description) {
+        //                 $description->description = $descriptionData['description'];
+        //                 $description->save();
+        //             }
+        //         } else {
+        //             // Если нет id, создаем новое описание
+        //             Description::create([
+        //                 'description' => $descriptionData['description'],
+        //                 'subscription_id' => $subscriptionId,
+        //             ]);
+        //         }
+        //     }
+        // }
 
 
 
