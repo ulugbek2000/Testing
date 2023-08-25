@@ -110,14 +110,12 @@ class SubscriptionController extends Controller
         if ($request->has('description')) {
             foreach ($request->input('description') as $descriptionData) {
                 if (isset($descriptionData['id'])) {
-                    // Если есть id, ищем описание по id и обновляем
-                    Description::updateOrCreate(
-                        ['id' => $descriptionData['id']], 
-                        [
-                            'description' => $descriptionData['description'],
-                            'subscription_id' => $subscriptionId,
-                        ] // Обновляем или создаем
-                    );
+                    $description = Description::find($descriptionData['id']);
+                    if ($description) {
+                        $description->description = $descriptionData['description'];
+                        // Не обновляйте айди описания здесь
+                        $description->save();
+                    }
                 } else {
                     // Если нет id, создаем новое описание
                     Description::create([
