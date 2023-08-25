@@ -109,7 +109,7 @@ class SubscriptionController extends Controller
         // Обновление или создание описаний
         if ($request->has('description')) {
         
-return response()->json($request);
+
             foreach ($request->input('description') as $descriptionData) {
                 if (isset($descriptionData['id'])) {
                     // Если есть id, ищем описание по id и обновляем
@@ -130,7 +130,7 @@ return response()->json($request);
 
 
 
-        return response()->json(['message' => 'Description succesfully updated']);
+        return response()->json([$request]);
     }
 
     /**
