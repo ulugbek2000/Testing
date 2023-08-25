@@ -103,16 +103,26 @@ class SubscriptionController extends Controller
         $subscription->course_id = $request->input('course_id');
         // Обновите другие поля, если необходимо
 
-        // Обновление описания, если есть
-        if ($request->has('description')) {
-            foreach ($request->input('description') as $descriptionData) {
-                Description::updateOrCreate(
-                    ['id' => $descriptionData['id']], // Ищем описание по id
-                    ['description' => $descriptionData['description']] // Обновляем или создаем
-                );
+      
+    // Обновление или создание описаний
+    if ($request->has('description')) {
+        foreach ($request->input('description') as $descriptionData) {
+            if (isset($descriptionData['id'])) {
+                // Если есть id, ищем описание по id и обновляем
+                $description = Description::find($descriptionData['id']);
+                if ($description) {
+                    $description->description = $descriptionData['description'];
+                    $description->save();
+                }
+            } else {
+                // Если нет id, создаем новое описание
+                Description::create([
+                    'description' => $descriptionData['description'],
+                    'subscription_id' => $subscriptionId,
+                ]);
             }
         }
-        return response()->json(['message' => 'Subscription updated successfully']);
+    }
     }
 
     /**
