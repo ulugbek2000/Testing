@@ -111,12 +111,13 @@ class SubscriptionController extends Controller
             foreach ($request->input('description') as $descriptionData) {
                 if (isset($descriptionData['id'])) {
                     // Если есть id, ищем описание по id и обновляем
-                    $description = Description::find($descriptionData['id']);
-                    if ($description) {
-                        $description->description = $descriptionData['description'];
-                        // $description->description = $descriptionData['id'];
-                        $description->save();
-                    }
+                    Description::updateOrCreate(
+                        ['id' => $descriptionData['id']], 
+                        [
+                            'description' => $descriptionData['description'],
+                            'subscription_id' => $subscriptionId,
+                        ] // Обновляем или создаем
+                    );
                 } else {
                     // Если нет id, создаем новое описание
                     Description::create([
@@ -132,7 +133,7 @@ class SubscriptionController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    
+
     public function destroy(Subscription $subscription)
     {
         $subscription->delete();
