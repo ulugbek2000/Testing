@@ -113,8 +113,8 @@ class SubscriptionController extends Controller
                     // Если есть id, ищем описание по id и обновляем
                     $description = Description::find($descriptionData['id']);
                     if ($description) {
-                        // $description->description = $descriptionData['description'];
-                        $description->description = $descriptionData['id'];
+                        $description->description = $descriptionData['description'];
+                        // $description->description = $descriptionData['id'];
                         $description->save();
                     }
                 } else {
