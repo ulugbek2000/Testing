@@ -123,6 +123,7 @@ class SubscriptionController extends Controller
             }
         }
     }
+    return response()->json(['message'=>'Description succesfully updated']);
     }
 
     /**
