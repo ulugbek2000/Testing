@@ -108,14 +108,13 @@ class SubscriptionController extends Controller
 
         // Обновление или создание описаний
         if ($request->has('description')) {
-        
-
             foreach ($request->input('description') as $descriptionData) {
                 if (isset($descriptionData['id'])) {
                     // Если есть id, ищем описание по id и обновляем
                     $description = Description::find($descriptionData['id']);
                     if ($description) {
-                        $description->description = $descriptionData['description'];
+                        // $description->description = $descriptionData['description'];
+                        $description->description = $descriptionData['id'];
                         $description->save();
                     }
                 } else {
@@ -127,15 +126,13 @@ class SubscriptionController extends Controller
                 }
             }
         }
-
-
-
         return response()->json(['message' => 'Description succesfully updated']);
     }
 
     /**
      * Remove the specified resource from storage.
      */
+    
     public function destroy(Subscription $subscription)
     {
         $subscription->delete();
