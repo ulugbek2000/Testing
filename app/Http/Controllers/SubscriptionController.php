@@ -103,7 +103,8 @@ class SubscriptionController extends Controller
         $subscription->course_id = $request->input('course_id');
         // Обновите другие поля, если необходимо
 
-      
+        Description::where('subscription_id', $subscriptionId)->delete();
+        
     // Обновление или создание описаний
     if ($request->has('description')) {
         foreach ($request->input('description') as $descriptionData) {
