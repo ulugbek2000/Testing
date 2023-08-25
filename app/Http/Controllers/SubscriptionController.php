@@ -111,6 +111,10 @@ class SubscriptionController extends Controller
                     $description->description = $descriptionData['description'];
                     $description->save();
                 }
+                if (!$description) {
+                    $description->description = $descriptionData['description'];
+                    $description->save();
+                }
             }
         }
         return response()->json(['message' => 'Subscription updated successfully']);
