@@ -85,7 +85,7 @@ class SubscriptionController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Subscription $subscription)
+    public function update(Request $request, $subscriptionId)
     {
         $data = $request->validate([
             'name' => 'required|string',
@@ -95,7 +95,7 @@ class SubscriptionController extends Controller
             'course_id' =>  'required|integer',
             'description' => 'required',
         ]);
-        // $subscription = Subscription::find($subscriptionId);
+        $subscription = Subscription::find($subscriptionId);
         $subscription->name = $request->input('name');
         $subscription->price = $request->input('price');
         $subscription->duration = $request->input('duration');
@@ -103,7 +103,7 @@ class SubscriptionController extends Controller
         $subscription->course_id = $request->input('course_id');
         // Обновите другие поля, если необходимо
 
-        Description::where('subscription_id', $subscription)->delete();
+        Description::where('subscription_id', $subscriptionId)->delete();
 
     // Обновление или создание описаний
     if ($request->has('description')) {
@@ -119,7 +119,7 @@ class SubscriptionController extends Controller
                 // Если нет id, создаем новое описание
                 Description::create([
                     'description' => $descriptionData['description'],
-                    'subscription_id' => $subscription['subscription_id'],
+                    'subscription_id' => $subscriptionId,
                 ]);
             }
         }
