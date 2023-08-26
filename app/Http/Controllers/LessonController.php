@@ -97,7 +97,7 @@ class LessonController extends Controller
             'cover' => 'nullable|image|mimes:jpeg,png,jpg,gif,mov',
             'duration' => 'string|nullable',
             'content' => 'nullable',
-            'type' =>  [new Enum(LessonTypes::class)]
+            // 'type' =>  [new Enum(LessonTypes::class)]
         ]);
 
         $coverpath = $lesson->cover;
