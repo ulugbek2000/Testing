@@ -15,13 +15,9 @@ class RoleSeeder extends Seeder
     public function run(): void
     {
      
-            Role::create(['name' => UserType::Admin]);
-            Role::create(['name' => UserType::Teacher]);
-            Role::create(['name' => UserType::Student]);
+            Role::create(['name' => UserType::Admin, 'guard_name' => 'web']);
+            Role::create(['name' => UserType::Teacher, 'guard_name' => 'web']);
+            Role::create(['name' => UserType::Student, 'guard_name' => 'web']);
         
-    }
-    public function down()
-    {
-        Role::whereIn('name', [UserType::Admin, UserType::Teacher, UserType::Student])->delete();
     }
 }

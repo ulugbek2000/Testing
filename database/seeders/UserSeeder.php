@@ -19,7 +19,7 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        $user = User::create(
+        $user = User::firstOrcreate(
             [
                 'name' => 'Admin',
                 'email' => 'admin@lms.com',
@@ -28,13 +28,5 @@ class UserSeeder extends Seeder
         );
         $user->assignRole(UserType::Admin);
 
-        Role::create(['name' => 'admin']);
-
-        $adminRole = Role::create(['name' => 'admin']);
-
-        $user = User::find(1); // Здесь 1 - ID пользователя
-        if ($user) {
-            $user->assignRole($adminRole);
-        }
     }
 }
