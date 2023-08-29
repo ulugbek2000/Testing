@@ -49,30 +49,6 @@ class UsersController extends Controller
             'phone' => 'required|string'
         ]);
         // dd()->response()->json($request);
-        $type = $request->input('type');
-        $сontent = $request->input('content');
-        $cover = $request->file('cover')->store('cover', 'public');
-
-        $lesson = new User();
-        $lesson->type = $type;
-
-        if ($type === 'text') {
-            $lesson->content = $сontent;
-        } elseif ($type === 'video' || $type === 'audio') {
-            $filePath = $request->file('content')->store('lessonContent');
-        }
-        $data = [
-            'topic_id' => $request->topic_id,
-            'name' => $request->name,
-            'cover' => Storage::url($cover),
-            'duration' => $request->duration,
-            'content' => in_array($request->type, [UserType::Video, LessonTypes::Audio]) ? $filePath : $request->content,
-            'type' => $request->type,
-        ];
-
-        User::create($data);
-
-        return response()->json(['message' => 'Lesson created successfully.']);
     }
 
     /**
