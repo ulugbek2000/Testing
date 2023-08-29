@@ -65,7 +65,7 @@ class CourseController extends Controller
             'slug' => 'required|string|max:255',
             'quantity_lessons' => 'required',
             'hours_lessons' => 'required',
-            'short_description' => 'required|max:255',
+            'short_description' => 'required',
             // 'duration' => 'required|integer',
             // 'duration_type' => 'required',
             'video' => 'required|mimes:mp4,mov,avi,mpeg,mkv',
@@ -134,7 +134,7 @@ class CourseController extends Controller
             'slug' => 'required|string|max:255',
             'quantity_lessons' => 'required|string',
             'hours_lessons' => 'required|string',
-            'short_description' => 'required|string|max:255',
+            'short_description' => 'required|string',
             'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,mov',
             'video' => 'nullable|mimes:mp4,mov,avi,mpeg,mkv,max:102400',
         ]);
