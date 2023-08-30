@@ -115,6 +115,13 @@ Route::put('role/{id}', [RoleController::class, 'update']);
 Route::delete('role/{id}', [RoleController::class, 'destroy']);
 //End Role
 
+
+Route::middleware(['admin.api'])->group(function () {
+    
+});
+
+
+
 Route::get('/account', function(Request $request){
     return response()->json(auth()->user());
 });
