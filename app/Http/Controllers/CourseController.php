@@ -24,10 +24,6 @@ class CourseController extends Controller
     //     $this->middleware('course');
     // }
 
-
-
-
-
     /**
      * Display a listing of the resource.
      */
@@ -72,7 +68,10 @@ class CourseController extends Controller
             // 'price' => 'required',
         ]);
         $logo = $request->file('logo')->store('images', 'public');
-        $video = $request->file('video')->store('videos', 'public'); // Сохранение видео в папку storage/app/public/videos
+        $video = $request->file('video')->store('videos', 'public'); 
+
+        // Сохранение видео в папку storage/app/public/videos
+
         try {
             $data = [
                 'logo' => Storage::url($logo),
