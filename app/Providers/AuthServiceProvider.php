@@ -25,22 +25,7 @@ class AuthServiceProvider extends ServiceProvider
     public function boot(): void
     {
         
-        // $this->registerPolicies();
-
-        // Define roles and permissions
-        // $adminRole = Role::create(['name' => 'admin']);
-        // $userRole = Role::create(['name' => 'user']);
-
-        // Permission::create(['name' => 'manage_users']);
-        // Permission::create(['name' => 'manage_roles']);
-
-        // Assign permissions to roles
-        // $adminRole->givePermissionTo('manage_users', 'manage_roles');
-
-
-        // Assign roles to users (example)
-        // $user = User::find(1);
-        // $user->assignRole('admin');
+    
 
     }
 }
