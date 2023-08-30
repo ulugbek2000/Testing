@@ -73,19 +73,4 @@ class RegisterController extends Controller
             'password' => Hash::make($data['password']),
         ]);
     }
-    // public function store(Request $request)
-    // {
-    //     $request->validate([
-    //         'name' => ['required', 'string', 'max:255'],
-    //         'email' => ['required', 'string', 'email', 'max:255', 'unique' . User::class],
-    //         'password' => ['required', 'string',  'confirmed', Password::default()],
-    //     ]);
-
-    //     $user = User::create([
-    //         'name'=>$request->name,
-    //         'email'=>$request->email,
-    //         'password'=>$request->password,
-    //     ]);
-    //     return response($user, Response::HTTP_CREATED); 
-    // }
 }
