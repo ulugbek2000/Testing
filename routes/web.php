@@ -19,7 +19,10 @@ use Illuminate\Support\Facades\Route;
 // Auth::routes();
 
 Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-Route::get('/logs', [\Rap2hpoutre\LaravelLogViewer\LogViewerController::class, 'index']);
+// Route::get('/logs', [\Rap2hpoutre\LaravelLogViewer\LogViewerController::class, 'index']);
+Route::get('/logs', function () {
+    return 'logs hello';
+});
 
 Route::get('/endpoints', function (){
     $routeCollection = Illuminate\Support\Facades\Route::getRoutes();

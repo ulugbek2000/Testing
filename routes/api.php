@@ -125,6 +125,3 @@ Route::middleware(['admin.api'])->group(function () {
 Route::get('/account', function(Request $request){
     return response()->json(Auth::check() ? [auth()->user() , 200] : [null, 401]);
 });
-
-
-Route::get('/logs', [\Rap2hpoutre\LaravelLogViewer\LogViewerController::class, 'index']);
