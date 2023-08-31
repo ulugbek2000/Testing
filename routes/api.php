@@ -123,5 +123,6 @@ Route::middleware(['admin.api'])->group(function () {
 
 
 Route::get('/account', function(Request $request){
-    return response()->json(auth()->user());
+    return response()->json(auth()->check() ? [auth()->user() , 200] : [null, 401]);
 });
+
