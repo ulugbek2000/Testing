@@ -10,7 +10,6 @@ use Laravel\Sanctum\HasApiTokens;
 use App\Traits\HasRolesAndPermissions;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Spatie\Permission\Traits\HasRoles;
-// use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
