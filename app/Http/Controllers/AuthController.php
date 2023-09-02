@@ -42,7 +42,7 @@ class AuthController extends Controller
     public function checkToken(Request $request)
     {
         // Получите токен из запроса (например, из заголовка или параметра запроса)
-        $token = $request->input('token');
+        $token = $request->header('token');
 
         // Найдите пользователя по токену в базе данных
         $user = User::where('api_token', $token)->first();
