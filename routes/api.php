@@ -123,11 +123,11 @@ Route::delete('role/{id}', [RoleController::class, 'destroy']);
 Route::middleware(['admin.api'])->group(function () {
 });
 
-Route::middleware('auth.custom')->group(function () {
+// Route::middleware('auth.custom')->group(function () {
   
     Route::post('login', [AuthController::class, 'login']);
        
-});
+// });
 
 
 
