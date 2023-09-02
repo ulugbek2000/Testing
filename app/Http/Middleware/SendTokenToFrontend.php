@@ -16,13 +16,9 @@ class SendTokenToFrontend
      */
     public function handle(Request $request, Closure $next): Response
     {
-   
-
-        if (Auth::check()) {
-            return $next($request);
-        }
-
-        return response()->json(['message' => 'Unauthorized'], 401);
-    
+        // if () {
+        //     return $next($request);
+        // }
+        // return response()->json(['message' => 'Unauthorized'], 401);    
     }
 }
