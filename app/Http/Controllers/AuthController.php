@@ -29,4 +29,13 @@ class AuthController extends Controller
     
     
     }
+
+    public function index(Request $request)
+    {
+        // Получите данные пользователя, который успешно аутентифицирован
+        $user = $request->user();
+
+        // Верните данные пользователя в виде JSON-ответа
+        return response()->json(['user' => $user]);
+    }
 }

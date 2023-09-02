@@ -110,7 +110,7 @@ Route::delete('transactiondelete/{id}', [UserTransactionController::class, 'dest
 
 //Start Role
 Auth::routes([
-    'login'=>false
+    'login' => false
 ]);
 Route::get('role', [RoleController::class, 'index']);
 Route::post('role', [RoleController::class, 'store']);
@@ -124,12 +124,16 @@ Route::middleware(['admin.api'])->group(function () {
 });
 
 // Route::middleware('auth.custom')->group(function () {
-  
-    Route::post('login', [AuthController::class, 'login']);
-       
+
+Route::post('login', [AuthController::class, 'login']);
+
 // });
 
 
+Route::middleware(['auth.custom'])->group(function () {
+    // Ваши маршруты, доступные только для аутентифицированных пользователей
+    Route::get('/secure-data', [AuthController::class, 'index']);
+});
 
 Route::get('/account', function (Request $request) {
     return response()->json(Auth::check() ? [auth()->user(), 200] : [null, 401]);
