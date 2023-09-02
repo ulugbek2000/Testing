@@ -38,4 +38,21 @@ class AuthController extends Controller
         // Верните данные пользователя в виде JSON-ответа
         return response()->json(['user' => $user]);
     }
+
+    public function checkToken(Request $request)
+    {
+        // Получите токен из запроса (например, из заголовка или параметра запроса)
+        $token = $request->input('token');
+
+        // Найдите пользователя по токену в базе данных
+        $user = User::where('api_token', $token)->first();
+
+        // Если пользователя с таким токеном не найдено, верните ошибку
+        if (!$user) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
+        // Если пользователь найден, верните данные
+        return response()->json(['user' => $user]);
+    }
 }

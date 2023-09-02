@@ -2,7 +2,6 @@
 
 namespace App\Http\Middleware;
 
-use App\Models\User;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -17,22 +16,11 @@ class SendTokenToFrontend
      */
     public function handle(Request $request, Closure $next): Response
     {
-        // Проверьте наличие заголовка с токеном (замените 'X-Auth-Token' на ваш заголовок)
-        $token = $request->header('Bearer');
 
-        if (!$token) {
-            return response()->json(['message' => 'Unauthorized'], 401);
+        if (Auth::guard('sanctum')->check()) {
+            return $next($request);
         }
 
-        $user = User::where('api_token', $token)->first();
-
-        if (!$user) {
-            return response()->json(['message' => 'Unauthorized'], 401);
-        }
-
-        // Аутентификация успешна, установите пользователя как аутентифицированного
-        Auth::login($user);
-
-        return $next($request);
+        return response()->json(['message' => 'Unauthorized'], 401);
     }
 }
