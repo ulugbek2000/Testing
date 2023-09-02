@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\CourseSkillsController;
 use App\Http\Controllers\LessonController;
@@ -15,6 +16,7 @@ use App\Models\UserWallet;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Validation\ValidationException;
 
 /*
 |--------------------------------------------------------------------------
@@ -107,7 +109,9 @@ Route::delete('transactiondelete/{id}', [UserTransactionController::class, 'dest
 //End Transaction
 
 //Start Role
-Auth::routes();
+Auth::routes([
+    'login'=>false
+]);
 Route::get('role', [RoleController::class, 'index']);
 Route::post('role', [RoleController::class, 'store']);
 Route::get('role/{id}', [RoleController::class, 'show']);
@@ -117,11 +121,16 @@ Route::delete('role/{id}', [RoleController::class, 'destroy']);
 
 
 Route::middleware(['admin.api'])->group(function () {
-    
+});
+
+Route::middleware('auth.custom')->group(function () {
+  
+    Route::post('login', [AuthController::class, 'login']);
+       
 });
 
 
 
-Route::get('/account', function(Request $request){
-    return response()->json(Auth::check() ? [auth()->user() , 200] : [null, 401]);
+Route::get('/account', function (Request $request) {
+    return response()->json(Auth::check() ? [auth()->user(), 200] : [null, 401]);
 });
