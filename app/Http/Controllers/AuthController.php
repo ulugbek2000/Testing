@@ -36,7 +36,7 @@ class AuthController extends Controller
       $token = $request->header('token');
 
       // Найдите пользователя по токену в базе данных
-      $user = User::where('api_token', $token)->first();
+      $user = User::where('token', $token)->first();
 
       // Если пользователя с таким токеном не найдено, верните ошибку
       if (!$user) {
