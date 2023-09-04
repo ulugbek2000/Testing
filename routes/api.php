@@ -131,11 +131,6 @@ Route::post('login', [AuthController::class, 'login']);
 // });
 
 
-Route::middleware(['auth.custom'])->group(function () {
-    Route::get('/secure-data', [AuthController::class, 'index']);
-});
-
-
 
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/account', function (Request $request) {
