@@ -15,6 +15,7 @@ class Authenticate extends Middleware
     {
         return $request->expectsJson() ? null : route('login');
     }
+    
     public function handle($request, Closure $next, ...$guards)
     {
          if ($jwt = $request->cookie('jwt')) {

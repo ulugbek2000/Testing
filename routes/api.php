@@ -133,7 +133,7 @@ Route::post('login', [AuthController::class, 'login']);
 
 
 Route::middleware(['auth:sanctum'])->group(function () {
-    Route::get('/account', function (Request $request) {
+    Route::get('/account', function () {
         return response()->json(Auth::check() ? [auth()->user(), 200] : [null, 401]);
     });
 });
