@@ -127,14 +127,18 @@ Route::middleware(['admin.api'])->group(function () {
 
 Route::post('login', [AuthController::class, 'login']);
 
+
 // });
 
 
 Route::middleware(['auth.custom'])->group(function () {
-    // Ваши маршруты, доступные только для аутентифицированных пользователей
     Route::get('/secure-data', [AuthController::class, 'index']);
 });
 
-Route::get('/account', function (Request $request) {
-    return response()->json(Auth::check() ? [auth()->user(), 200] : [null, 401]);
+
+
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::get('/account', function (Request $request) {
+        return response()->json(Auth::check() ? [auth()->user(), 200] : [null, 401]);
+    });
 });

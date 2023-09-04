@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
@@ -15,40 +17,19 @@ class AuthController extends Controller
             'email' => 'required',
             'password' => 'required',
         ]);
-    
-        if (Auth::attempt($request->only('email', 'password'))) {
-            $user = Auth::user();
-            $token = $user->createToken('app-token')->plainTextToken;
-    
-            return response()->json(['token' => $token], 200);
+
+        if (!Auth::attempt($request->only('email', 'password'))) {
+            return response()->json(['message' => 'Invalid credentials'], Response::HTTP_UNAUTHORIZED);
         }
-    
-        throw ValidationException::withMessages([
-            'email' => ['The provided credentials are incorrect.'],
-        ]);
-    
-    
+
+        $user = Auth::user();
+
+        $token = $user->createToken('token')->plainTextToken;
+
+        $cookie = cookie('jwt',$token);
+        return response([
+            'message'=> $token
+        ])->withCookie($cookie);
     }
-
-    public function index(Request $request)
-    {
-      // Получите токен из запроса (например, из заголовка или параметра запроса)
-      $token = $request->header('token');
-
-      // Найдите пользователя по токену в базе данных
-      $user = User::where('token', $token)->first();
-
-      // Если пользователя с таким токеном не найдено, верните ошибку
-      if (!$user) {
-          return response()->json(['message' => 'Unauthorized'], 401);
-      }
-
-      // Если пользователь найден, верните данные
-      return response()->json(['user' => $user]);
-    }
-
-    public function checkToken(Request $request)
-    {
-       
-    }
+  
 }
