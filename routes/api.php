@@ -110,6 +110,7 @@ Route::delete('transactiondelete/{id}', [UserTransactionController::class, 'dest
 
 //Start Role
 Auth::routes([
+    'register'=>false,
     'login' => false
 ]);
 Route::get('role', [RoleController::class, 'index']);
@@ -125,8 +126,9 @@ Route::middleware(['admin.api'])->group(function () {
 
 // Route::middleware('auth.custom')->group(function () {
 
-Route::post('login', [AuthController::class, 'login']);
-
+    
+    Route::post('login', [AuthController::class, 'login']);
+    Route::post('register', [AuthController::class, 'register']);
 
 // });
 

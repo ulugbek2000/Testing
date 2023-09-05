@@ -7,10 +7,47 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
+    public function register(Request $request, User $user)
+    {
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string',
+            'email' => 'required|email|unique:users',
+            'password' => 'required|string|min:8',
+            'city' => 'nullable|string',
+            'photo' => 'nullable|image',
+            'gender' => 'nullable|string|in:male,female,other',
+            'date_of_birth' => 'nullable|date',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 400);
+        }
+
+        $photo = $request->file('photo')->store('account', 'public');
+
+        $user = new User([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'city' => $request->city,
+            'photo' => Storage::url($photo),
+            'gender' => $request->gender,
+            'date_of_birth' => $request->date_of_birth,
+        ]);
+
+        $user->save();
+
+        // Дополнительные действия, такие как отправка подтверждающего письма, если необходимо
+
+        return response()->json(['message' => 'Register succefully'], 201);
+    }
+
     public function login(Request $request)
     {
         $request->validate([
@@ -26,10 +63,9 @@ class AuthController extends Controller
 
         $token = $user->createToken('api-token')->plainTextToken;
 
-        $cookie = cookie('jwt',$token);
+        $cookie = cookie('jwt', $token);
         return response([
-            'message'=> $token
+            'message' => $token
         ])->withCookie($cookie);
     }
-  
 }
