@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\UserType;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\CourseSkillsController;
@@ -33,92 +34,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-//Start Courses
-Route::get('course', [CourseController::class, 'index']);
-Route::get('course/{course}', [CourseController::class, 'show']);
-Route::post('course', [CourseController::class, 'store']);
-Route::put('course/{course}', [CourseController::class, 'update']);
-Route::delete('course/{course}', [CourseController::class, 'destroy']);
-Route::post('enroll/{course}/{user}', [CourseController::class, 'enroll']);
 
-// Route::resource('course', CourseController::class);
-//End Courses
-
-//Start Topics
-Route::get('course/{course}/topics', [TopicController::class, 'index']);
-Route::get('topic/{topic}', [TopicController::class, 'show']);
-Route::post('topic', [TopicController::class, 'store']);
-Route::put('topic/{topic}', [TopicController::class, 'update']);
-Route::delete('topic/{topic}', [TopicController::class, 'destroy']);
-//End Topics
-
-//Start Lessons
-Route::get('topic/{topic}/lessons', [LessonController::class, 'index']);
-Route::get('lesson/{lesson}', [LessonController::class, 'show']);
-Route::post('lesson', [LessonController::class, 'store']);
-Route::put('lesson/{lesson}', [LessonController::class, 'update']);
-Route::delete('lesson/{lesson}', [LessonController::class, 'destroy']);
-//End Lessons
-
-//Start CourseSkills
-Route::get('course/{course}/skill', [CourseSkillsController::class, 'index']);
-Route::post('skill', [CourseSkillsController::class, 'store']);
-Route::put('skill/{courseSkills}', [CourseSkillsController::class, 'update']);
-Route::delete('skill/{courseSkills}', [CourseSkillsController::class, 'destroy']);
-//End CourseSkills
-
-//Start SubscriptionCourse
-Route::get('course/{course}/subscriptions', [SubscriptionController::class, 'index']);
-Route::post('subscription', [SubscriptionController::class, 'store']);
-Route::put('subscription/{subscription_id}', [SubscriptionController::class, 'update']);
-Route::delete('subscription/{subscription}', [SubscriptionController::class, 'destroy']);
-//End SubscriptionCourse
-
-//Start Users
-Route::get('users', [UsersController::class, 'index']);
-Route::get('user/{users}', [UsersController::class, 'show']);
-Route::post('users', [UsersController::class, 'store']);
-Route::put('users/{users}', [UsersController::class, 'update']);
-Route::delete('users/{users}', [UsersController::class, 'destroy']);
-Route::get('/users/{users}/role', [UsersController::class, 'showUserRole']);
-
-//End Users
-
-//Start Sessons
-Route::get('sessions', [SessionController::class, 'index']);
-Route::get('session/{id}', [SessionController::class, 'show']);
-Route::post('sessions', [SessionController::class, 'store']);
-Route::put('sessionsupdate/{id}', [SessionController::class, 'update']);
-Route::delete('sessionsdelete/{id}', [SessionController::class, 'destroy']);
-//End Sessions
-
-//Start User Wallets
-Route::get('wallets', [UserWalletController::class, 'index']);
-Route::post('wallets', [UserWalletController::class, 'store']);
-Route::get('wallets/{id}', [UserWalletController::class, 'show']);
-Route::put('walletupdate/{id}', [UserWalletController::class, 'update']);
-Route::delete('walletdelete/{id}', [UserWalletController::class, 'destroy']);
-//End User Wallets
-
-//Start Transaction
-Route::get('transactions', [UserTransactionController::class, 'index']);
-Route::post('transactions', [UserTransactionController::class, 'store']);
-Route::get('transactions/{id}', [UserTransactionController::class, 'show']);
-Route::put('transactionupdate/{id}', [UserTransactionController::class, 'update']);
-Route::delete('transactiondelete/{id}', [UserTransactionController::class, 'destroy']);
-//End Transaction
-
-//Start Role
-Auth::routes([
-    'register'=>false,
-    'login' => false
-]);
-Route::get('role', [RoleController::class, 'index']);
-Route::post('role', [RoleController::class, 'store']);
-Route::get('role/{id}', [RoleController::class, 'show']);
-Route::put('role/{id}', [RoleController::class, 'update']);
-Route::delete('role/{id}', [RoleController::class, 'destroy']);
-//End Role
 
 
 Route::middleware(['admin.api'])->group(function () {
@@ -126,15 +42,108 @@ Route::middleware(['admin.api'])->group(function () {
 
 // Route::middleware('auth.custom')->group(function () {
 
-    
-    Route::post('login', [AuthController::class, 'login']);
-    Route::post('register', [AuthController::class, 'register']);
+
+Route::post('login', [AuthController::class, 'login']);
+Route::post('register', [AuthController::class, 'register']);
 
 // });
 
 
-
 Route::middleware(['auth:sanctum'])->group(function () {
+
+
+    Route::middleware('access:' . implode(',', [UserType::Admin, UserType::Teacher]))->group(function () {
+        //Start Courses
+        Route::get('course', [CourseController::class, 'index']);
+        Route::get('course/{course}', [CourseController::class, 'show']);
+        Route::post('course', [CourseController::class, 'store']);
+        Route::put('course/{course}', [CourseController::class, 'update']);
+        Route::delete('course/{course}', [CourseController::class, 'destroy']);
+        Route::post('enroll/{course}/{user}', [CourseController::class, 'enroll']);
+
+        // Route::resource('course', CourseController::class);
+        //End Courses
+
+        //Start Topics
+        Route::get('course/{course}/topics', [TopicController::class, 'index']);
+        Route::get('topic/{topic}', [TopicController::class, 'show']);
+        Route::post('topic', [TopicController::class, 'store']);
+        Route::put('topic/{topic}', [TopicController::class, 'update']);
+        Route::delete('topic/{topic}', [TopicController::class, 'destroy']);
+        //End Topics
+
+        //Start Lessons
+        Route::get('topic/{topic}/lessons', [LessonController::class, 'index']);
+        Route::get('lesson/{lesson}', [LessonController::class, 'show']);
+        Route::post('lesson', [LessonController::class, 'store']);
+        Route::put('lesson/{lesson}', [LessonController::class, 'update']);
+        Route::delete('lesson/{lesson}', [LessonController::class, 'destroy']);
+        //End Lessons
+
+        //Start CourseSkills
+        Route::get('course/{course}/skill', [CourseSkillsController::class, 'index']);
+        Route::post('skill', [CourseSkillsController::class, 'store']);
+        Route::put('skill/{courseSkills}', [CourseSkillsController::class, 'update']);
+        Route::delete('skill/{courseSkills}', [CourseSkillsController::class, 'destroy']);
+        //End CourseSkills
+
+        //Start SubscriptionCourse
+        Route::get('course/{course}/subscriptions', [SubscriptionController::class, 'index']);
+        Route::post('subscription', [SubscriptionController::class, 'store']);
+        Route::put('subscription/{subscription_id}', [SubscriptionController::class, 'update']);
+        Route::delete('subscription/{subscription}', [SubscriptionController::class, 'destroy']);
+        //End SubscriptionCourse
+
+        //Start Users
+        Route::get('users', [UsersController::class, 'index']);
+        Route::get('user/{users}', [UsersController::class, 'show']);
+        Route::post('users', [UsersController::class, 'store']);
+        Route::put('users/{users}', [UsersController::class, 'update']);
+        Route::delete('users/{users}', [UsersController::class, 'destroy']);
+        Route::get('/users/{users}/role', [UsersController::class, 'showUserRole']);
+
+        //End Users
+
+        //Start Sessons
+        Route::get('sessions', [SessionController::class, 'index']);
+        Route::get('session/{id}', [SessionController::class, 'show']);
+        Route::post('sessions', [SessionController::class, 'store']);
+        Route::put('sessionsupdate/{id}', [SessionController::class, 'update']);
+        Route::delete('sessionsdelete/{id}', [SessionController::class, 'destroy']);
+        //End Sessions
+
+        //Start User Wallets
+        Route::get('wallets', [UserWalletController::class, 'index']);
+        Route::post('wallets', [UserWalletController::class, 'store']);
+        Route::get('wallets/{id}', [UserWalletController::class, 'show']);
+        Route::put('walletupdate/{id}', [UserWalletController::class, 'update']);
+        Route::delete('walletdelete/{id}', [UserWalletController::class, 'destroy']);
+        //End User Wallets
+
+        //Start Transaction
+        Route::get('transactions', [UserTransactionController::class, 'index']);
+        Route::post('transactions', [UserTransactionController::class, 'store']);
+        Route::get('transactions/{id}', [UserTransactionController::class, 'show']);
+        Route::put('transactionupdate/{id}', [UserTransactionController::class, 'update']);
+        Route::delete('transactiondelete/{id}', [UserTransactionController::class, 'destroy']);
+        //End Transaction
+
+        //Start Role
+        Auth::routes([
+            'register' => false,
+            'login' => false
+        ]);
+        Route::get('role', [RoleController::class, 'index']);
+        Route::post('role', [RoleController::class, 'store']);
+        Route::get('role/{id}', [RoleController::class, 'show']);
+        Route::put('role/{id}', [RoleController::class, 'update']);
+        Route::delete('role/{id}', [RoleController::class, 'destroy']);
+        //End Role
+    });
+
+    Route::middleware('access:' . implode(',', [UserType::Student]))->group(function () {
+    });
+
     Route::get('/account', function () {
         return response()->json(Auth::check() ? [auth()->user(), 200] : [null, 401]);
     });

@@ -2,6 +2,7 @@
 
 namespace App\Http;
 
+use App\Http\Middleware\RoleMiddleware;
 use App\Http\Middleware\SendTokenToFrontend;
 use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
@@ -85,6 +86,7 @@ class Kernel extends HttpKernel
         'role_or_permission' => \Spatie\Permission\Middlewares\RoleOrPermissionMiddleware::class,
         'auth.custom' => SendTokenToFrontend::class,
         'admin.api' => \App\Http\Middleware\AdminApiMiddleware::class,
+        'access' => RoleMiddleware::class,
         // 'student' => \App\Http\Middleware\StudentMiddleware::class,
         // 'teacher' => \App\Http\Middleware\TeacherMiddleware::class,
     ];

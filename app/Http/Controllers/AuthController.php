@@ -20,7 +20,7 @@ class AuthController extends Controller
             'email' => 'required|email|unique:users',
             'password' => 'required|string|min:8',
             'city' => 'nullable|string',
-            'photo' => 'nullable|image',
+            'photo' => 'nullable|mimes:jpeg,png,jpg,gif,mov',
             'gender' => 'nullable|string|in:male,female,other',
             'date_of_birth' => 'nullable|date',
         ]);
@@ -29,7 +29,7 @@ class AuthController extends Controller
             return response()->json(['errors' => $validator->errors()], 400);
         }
 
-        $photo = $request->file('photo')->store('account', 'public');
+        $photo = $request->file('photo')->store('account', 'storage');
 
         $user = new User([
             'name' => $request->name,
@@ -42,8 +42,6 @@ class AuthController extends Controller
         ]);
 
         $user->save();
-
-        // Дополнительные действия, такие как отправка подтверждающего письма, если необходимо
 
         return response()->json(['message' => 'Register succefully'], 201);
     }

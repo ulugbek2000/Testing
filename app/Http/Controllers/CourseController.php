@@ -56,7 +56,7 @@ class CourseController extends Controller
     {
 
         $request->validate([
-            'logo' => 'required|image',
+            'logo' => 'requiredmimes:jpeg,png,jpg,gif,mov',
             'name' => 'required|string',
             'slug' => 'required|string|max:255',
             'quantity_lessons' => 'required',
