@@ -31,16 +31,19 @@ class AuthController extends Controller
 
         $photo = $request->file('photo')->store('account');
 
+
         $user = new User([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'city' => $request->city,
-            'photo' => Storage::url($photo),
+            // 'photo' => Storage::url($photo),
             'gender' => $request->gender,
             'date_of_birth' => $request->date_of_birth,
         ]);
-
+        if ($request->has('photo')) {
+            $user->photo = $request->photo;
+        }
         $user->save();
 
         return response()->json(['message' => 'Register succefully'], 201);
