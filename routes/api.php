@@ -51,8 +51,7 @@ Route::post('register', [AuthController::class, 'register']);
 
 Route::middleware(['auth:sanctum'])->group(function () {
 
-
-    Route::middleware('access:' . implode(',', [UserType::Admin, UserType::Teacher]))->group(function () {
+    Route::middleware(['access:' . UserType::Admin, UserType::Teacher])->group(function () {
         //Start Courses
         Route::get('course', [CourseController::class, 'index']);
         Route::get('course/{course}', [CourseController::class, 'show']);
