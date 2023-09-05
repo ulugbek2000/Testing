@@ -20,7 +20,7 @@ class AuthController extends Controller
             'email' => 'required|email|unique:users',
             'password' => 'required|string|min:8',
             'city' => 'nullable|string',
-            'photo' => 'required|image|mimes:jpeg,png,jpg,gif,mov',
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,mov',
             'gender' => 'nullable|string|in:male,female,other',
             'date_of_birth' => 'nullable|date',
         ]);
