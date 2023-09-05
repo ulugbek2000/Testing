@@ -29,7 +29,7 @@ class AuthController extends Controller
             return response()->json(['errors' => $validator->errors()], 400);
         }
 
-        $photo = $request->file('photo')->store('account', 'storage');
+        $photo = $request->file('photo')->store('account');
 
         $user = new User([
             'name' => $request->name,
