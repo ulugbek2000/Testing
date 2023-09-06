@@ -53,7 +53,9 @@ Route::post('register', [AuthController::class, 'register']);
 Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::put('profile/{user}', [ProfileController::class, 'updateProfile']);
-    Route::middleware(['access:' . UserType::Admin, UserType::Teacher])->group(function () {
+
+    Route::middleware(['access:' . UserType::Admin])->group(function () {
+
         //Start Courses
         Route::get('course', [CourseController::class, 'index']);
         Route::get('course/{course}', [CourseController::class, 'show']);
@@ -61,8 +63,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::put('course/{course}', [CourseController::class, 'update']);
         Route::delete('course/{course}', [CourseController::class, 'destroy']);
         Route::post('enroll/{course}/{user}', [CourseController::class, 'enroll']);
-
-        // Route::resource('course', CourseController::class);
         //End Courses
 
         //Start Topics

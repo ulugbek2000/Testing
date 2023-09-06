@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\UserType;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -57,6 +58,7 @@ class AuthController extends Controller
         if ($request->has('photo')) {
             $user->photo = $request->photo;
         }
+        $user->assignRole(UserType::Student);
         return response()->json(['message' => 'Registration successful'], 201);
     }
 
@@ -78,8 +80,8 @@ class AuthController extends Controller
 
         if (Auth::attempt([$field => $credentials['email_or_phone'], 'password' => $credentials['password']])) {
             $user = Auth::user();
-              // Создайте токен и добавьте к нему пользовательские данные
-              $token = $user->createToken('api-token', ['email', 'name'])->plainTextToken;
+            // Создайте токен и добавьте к нему пользовательские данные
+            $token = $user->createToken('api-token', ['email', 'name'])->plainTextToken;
 
             $cookie = cookie('jwt', $token);
             return response([
@@ -89,5 +91,15 @@ class AuthController extends Controller
 
             return response()->json(['message' => 'Unauthorize'], 401);
         }
+    }
+
+    protected function respondWithToken($token)
+    {
+        return response()->json([
+            'success' => true,
+            'access_token' => $token,
+            'token_type' => 'Bearer',
+            'expires_in' => auth()->factory()->getTTL()
+        ]);
     }
 }
