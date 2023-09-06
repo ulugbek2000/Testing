@@ -2,16 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class ProfileController extends Controller
 {
     public function updateProfile(Request $request)
     {
         $user = Auth::user();
-
-        $validatedData = $request->validate([
+        $request->validate([
             'name' => 'string',
             'surname' => 'string',
             'email' => 'email|unique:users,email,' . $user->id,
@@ -23,8 +24,18 @@ class ProfileController extends Controller
             'date_of_birth' => 'date',
 
         ]);
+        $photoPath = $user->photo;
+        if ($request->hasFile('photo')) {
+            // Delete old photo file if needed
+            Storage::delete($user->photo);
+            // Upload and store new photo file
+            $photoPath = $request->file('photo')->store('account', 'public');
+        }
 
-        $user->update($validatedData);
+        $data = array_merge($request->only(['name', 'surname', 'email', 'phone', 'password', 'city', 'photo', 'gender', 'date_of_birth']), [
+            'photo' => $photoPath
+        ]);
+        $user->update($data);
 
         return response()->json(['message' => 'Profile updated succesfully']);
     }

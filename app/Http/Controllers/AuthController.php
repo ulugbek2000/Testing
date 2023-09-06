@@ -79,7 +79,7 @@ class AuthController extends Controller
         if (Auth::attempt([$field => $credentials['email_or_phone'], 'password' => $credentials['password']])) {
             $user = Auth::user();
 
-            $token = $user->createToken('api-token')->plainTextToken;
+                       $token = $user->createToken('api-token', ['email', 'name'])->plainTextToken;
 
             $cookie = cookie('jwt', $token);
             return response([

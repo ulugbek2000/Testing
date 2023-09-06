@@ -1,6 +1,7 @@
 <?php
 
 use Laravel\Sanctum\Sanctum;
+use PhpParser\Parser\Tokens;
 
 return [
 
@@ -20,6 +21,17 @@ return [
         'localhost,localhost:3000,127.0.0.1,127.0.0.1:8000,::1',
         Sanctum::currentApplicationUrlWithPort()
     ))),
+
+    'stateful' => [
+        'web', // и другие домены
+    ],
+    'expiration' => null,
+    'features' => [
+        Sunctum::abilities([
+            'email' => 'Read user email', // Добавляем поле "email" к токену
+            'name' => 'Read user name',   // Добавляем поле "имя" к токену
+        ]),
+    ],
 
     /*
     |--------------------------------------------------------------------------
