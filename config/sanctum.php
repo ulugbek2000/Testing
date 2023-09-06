@@ -22,16 +22,16 @@ return [
         Sanctum::currentApplicationUrlWithPort()
     ))),
 
-    'stateful' => [
-        'web', // и другие домены
-    ],
-    'expiration' => null,
-    'features' => [
-        Sunctum::abilities([
-            'email' => 'Read user email', // Добавляем поле "email" к токену
-            'name' => 'Read user name',   // Добавляем поле "имя" к токену
-        ]),
-    ],
+    // 'stateful' => [
+    //     'web', // и другие домены
+    // ],
+    // 'expiration' => null,
+    // 'features' => [
+    //     Sunctum::abilities([
+    //         'email' => 'Read user email', // Добавляем поле "email" к токену
+    //         'name' => 'Read user name',   // Добавляем поле "имя" к токену
+    //     ]),
+    // ],
 
     /*
     |--------------------------------------------------------------------------
