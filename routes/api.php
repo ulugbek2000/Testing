@@ -50,10 +50,10 @@ Route::post('register', [AuthController::class, 'register']);
 // });
 
 
-// Route::middleware(['auth:sanctum'])->group(function () {
+Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::put('profile/{user}', [ProfileController::class, 'updateProfile']);
-    // Route::middleware(['access:' . UserType::Admin, UserType::Teacher])->group(function () {
+    Route::middleware(['access:' . UserType::Admin, UserType::Teacher])->group(function () {
         //Start Courses
         Route::get('course', [CourseController::class, 'index']);
         Route::get('course/{course}', [CourseController::class, 'show']);
@@ -140,7 +140,7 @@ Route::post('register', [AuthController::class, 'register']);
         Route::put('role/{id}', [RoleController::class, 'update']);
         Route::delete('role/{id}', [RoleController::class, 'destroy']);
         //End Role
-    // });
+    });
 
     Route::middleware('access:' . implode(',', [UserType::Student]))->group(function () {
     });
@@ -148,4 +148,4 @@ Route::post('register', [AuthController::class, 'register']);
     Route::get('/account', function () {
         return response()->json(Auth::check() ? [auth()->user(), 200] : [null, 401]);
     });
-// });
+});

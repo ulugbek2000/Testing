@@ -27,7 +27,7 @@ return [
     // ],
     // 'expiration' => null,
     // 'features' => [
-    //     Sunctum::abilities([
+    //     Tokens::abilities([
     //         'email' => 'Read user email', // Добавляем поле "email" к токену
     //         'name' => 'Read user name',   // Добавляем поле "имя" к токену
     //     ]),
