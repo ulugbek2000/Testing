@@ -40,24 +40,23 @@ class AuthController extends Controller
                 'email' => $request->input('email'),
                 'password' => Hash::make($request->input('password')),
                 'city' => $request->input('city'),
-                'photo' => $request->input('photo'),
                 'gender' => $request->input('gender'),
                 'date_of_birth' => $request->input('date_of_birth'),
             ]);
         } elseif ($request->has('phone')) {
-            // Регистрация с использованием номера телефона
             $user = User::create([
                 'name' => $request->input('name'),
                 'surname' => $request->input('surname'),
                 'phone' => $request->input('phone'),
                 'password' => Hash::make($request->input('password')),
                 'city' => $request->input('city'),
-                'photo' => $request->input('photo'),
                 'gender' => $request->input('gender'),
                 'date_of_birth' => $request->input('date_of_birth'),
             ]);
         }
-
+        if ($request->has('photo')) {
+            $user->photo = $request->photo;
+        }
         return response()->json(['message' => 'Registration successful'], 201);
     }
 
@@ -88,19 +87,7 @@ class AuthController extends Controller
             ])->withCookie($cookie);
         } else {
 
-            return response()->json(['message' => 'Ошибка аутентификации'], 401);
+            return response()->json(['message' => 'Unauthorize'], 401);
         }
-
-
-        // $request->validate([
-        //     'email' => 'required',
-        //     'password' => 'required',
-        // ]);
-
-        // if (!Auth::attempt($request->only('email', 'password'))) {
-        //     return response()->json(['message' => 'Invalid credentials'], Response::HTTP_UNAUTHORIZED);
-        // }
-
-
     }
 }

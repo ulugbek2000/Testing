@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\CourseSkillsController;
 use App\Http\Controllers\LessonController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SessionController;
 use App\Http\Controllers\SubscriptionController;
@@ -51,6 +52,7 @@ Route::post('register', [AuthController::class, 'register']);
 
 Route::middleware(['auth:sanctum'])->group(function () {
 
+    Route::put('profile', [ProfileController::class, 'updateProfile']);
     Route::middleware(['access:' . UserType::Admin, UserType::Teacher])->group(function () {
         //Start Courses
         Route::get('course', [CourseController::class, 'index']);
