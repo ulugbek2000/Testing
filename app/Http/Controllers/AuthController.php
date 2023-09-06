@@ -59,64 +59,48 @@ class AuthController extends Controller
         }
 
         return response()->json(['message' => 'Registration successful'], 201);
-
-
-
-
-
-
-        // $validator = Validator::make($request->all(), [
-        //     'name' => 'required|string',
-        //     'surname' => 'required|string',
-        //     'email' => 'required_without:phone|email|unique:users',
-        //     'phone' => 'required_without:email|string|unique:users',
-        //     'password' => 'required|string|min:8',
-        //     'city' => 'nullable|string',
-        //     'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,mov',
-        //     'gender' => 'nullable|string|in:male,female,other',
-        //     'date_of_birth' => 'nullable|date',
-        // ]);
-
-        // if ($validator->fails()) {
-        //     return response()->json(['errors' => $validator->errors()], 400);
-        // }
-
-        // $user = new User([
-        //     'name' => $request->name,
-        //     'surname' => $request->surname,
-        //     'email' => $request->email,
-        //     'password' => Hash::make($request->password),
-        //     'city' => $request->city,
-        //     'gender' => $request->gender,
-        //     'date_of_birth' => $request->date_of_birth,
-        // ]);
-        // if ($request->has('photo')) {
-        //     $user->photo = $request->photo;
-        // }
-        // $user->save();
-
-        // return response()->json(['message' => 'Register succefully'], 201);
     }
 
     public function login(Request $request)
     {
-        
-        $request->validate([
-            'email' => 'required',
-            'password' => 'required',
+
+        $validator = Validator::make($request->all(), [
+            'email_or_phone' => 'required|string',
+            'password' => 'required|string|min:8',
         ]);
 
-        if (!Auth::attempt($request->only('email', 'password'))) {
-            return response()->json(['message' => 'Invalid credentials'], Response::HTTP_UNAUTHORIZED);
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        $user = Auth::user();
+        $credentials = $request->only('email_or_phone', 'password');
 
-        $token = $user->createToken('api-token')->plainTextToken;
+        $field = filter_var($credentials['email_or_phone'], FILTER_VALIDATE_EMAIL) ? 'email' : 'phone';
 
-        $cookie = cookie('jwt', $token);
-        return response([
-            'message' => $token
-        ])->withCookie($cookie);
+        if (Auth::attempt([$field => $credentials['email_or_phone'], 'password' => $credentials['password']])) {
+            $user = Auth::user();
+
+            $token = $user->createToken('api-token')->plainTextToken;
+
+            $cookie = cookie('jwt', $token);
+            return response([
+                'message' => $token
+            ])->withCookie($cookie);
+        } else {
+
+            return response()->json(['message' => 'Ошибка аутентификации'], 401);
+        }
+
+
+        // $request->validate([
+        //     'email' => 'required',
+        //     'password' => 'required',
+        // ]);
+
+        // if (!Auth::attempt($request->only('email', 'password'))) {
+        //     return response()->json(['message' => 'Invalid credentials'], Response::HTTP_UNAUTHORIZED);
+        // }
+
+
     }
 }
