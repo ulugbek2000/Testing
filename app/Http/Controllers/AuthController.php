@@ -102,4 +102,10 @@ class AuthController extends Controller
             'expires_in' => auth()->factory()->getTTL()
         ]);
     }
+
+    public function logout()
+    {
+        Auth::guard('web')->logout();
+        return response()->json(['message' => 'You are Logouted ']);
+    }
 }

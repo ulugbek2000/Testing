@@ -132,7 +132,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
         //Start Role
         Auth::routes([
             'register' => false,
-            'login' => false
+            'login' => false,
+            'logout'=>false
         ]);
         Route::get('role', [RoleController::class, 'index']);
         Route::post('role', [RoleController::class, 'store']);
@@ -144,6 +145,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::middleware('access:' . implode(',', [UserType::Student]))->group(function () {
     });
+    Route::post('logout', [AuthController::class, 'logout']);
 
     Route::get('/account', function () {
         return response()->json(Auth::check() ? [auth()->user(), 200] : [null, 401]);
