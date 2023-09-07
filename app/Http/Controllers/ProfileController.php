@@ -26,27 +26,23 @@ class ProfileController extends Controller
             'date_of_birth' => 'date',
         ]);
 
-        $user->name = $request->input('name');
-        $user->surname = $request->input('surname');
-        $user->email = $request->input('email');
-        $user->phone = $request->input('phone');
-        $user->city = $request->input('city');
-        // $user->photo = $request->input('photo');
-        $user->gender = $request->input('gender');
-        $user->date_of_birth = $request->input('date_of_birth');
         $photoPath = $user->photo;
+
+        // if ($request->has('password')) {
+        //     $user->password = bcrypt($request->input('password'));
+        // }
+
         if ($request->hasFile('photo')) {
+            // Delete old cover file if needed
+            Storage::delete($user->photo);
             // Upload and store new cover file
             $photoPath = $request->file('photo')->store('photo', 'public');
         }
-        $data = array_merge($request->only( [
+        $data = array_merge($request->only(['name','surname','email','phone','city','gender','date_of_birth','password']),[
             'photo' => $photoPath
-        ]));
-        if ($request->has('password')) {
-            $user->password = bcrypt($request->input('password'));
-        }
-
-        $user->save($data);
+        ]);
+     
+        $user->update($data);
 
         return response()->json(['message' => 'Profile updated successfully']);
     }

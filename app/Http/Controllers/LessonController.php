@@ -111,9 +111,9 @@ class LessonController extends Controller
         }
         if ($request->type == LessonTypes::Video ||  $request->type == LessonTypes::Audio) {
             if ($request->hasFile('content')) {
-                // Delete old cover file if needed
+                // Delete old content file if needed
                 Storage::delete($lesson->content);
-                // Upload and store new cover file
+                // Upload and store new content file
                 $content = $request->file('content')->store('content', 'public');
             }
         } else {
