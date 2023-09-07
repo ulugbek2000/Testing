@@ -21,7 +21,7 @@ class ProfileController extends Controller
             'phone' => 'string|unique:users,phone,' . $user->id,
             'password' => 'string|min:8',
             'city' => 'string',
-            'photo' => 'mimes:jpeg,png,jpg,gif,mov',
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,mov',
             'gender' => 'string|in:male,female,other',
             'date_of_birth' => 'date',
         ]);
