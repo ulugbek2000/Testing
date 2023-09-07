@@ -14,7 +14,7 @@ class ProfileController extends Controller
     {
 
         $user = Auth::user();
-        $request->validate( [
+        $request->validate([
             'name' => 'string',
             'surname' => 'string',
             'email' => 'email|unique:users,email,' . $user->id,
@@ -41,13 +41,13 @@ class ProfileController extends Controller
             // Upload and store new cover file
             $photoPath = $request->file('photo')->store('photo', 'public');
         }
-
+        $data = array_merge($request->only(['name', 'surname', 'email', 'city', 'phone', 'gender', 'date_ofbirth']), [
+            'photo' => $photoPath
+        ]);
         if ($request->has('password')) {
             $user->password = bcrypt($request->input('password'));
         }
-        $data = array_merge($request->only(['name', 'surname', 'email', 'city','phone','gender','date_ofbirth']), [
-            'photo' => $photoPath
-        ]);
+
 
         $user->update($data);
 
