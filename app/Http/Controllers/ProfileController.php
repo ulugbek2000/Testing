@@ -49,7 +49,7 @@ class ProfileController extends Controller
         }
 
 
-        $user->update($data);
+        $user->save($data,$user);
 
         return response()->json(['message' => 'Profile updated successfully']);
     }
