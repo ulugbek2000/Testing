@@ -30,11 +30,15 @@ class ProfileController extends Controller
         $user->surname = $request->input('surname');
         $user->email = $request->input('email');
         $user->phone = $request->input('phone');
-        $user->password = bcrypt($request->input('password'));
+        // $user->password = bcrypt($request->input('password'));
         $user->city = $request->input('city');
         $user->photo = $request->input('photo');
         $user->gender = $request->input('gender');
         $user->date_of_birth = $request->input('date_of_birth');
+
+        if ($request->has('password')) {
+            $user->password = bcrypt($request->input('password'));
+        }
         $user->save();
 
         return response()->json(['message' => 'Profile updated successfully']);
