@@ -108,4 +108,6 @@ class AuthController extends Controller
         Auth::guard('web')->logout();
         return response()->json(['message' => 'You are Logouted ']);
     }
+
+    
 }

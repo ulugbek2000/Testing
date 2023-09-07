@@ -49,10 +49,10 @@ Route::post('register', [AuthController::class, 'register']);
 
 // });
 
-
 Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::put('profile/{user}', [ProfileController::class, 'updateProfile']);
+
 
     Route::middleware(['access:' . UserType::Admin])->group(function () {
 
