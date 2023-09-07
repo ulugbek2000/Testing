@@ -48,8 +48,7 @@ class ProfileController extends Controller
             $user->password = bcrypt($request->input('password'));
         }
 
-
-        $user->save($data,$user);
+        $user->save($data);
 
         return response()->json(['message' => 'Profile updated successfully']);
     }
