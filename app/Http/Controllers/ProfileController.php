@@ -34,7 +34,7 @@ class ProfileController extends Controller
         // // $user->photo = $request->input('photo');
         // $user->gender = $request->input('gender');
         // $user->date_of_birth = $request->input('date_of_birth');
-
+        $photoPath = $user->photo;
         if ($request->hasFile('photo')) {
             // Delete old cover file if needed
             Storage::delete($user->photo);
