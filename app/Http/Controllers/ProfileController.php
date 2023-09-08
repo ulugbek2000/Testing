@@ -12,9 +12,9 @@ use Illuminate\Support\Facades\Storage;
 
 class ProfileController extends Controller
 {
-    public function updateProfile(Request $request,User $user)
+    public function updateProfile(Request $request)
     {
-        // $user = Auth::user();
+        $user = Auth::user();
         $validator = Validator::make(request()->all(), [
             'name' => 'string',
             'surname' => 'string',
@@ -30,37 +30,26 @@ class ProfileController extends Controller
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
         }
+        $coverpath = $user->photo;
 
-        // Установите значения атрибутов пользователя на основе запроса
-        $user->name = $request->input('name');
-        $user->surname = $request->input('surname');
-        $user->email = $request->input('email');
-        $user->phone = $request->input('phone');
-        $user->city = $request->input('city');
-        $user->gender = $request->input('gender');
-        $user->date_of_birth = $request->input('date_of_birth');
+        if ($request->hasFile('photo')) {
+            // Delete old cover file if needed
+            Storage::delete($user->photo);
+            // Upload and store new cover file
+            $coverpath = $request->file('photo')->store('photo', 'public');
+        }
+
+        $data = array_merge($request->only(['name', 'type', 'topic_id', 'duration']), [
+            'photo' => $coverpath,
+
+        ]);
+
+        $user->update($data);
 
         if ($request->has('password')) {
             $user->password = bcrypt($request->input('password'));
+            $user->save();
         }
-
-
-
-        // if ($request->hasFile('photo')) {
-        //     $destination = 'storage/profile/' . $user->photo;
-        //     if (File::exists($destination)) {
-        //         File::delete($destination);
-        //     }
-        //     $file = $request->file('photo');
-        //     $extension = $file->getClientOriginalExtension();
-        //     $filename = time() . '.' . $extension;
-        //     $file->move('storage/profile/', $filename);
-        //     $user->photo = $filename;
-        // }
-        if ($request->has('password')) {
-            $user->password = bcrypt($request->input('password'));
-        }
-        $user->save();
         return response()->json(['message' => 'Profile updated successfully']);
     }
 }
