@@ -85,7 +85,8 @@ class AuthController extends Controller
 
             $cookie = cookie('jwt', $token);
             return response([
-                'message' => $token
+                'message' => $token,
+                'user_role'=>$user->roles()
             ])->withCookie($cookie);
         } else {
 
