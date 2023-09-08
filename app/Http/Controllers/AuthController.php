@@ -43,10 +43,8 @@ class AuthController extends Controller
                 'city' => $request->input('city'),
                 'gender' => $request->input('gender'),
                 'date_of_birth' => $request->input('date_of_birth'),
+                'photo' => $request->hasFile('photo') ? $request->file('photo')->store('photo', 'public') : null,
             ]);
-            if ($request->has('photo')) {
-                $user->photo = $request->photo;
-            }
         } elseif ($request->has('phone')) {
             $user = User::create([
                 'name' => $request->input('name'),
@@ -56,13 +54,10 @@ class AuthController extends Controller
                 'city' => $request->input('city'),
                 'gender' => $request->input('gender'),
                 'date_of_birth' => $request->input('date_of_birth'),
-                
+                'photo' => $request->hasFile('photo') ? $request->file('photo')->store('photo', 'public') : null,
             ]);
-            if ($request->has('photo')) {
-                $user->photo = $request->photo;
-            }
         }
-      
+
         $user->assignRole(UserType::Student);
         return response()->json(['message' => 'Registration successful'], 201);
     }
@@ -113,6 +108,4 @@ class AuthController extends Controller
         Auth::guard('web')->logout();
         return response()->json(['message' => 'You are Logouted ']);
     }
-
-    
 }
