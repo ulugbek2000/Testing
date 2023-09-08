@@ -12,7 +12,6 @@ class ProfileController extends Controller
 {
     public function updateProfile(Request $request)
     {
-
         $user = Auth::user();
         $request->validate([
             'name' => 'string',
@@ -28,21 +27,22 @@ class ProfileController extends Controller
 
         $photoPath = $user->photo;
 
-        // if ($request->has('password')) {
-        //     $user->password = bcrypt($request->input('password'));
-        // }
-
         if ($request->hasFile('photo')) {
             // Delete old cover file if needed
             Storage::delete($user->photo);
             // Upload and store new cover file
             $photoPath = $request->file('photo')->store('photo', 'public');
         }
-        $data = array_merge($request->only(['name','surname','email','phone','city','gender','date_of_birth','password']),[
+        $data = array_merge($request->only(['name','surname','email','phone','city','gender','date_of_birth']),[
             'photo' => $photoPath
         ]);
      
         $user->update($data);
+
+        if ($request->has('password')) {
+            $user->password = bcrypt($request->input('password'));
+            $user->save();
+        }
 
         return response()->json(['message' => 'Profile updated successfully']);
     }
