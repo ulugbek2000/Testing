@@ -159,4 +159,30 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/account', function () {
         return response()->json(Auth::check() ? [auth()->user(), 200] : [null, 401]);
     });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    Route::get('course', [CourseController::class, 'index']);
+
+    Route::get('course/{course}/topics', [TopicController::class, 'index']);
+
+    Route::get('topic/{topic}/lessons', [LessonController::class, 'index']);
+
+    Route::get('course/{course}/skill', [CourseSkillsController::class, 'index']);
+
+    Route::get('course/{course}/subscriptions', [SubscriptionController::class, 'index']);
+
+
 });
