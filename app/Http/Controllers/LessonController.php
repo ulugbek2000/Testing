@@ -94,7 +94,7 @@ class LessonController extends Controller
         $request->validate([
             'topic_id' => 'integer',
             'name' => 'string',
-            'cover' => 'nullable|image|mimes:jpeg,png,jpg,gif,mov',
+            'cover' => 'nullable|mimes:jpeg,png,jpg,gif,mov',
             'duration' => 'string|nullable',
             'content' => 'nullable',
             // 'type' =>  [new Enum(LessonTypes::class)]
