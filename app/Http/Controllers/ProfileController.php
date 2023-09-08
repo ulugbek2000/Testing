@@ -22,11 +22,11 @@ class ProfileController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'string',
             'surname' => 'string',
-            'email' => 'email|unique:users,email,' . $user->id,
-            'phone' => 'string|unique:users,phone,' . $user->id,
+            'email' => 'required_without:phone|email|unique:users' . $user->id,
+            'phone' => 'required_without:email|string|unique:users' . $user->id,
             'password' => 'string|min:8',
             'city' => 'string',
-            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,mov',
+            'photo' => 'nullable|mimes:jpeg,png,jpg,gif,mov',
             'gender' => 'string|in:male,female,other',
             'date_of_birth' => 'date',
         ]);
@@ -56,13 +56,13 @@ class ProfileController extends Controller
         $data['photo'] = $photoPath;
         $user->update($data);
 
-        
+
         if ($request->has('password')) {
             $user->password = bcrypt($request->input('password'));
             $user->save();
         }
 
-     
+
 
 
         return response()->json(['message' => 'Profile updated successfully']);
