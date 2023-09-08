@@ -35,25 +35,25 @@ class CheckUserRole
       
       
       
-        if ($request->user()->hasRole(UserType::Admin)) {
-            return $next($request);
-        } else {
-            // Обработка запрета доступа
-            return response()->json(['error' => 'Access denied'], 403);
-        }
+        //  if ($request->user()->hasRole(UserType::Admin)) {
+        //     return $next($request);
+        // } else {
+        //     // Обработка запрета доступа
+        //     return response()->json(['error' => 'Access denied'], 403);
+        // }
 
-        if ($request->user()->hasRole(UserType::Teacher)) {
-            return $next($request);
-        } else {
-            // Обработка запрета доступа
-            return response()->json(['error' => 'Access denied'], 403);
-        }
+        // if ($request->user()->hasRole(UserType::Teacher)) {
+        //     return $next($request);
+        // } else {
+        //     // Обработка запрета доступа
+        //    return response()->json(['error' => 'Access denied'], 403);
+        // }
 
-        if ($request->user()->hasRole(UserType::Student)) {
-            return $next($request);
-        } else {
-            // Обработка запрета доступа
-            return response()->json(['error' => 'Access denied'], 403);
-        }
+        // if ($request->user()->hasRole(UserType::Student)) {
+        //     return $next($request);
+        // } else {
+        //     // Обработка запрета доступа
+        //     return response()->json(['error' => 'Access denied'], 403);
+        // }
     }
 }
