@@ -52,7 +52,8 @@ class ProfileController extends Controller
             $photoPath = $request->file('photo')->store('photo', 'public');
             $data['photo'] = $photoPath;
         } 
-       
+        $photoPath = $request->file('photo')->store('photo', 'public');
+        $data['photo'] = $photoPath;
         $user->update($data);
        
 
