@@ -31,16 +31,6 @@ class ProfileController extends Controller
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        $updateData = [
-            'name' => $request->input('name'),
-            'surname' => $request->input('surname'),
-            'email' => $request->input('email'),
-            'phone' => $request->input('phone'),
-            'city' => $request->input('city'),
-            'gender' => $request->input('gender'),
-            'date_of_birth' => $request->input('date_of_birth'),
-        ];
-        $user->update($updateData);
         // $coverpath = $user->photo;
 
         // if ($request->hasFile('photo')) {
@@ -50,17 +40,17 @@ class ProfileController extends Controller
         //     $coverpath = $request->file('photo')->store('photo', 'public');
         // }
 
-        // $data = array_merge($request->only(['name', 'type', 'topic_id', 'duration']), [
-        //     'photo' => $coverpath,
+        $data = array_merge($request->only(['name', 'type', 'topic_id', 'duration']), [
+            // 'photo' => $coverpath,
 
-        // ]);
+        ]);
 
-        // $user->update($data);
+        $user->update($data);
 
-        // if ($request->has('password')) {
-        //     $user->password = bcrypt($request->input('password'));
-        //     $user->save();
-        // }
+        if ($request->has('password')) {
+            $user->password = bcrypt($request->input('password'));
+            $user->save();
+        }
         return response()->json(['message' => 'Profile updated successfully']);
     }
 }
