@@ -30,26 +30,28 @@ class ProfileController extends Controller
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
         }
-        $coverpath = $user->photo;
 
-        if ($request->hasFile('photo')) {
-            // Delete old cover file if needed
-            Storage::delete($user->photo);
-            // Upload and store new cover file
-            $coverpath = $request->file('photo')->store('photo', 'public');
-        }
+        $user->update($request->all());
+        // $coverpath = $user->photo;
 
-        $data = array_merge($request->only(['name', 'type', 'topic_id', 'duration']), [
-            'photo' => $coverpath,
+        // if ($request->hasFile('photo')) {
+        //     // Delete old cover file if needed
+        //     Storage::delete($user->photo);
+        //     // Upload and store new cover file
+        //     $coverpath = $request->file('photo')->store('photo', 'public');
+        // }
 
-        ]);
+        // $data = array_merge($request->only(['name', 'type', 'topic_id', 'duration']), [
+        //     'photo' => $coverpath,
 
-        $user->update($data);
+        // ]);
 
-        if ($request->has('password')) {
-            $user->password = bcrypt($request->input('password'));
-            $user->save();
-        }
+        // $user->update($data);
+
+        // if ($request->has('password')) {
+        //     $user->password = bcrypt($request->input('password'));
+        //     $user->save();
+        // }
         return response()->json(['message' => 'Profile updated successfully']);
     }
 }
