@@ -51,11 +51,13 @@ class ProfileController extends Controller
 
         if (is_string($photoPath) && Storage::exists($photoPath)) {
             Storage::delete($photoPath);
+        } else {
+            $photoPath = $user->photo;
         }
         $photoPath = $request->file('photo')->store('photo', 'public');
         $data['photo'] = $photoPath;
         $user->update($data);
-
+       
 
         if ($request->has('password')) {
             $user->password = bcrypt($request->input('password'));

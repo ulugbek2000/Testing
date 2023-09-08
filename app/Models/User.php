@@ -32,6 +32,8 @@ class User extends Authenticatable
         'city',
         'photo',
         'gender',
+        'description',
+        'position',
         'date_of_birth',
         'email_verified_at',
         'phone_verified_at',
@@ -40,6 +42,7 @@ class User extends Authenticatable
         'two_factor_confirmed_at',
         'remember_token'
     ];
+
     public function courses()
     {
         return $this->hasManyThrough(Course::class, UserCourse::class);
@@ -48,6 +51,11 @@ class User extends Authenticatable
     public function role()
     {
         return $this->hasMany(Role::class);
+    }
+
+    public function userSkills()
+    {
+        return $this->hasMany(UserSkills::class);
     }
     /**
      * The attributes that should be hidden for serialization.
