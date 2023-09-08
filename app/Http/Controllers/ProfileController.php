@@ -22,8 +22,8 @@ class ProfileController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'string',
             'surname' => 'string',
-            'email' => 'required_without:phone|email|unique:users' . $user->id,
-            'phone' => 'required_without:email|string|unique:users' . $user->id,
+            'email' => 'email|unique:users,email,' . $user->id,
+            'phone' => 'string|unique:users,phone,' . $user->id,
             'password' => 'string|min:8',
             'city' => 'string',
             'photo' => 'nullable|mimes:jpeg,png,jpg,gif,mov',
@@ -62,7 +62,7 @@ class ProfileController extends Controller
             $user->save();
         }
 
-
+     
 
 
         return response()->json(['message' => 'Profile updated successfully']);
