@@ -27,8 +27,10 @@ class CourseController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index(Request $request, User $user)
     {
+      
+
         $per_page = $request->per_page ?? 12;
         // All Courses
         // $perPage = $request->input('per_page', 2);
