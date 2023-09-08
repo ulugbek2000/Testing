@@ -12,9 +12,9 @@ use Illuminate\Support\Facades\Storage;
 
 class ProfileController extends Controller
 {
-    public function updateProfile(Request $request)
+    public function updateProfile(Request $request,User $user)
     {
-        $user = Auth::user();
+        // $user = Auth::user();
         $validator = Validator::make(request()->all(), [
             'name' => 'string',
             'surname' => 'string',
@@ -26,25 +26,25 @@ class ProfileController extends Controller
             'gender' => 'string|in:male,female,other',
             'date_of_birth' => 'date',
         ]);
-        
+
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
         }
-        
+
         // Установите значения атрибутов пользователя на основе запроса
         $user->name = $request->input('name');
-        $user->surname = $request->input('surname'); // Исправлено на 'surname'
-        $user->email = $request->input('email'); // Исправлено на 'email'
+        $user->surname = $request->input('surname');
+        $user->email = $request->input('email');
         $user->phone = $request->input('phone');
         $user->city = $request->input('city');
         $user->gender = $request->input('gender');
         $user->date_of_birth = $request->input('date_of_birth');
-        
+
         if ($request->has('password')) {
             $user->password = bcrypt($request->input('password'));
         }
-        
-      
+
+
 
         // if ($request->hasFile('photo')) {
         //     $destination = 'storage/profile/' . $user->photo;
