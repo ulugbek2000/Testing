@@ -47,15 +47,12 @@ class ProfileController extends Controller
             'date_of_birth' => $request->input('date_of_birth', $user->date_of_birth),
         ];
 
-        // Добавляем обработку изображения, если оно было изменено
-if ($request->has('photo')) {
-    $photoPath = $user->photo;
-}
         if (is_string($photoPath) && Storage::exists($photoPath)) {
             Storage::delete($photoPath);
+            $photoPath = $request->file('photo')->store('photo', 'public');
+            $data['photo'] = $photoPath;
         } 
-        $photoPath = $request->file('photo')->store('photo', 'public');
-        $data['photo'] = $photoPath;
+       
         $user->update($data);
        
 
@@ -63,9 +60,6 @@ if ($request->has('photo')) {
             $user->password = bcrypt($request->input('password'));
             $user->save();
         }
-
-     
-
 
         return response()->json(['message' => 'Profile updated successfully']);
 
