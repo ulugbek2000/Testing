@@ -48,12 +48,12 @@ class ProfileController extends Controller
         ];
 
         // Добавляем обработку изображения, если оно было изменено
-
+if ($request->has('photo')) {
+    $photoPath = $user->photo;
+}
         if (is_string($photoPath) && Storage::exists($photoPath)) {
             Storage::delete($photoPath);
-        } else {
-            $photoPath = $user->photo;
-        }
+        } 
         $photoPath = $request->file('photo')->store('photo', 'public');
         $data['photo'] = $photoPath;
         $user->update($data);
