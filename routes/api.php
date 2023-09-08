@@ -133,7 +133,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Auth::routes([
             'register' => false,
             'login' => false,
-            'logout'=>false
+            'logout' => false
         ]);
         Route::get('role', [RoleController::class, 'index']);
         Route::post('role', [RoleController::class, 'store']);
@@ -144,6 +144,15 @@ Route::middleware(['auth:sanctum'])->group(function () {
     });
 
     Route::middleware('access:' . implode(',', [UserType::Student]))->group(function () {
+        Route::get('course', [CourseController::class, 'index']);
+
+        Route::get('course/{course}/topics', [TopicController::class, 'index']);
+
+        Route::get('topic/{topic}/lessons', [LessonController::class, 'index']);
+
+        Route::get('course/{course}/skill', [CourseSkillsController::class, 'index']);
+
+        Route::get('course/{course}/subscriptions', [SubscriptionController::class, 'index']);
     });
     Route::post('logout', [AuthController::class, 'logout']);
 
