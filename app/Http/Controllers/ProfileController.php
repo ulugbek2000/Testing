@@ -15,7 +15,8 @@ class ProfileController extends Controller
     public function updateProfile(Request $request)
     {
         $user = Auth::user();
-        $validator = Validator::make(request()->all(), [
+
+        $request->validate( [
             'name' => 'string',
             'surname' => 'string',
             'email' => 'email|unique:users,email,' . $user->id,
@@ -26,10 +27,6 @@ class ProfileController extends Controller
             'gender' => 'string|in:male,female,other',
             'date_of_birth' => 'date',
         ]);
-
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
 
         // $coverpath = $user->photo;
 
@@ -46,7 +43,6 @@ class ProfileController extends Controller
         // ]);
 
         // $user->update($data);
-
         $user->name = $request->input('name');
         $user->surname = $request->input('surname');
         $user->email = $request->input('email');
@@ -57,7 +53,6 @@ class ProfileController extends Controller
 
         if ($request->has('password')) {
             $user->password = bcrypt($request->input('password'));
-           
         }
         $user->save();
         return response()->json(['message' => 'Profile updated successfully']);
