@@ -16,7 +16,7 @@ class ProfileController extends Controller
     {
         $user = Auth::user();
 
-        $request->validate( [
+        $request->validate([
             'name' => 'string',
             'surname' => 'string',
             'email' => 'email|unique:users,email,' . $user->id,
@@ -28,33 +28,26 @@ class ProfileController extends Controller
             'date_of_birth' => 'date',
         ]);
 
-        // $coverpath = $user->photo;
+        $coverpath = $user->photo;
+        if ($request->hasFile('photo')) {
+            // Delete old logo file if needed
+            Storage::delete($user->photo);
+            // Upload and store new logo file
+            $coverpath = $request->file('photo')->store('photo', 'public');
+        } else {
+            $coverpath = $user->photo;
+        }
 
-        // if ($request->hasFile('photo')) {
-        //     // Delete old cover file if needed
-        //     Storage::delete($user->photo);
-        //     // Upload and store new cover file
-        //     $coverpath = $request->file('photo')->store('photo', 'public');
-        // }
+        $data = array_merge($request->only(['name', 'surname', 'email', 'phone', 'city', 'gender', 'date_of_birth']), [
+            'photo' => $coverpath,
 
-        // $data = array_merge($request->only(['name', 'type', 'topic_id', 'duration']), [
-        //     // 'photo' => $coverpath,
-
-        // ]);
-
-        // $user->update($data);
-        $user->name = $request->input('name');
-        $user->surname = $request->input('surname');
-        $user->email = $request->input('email');
-        $user->phone = $request->input('phone');
-        $user->city = $request->input('city');
-        $user->gender = $request->input('gender');
-        $user->date_of_birth = $request->input('date_of_birth');
-
+        ]);
+        $user->update($data);
         if ($request->has('password')) {
             $user->password = bcrypt($request->input('password'));
+            $user->save();
         }
-        $user->save();
+
         return response()->json(['message' => 'Profile updated successfully']);
     }
 }
