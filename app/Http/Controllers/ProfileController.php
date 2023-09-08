@@ -31,7 +31,16 @@ class ProfileController extends Controller
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        $user->update($request->all());
+        $updateData = [
+            'name' => $request->input('name'),
+            'surname' => $request->input('surname'),
+            'email' => $request->input('email'),
+            'phone' => $request->input('phone'),
+            'city' => $request->input('city'),
+            'gender' => $request->input('gender'),
+            'date_of_birth' => $request->input('date_of_birth'),
+        ];
+        $user->update($updateData);
         // $coverpath = $user->photo;
 
         // if ($request->hasFile('photo')) {
