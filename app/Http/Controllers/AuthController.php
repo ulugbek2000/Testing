@@ -82,11 +82,11 @@ class AuthController extends Controller
             $user = Auth::user();
             // Создайте токен и добавьте к нему пользовательские данные
             $token = $user->createToken('api-token', ['email', 'name'])->plainTextToken;
-
+            $role = $user->roles()->first()->id;
             $cookie = cookie('jwt', $token);
             return response([
                 'message' => $token,
-                'user_role'=>$user->roles()
+                'user_role'=>$role
             ])->withCookie($cookie);
         } else {
 
