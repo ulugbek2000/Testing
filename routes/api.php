@@ -41,21 +41,18 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::middleware(['admin.api'])->group(function () {
 });
 
-
-Route::middleware(['checkRole'])->group(function () {
-    Route::get('course', [CourseController::class, 'index']);
-    Route::get('course/{course}/topics', [TopicController::class, 'index']);
-    Route::get('topic/{topic}/lessons', [LessonController::class, 'index']);
-
-    Route::get('course/{course}/skill', [CourseSkillsController::class, 'index']);
-
-    Route::get('course/{course}/subscriptions', [SubscriptionController::class, 'index']);
-});
 // Route::middleware('auth.custom')->group(function () {
 
 
 Route::post('login', [AuthController::class, 'login']);
 Route::post('register', [AuthController::class, 'register']);
+
+Route::get('course', [CourseController::class, 'index']);
+
+
+Route::get('course/{course}/topics', [TopicController::class, 'index']);
+Route::get('topic/{topic}/lessons', [LessonController::class, 'index']);
+
 
 // });
 
@@ -67,7 +64,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::middleware(['access:' . UserType::Admin])->group(function () {
 
         //Start Courses
-        Route::get('course', [CourseController::class, 'index']);
+      
         Route::get('course/{course}', [CourseController::class, 'show']);
         Route::post('course', [CourseController::class, 'store']);
         Route::put('course/{course}', [CourseController::class, 'update']);
@@ -76,7 +73,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
         //End Courses
 
         //Start Topics
-        Route::get('course/{course}/topics', [TopicController::class, 'index']);
         Route::get('topic/{topic}', [TopicController::class, 'show']);
         Route::post('topic', [TopicController::class, 'store']);
         Route::put('topic/{topic}', [TopicController::class, 'update']);
@@ -84,7 +80,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
         //End Topics
 
         //Start Lessons
-        Route::get('topic/{topic}/lessons', [LessonController::class, 'index']);
         Route::get('lesson/{lesson}', [LessonController::class, 'show']);
         Route::post('lesson', [LessonController::class, 'store']);
         Route::put('lesson/{lesson}', [LessonController::class, 'update']);
@@ -154,15 +149,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     });
 
     Route::middleware('access:' . implode(',', [UserType::Student]))->group(function () {
-        Route::get('course', [CourseController::class, 'index']);
-
-        Route::get('course/{course}/topics', [TopicController::class, 'index']);
-
-        Route::get('topic/{topic}/lessons', [LessonController::class, 'index']);
-
-        Route::get('course/{course}/skill', [CourseSkillsController::class, 'index']);
-
-        Route::get('course/{course}/subscriptions', [SubscriptionController::class, 'index']);
+   
     });
     Route::post('logout', [AuthController::class, 'logout']);
 
