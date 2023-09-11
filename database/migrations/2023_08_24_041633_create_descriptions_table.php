@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('subscription_id')->references('id')->on('subscriptions')->onDelete('cascade');
             // $table->foreignId('course_id')->references('id')->on('courses')->onDelete('cascade');
-            $table->string('description');          
-              $table->timestamps();
+            $table->string('description');
+            $table->timestamps();
         });
     }
 

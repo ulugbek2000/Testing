@@ -12,6 +12,7 @@ class Description extends Model
         'description',
         'subscription_id',
     ];
+    
     public function subscription()
     {
         return $this->belongsTo(Subscription::class);

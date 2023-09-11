@@ -36,8 +36,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 
-
-
 Route::middleware(['admin.api'])->group(function () {
 });
 
@@ -48,10 +46,11 @@ Route::post('login', [AuthController::class, 'login']);
 Route::post('register', [AuthController::class, 'register']);
 
 Route::get('course', [CourseController::class, 'index']);
+Route::get('course/{course}', [CourseController::class, 'show']);
 
+Route::get('topic/{topic}', [TopicController::class, 'show']);
 
 Route::get('course/{course}/topics', [TopicController::class, 'index']);
-Route::get('topic/{topic}/lessons', [LessonController::class, 'index']);
 
 
 // });
@@ -65,7 +64,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
         //Start Courses
       
-        Route::get('course/{course}', [CourseController::class, 'show']);
         Route::post('course', [CourseController::class, 'store']);
         Route::put('course/{course}', [CourseController::class, 'update']);
         Route::delete('course/{course}', [CourseController::class, 'destroy']);
@@ -73,9 +71,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
         //End Courses
 
         //Start Topics
-        Route::get('topic/{topic}', [TopicController::class, 'show']);
+       
         Route::post('topic', [TopicController::class, 'store']);
         Route::put('topic/{topic}', [TopicController::class, 'update']);
+        Route::get('topic/{topic}/lessons', [LessonController::class, 'index']);
         Route::delete('topic/{topic}', [TopicController::class, 'destroy']);
         //End Topics
 

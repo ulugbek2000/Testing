@@ -87,8 +87,5 @@ class Kernel extends HttpKernel
         'auth.custom' => SendTokenToFrontend::class,
         'admin.api' => \App\Http\Middleware\AdminApiMiddleware::class,
         'access' => RoleMiddleware::class,
-        'checkRole' => CheckUserRole::class,
-        // 'student' => \App\Http\Middleware\StudentMiddleware::class,
-        // 'teacher' => \App\Http\Middleware\TeacherMiddleware::class,
     ];
 }

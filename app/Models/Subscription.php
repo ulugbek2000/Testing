@@ -16,10 +16,6 @@ class Subscription extends Model
         'course_id',
     ];
 
-    protected $casts = [
-        'description' => 'array', // Определите, что поле 'description' должно быть массивом
-    ];
-
     public function course()
     {
         return $this->belongsTo(Course::class, 'course_id', 'id');
