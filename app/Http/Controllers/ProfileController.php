@@ -65,11 +65,32 @@ class ProfileController extends Controller
         ];
 
         $photoPath = $user->photo;
+
         if (is_string($photoPath) && Storage::exists($photoPath)) {
+            // Delete the old photo
             Storage::delete($photoPath);
-            $photoPath = $request->file('photo')->store('photo', 'public');
+        }
+
+        if ($request->hasFile('photo')) {
+            // Ensure that a file was uploaded
+            $uploadedPhoto = $request->file('photo');
+
+            // Generate a unique filename (you can modify this as needed)
+            $photoFileName = uniqid('photo_') . '.' . $uploadedPhoto->getClientOriginalExtension();
+
+            // Store the new photo with the generated filename in the 'public/photo' directory
+            $photoPath = $uploadedPhoto->storeAs('photo', $photoFileName, 'public');
+
+            // Update the user's profile with the new photo path
             $data['photo'] = $photoPath;
         }
+
+        // $photoPath = $user->photo;
+        // if (is_string($photoPath) && Storage::exists($photoPath)) {
+        //     Storage::delete($photoPath);
+        //     $photoPath = $request->file('photo')->store('photo', 'public');
+        //     $data['photo'] = $photoPath;
+        // }
 
         if (UserType::Teacher) {
             $data['position'] = $request->input('position', $user->position);
@@ -177,7 +198,7 @@ class ProfileController extends Controller
             }
         }
     }
-    
+
     public function getAllStudents(Request $request)
     {
         $students = User::all()->filter(function ($user) {
