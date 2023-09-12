@@ -6,7 +6,10 @@ use App\Enums\UserType;
 use App\Http\Middleware\CheckUserRole;
 use App\Models\Course;
 use App\Models\User;
+use App\Models\UserSkills;
+use Dotenv\Validator;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Spatie\Permission\Models\Role;
 
@@ -169,4 +172,6 @@ class UsersController extends Controller
             return response()->json(['error' => 'User not found'], 404);
         }
     }
+
+   
 }

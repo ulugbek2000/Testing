@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Enums\UserType;
+use App\Http\Resources\USerResource;
+use App\Models\Role;
 use App\Models\User;
 use App\Models\UserSkills;
 use Illuminate\Support\Facades\Validator;
@@ -19,7 +21,6 @@ class ProfileController extends Controller
 
     public function updateProfile(Request $request)
     {
-
 
         $user = Auth::user();
         $validator = null; // Инициализация валидатора
@@ -63,11 +64,11 @@ class ProfileController extends Controller
             'date_of_birth' => $request->input('date_of_birth', $user->date_of_birth),
         ];
 
-        $photoPath = $user->skills;
+        $photoPath = $user->photo;
         if (is_string($photoPath) && Storage::exists($photoPath)) {
             Storage::delete($photoPath);
-            $photoPath = $request->file('skills')->store('skills', 'public');
-            $data['skills'] = $photoPath;
+            $photoPath = $request->file('photo')->store('photo', 'public');
+            $data['photo'] = $photoPath;
         }
 
         if (UserType::Teacher) {
@@ -82,9 +83,80 @@ class ProfileController extends Controller
             $user->save();
         }
 
+
         if (UserType::Teacher) {
             // dd($request->file('skills'), $request->has('skills'), is_array($request->file('skills')));
 
+            if ($request->has('skills') && is_array($request->file('skills'))) {
+                foreach ($request->file('skills') as $skillImage) {
+
+                    if ($skillImage->isValid()) {
+                        $skillPath = $skillImage->store('skills', 'public');
+                        UserSkills::create([
+                            'user_id' => $user->id,
+                            'skills' => $skillPath,
+                        ]);
+                    }
+                }
+            }
+        }
+
+        return response()->json(['message' => 'Profile updated successfully']);
+    }
+
+
+    public function updateTeacher(Request $request, User $user)
+    {
+        // $user = Auth::user();
+        if (UserType::Admin) {
+            // $validator = null;
+            // dd($request);
+            $validator = Validator::make($request->all(), [
+                'name' => 'string',
+                'surname' => 'string',
+                'email' => 'required_without:phone|email|unique:users,email,' . $user->id,
+                'phone' => 'required_without:email|string|unique:users,phone,' . $user->id,
+                'password' => 'string|min:8',
+                'city' => 'string',
+                'photo' => 'nullable|mimes:jpeg,png,jpg,gif,mov',
+                'gender' => 'string|in:male,female,other',
+                'date_of_birth' => 'date',
+                'position' => 'nullable|string',
+                'description' => 'nullable|string',
+                'skills' => 'nullable|array',
+                'skills.*' => 'image|mimes:jpeg,png,jpg,gif',
+            ]);
+
+
+            if ($validator->fails()) {
+                return response()->json(['errors' => $validator->errors()], 422);
+            }
+
+            $data = [
+                'name' => $request->input('name', $user->name),
+                'surname' => $request->input('surname', $user->surname),
+                'email' => $request->input('email', $user->email),
+                'phone' => $request->input('phone', $user->phone),
+                'city' => $request->input('city', $user->city),
+                'gender' => $request->input('gender', $user->gender),
+                'date_of_birth' => $request->input('date_of_birth', $user->date_of_birth),
+                'position' => $request->input('position', $user->position),
+                'description' => $request->input('description', $user->description),
+            ];
+
+            $photoPath = $user->photo;
+            if (is_string($photoPath) && Storage::exists($photoPath)) {
+                Storage::delete($photoPath);
+                $photoPath = $request->file('photo')->store('photo', 'public');
+                $data['photo'] = $photoPath;
+            }
+
+            if ($request->has('password')) {
+                $user->password = bcrypt($request->input('password'));
+                $user->save();
+            }
+
+            $user->update($data);
             if ($request->has('skills') && is_array($request->file('skills'))) {
                 foreach ($request->file('skills') as $skillImage) {
 
@@ -98,8 +170,36 @@ class ProfileController extends Controller
                     }
                 }
             }
-        }
 
-        return response()->json(['message' => 'Profile updated successfully']);
+            return response()->json(['message' => 'Mentor updated successfully']);
+            if (!UserType::Admin) {
+                return response()->json(['error' => 'Access denied'], 403);
+            }
+        }
+    }
+    
+    public function getAllStudents(Request $request)
+    {
+        $students = User::all()->filter(function ($user) {
+            return $user->user_type === UserType::Student;
+        });
+
+        return response()->json($students);
+    }
+
+    public function getAllTeachers(Request $request)
+    {
+        $teachers = User::all()->filter(function ($user) {
+            return $user->user_type === UserType::Teacher;
+        });
+
+        return response()->json($teachers);
+    }
+
+    public function getUserById(User $user)
+    {
+        return response()->json([
+            'user' => $user
+        ], 200);
     }
 }

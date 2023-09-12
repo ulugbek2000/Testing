@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1258ee6d7fc4078ff6f596f118917600",
+    "content-hash": "babbdeecfd276f1cf49e0318d7820f2f",
     "packages": [
         {
             "name": "bensampo/laravel-enum",
@@ -3885,6 +3885,66 @@
                 "source": "https://github.com/rap2hpoutre/laravel-log-viewer/tree/v2.3.0"
             },
             "time": "2023-02-15T07:36:34+00:00"
+        },
+        {
+            "name": "riotj/osonsms-gateway",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Rio-TJ/osonsms-gateway.git",
+                "reference": "a21b71aaf6441554015a3c73ef24e4db836b352c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Rio-TJ/osonsms-gateway/zipball/a21b71aaf6441554015a3c73ef24e4db836b352c",
+                "reference": "a21b71aaf6441554015a3c73ef24e4db836b352c",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.1"
+            },
+            "require-dev": {
+                "orchestra/testbench": "^4.0",
+                "phpunit/phpunit": "^8.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "OsonSMS\\SMSGateway\\SMSGatewayServiceProvider"
+                    ],
+                    "aliases": {
+                        "SMSGateway": "OsonSMS\\SMSGateway\\SMSGatewayFacade"
+                    }
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "OsonSMS\\SMSGateway\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "RIO | Simply Digital",
+                    "email": "info@rio.tj",
+                    "role": "Developer"
+                }
+            ],
+            "description": "A simple library for sending SMS via OsonSMS API.",
+            "homepage": "https://github.com/Rio-TJ/osonsms",
+            "keywords": [
+                "osonsms",
+                "smsgateway"
+            ],
+            "support": {
+                "issues": "https://github.com/Rio-TJ/osonsms-gateway/issues",
+                "source": "https://github.com/Rio-TJ/osonsms-gateway/tree/1.0.0"
+            },
+            "time": "2023-09-11T06:28:08+00:00"
         },
         {
             "name": "spatie/laravel-package-tools",

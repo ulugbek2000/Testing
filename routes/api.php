@@ -46,9 +46,8 @@ Route::post('login', [AuthController::class, 'login']);
 Route::post('register', [AuthController::class, 'register']);
 
 Route::get('course', [CourseController::class, 'index']);
-Route::get('course/{course}', [CourseController::class, 'show']);
 
-Route::get('topic/{topic}', [TopicController::class, 'show']);
+
 
 Route::get('course/{course}/topics', [TopicController::class, 'index']);
 
@@ -62,8 +61,16 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::middleware(['access:' . UserType::Admin])->group(function () {
 
+        //Update mentor with help Admin
+        Route::put('/user/{user}',  [ProfileController::class, 'updateTeacher']);
+
+        //get all Student
+        Route::get('getStudents', [ProfileController::class, 'getAllStudents']);
+        Route::get('getTeachers', [ProfileController::class, 'getAllTeachers']);
+        Route::get('user/{user}', [ProfileController::class, 'getUserById']);
         //Start Courses
-      
+
+        Route::get('course/{course}', [CourseController::class, 'show']);
         Route::post('course', [CourseController::class, 'store']);
         Route::put('course/{course}', [CourseController::class, 'update']);
         Route::delete('course/{course}', [CourseController::class, 'destroy']);
@@ -71,14 +78,14 @@ Route::middleware(['auth:sanctum'])->group(function () {
         //End Courses
 
         //Start Topics
-       
+        Route::get('topic/{topic}', [TopicController::class, 'show']);
         Route::post('topic', [TopicController::class, 'store']);
         Route::put('topic/{topic}', [TopicController::class, 'update']);
-        Route::get('topic/{topic}/lessons', [LessonController::class, 'index']);
         Route::delete('topic/{topic}', [TopicController::class, 'destroy']);
         //End Topics
 
         //Start Lessons
+        Route::get('topic/{topic}/lessons', [LessonController::class, 'index']);
         Route::get('lesson/{lesson}', [LessonController::class, 'show']);
         Route::post('lesson', [LessonController::class, 'store']);
         Route::put('lesson/{lesson}', [LessonController::class, 'update']);
@@ -148,7 +155,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
     });
 
     Route::middleware('access:' . implode(',', [UserType::Student]))->group(function () {
-   
     });
     Route::post('logout', [AuthController::class, 'logout']);
 

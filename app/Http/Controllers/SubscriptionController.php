@@ -87,7 +87,6 @@ class SubscriptionController extends Controller
      */
     public function update(Request $request, $subscriptionId)
     {
-
         $data = $request->validate([
             'name' => 'required|string',
             'price' => 'required|integer',

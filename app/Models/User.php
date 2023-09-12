@@ -31,6 +31,7 @@ class User extends Authenticatable
         'phone',
         'city',
         'photo',
+        'user_type',
         'gender',
         'description',
         'position',
@@ -58,7 +59,7 @@ class User extends Authenticatable
         return $this->hasMany(UserSkills::class);
     }
 
-    
+
 
     /**
      * The attributes that should be hidden for serialization.

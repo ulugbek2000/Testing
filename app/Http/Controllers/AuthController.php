@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Enums\UserType;
 use App\Models\User;
+use App\Models\UserSkills;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
@@ -59,6 +60,9 @@ class AuthController extends Controller
         }
 
         $user->assignRole(UserType::Student);
+        // $user->user_type = 'student';
+
+        // $user->save();
         return response()->json(['message' => 'Registration successful'], 201);
     }
 
@@ -86,7 +90,7 @@ class AuthController extends Controller
             $cookie = cookie('jwt', $token);
             return response([
                 'message' => $token,
-                'user_role'=>$role
+                'user_role' => $role
             ])->withCookie($cookie);
         } else {
 
@@ -109,4 +113,7 @@ class AuthController extends Controller
         Auth::guard('web')->logout();
         return response()->json(['message' => 'You are Logouted ']);
     }
+
+
+ 
 }
