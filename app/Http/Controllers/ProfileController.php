@@ -212,7 +212,7 @@ class ProfileController extends Controller
     {
         $teachers = User::all()->filter(function ($user) {
             return $user->user_type === UserType::Teacher;
-        });
+        })->with('userSkills')->get();
 
         return response()->json($teachers);
     }
