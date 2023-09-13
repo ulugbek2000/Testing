@@ -8,6 +8,7 @@ use App\Http\Controllers\LessonController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SessionController;
+use App\Http\Controllers\SmsController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\TopicController;
 use App\Http\Controllers\UsersController;
@@ -50,12 +51,15 @@ Route::get('course', [CourseController::class, 'index']);
 
 
 Route::get('course/{course}/topics', [TopicController::class, 'index']);
+Route::get('getSMS', [SmsController::class, 'sendSms']);
+
 
 
 // });
 
 Route::middleware(['auth:sanctum'])->group(function () {
 
+   
     Route::put('profile', [ProfileController::class, 'updateProfile']);
 
 
