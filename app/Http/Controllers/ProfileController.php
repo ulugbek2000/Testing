@@ -210,11 +210,16 @@ class ProfileController extends Controller
 
     public function getAllTeachers(Request $request)
     {
-        $teachers = User::all()->filter(function ($user) {
-            return $user->user_type === UserType::Teacher;
-        })->with('userSkills')->get();
+
+        $teachers = User::where('user_type', UserType::Teacher)->with('userSkills')->get();
 
         return response()->json($teachers);
+
+        // $teachers = User::all()->filter(function ($user) {
+        //     return $user->user_type === UserType::Teacher;
+        // });
+
+        // return response()->json($teachers);
     }
 
     public function getUserById(User $user)
