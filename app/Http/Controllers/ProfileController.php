@@ -199,7 +199,7 @@ class ProfileController extends Controller
         }
     }
 
-    public function getAllStudents(Request $request)
+    public function getAllStudents()
     {
         $students = User::all()->filter(function ($user) {
             return $user->user_type === UserType::Student;
@@ -208,18 +208,11 @@ class ProfileController extends Controller
         return response()->json($students);
     }
 
-    public function getAllTeachers(Request $request)
+    public function getAllTeachers()
     {
-
         $teachers = User::where('user_type', UserType::Teacher)->with('userSkills')->get();
 
         return response()->json($teachers);
-
-        // $teachers = User::all()->filter(function ($user) {
-        //     return $user->user_type === UserType::Teacher;
-        // });
-
-        // return response()->json($teachers);
     }
 
     public function getUserById(User $user)
