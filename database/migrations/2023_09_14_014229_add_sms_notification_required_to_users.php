@@ -13,7 +13,7 @@ return new class extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->boolean('sms_notification_required')->default(false);
+            $table->timestamp('phone_verified_at')->nullable();
         });
     }
 

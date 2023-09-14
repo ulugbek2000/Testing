@@ -8,9 +8,6 @@ use OsonSMS\SMSGateway\SMSGateway;
 
 class SmsMessage
 {
-
-    protected string $user;
-    protected string $password;
     protected string $to;
     protected string $from;
     protected array $lines;
@@ -53,7 +50,7 @@ class SmsMessage
         }
 
         $txn_id = uniqid();
-        return $result = SMSGateway::Send('931272616', 'This is my test message from Laravel!', $txn_id);
+        return $result = SMSGateway::Send($this->to, implode('\n', $this->lines), $txn_id);
     }
 
     public function dryrun($dry = 'yes'): self

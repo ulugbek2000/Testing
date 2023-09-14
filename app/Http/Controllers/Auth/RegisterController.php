@@ -53,9 +53,15 @@ class RegisterController extends Controller
     protected function validator(array $data)
     {
         return Validator::make($data, [
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'name' => 'required|string',
+            'surname' => 'required|string',
+            'email' => 'required_without:phone|email|unique:users',
+            'phone' => 'required_without:email|string|unique:users',
+            'password' => 'required|string|min:8',
+            'city' => 'nullable|string',
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,mov',
+            'gender' => 'nullable|string|in:male,female,other',
+            'date_of_birth' => 'nullable|date',
         ]);
     }
 
@@ -67,10 +73,23 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
+        $photoPath = null;
+
+        if (isset($data['photo']) && $data['photo']->isValid()) {
+            $photoPath = $data['photo']->store('photo', 'public');
+
         return User::create([
             'name' => $data['name'],
+            'surname' => $data['surname'],
             'email' => $data['email'],
+            'phone' => $data['phone'],
             'password' => Hash::make($data['password']),
+            'city' => $data['city'],
+            'gender' => $data['gender'],
+            'date_of_birth' => $data['date_of_birth'],
+            'photo' => $photoPath,
+            // 'photo' => $data->hasFile('photo') ? $data->file('photo')->store('photo', 'public') : null,
         ]);
     }
+}
 }

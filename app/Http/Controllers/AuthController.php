@@ -19,7 +19,6 @@ class AuthController extends Controller
     public function register(Request $request, User $user)
     {
 
-
         $validator = Validator::make($request->all(), [
             'name' => 'required|string',
             'surname' => 'required|string',
@@ -35,45 +34,22 @@ class AuthController extends Controller
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
         }
-
-        if ($request->has('email')) {
-            $user = User::create([
-                'name' => $request->input('name'),
-                'surname' => $request->input('surname'),
-                'email' => $request->input('email'),
-                'password' => Hash::make($request->input('password')),
-                'city' => $request->input('city'),
-                'gender' => $request->input('gender'),
-                'date_of_birth' => $request->input('date_of_birth'),
-                'photo' => $request->hasFile('photo') ? $request->file('photo')->store('photo', 'public') : null,
-            ]);
-        } elseif ($request->has('phone')) {
-            $user = User::create([
-                'name' => $request->input('name'),
-                'surname' => $request->input('surname'),
-                'phone' => $request->input('phone'),
-                'password' => Hash::make($request->input('password')),
-                'city' => $request->input('city'),
-                'gender' => $request->input('gender'),
-                'date_of_birth' => $request->input('date_of_birth'),
-                'photo' => $request->hasFile('photo') ? $request->file('photo')->store('photo', 'public') : null,
-            ]);
-        }
-        $user->sms_notification_required = true;
+        
+        $user = User::create([
+            'name' => $request->input('name'),
+            'surname' => $request->input('surname'),
+            'email' => $request->input('email'),
+            'phone' => $request->input('phone'),
+            'password' => Hash::make($request->input('password')),
+            'city' => $request->input('city'),
+            'gender' => $request->input('gender'),
+            'date_of_birth' => $request->input('date_of_birth'),
+            'photo' => $request->hasFile('photo') ? $request->file('photo')->store('photo', 'public') : null,
+        ]);
+      
+       
         $user->save();
-        $verificationCode = mt_rand(1000, 9999);
-        // Отправка SMS-уведомления
-        $smsData = [
-            'number' => $user->phone, // Предполагается, что у пользователя есть поле "phone" с номером телефона
-            'text' => 'Код подтверждения: ' . $verificationCode, // Генерируйте уникальный код подтверждения
-        ];
     
-        // Отправляем уведомление с помощью очереди
-        $user->notify((new SmsVerification($smsData))->delay(now()->addMinutes(1))); // Задержка 1 минуту
-
-        $user->assignRole(UserType::Student);
-        // $user->user_type = 'student';
-
         // $user->save();
         return response()->json(['message' => 'Registration successful'], 201);
     }
@@ -126,6 +102,8 @@ class AuthController extends Controller
         return response()->json(['message' => 'You are Logouted ']);
     }
 
-
- 
+    function verifyPhoneNumber(Request $request) {
+        $user = Auth::user();
+        return $user->verifyCode($request->input('verification'));
+    }
 }

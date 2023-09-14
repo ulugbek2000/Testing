@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use App\Broadcasting\SmsChannel;
 use App\SmsMessage;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -30,7 +31,7 @@ class SmsVerification extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['database'];
+        return ['database', SmsChannel::class];
     }
 
     /**
@@ -40,14 +41,7 @@ class SmsVerification extends Notification
      */
     public function toArray(object $notifiable): array
     {
-         (new SmsMessage)
-                    ->from(config('app.name'))
-                    ->to($this->message['phone'])
-                    ->line($this->message['text']);
-
-        return [
-            $this->message
-        ];
+        return $this->message;
 
 
     }
@@ -56,7 +50,7 @@ class SmsVerification extends Notification
     {
         return (new SmsMessage)
                     ->from(config('app.name'))
-                    ->to($this->message['phone'])
+                    ->to($notifiable->phone)
                     ->line($this->message['text']);
     }
 

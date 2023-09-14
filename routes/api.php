@@ -43,15 +43,22 @@ Route::middleware(['admin.api'])->group(function () {
 // Route::middleware('auth.custom')->group(function () {
 
 
+//Auth Routes
+Auth::routes([
+    'register' => true,
+    'login' => false,
+    'logout' => false
+]);
+
 Route::post('login', [AuthController::class, 'login']);
-Route::post('register', [AuthController::class, 'register']);
+// Route::post('register', [AuthController::class, 'register']);
+Route::post('verify-phone', [AuthController::class, 'verifyPhoneNumber']);
 
 Route::get('course', [CourseController::class, 'index']);
 
 
 
 Route::get('course/{course}/topics', [TopicController::class, 'index']);
-Route::get('getSMS', [SmsController::class, 'sendSms']);
 
 
 
@@ -144,12 +151,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::delete('transactiondelete/{id}', [UserTransactionController::class, 'destroy']);
         //End Transaction
 
-        //Start Role
-        Auth::routes([
-            'register' => false,
-            'login' => false,
-            'logout' => false
-        ]);
+        
         Route::get('role', [RoleController::class, 'index']);
         Route::post('role', [RoleController::class, 'store']);
         Route::get('role/{id}', [RoleController::class, 'show']);

@@ -81,4 +81,15 @@ class User extends Authenticatable
         'password' => 'hashed',
         'skills' => 'array', // Определите, что поле 'description' должно быть массивом
     ];
+
+    function verifyCode($code) {
+        $notification = $this->unreadNotifications()->where('type', 'App\Notifications\SmsVerification')->latest()->first();
+        $result = array_key_exists('verification', $notification->data) && $notification->data['verification'] === $code ? true : false;
+        if($result){
+            $this->update(['phone_verified_at' => now()]);
+        }
+
+        $notification->markAsRead();
+        return $result;
+    }
 }
