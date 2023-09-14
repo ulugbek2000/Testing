@@ -89,7 +89,7 @@ class User extends Authenticatable
             $this->update(['phone_verified_at' => now()]);
         }
 
-        $notification->markAsRead();
+        $result && $notification->markAsRead();
         return $result;
     }
 }
