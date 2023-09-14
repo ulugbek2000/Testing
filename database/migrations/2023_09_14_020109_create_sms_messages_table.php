@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('sms_messages', function (Blueprint $table) {
             $table->id();
-            $table->string('phone_number'); // Номер телефона получателя SMS
-            $table->text('message'); // Текст SMS-сообщения
+            $table->string('phone_number'); 
+            $table->text('message'); 
             $table->timestamps();
         });
     }

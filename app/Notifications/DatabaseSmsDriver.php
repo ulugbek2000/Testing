@@ -24,7 +24,7 @@ class DatabaseSmsDriver extends Notification
     {
         $smsData = $notification->toSms($notifiable);
 
-        // Сохраните SMS в базе данных
+        
         DB::table('sms_messages')->insert([
             'phone_number' => $smsData['number'],
             'message' => $smsData['text'],
@@ -34,8 +34,8 @@ class DatabaseSmsDriver extends Notification
     public function toDatabase($notifiable)
     {
         return [
-            'number' => $this->number, // Номер телефона получателя
-            'text' => $this->text, // Текст SMS-сообщения
+            'number' => $this->number, 
+            'text' => $this->text,
         ];
     }
 }

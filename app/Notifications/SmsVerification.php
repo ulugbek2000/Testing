@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use App\SmsMessage;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -29,7 +30,7 @@ class SmsVerification extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['database', 'sms'];
+        return ['database'];
     }
 
     /**
@@ -39,18 +40,24 @@ class SmsVerification extends Notification
      */
     public function toArray(object $notifiable): array
     {
+         (new SmsMessage)
+                    ->from(config('app.name'))
+                    ->to($this->message['phone'])
+                    ->line($this->message['text']);
+
         return [
             $this->message
         ];
+
+
     }
 
-    public function toSms(object $notifiable) {
-        $txn_id = uniqid();
-        $result = SMSGateway::Send($this->message['number'], $this->message['text'], $txn_id);
-
-        if ($result) 
-            return "SMS has been sent successfully";
-        return "An error occurred while sending the SMS";
+    public function toSms($notifiable)
+    {
+        return (new SmsMessage)
+                    ->from(config('app.name'))
+                    ->to($this->message['phone'])
+                    ->line($this->message['text']);
     }
 
 }
