@@ -84,7 +84,7 @@ class User extends Authenticatable
 
     function verifyCode($code) {
         $notification = $this->unreadNotifications()->where('type', 'App\Notifications\SmsVerification')->latest()->first();
-        $result = array_key_exists('verification', $notification->data) && $notification->data['verification'] === $code ? true : false;
+        $result = ($notification && array_key_exists('verification', $notification->data) && $notification->data['verification'] === $code) ? true : false;
         if($result){
             $this->update(['phone_verified_at' => now()]);
         }
