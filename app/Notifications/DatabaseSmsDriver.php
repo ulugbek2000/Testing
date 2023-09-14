@@ -14,7 +14,7 @@ class DatabaseSmsDriver extends Notification
 
     public function send($notifiable, Notification $notification)
     {
-        $smsData = $notification->toDatabaseSms($notifiable);
+        $smsData = $notification->toSms($notifiable);
 
         // Сохраните SMS в базе данных
         DB::table('sms_messages')->insert([
