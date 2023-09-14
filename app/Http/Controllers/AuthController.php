@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Enums\UserType;
 use App\Models\User;
 use App\Models\UserSkills;
+use App\Notifications\SmsVerification;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
@@ -58,6 +59,17 @@ class AuthController extends Controller
                 'photo' => $request->hasFile('photo') ? $request->file('photo')->store('photo', 'public') : null,
             ]);
         }
+        $user->sms_notification_required = true;
+        $user->save();
+        $verificationCode = mt_rand(1000, 9999);
+        // Отправка SMS-уведомления
+        $smsData = [
+            'number' => $user->phone, // Предполагается, что у пользователя есть поле "phone" с номером телефона
+            'text' => 'Код подтверждения: ' . $verificationCode, // Генерируйте уникальный код подтверждения
+        ];
+    
+        // Отправляем уведомление с помощью очереди
+        $user->notify((new SmsVerification($smsData))->delay(now()->addMinutes(1))); // Задержка 1 минуту
 
         $user->assignRole(UserType::Student);
         // $user->user_type = 'student';
