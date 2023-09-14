@@ -52,11 +52,5 @@ class SmsVerification extends Notification
             return "SMS has been sent successfully";
         return "An error occurred while sending the SMS";
     }
-    // public function toDatabase($notifiable)
-    // {
-    //     return [
-    //         'number' => $this->number, // Номер телефона получателя
-    //         'text' => $this->text, // Текст SMS-сообщения
-    //     ];
-    // }
+
 }
