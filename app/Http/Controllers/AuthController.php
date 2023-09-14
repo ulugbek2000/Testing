@@ -15,45 +15,7 @@ use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Validator;
 // use Illuminate\Validation\ValidationException;
 class AuthController extends Controller
-{
-    public function register(Request $request, User $user)
-    {
-
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|string',
-            'surname' => 'required|string',
-            'email' => 'required_without:phone|email|unique:users',
-            'phone' => 'required_without:email|string|unique:users',
-            'password' => 'required|string|min:8',
-            'city' => 'nullable|string',
-            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,mov',
-            'gender' => 'nullable|string|in:male,female,other',
-            'date_of_birth' => 'nullable|date',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
-        
-        $user = User::create([
-            'name' => $request->input('name'),
-            'surname' => $request->input('surname'),
-            'email' => $request->input('email'),
-            'phone' => $request->input('phone'),
-            'password' => Hash::make($request->input('password')),
-            'city' => $request->input('city'),
-            'gender' => $request->input('gender'),
-            'date_of_birth' => $request->input('date_of_birth'),
-            'photo' => $request->hasFile('photo') ? $request->file('photo')->store('photo', 'public') : null,
-        ]);
-      
-       
-        $user->save();
-    
-        // $user->save();
-        return response()->json(['message' => 'Registration successful'], 201);
-    }
-
+{   
     public function login(Request $request)
     {
 
