@@ -23,15 +23,15 @@ class NewUserListener
     public function handle(object $event): void
     {
             // Assign newly registered user as student
-            $event->user->assignRole(UserType::Student);
+        //     $event->user->assignRole(UserType::Student);
        
-        // Send sms verification notification
-        $verificationNumber = rand(1000, 9999);
-        $event->user->notify(new SmsVerification(
-            [
-                'text' => "Ваш проверочный номер {$verificationNumber}",
-                'verification' => $verificationNumber
-            ]
-        ));
+        // // Send sms verification notification
+        // $verificationNumber = rand(1000, 9999);
+        // $event->user->notify(new SmsVerification(
+        //     [
+        //         'text' => "Ваш проверочный номер {$verificationNumber}",
+        //         'verification' => $verificationNumber
+        //     ]
+        // ));
     }
 }
