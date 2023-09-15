@@ -51,16 +51,13 @@ Auth::routes([
 ]);
 
 Route::post('login', [AuthController::class, 'login']);
-// Route::post('register', [AuthController::class, 'register']);
 Route::post('verify-phone', [AuthController::class, 'verifyPhoneNumber']);
 
 Route::get('course', [CourseController::class, 'index']);
 
-
-
 Route::get('course/{course}/topics', [TopicController::class, 'index']);
 
-
+Route::get('topic/{topic}/lessons', [LessonController::class, 'index']);
 
 // });
 
@@ -75,7 +72,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         //Update mentor with help Admin
         Route::put('/user/{user}',  [ProfileController::class, 'updateTeacher']);
 
-        //get all Student
+        //get all users
         Route::get('getStudents', [ProfileController::class, 'getAllStudents']);
         Route::get('getTeachers', [ProfileController::class, 'getAllTeachers']);
         Route::get('user/{user}', [ProfileController::class, 'getUserById']);
@@ -96,7 +93,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
         //End Topics
 
         //Start Lessons
-        Route::get('topic/{topic}/lessons', [LessonController::class, 'index']);
         Route::get('lesson/{lesson}', [LessonController::class, 'show']);
         Route::post('lesson', [LessonController::class, 'store']);
         Route::put('lesson/{lesson}', [LessonController::class, 'update']);
@@ -162,6 +158,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::middleware('access:' . implode(',', [UserType::Student]))->group(function () {
     });
+
     Route::post('logout', [AuthController::class, 'logout']);
 
     Route::get('/account', function () {

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\UserType;
 use App\Models\Course;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\Paginator;
@@ -29,7 +30,7 @@ class CourseController extends Controller
      */
     public function index(Request $request)
     {
-      
+
 
         $per_page = $request->per_page ?? 12;
         // All Courses
@@ -70,7 +71,7 @@ class CourseController extends Controller
             // 'price' => 'required',
         ]);
         $logo = $request->file('logo')->store('images', 'public');
-        $video = $request->file('video')->store('videos', 'public'); 
+        $video = $request->file('video')->store('videos', 'public');
 
         // Сохранение видео в папку storage/app/public/videos
 
@@ -178,6 +179,23 @@ class CourseController extends Controller
 
     public function enroll(Request $request, Course $course, User $user)
     {
+        $teachers = [$user]; // Замените этот массив ID учителей на ваш собственный
+
+        foreach ($teachers as $teacherId) {
+            // Проверяем, что пользователь с таким ID существует и имеет тип "Teacher"
+            $teacher = User::where('id', $teacherId)->where('user_type', UserType::Teacher)->first();
+
+            if ($teacher) {
+                $userCourse = UserCourse::firstOrCreate([
+                    'user_id' => $teacher->id,
+                    'course_id' => $course->id
+                ], [
+                    'user_id' => $teacher->id,
+                    'course_id' => $course->id
+                ]);
+            }
+        }
+
         $userCourse = UserCourse::firstOrCreate([
             'user_id' => $user->id,
             'course_id' => $course->id
@@ -185,8 +203,7 @@ class CourseController extends Controller
             'user_id' => $user->id,
             'course_id' => $course->id
         ]);
-        return response()->json([
-            'message' => $userCourse->wasRecentlyCreated ? "Student enrolled to course successfuly." : "Student already enrolled!"
-        ], 200);
+        return response()->json(['message' => $userCourse->wasRecentlyCreated ? "User enrolled to course successfuly." : "User already enrolled!"], 200);
     }
 }
+    

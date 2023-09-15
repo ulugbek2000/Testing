@@ -88,7 +88,6 @@ class RegisterController extends Controller
             'gender' => $data['gender'],
             'date_of_birth' => $data['date_of_birth'] ?? null,
             'photo' => $photoPath,
-            // 'photo' => $data->hasFile('photo') ? $data->file('photo')->store('photo', 'public') : null,
         ]);
     }
 }
