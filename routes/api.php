@@ -63,7 +63,7 @@ Route::get('topic/{topic}/lessons', [LessonController::class, 'index']);
 
 Route::middleware(['auth:sanctum'])->group(function () {
 
-   
+
     Route::put('profile', [ProfileController::class, 'updateProfile']);
 
 
@@ -83,6 +83,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::put('course/{course}', [CourseController::class, 'update']);
         Route::delete('course/{course}', [CourseController::class, 'destroy']);
         Route::post('enroll/{course}/{user}', [CourseController::class, 'enroll']);
+
+        Route::post('/courses/{course}/add-teachers', [CourseController::class,'addTeachersToCourse']);
         //End Courses
 
         //Start Topics
@@ -147,7 +149,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::delete('transactiondelete/{id}', [UserTransactionController::class, 'destroy']);
         //End Transaction
 
-        
+
         Route::get('role', [RoleController::class, 'index']);
         Route::post('role', [RoleController::class, 'store']);
         Route::get('role/{id}', [RoleController::class, 'show']);
