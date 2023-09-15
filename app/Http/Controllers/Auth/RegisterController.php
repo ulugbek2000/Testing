@@ -77,7 +77,7 @@ class RegisterController extends Controller
 
         if (isset($data['photo']) && $data['photo']->isValid()) {
             $photoPath = $data['photo']->store('photo', 'public');
-
+        }
         return User::create([
             'name' => $data['name'],
             'surname' => $data['surname'],
@@ -90,5 +90,4 @@ class RegisterController extends Controller
             'photo' => $photoPath,
         ]);
     }
-}
 }
