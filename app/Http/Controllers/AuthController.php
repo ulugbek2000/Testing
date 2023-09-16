@@ -15,7 +15,7 @@ use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Validator;
 // use Illuminate\Validation\ValidationException;
 class AuthController extends Controller
-{   
+{
     public function login(Request $request)
     {
 
@@ -64,10 +64,23 @@ class AuthController extends Controller
         return response()->json(['message' => 'You are Logouted ']);
     }
 
-    function verifyPhoneNumber(Request $request) {
+    function verifyPhoneNumber(Request $request)
+    {
         $user = Auth::user();
-        return $user->verifyCode($request->input('verification')) == true 
-            ? response()->json(['message' =>'Verification Completed'], 200) 
-            : response()->json(['message' =>'Verification Failed'], 406);
+        if ($user) {
+            // Проверяем код верификации и возвращаем соответствующий ответ
+            if ($user->verifyCode($request->input('verification')) === true) {
+                return response()->json(['message' => 'Verification Completed'], 200);
+            } else {
+                return response()->json(['message' => 'Verification Failed'], 406);
+            }
+        } else {
+            // Если пользователь не аутентифицирован, вернем соответствующий ответ
+            return response()->json(['message' => 'User not authenticated'], 401);
+        }
+        // $user = Auth::user();
+        // return $user->verifyCode($request->input('verification')) === true 
+        //     ? response()->json(['message' =>'Verification Completed'], 200) 
+        //     : response()->json(['message' =>'Verification Failed'], 406);
     }
 }
