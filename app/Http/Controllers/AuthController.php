@@ -67,20 +67,9 @@ class AuthController extends Controller
     function verifyPhoneNumber(Request $request)
     {
         $user = Auth::user();
-        if ($user) {
-            // Проверяем код верификации и возвращаем соответствующий ответ
-            if ($user->verifyCode($request->input('verification')) === true) {
-                return response()->json(['message' => 'Verification Completed'], 200);
-            } else {
-                return response()->json(['message' => 'Verification Failed'], 406);
-            }
-        } else {
-            // Если пользователь не аутентифицирован, вернем соответствующий ответ
-            return response()->json(['message' => 'User not authenticated'], 401);
-        }
-        // $user = Auth::user();
-        // return $user->verifyCode($request->input('verification')) === true 
-        //     ? response()->json(['message' =>'Verification Completed'], 200) 
-        //     : response()->json(['message' =>'Verification Failed'], 406);
+        dd($user);
+        return $user->verifyCode($request->input('verification')) === true 
+            ? response()->json(['message' =>'Verification Completed'], 200) 
+            : response()->json(['message' =>'Verification Failed'], 406);
     }
 }
