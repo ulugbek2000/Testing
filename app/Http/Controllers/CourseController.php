@@ -224,7 +224,7 @@ class CourseController extends Controller
             ->get();
     
         if ($teachers->isEmpty()) {
-            return response()->json(['message' => 'Teacher not founr or incorrect type'], 404);
+            return response()->json(['message' => 'Teacher not found or incorrect type'], 404);
         }
     
         $course->users()->syncWithoutDetaching($teachers->pluck('id'));
