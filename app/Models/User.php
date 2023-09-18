@@ -46,7 +46,7 @@ class User extends Authenticatable
 
     public function courses()
     {
-        return $this->hasManyThrough(Course::class, UserCourse::class);
+        return $this->hasMany(Course::class, UserCourse::class);
     }
 
     public function role()

@@ -179,23 +179,6 @@ class CourseController extends Controller
 
     public function enroll(Request $request, Course $course, User $user)
     {
-        $teachers = [$user]; // Замените этот массив ID учителей на ваш собственный
-
-        foreach ($teachers as $teacherId) {
-            // Проверяем, что пользователь с таким ID существует и имеет тип "Teacher"
-            $teacher = User::where('id', $teacherId)->where('user_type', UserType::Teacher)->first();
-
-            if ($teacher) {
-                $userCourse = UserCourse::firstOrCreate([
-                    'user_id' => $teacher->id,
-                    'course_id' => $course->id
-                ], [
-                    'user_id' => $teacher->id,
-                    'course_id' => $course->id
-                ]);
-            }
-        }
-
         $userCourse = UserCourse::firstOrCreate([
             'user_id' => $user->id,
             'course_id' => $course->id
@@ -205,9 +188,6 @@ class CourseController extends Controller
         ]);
         return response()->json(['message' => $userCourse->wasRecentlyCreated ? "User enrolled to course successfuly." : "User already enrolled!"], 200);
     }
-
-
-
 
     public function addTeachersToCourse(Request $request,Course $course)
     {
@@ -227,7 +207,7 @@ class CourseController extends Controller
             return response()->json(['message' => 'Teacher not found or incorrect type'], 404);
         }
     
-        $course->users->syncWithoutDetaching($teachers->pluck('id'));
+        $course->users()->syncWithoutDetaching($teachers->pluck('id'));
     
         return response()->json(['message' => 'Teacher added succesfully']);
     }
