@@ -189,28 +189,25 @@ class CourseController extends Controller
         return response()->json(['message' => $userCourse->wasRecentlyCreated ? "User enrolled to course successfuly." : "User already enrolled!"], 200);
     }
 
-    public function addTeachersToCourse(Request $request,Course $course)
+    public function addTeachersToCourse(Request $request, Course $course)
     {
-        // Предполагается, что в запросе есть массив с ID учителей для добавления в курс
         $teacherIds = $request->input('teacher_ids', []);
-    
-    
+
+
         if (!$course) {
             return response()->json(['message' => 'Course not found'], 404);
         }
-    
+
         $teachers = User::whereIn('id', $teacherIds)
-            ->where('user_type', UserType::Teacher) // Проверьте, что пользователи имеют тип "Teacher"
+            ->where('user_type', UserType::Teacher)
             ->get();
-    
+
         if ($teachers->isEmpty()) {
             return response()->json(['message' => 'Teacher not found or incorrect type'], 404);
         }
-    
+
         $course->users()->syncWithoutDetaching($teachers->pluck('id'));
-    
+
         return response()->json(['message' => 'Teacher added succesfully']);
     }
-
 }
-    
