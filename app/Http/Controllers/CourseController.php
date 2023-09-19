@@ -203,24 +203,5 @@ class CourseController extends Controller
         }
     
         return response()->json(['message' => 'No teachers selected or incorrect type.'], 400);
-
-        // $teacherIds = $request->input('teacher_ids', []);
-
-
-        // if (!$course) {
-        //     return response()->json(['message' => 'Course not found'], 404);
-        // }
-
-        // $teachers = User::whereIn('id', $teacherIds)
-        //     ->where('user_type', UserType::Teacher)
-        //     ->get();
-
-        // if ($teachers->isEmpty()) {
-        //     return response()->json(['message' => 'Teacher not found or incorrect type'], 404);
-        // }
-
-        // $course->users()->syncWithoutDetaching($teachers->pluck('id'));
-
-        // return response()->json(['message' => 'Teacher added succesfully']);
     }
 }
