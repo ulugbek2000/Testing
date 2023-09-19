@@ -192,17 +192,31 @@ class CourseController extends Controller
     public function addTeachersToCourse(Request $request, Course $course)
     {
         $teacherIds = $request->input('teacher_ids', []);
-
-        if (count($teacherIds) > 0) {
-            $teachers = User::whereIn('id', $teacherIds)->where('user_type', UserType::Teacher)->get();
     
-            if ($teachers->isNotEmpty()) {
-                $course->users()->syncWithoutDetaching($teachers->pluck('id'));
-                return response()->json(['message' => 'Teachers enrolled successfully.'], 200);
+        if (!$course) {
+            return response()->json(['message' => 'Course not found'], 404);
+        }
+        
+        // Получите все текущие связанные записи для курса
+        $existingTeachers = $course->teachers;
+        
+        foreach ($teacherIds as $teacherId) {
+            // Проверьте, что пользователь существует и является учителем
+            $teacher = User::where('id', $teacherId)
+                ->where('user_type', UserType::Teacher)
+                ->first();
+        
+            if ($teacher) {
+                // Проверьте, не существует ли уже такой связи
+                if (!$existingTeachers->contains($teacher)) {
+                    // Если связи нет, создайте её
+                    $course->teachers()->save($teacher);
+                }
             }
         }
-    
-        return response()->json(['message' => 'No teachers selected or incorrect type.'], 400);
+        
+        return response()->json(['message' => 'Teachers added successfully']);
+        
 
         // $teacherIds = $request->input('teacher_ids', []);
 
