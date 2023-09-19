@@ -193,21 +193,34 @@ class CourseController extends Controller
     {
         $teacherIds = $request->input('teacher_ids', []);
 
-
-        if (!$course) {
-            return response()->json(['message' => 'Course not found'], 404);
+        if (count($teacherIds) > 0) {
+            $teachers = User::whereIn('id', $teacherIds)->where('user_type', UserType::Teacher)->get();
+    
+            if ($teachers->isNotEmpty()) {
+                $course->users()->syncWithoutDetaching($teachers->pluck('id'));
+                return response()->json(['message' => 'Teachers enrolled successfully.'], 200);
+            }
         }
+    
+        return response()->json(['message' => 'No teachers selected or incorrect type.'], 400);
 
-        $teachers = User::whereIn('id', $teacherIds)
-            ->where('user_type', UserType::Teacher)
-            ->get();
+        // $teacherIds = $request->input('teacher_ids', []);
 
-        if ($teachers->isEmpty()) {
-            return response()->json(['message' => 'Teacher not found or incorrect type'], 404);
-        }
 
-        $course->users()->syncWithoutDetaching($teachers->pluck('id'));
+        // if (!$course) {
+        //     return response()->json(['message' => 'Course not found'], 404);
+        // }
 
-        return response()->json(['message' => 'Teacher added succesfully']);
+        // $teachers = User::whereIn('id', $teacherIds)
+        //     ->where('user_type', UserType::Teacher)
+        //     ->get();
+
+        // if ($teachers->isEmpty()) {
+        //     return response()->json(['message' => 'Teacher not found or incorrect type'], 404);
+        // }
+
+        // $course->users()->syncWithoutDetaching($teachers->pluck('id'));
+
+        // return response()->json(['message' => 'Teacher added succesfully']);
     }
 }
