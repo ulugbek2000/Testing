@@ -61,12 +61,18 @@ class AuthController extends Controller
 
     public function logout()
     {
-        auth()->user()->tokens->each(function ($token, $key) {
-            $token->delete();
-        });
-        return response()->json([
-            'message' => 'Logged out successfully!'
-        ], 200);
+        Auth::guard('web')->logout();
+    
+        // First try: auth()->user()->currentAccessToken()->delete();
+        // Second try: $request->user()->token()->revoke();
+        auth()->user()->tokens()->delete();
+
+        // auth()->user()->tokens->each(function ($token, $key) {
+        //     $token->delete();
+        // });
+        // return response()->json([
+        //     'message' => 'Logged out successfully!'
+        // ], 200);
 
         // Auth::guard('web')->logout();
         // return response()->json(['message' => 'You are Logouted ']);
