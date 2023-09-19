@@ -63,25 +63,13 @@ class AuthController extends Controller
     {
         Auth::guard('web')->logout();
     
-        // First try: auth()->user()->currentAccessToken()->delete();
-        // Second try: $request->user()->token()->revoke();
         auth()->user()->tokens()->delete();
-
-        // auth()->user()->tokens->each(function ($token, $key) {
-        //     $token->delete();
-        // });
-        // return response()->json([
-        //     'message' => 'Logged out successfully!'
-        // ], 200);
-
-        // Auth::guard('web')->logout();
-        // return response()->json(['message' => 'You are Logouted ']);
     }
 
     function verifyPhoneNumber(Request $request)
     {
         $user = Auth::guard('web')->user();
-
+dd($user);
         if ($user) {
             // Пользователь аутентифицирован, можно вызывать метод verifyCode()
             if ($user->verifyCode($request->input('verification'))) {
