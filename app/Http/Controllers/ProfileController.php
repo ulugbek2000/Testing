@@ -217,8 +217,13 @@ class ProfileController extends Controller
 
     public function getUserById(User $user)
     {
-        return response()->json([
-            'user' => $user
-        ], 200)->with('userSkills')->get();
+         // Проверяем, является ли пользователь учителем
+         if ($user && $user->user_type == UserType::Teacher) {
+            // Если пользователь - учитель, получаем его скиллы
+            $teacherSkills = UserSkills::where('user_id', $user->id)->get();
+            return response()->json(['skills' => $teacherSkills], 200);
+        } else {
+            return response()->json(['message' => 'User is not a teacher'], 404);
+        }
     }
 }
