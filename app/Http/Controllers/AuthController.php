@@ -61,8 +61,16 @@ class AuthController extends Controller
 
     public function logout()
     {
+        Auth::user()->tokens()->each(function ($token, $key) {
+            $token->delete();
+        });
+    
         Auth::guard('web')->logout();
-        return response()->json(['message' => 'You are Logouted ']);
+        
+        return response()->json(['message' => 'You are logged out']);
+
+        // Auth::guard('web')->logout();
+        // return response()->json(['message' => 'You are Logouted ']);
     }
 
     function verifyPhoneNumber(Request $request)
