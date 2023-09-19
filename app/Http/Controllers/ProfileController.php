@@ -219,6 +219,6 @@ class ProfileController extends Controller
     {
         return response()->json([
             'user' => $user
-        ], 200);
+        ], 200)->with('userSkills')->get();
     }
 }
