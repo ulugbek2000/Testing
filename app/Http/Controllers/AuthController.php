@@ -70,7 +70,6 @@ class AuthController extends Controller
     {
         // $user = Auth::user();
         $user = Auth::guard('web')->user();
-        dd($user);
         if ($user) {
             // Пользователь аутентифицирован, можно вызывать метод verifyCode()
             if ($user->verifyCode($request->input('verification'))) {
