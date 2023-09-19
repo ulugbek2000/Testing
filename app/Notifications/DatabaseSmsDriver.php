@@ -10,32 +10,32 @@ use Illuminate\Support\Facades\DB;
 
 class DatabaseSmsDriver extends Notification
 {
-    use Queueable;
-    private $number;
-    private $text;
+    // use Queueable;
+    // private $number;
+    // private $text;
 
-    public function __construct($message)
-    {
-        $this->number = $message['number'];
-        $this->text = $message['text'];
-    } 
+    // public function __construct($message)
+    // {
+    //     $this->number = $message['number'];
+    //     $this->text = $message['text'];
+    // } 
     
-    public function send($notifiable, Notification $notification)
-    {
-        $smsData = $notification->toSms($notifiable);
+    // public function send($notifiable, Notification $notification)
+    // {
+    //     $smsData = $notification->toSms($notifiable);
 
         
-        DB::table('sms_messages')->insert([
-            'phone_number' => $smsData['number'],
-            'message' => $smsData['text'],
-        ]);
-    }
+    //     DB::table('sms_messages')->insert([
+    //         'phone_number' => $smsData['number'],
+    //         'message' => $smsData['text'],
+    //     ]);
+    // }
 
-    public function toDatabase($notifiable)
-    {
-        return [
-            'number' => $this->number, 
-            'text' => $this->text,
-        ];
-    }
+    // public function toDatabase($notifiable)
+    // {
+    //     return [
+    //         'number' => $this->number, 
+    //         'text' => $this->text,
+    //     ];
+    // }
 }
