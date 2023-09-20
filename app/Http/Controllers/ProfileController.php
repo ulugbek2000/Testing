@@ -224,7 +224,7 @@ class ProfileController extends Controller
             return response()->json(['teacher' => $user], 200);
         }
 
-        if (!$user->user_type == UserType::Teacher) {
+        else if (!$user->user_type == UserType::Teacher) {
         
             return response()->json(['user' => $user], 200);
         }
