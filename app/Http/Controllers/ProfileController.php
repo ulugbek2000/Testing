@@ -214,8 +214,8 @@ class ProfileController extends Controller
 
         return response()->json($teachers);
     }
-// getTeacherWithSkills
-    public function getUserById(Request $request,User $user)
+
+    public function getUserById(Request $request, User $user)
     {
         if (!$user) {
             // Если пользователь не найден, вернем сообщение об ошибке
@@ -224,7 +224,6 @@ class ProfileController extends Controller
 
         // Проверим, является ли пользователь учителем
         if ($user->user_type == UserType::Teacher) {
-            // Если пользователь - учитель, загрузим информацию о его навыках
             $user->load('userSkills');
         }
 
