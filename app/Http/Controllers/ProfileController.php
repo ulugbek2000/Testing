@@ -214,8 +214,8 @@ class ProfileController extends Controller
 
         return response()->json($teachers);
     }
-
-    public function getTeacherWithSkills(Request $request, $userId)
+// getTeacherWithSkills
+    public function getUserById(Request $request, $userId)
     {
         // Найдем пользователя по его идентификатору с скиллами
         $user = User::with('teacherSkills')->find($userId);
