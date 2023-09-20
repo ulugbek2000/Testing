@@ -218,7 +218,7 @@ class ProfileController extends Controller
     public function getUserById(Request $request, $userId)
     {
         // Найдем пользователя по его идентификатору с скиллами
-        $user = User::with('teacherSkills')->find($userId);
+        $user = User::with('userSkills')->find($userId);
 
         // Проверим, является ли пользователь учителем
         if ($user && $user->user_type == UserType::Teacher) {
