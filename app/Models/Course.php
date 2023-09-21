@@ -19,11 +19,10 @@ class Course extends Model
         'quantity_lessons',
         'hours_lessons',
         'short_description',
-        // 'duration',
-        // 'duration_type',
+        'duration',
+        'duration_type',
         'video',
         'has_certificate',
-        // 'price'
     ];
 
 

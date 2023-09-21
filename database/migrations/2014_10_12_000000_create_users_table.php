@@ -25,9 +25,9 @@ return new class extends Migration
                 $table->string('user_type')->nullable();
                 // $table->foreignId('role_id')->references('id')->on('roles')->onDelete('cascade');
                 $table->timestamp('email_verified_at')->nullable();
+                $table->timestamp('phone_verified_at')->nullable();
                 $table->date('date_of_birth')->nullable();
                 $table->string('photo')->nullable();
-                $table->timestamp('phone_verified_at')->nullable();
                 $table->string('password')->nullable();
                 $table->text('two_factor_secret')->nullable();
                 $table->text('two_factor_recovery_codes')->nullable();

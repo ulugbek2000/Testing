@@ -2,6 +2,7 @@
 
 use App\Enums\UserType;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BalanceController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\CourseSkillsController;
 use App\Http\Controllers\LessonController;
@@ -84,7 +85,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::delete('course/{course}', [CourseController::class, 'destroy']);
         Route::post('enroll/{course}/{user}', [CourseController::class, 'enroll']);
 
-        Route::post('/courses/{course}/add-teachers', [CourseController::class,'addTeachersToCourse']);
+        Route::post('/courses/{course}/add-teachers', [CourseController::class, 'addTeachersToCourse']);
         //End Courses
 
         //Start Topics
@@ -159,6 +160,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     });
 
     Route::middleware('access:' . implode(',', [UserType::Student]))->group(function () {
+        Route::post('balance/deposit', [BalanceController::class, 'deposit']);
+        Route::post('balance/withdraw', [BalanceController::class, 'purchaseCourse']);
     });
 
     Route::post('logout', [AuthController::class, 'logout']);

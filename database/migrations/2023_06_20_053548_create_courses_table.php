@@ -21,9 +21,6 @@ return new class extends Migration
                 $table->string('hours_lessons');
                 $table->text('short_description');
                 $table->string('video')->nullable();
-                // $table->decimal('price', 10, 2);
-                // $table->integer('duration');
-                // $table->string('duration_type');
                 $table->boolean('has_certificate')->default(false);
                 $table->timestamps();
                 $table->softDeletes();

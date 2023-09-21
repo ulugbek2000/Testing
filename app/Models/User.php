@@ -59,7 +59,10 @@ class User extends Authenticatable
         return $this->hasMany(UserSkills::class);
     }
 
-
+    public function balance()
+    {
+        return $this->hasMany(Balance::class);
+    }
 
     /**
      * The attributes that should be hidden for serialization.

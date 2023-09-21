@@ -5,16 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Description extends Model
+class Balance extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'description',
-        'subscription_id',
+        'amount',
+        'user_id'
     ];
-    
-    public function subscription()
-    {
-        return $this->belongsTo(Subscription::class);
+    public function user(){
+        return $this->belongsTo(User::class);
     }
 }
