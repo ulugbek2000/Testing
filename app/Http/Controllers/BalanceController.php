@@ -25,7 +25,7 @@ class BalanceController extends Controller
         return response()->json('success', 'Balance updated successfully');
     }
 
-    public function purchaseCourse(Request $request, Course $course)
+    public function purchaseCourse(Request $request)
     {
         $user = Auth::user();
         if (!$user->balance) {
@@ -38,13 +38,20 @@ class BalanceController extends Controller
             $user->balance()->associate($balance);
             $user->save();
         }
+
+        // Получите идентификатор курса из запроса.
+        $courseId = $request->input('course_id');
+
+        // Загрузите объект курса по его идентификатору.
+        $course = Course::find($courseId);
+
         if (!$course) {
-            return response()->json('error', 'Course not found');
+            return response()->json(['error' => 'Course not found'], 404);
         }
 
         // Проверьте, достаточно ли средств на балансе пользователя.
         if ($user->balance->amount < $course->subscription->price) {
-            return response()->json('error', 'Insufficient balance');
+            return response()->json(['error' => 'Insufficient balance'], 400);
         }
 
         // Уменьшите баланс пользователя.
@@ -54,6 +61,39 @@ class BalanceController extends Controller
         // Добавьте пользователя к курсу.
         $user->courses()->attach($course);
 
-        return response()->json('success', 'Course purchased successfully');
+        return response()->json(['success' => 'Course purchased successfully'], 200);
     }
+
+
+    // public function purchaseCourse(Request $request, Course $course)
+    // {
+    //     $user = Auth::user();
+    //     if (!$user->balance) {
+    //         // Если объект баланса отсутствует, создайте его.
+    //         $balance = new Balance();
+    //         $balance->amount = 0; // Устанавливаем начальный баланс в 0 или другое значение.
+    //         $balance->save();
+
+    //         // Привяжите объект баланса к пользователю.
+    //         $user->balance()->associate($balance);
+    //         $user->save();
+    //     }
+    //     if (!$course) {
+    //         return response()->json('error', 'Course not found');
+    //     }
+
+    //     // Проверьте, достаточно ли средств на балансе пользователя.
+    //     if ($user->balance->amount < $course->subscription->price) {
+    //         return response()->json('error', 'Insufficient balance');
+    //     }
+
+    //     // Уменьшите баланс пользователя.
+    //     $user->balance->amount -= $course->subscription->price;
+    //     $user->balance->save();
+
+    //     // Добавьте пользователя к курсу.
+    //     $user->courses()->attach($course);
+
+    //     return response()->json('success', 'Course purchased successfully');
+    // }
 }
