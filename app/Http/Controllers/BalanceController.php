@@ -19,10 +19,17 @@ class BalanceController extends Controller
             return response()->json(['error' => 'Invalid amount'], 400);
         }
         
-        $user->balance->amount += $amount;
-        $user->balance->save();
+        // Получаем объект баланса пользователя
+        $balance = $user->balance;
+        
+        // Увеличиваем баланс
+        $balance->amount += $amount;
+        
+        // Сохраняем изменения
+        $balance->save();
         
         return response()->json(['success' => 'Balance updated successfully'], 200);
+        
         
     }
 
