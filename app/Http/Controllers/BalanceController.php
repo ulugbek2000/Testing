@@ -10,19 +10,19 @@ use Illuminate\Support\Facades\Auth;
 
 class BalanceController extends Controller
 {
-    public function deposit(Request $request, User $user)
+    public function deposit(Request $request)
     {
-        // $user = Auth::user();
+        $user = Auth::user();
         $amount = $request->input('amount');
 
         if ($amount <= 0) {
-            return response()->json('error', 'Invalid amount');
+            return response()->json(['message' => 'Invalid amount']);
         }
 
         $user->balance->amount += $amount;
-        $user->balance()->save($user);
+        $user->balance->save();
 
-        return response()->json('success', 'Balance updated successfully');
+        return response()->json(['message' => 'Balance updated successfully']);
     }
 
     public function purchaseCourse(Request $request)
