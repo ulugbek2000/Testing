@@ -22,6 +22,6 @@ class Subscription extends Model
     }
     public function description()
     {
-        return $this->hasMany(Description::class);
+        return $this->hasMany(Description::class, 'course_id');
     }
 }
