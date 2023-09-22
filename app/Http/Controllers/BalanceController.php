@@ -14,15 +14,16 @@ class BalanceController extends Controller
     {
         $user = Auth::user();
         $amount = $request->input('amount');
-
+        
         if ($amount <= 0) {
-            return response()->json(['message' => 'Invalid amount']);
+            return response()->json(['error' => 'Invalid amount'], 400);
         }
-
+        
         $user->balance->amount += $amount;
         $user->balance->save();
-
-        return response()->json(['message' => 'Balance updated successfully']);
+        
+        return response()->json(['success' => 'Balance updated successfully'], 200);
+        
     }
 
     public function purchaseCourse(Request $request)
