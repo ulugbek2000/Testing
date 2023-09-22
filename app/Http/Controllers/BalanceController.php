@@ -20,7 +20,16 @@ class BalanceController extends Controller
         }
         
         // Получаем объект баланса пользователя
-        $balance = $user->balance();
+        $balance = $user->balance;
+        
+        // Проверяем, существует ли объект баланса
+        if (!$balance) {
+            // Если объект баланса отсутствует, создаем новый
+            $balance = new Balance();
+            $balance->amount = 0; // Устанавливаем начальный баланс
+            $balance->user()->associate($user); // Связываем с пользователем
+            $balance->save(); // Сохраняем баланс
+        }
         
         // Увеличиваем баланс
         $balance->amount += $amount;
@@ -29,6 +38,7 @@ class BalanceController extends Controller
         $balance->save();
         
         return response()->json(['success' => 'Balance updated successfully'], 200);
+        
         
         
     }
