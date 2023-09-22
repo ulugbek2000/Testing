@@ -52,7 +52,7 @@ class SubscriptionController extends Controller
             'course_id' => $data['course_id'],
         ]);
 
-        // $subscription = Subscription::findOrFail($subscription);
+        $subscription = Subscription::findOrFail($subscription);
 
         if (isset($data['description'])) {
             foreach ($data['description'] as $descriptionData) {
