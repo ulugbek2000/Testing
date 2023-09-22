@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Course;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -23,20 +24,20 @@ class BalanceController extends Controller
         return response()->json('success', 'Balance updated successfully');
     }
 
-    public function purchaseCourse(Request $request, Course $course)
+    public function purchaseCourse(Request $request, Course $course,User $user)
     {
-        $user = Auth::user();
+        // $user = Auth::user();
 
         if (!$course) {
             return response()->json('error', 'Course not found');
         }
 
-        if ($user->balance()->amount < $course->subscription->price) {
+        if ($user->balance->amount < $course->subscription->price) {
             return response()->json('error', 'Insufficient balance');
         }
 
         // Уменьшите баланс пользователя
-        $user->balance()->amount -= $course->subscription->price;
+        $user->balance->amount -= $course->subscription->price;
         $user->balance->save();
 
         // Добавьте пользователя к курсу
