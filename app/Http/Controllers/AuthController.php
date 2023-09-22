@@ -62,22 +62,15 @@ class AuthController extends Controller
     public function logout()
     {
         Auth::guard('web')->logout();
-    
+
         auth()->user()->tokens()->delete();
     }
 
     function verifyPhoneNumber(Request $request)
     {
-        $user = Auth::guard('api')->user();
-        if ($user) {
-            // Пользователь аутентифицирован, можно вызывать метод verifyCode()
-            if ($user->verifyCode($request->input('verification'))) {
-                return response()->json(['message' => 'Verification Completed'], 200);
-            } else {
-                return response()->json(['message' => 'Verification Failed'], 406);
-            }
-        } else {
-            return response()->json(['message' => 'User not authenticated'], 401);
-        }
+        $user = Auth::user();
+        return $user->verifyCode($request->input('verification')) === true
+            ? response()->json(['message' => 'Verification Completed'], 200)
+            : response()->json(['message' => 'Verification Failed'], 406);
     }
 }
