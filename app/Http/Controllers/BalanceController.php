@@ -20,7 +20,7 @@ class BalanceController extends Controller
         }
 
         $user->balance->amount += $amount;
-        $user->balance->save();
+        $user->save();
 
         return response()->json('success', 'Balance updated successfully');
     }
