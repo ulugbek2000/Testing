@@ -52,19 +52,23 @@ class SubscriptionController extends Controller
             'course_id' => $data['course_id'],
         ]);
 
-        // $subscription = Subscription::findOrFail($subscription);
-
         if (isset($data['description'])) {
             foreach ($data['description'] as $descriptionData) {
-                Description::create([
+                $description = Description::create([
                     'subscription_id' => $subscription->id,
                     'description' => $descriptionData['description'],
                 ]);
+
+                // Добавим отладочную информацию
+                if (!$description) {
+                    return response()->json(['error' => 'Failed to create description'], 500);
+                }
             }
         }
 
         return response()->json(['message' => 'Subscription created successfully']);
     }
+
 
     /**
      * Display the specified resource.
