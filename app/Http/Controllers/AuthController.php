@@ -68,7 +68,7 @@ class AuthController extends Controller
 
     function verifyPhoneNumber(Request $request)
     {
-        $user = Auth::guard('web')->user();
+        $user = Auth::guard('api')->user();
         if ($user) {
             // Пользователь аутентифицирован, можно вызывать метод verifyCode()
             if ($user->verifyCode($request->input('verification'))) {
