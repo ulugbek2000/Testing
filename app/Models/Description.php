@@ -11,10 +11,15 @@ class Description extends Model
     protected $fillable = [
         'description',
         'subscription_id',
+        'course_id',
     ];
     
     public function subscription()
     {
         return $this->belongsTo(Subscription::class);
     }
+    protected $casts = [
+
+        'description' => 'array', 
+    ];
 }
