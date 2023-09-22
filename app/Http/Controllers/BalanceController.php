@@ -31,12 +31,12 @@ class BalanceController extends Controller
             return response()->json('error', 'Course not found');
         }
 
-        if ($user->balance->amount < $course->subscription->price) {
+        if ($user->balance()->amount < $course->subscription->price) {
             return response()->json('error', 'Insufficient balance');
         }
 
         // Уменьшите баланс пользователя
-        $user->balance->amount -= $course->subscription->price;
+        $user->balance()->amount -= $course->subscription->price;
         $user->balance->save();
 
         // Добавьте пользователя к курсу
