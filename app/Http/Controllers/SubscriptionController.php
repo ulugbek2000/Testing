@@ -57,7 +57,6 @@ class SubscriptionController extends Controller
             foreach ($data['description'] as $descriptionData) {
                 $description = Description::create([
                     'subscription_id' => $subscription->id,
-                    'course_id' => $course->id,
                     'description' => $descriptionData['description'],
                 ]);
 
