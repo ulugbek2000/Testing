@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Enums\DurationType;
 use App\Enums\SubscriptionType;
 use App\Models\Course;
+use App\Models\CourseSkills;
 use App\Models\Description;
 use App\Models\Subscription;
 use Illuminate\Http\Request;
@@ -33,7 +34,7 @@ class SubscriptionController extends Controller
      * Store a newly created resource in storage.
      */
 
-    public function store(Request $request, Subscription $subscription)
+    public function store(Request $request, Subscription $subscription,Course $course)
     {
         $data = $request->validate([
             'name' => 'required|string',
@@ -56,6 +57,7 @@ class SubscriptionController extends Controller
             foreach ($data['description'] as $descriptionData) {
                 $description = Description::create([
                     'subscription_id' => $subscription->id,
+                    'course_id' => $course->id,
                     'description' => $descriptionData['description'],
                 ]);
 
