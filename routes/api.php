@@ -51,6 +51,9 @@ Auth::routes([
     'logout' => false
 ]);
 
+Route::post('balance/deposit', [BalanceController::class, 'deposit']);
+Route::post('balance/withdraw', [BalanceController::class, 'purchaseCourse']);
+
 Route::post('login', [AuthController::class, 'login']);
 Route::post('verify-phone', [AuthController::class, 'verifyPhoneNumber']);
 
@@ -160,8 +163,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     });
 
     Route::middleware('access:' . implode(',', [UserType::Student]))->group(function () {
-        Route::post('balance/deposit', [BalanceController::class, 'deposit']);
-        Route::post('balance/withdraw', [BalanceController::class, 'purchaseCourse']);
+       
     });
 
     Route::post('logout', [AuthController::class, 'logout']);
