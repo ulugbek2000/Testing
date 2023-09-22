@@ -20,7 +20,7 @@ class BalanceController extends Controller
         }
         
         // Получаем объект баланса пользователя
-        $balance = $user->balance;
+        $balance = $user->balance();
         
         // Увеличиваем баланс
         $balance->amount += $amount;
