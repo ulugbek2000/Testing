@@ -60,9 +60,9 @@ class BalanceController extends Controller
             return response()->json(['error' => 'Insufficient balance']);
         }
         if ($user_course) {
-            // $user->courses()->save($course);
+            $user->courses()->save($course);
             // Или использовать associate(), если у вас есть соответствующее отношение в модели
-            $user->courses()->atttach($course);
+            // $user->courses()->atttach($course);
 
             return response()->json(['message' => 'User is now enrolled in the course']);
         } else {
