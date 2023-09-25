@@ -53,8 +53,18 @@ class BalanceController extends Controller
             return response()->json(['error' => 'Insufficient balance']);
         }
 
+        // Вызываем метод subscription()
+        $subscription = $course->subscription();
+
+        // Получаем цену подписки через метод getPrice() (замените на фактический метод получения цены)
+        $price = $subscription->getPrice();
+
+        // Получаем цену подписки через метод
+        if ($user->balance->amount < $price) {
+            return response()->json(['error' => 'Insufficient balance']);
+        }
         // Уменьшите баланс пользователя
-        $user->balance->amount -= $course->subscription->price;
+        $user->balance->amount -= $price;
         $user->balance->save();
 
         // Добавьте пользователя к курсу
