@@ -59,7 +59,7 @@ class BalanceController extends Controller
         if ($user->balance->amount < $price) {
             return response()->json(['error' => 'Insufficient balance']);
         }
-        if ($user && $course) {
+        if ($user_course) {
             $user->courses()->save($course);
             // Или использовать associate(), если у вас есть соответствующее отношение в модели
             // $user->course()->associate($course);
@@ -68,7 +68,7 @@ class BalanceController extends Controller
         } else {
             return response()->json(['message' => 'User or course not found'], 404);
         }
-        
+
         // Уменьшите баланс пользователя
         $user->balance->amount -= $price;
         $user->balance->save();
