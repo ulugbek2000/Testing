@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Balance;
 use App\Models\Course;
 use App\Models\User;
+use App\Models\UserCourse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -57,8 +58,15 @@ class BalanceController extends Controller
         $user->balance->save();
 
         // Добавьте пользователя к курсу
-        $user->courses()->create($course);
+        $userCourse = UserCourse::firstOrCreate([
+            'user_id' => $user->id,
+            'course_id' => $course->id
+        ], [
+            'user_id' => $user->id,
+            'course_id' => $course->id
+        ]);
+        return response()->json(['message' => $userCourse->wasRecentlyCreated ? "User enrolled to course successfuly." : "User already enrolled!"], 200);
 
-        return response()->json(['success' => 'Course purchased successfully']);
+        // return response()->json(['success' => 'Course purchased successfully']);
     }
 }
