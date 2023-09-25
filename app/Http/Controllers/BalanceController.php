@@ -55,12 +55,6 @@ class BalanceController extends Controller
             $price = $subscription->getPrice();
         }
         
-        // // Вызываем метод subscription()
-        // $subscriptions = $course->subscriptions();
-
-        // // Получаем цену подписки через метод getPrice() (замените на фактический метод получения цены)
-        // $price = $subscriptions->getPrice();
-
         // Получаем цену подписки через метод
         if ($user->balance->amount < $price) {
             return response()->json(['error' => 'Insufficient balance']);
@@ -70,14 +64,8 @@ class BalanceController extends Controller
         $user->balance->amount -= $price;
         $user->balance->save();
 
-        // Добавьте пользователя к курсу
-        $userCourse = UserCourse::firstOrCreate([
-            'course_id' => $course->id
-        ], [
-            'course_id' => $course->id
-        ]);
-        return response()->json(['message' => $userCourse->wasRecentlyCreated ? "User enrolled to course successfuly." : "User already enrolled!"], 200);
+        $user->courses()->attach($course);
 
-        // return response()->json(['success' => 'Course purchased successfully']);
+        return response()->json(['success' => 'Course purchased successfully']);
     }
 }
