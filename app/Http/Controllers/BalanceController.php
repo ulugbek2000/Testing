@@ -51,10 +51,10 @@ class BalanceController extends Controller
 
 
         // Вызываем метод subscription()
-        $subscriptions = $course->subscriptions;
+        $subscriptions = $course->subscriptions();
 
         // Получаем цену подписки через метод getPrice() (замените на фактический метод получения цены)
-        $price = $subscriptions->getPrice;
+        $price = $subscriptions->getPrice();
 
         // Получаем цену подписки через метод
         if ($user->balance->amount < $price) {
