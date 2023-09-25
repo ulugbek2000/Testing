@@ -51,7 +51,7 @@ class BalanceController extends Controller
 
 
         // Вызываем метод subscription()
-        $subscriptions = $course->subscriptions();
+        $subscriptions = $course->subscriptions;
 
         // Получаем цену подписки через метод getPrice() (замените на фактический метод получения цены)
         $price = $subscriptions->getPrice();
