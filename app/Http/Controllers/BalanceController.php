@@ -56,7 +56,7 @@ class BalanceController extends Controller
         }
 
         // Получаем цену подписки через метод
-        if ($user->balance->amount < $price) {
+        if ($user->balance()->amount < $price) {
             return response()->json(['error' => 'Insufficient balance']);
         }
 
@@ -65,8 +65,8 @@ class BalanceController extends Controller
 
         if ($user_course) {
 
-            $user->balance->amount -= $price;
-            $user->balance->save();
+            $user->balance()->amount -= $price;
+            $user->balance()->save();
 
             $user->courses()->save($course);
 
