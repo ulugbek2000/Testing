@@ -61,7 +61,7 @@ class Course extends Model
     {
         return $this->hasMany(CourseSkills::class);
     }
-    public function subscription()
+    public function subscriptions()
     {
         return $this->hasMany(Subscription::class);
     }

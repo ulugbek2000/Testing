@@ -18,10 +18,14 @@ class Subscription extends Model
 
     public function course()
     {
-        return $this->belongsToMany(Course::class, 'course_id', 'id');
+        return $this->belongsTo(Course::class, 'course_id', 'id');
     }
     public function description()
     {
         return $this->hasMany(Description::class);
+    }
+    public function getPrice()
+    {
+        return $this->price;
     }
 }
