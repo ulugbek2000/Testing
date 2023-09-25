@@ -52,7 +52,7 @@ Auth::routes([
 ]);
 
 Route::post('balance/deposit', [BalanceController::class, 'deposit']);
-Route::post('balance/withdraw', [BalanceController::class, 'purchaseCourse']);
+Route::post('balance/withdraw/{course}', [BalanceController::class, 'purchaseCourse']);
 
 Route::post('login', [AuthController::class, 'login']);
 Route::post('verify-phone', [AuthController::class, 'verifyPhoneNumber']);

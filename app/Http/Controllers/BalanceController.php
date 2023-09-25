@@ -59,10 +59,8 @@ class BalanceController extends Controller
 
         // Добавьте пользователя к курсу
         $userCourse = UserCourse::firstOrCreate([
-            'user_id' => $user->id,
             'course_id' => $course->id
         ], [
-            'user_id' => $user->id,
             'course_id' => $course->id
         ]);
         return response()->json(['message' => $userCourse->wasRecentlyCreated ? "User enrolled to course successfuly." : "User already enrolled!"], 200);
