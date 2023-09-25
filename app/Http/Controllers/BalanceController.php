@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Balance;
 use App\Models\Course;
+use App\Models\Subscription;
 use App\Models\User;
 use App\Models\UserCourse;
 use Illuminate\Http\Request;
@@ -41,7 +42,7 @@ class BalanceController extends Controller
         return response()->json(['success' => 'Balance updated successfully'], 200);
     }
 
-    public function purchaseCourse(Request $request, Course $course)
+    public function purchaseCourse(Request $request, Course $course,Subscription $subscription)
     {
         $user = Auth::user();
 
@@ -49,7 +50,10 @@ class BalanceController extends Controller
             return response()->json(['message' => 'Course not found']);
         }
 
-
+        if ($subscription) {
+            // Теперь мы можем получить цену подписки
+            $price = $subscription->getPrice();
+        }
         // Вызываем метод subscription()
         $subscriptions = $course->subscriptions();
 
