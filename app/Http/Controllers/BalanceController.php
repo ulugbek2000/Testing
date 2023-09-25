@@ -54,7 +54,7 @@ class BalanceController extends Controller
         }
 
         // Уменьшите баланс пользователя
-        $user->balance->amount -= $course->price;
+        $user->balance->amount -= $course->subscription->price;
         $user->balance->save();
 
         // Добавьте пользователя к курсу
