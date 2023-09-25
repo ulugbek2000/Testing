@@ -49,15 +49,21 @@ class BalanceController extends Controller
             return response()->json(['message' => 'Course not found']);
         }
 
-        if ($user->balance->amount < $course->price) {
-            return response()->json(['error' => 'Insufficient balance']);
+     
+        // Получаем объект подписки
+        $subscription = $course->subscription;
+
+        // Проверяем, есть ли такая подписка и есть ли у нее метод для получения цены
+        if (!$subscription || !method_exists($subscription, 'getPrice')) {
+            return response()->json(['error' => 'Invalid subscription']);
         }
 
-        // Вызываем метод subscription()
-        $subscription = $course->subscription();
-
-        // Получаем цену подписки через метод getPrice() (замените на фактический метод получения цены)
+        // Получаем цену подписки
         $price = $subscription->getPrice();
+
+        if ($user->balance->amount <$price) {
+            return response()->json(['error' => 'Insufficient balance']);
+        }
 
         // Получаем цену подписки через метод
         if ($user->balance->amount < $price) {
