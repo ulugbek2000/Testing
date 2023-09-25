@@ -49,28 +49,24 @@ class BalanceController extends Controller
         if (!$course) {
             return response()->json(['message' => 'Course not found']);
         }
-
+        
         if ($subscription) {
             // Теперь мы можем получить цену подписки
             $price = $subscription->getPrice();
         }
-
+        
         // Получаем цену подписки через метод
-        if ($user->balance()->amount < $price) {
+        if ($user->balance->amount < $price) {
             return response()->json(['error' => 'Insufficient balance']);
         }
-
+        
         // Уменьшите баланс пользователя
-
-
         if ($user_course) {
-
-            $user->balance()->amount -= $price;
-            $user->balance()->save();
-
+            $user->balance->amount -= $price;
+            $user->balance->save();
+        
             $user->courses()->save($course);
-
-
+        
             return response()->json(['success' => 'Course purchased successfully']);
         } else {
             return response()->json(['message' => 'User or course not found'], 404);
