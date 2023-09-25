@@ -54,7 +54,7 @@ class BalanceController extends Controller
             // Теперь мы можем получить цену подписки
             
             $price = $subscription->getPrice();
-            dd($price);
+           
         }
         
         // Получаем цену подписки через метод
