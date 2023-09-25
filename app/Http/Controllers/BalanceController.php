@@ -64,7 +64,7 @@ class BalanceController extends Controller
         $user->balance->amount -= $price;
         $user->balance->save();
 
-        $user->courses()->save($course);
+        $user->courses()->associate($course);
 
         return response()->json(['success' => 'Course purchased successfully']);
     }
