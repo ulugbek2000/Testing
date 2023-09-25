@@ -42,7 +42,7 @@ class BalanceController extends Controller
         return response()->json(['success' => 'Balance updated successfully'], 200);
     }
 
-    public function purchaseCourse(Request $request, Course $course,Subscription $subscription)
+    public function purchaseCourse(User $user1, Request $request, Course $course, Subscription $subscription, UserCourse $user_course)
     {
         $user = Auth::user();
 
@@ -54,12 +54,21 @@ class BalanceController extends Controller
             // Теперь мы можем получить цену подписки
             $price = $subscription->getPrice();
         }
-        
+
         // Получаем цену подписки через метод
         if ($user->balance->amount < $price) {
             return response()->json(['error' => 'Insufficient balance']);
         }
+        if ($user && $course) {
+            $user->courses()->save($course);
+            // Или использовать associate(), если у вас есть соответствующее отношение в модели
+            // $user->course()->associate($course);
 
+            return response()->json(['message' => 'User is now enrolled in the course']);
+        } else {
+            return response()->json(['message' => 'User or course not found'], 404);
+        }
+        
         // Уменьшите баланс пользователя
         $user->balance->amount -= $price;
         $user->balance->save();
