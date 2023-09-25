@@ -57,7 +57,7 @@ class BalanceController extends Controller
         $user->balance->save();
 
         // Добавьте пользователя к курсу
-        $user->courses()->attach($course);
+        $user->courses()->create($course);
 
         return response()->json(['success' => 'Course purchased successfully']);
     }
