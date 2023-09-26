@@ -14,17 +14,17 @@ class UserWalletController extends Controller
     public function deposit(Request $request)
     {
         $user = Auth::user();
-        $balance = $request->input('balance');
+        $balances = $request->input('balance');
 
-        if ($balance <= 0) {
+        if ($balances <= 0) {
             return response()->json(['error' => 'Invalid amount'], 400);
         }
 
         // Получаем объект баланса пользователя
-        $balance = $user->balance;
+        $balances = $user->balance;
 
         // Проверяем, существует ли объект баланса
-        if (!$balance) {
+        if (!$balances) {
             // Если объект баланса отсутствует, создаем новый
             $balance = new UserWallet();
             $balance->balance = 0; // Устанавливаем начальный баланс
@@ -33,10 +33,10 @@ class UserWalletController extends Controller
         }
 
         // Увеличиваем баланс
-        $balance->balance += $balance;
+        $balances->balance += $balance;
 
         // Сохраняем изменения
-        $balance->save();
+        $balances->save();
 
         return response()->json(['success' => 'Balance updated successfully'], 200);
     }
