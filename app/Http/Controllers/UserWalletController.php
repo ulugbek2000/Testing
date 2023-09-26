@@ -2,130 +2,73 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Course;
+use App\Models\Subscription;
+use App\Models\UserCourse;
 use App\Models\UserWallet;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class UserWalletController extends Controller
 {
-   /*  function __construct()
+    public function deposit(Request $request)
     {
-        $this->middleware('permission:role-list|role-create|role-edit|role-delete', ['only' => ['index', 'store']]);
-        $this->middleware('permission:role-create', ['only' => ['create', 'store']]);
-        $this->middleware('permission:role-edit', ['only' => ['edit', 'update']]);
-        $this->middleware('permission:role-delete', ['only' => ['destroy']]);
-    } */
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        // All UserWallet
-        $wallet = UserWallet::all();
-        // Return Json Response
-        return response()->json([
-            'wallet' => $wallet
-        ], 200);
-    }
+        $user = Auth::user();
+        $balance = $request->input('balance');
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        try {
-            $data = [
-                'user_id' => $request->user_id,
-                'balance' => $request->balance,
-            ];
-            UserWallet::create($data);
-            return response()->json([
-                'message' => "Wallet succefully created."
-            ], 200);
-        } catch (\Exception $e) {
-            //Return response Json
-            return response()->json([
-                'message' => $e,
-            ], 500);
+        if ($balance <= 0) {
+            return response()->json(['error' => 'Invalid amount'], 400);
         }
+
+        // Получаем объект баланса пользователя
+        $balance = $user->balance;
+
+        // Проверяем, существует ли объект баланса
+        if (!$balance) {
+            // Если объект баланса отсутствует, создаем новый
+            $balance = new UserWallet();
+            $balance->balance = 0; // Устанавливаем начальный баланс
+            $balance->user()->associate($user); // Связываем с пользователем
+            $balance->save(); // Сохраняем баланс
+        }
+
+        // Увеличиваем баланс
+        $balance->balance += $balance;
+
+        // Сохраняем изменения
+        $balance->save();
+
+        return response()->json(['success' => 'Balance updated successfully'], 200);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show($id)
+    public function purchaseCourse(Course $course,Subscription $subscription, UserCourse $user_course)
     {
-        //Wallet detail
-        $wallet = UserWallet::find($id);
-        if (!$wallet) {
-            return response()->json([
-                'message' => 'Wallet not found.'
-            ], 404);
-        }
-        // Return Json Response
-        return response()->json([
-            'wallet' => $wallet
-        ], 200);
-    }
+        $user = Auth::user();
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
+        if (!$course) {
+            return response()->json(['message' => 'Course not found']);
+        }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, $id)
-    {
-        try {
-            //find course
-            $wallet = UserWallet::find($id);
-            if (!$wallet) {
-                return response()->json([
-                    'message' => 'wallet not found!!'
-                ], 404);
-            }
-            $data = [
-                $wallet->user_id = $request->user_id,
-                $wallet->balance = $request->balance
-            ];
-            $wallet->save($data);
-            //Return Json Response
-            return response()->json([
-                'message' => "wallet succefully updated."
-            ], 200);
-        } catch (\Exception $e) {
-            //Return Json Response
-            return response()->json([
-                'message' => $e,
-            ], 500);
+        if ($subscription) {
+            // Теперь мы можем получить цену подписки
+            $price = $subscription->getPrice();
         }
-    }
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy($id)
-    {
-        $wallet = UserWallet::find($id);
-        if (!$wallet) {
-            return response()->json([
-                'message' => 'Wallet not found.'
-            ], 404);
+
+        // Получаем цену подписки через метод
+        if ($user->balance->balance < $price) {
+            return response()->json(['error' => 'Insufficient balance']);
         }
-        $wallet->delete();
-        return response()->json([
-            'message' => "Wallet succefully deleted."
-        ], 200);
+
+        // Уменьшите баланс пользователя
+        if ($user_course) {
+            $user->balance->balance -= $price;
+            $user->balance->save();
+
+            $user->courses()->save($course);
+
+            return response()->json(['success' => 'Course purchased successfully']);
+        } else {
+            return response()->json(['message' => 'User or course not found'], 404);
+        }
     }
 }

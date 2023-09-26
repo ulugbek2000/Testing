@@ -87,7 +87,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::put('course/{course}', [CourseController::class, 'update']);
         Route::delete('course/{course}', [CourseController::class, 'destroy']);
         Route::post('enroll/{course}/{user}', [CourseController::class, 'enroll']);
-
         Route::post('/courses/{course}/add-teachers', [CourseController::class, 'addTeachersToCourse']);
         //End Courses
 
@@ -163,7 +162,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
     });
 
     Route::middleware('access:' . implode(',', [UserType::Student]))->group(function () {
-       
     });
 
     Route::post('logout', [AuthController::class, 'logout']);
