@@ -42,22 +42,24 @@ class BalanceController extends Controller
         return response()->json(['success' => 'Balance updated successfully'], 200);
     }
 
-    public function purchaseCourse(Course $course, Subscription $subscription, UserCourse $user_course)
+    public function purchaseCourse(Course $course, UserCourse $user_course)
     {
+        $subscriptionId = 1;
+        $subscription = Subscription::find($subscriptionId); // Предполагается, что вы ищете подписку по какому-то идентификатору.
+        if ($subscription) {
+            // Теперь вы можете получить цену подписки
+            $price = $subscription->price;
+            dd($price);
+        }
         $user = Auth::user();
 
         if (!$course) {
             return response()->json(['message' => 'Course not found']);
         }
-        if (isset($subscription['price'])) {
-            // Ключ 'price' существует, можно использовать $data['price']
-            $price = $subscription['price'];
-            dd($price);
-        }
+
         if ($subscription) {
             // Теперь мы можем получить цену подписки
             $price = $subscription->getPrice();
-           
         }
 
         // Получаем цену подписки через метод
