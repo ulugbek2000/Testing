@@ -54,15 +54,22 @@ class UserWalletController extends Controller
             $price = $subscription->getPrice();
         }
 
-        // Получаем цену подписки через метод
-        if ($user->balance->balance < $price) {
-            return response()->json(['error' => 'Insufficient balance']);
+        // Получаем сумму на балансе пользователя через свойство объекта баланса
+        $userBalance = $user->balance;
+
+        // Проверяем, существует ли объект баланса
+        if (!$userBalance) {
+            // Если объект баланса отсутствует, создаем новый
+            $userBalance = new UserWallet();
+            $userBalance->balance = 0; // Устанавливаем начальный баланс
+            $userBalance->user()->associate($user); // Связываем с пользователем
+            $userBalance->save(); // Сохраняем баланс
         }
 
-        // Уменьшите баланс пользователя
+        // Уменьшаем сумму на балансе пользователя
         if ($user_course) {
-            $user->balance->balance -= $price;
-            $user->balance->save();
+            $userBalance->balance -= $price;
+            $userBalance->save();
 
             $user->courses()->save($course);
 
