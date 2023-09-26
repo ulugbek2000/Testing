@@ -42,10 +42,8 @@ class BalanceController extends Controller
         return response()->json(['success' => 'Balance updated successfully'], 200);
     }
 
-    public function purchaseCourse(Course $course, UserCourse $user_course)
+    public function purchaseCourse(Course $course,Subscription $subscription, UserCourse $user_course)
     {
-        $subscriptionId = 2;
-        $subscription = Subscription::find($subscriptionId); // Предполагается, что вы ищете подписку по какому-то идентификатору.
         $user = Auth::user();
 
         if (!$course) {
