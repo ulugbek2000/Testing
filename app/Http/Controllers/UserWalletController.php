@@ -33,7 +33,7 @@ class UserWalletController extends Controller
         }
 
         // Увеличиваем баланс
-        $balances->balance += $balance;
+        $balance->balance += $balances;
 
         // Сохраняем изменения
         $balances->save();
