@@ -51,8 +51,9 @@ Auth::routes([
     'logout' => false
 ]);
 
-Route::post('balance/deposit', [BalanceController::class, 'deposit']);
-Route::post('balance/withdraw/{course}/{subscription}', [BalanceController::class, 'purchaseCourse']);
+Route::post('balance/deposit', [UserWalletController::class, 'deposit']);
+Route::post('balance/withdraw/{course}/{subscription}', [UserWalletController::class, 'purchaseCourse']);
+
 
 Route::post('login', [AuthController::class, 'login']);
 Route::post('verify-phone', [AuthController::class, 'verifyPhoneNumber']);
