@@ -52,11 +52,12 @@ class BalanceController extends Controller
         if (isset($data['price'])) {
             $price = $data['price'];
         }
+        $price = $data['price'] ?? 0;
         if ($subscription) {
             // Теперь мы можем получить цену подписки
             $price = $subscription->getPrice();
         }
-    
+
         // Получаем цену подписки через метод
         if ($user->balance->amount < $price) {
             return response()->json(['error' => 'Insufficient balance']);
