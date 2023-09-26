@@ -49,10 +49,10 @@ class BalanceController extends Controller
         if (!$course) {
             return response()->json(['message' => 'Course not found']);
         }
-        if (isset($data['price'])) {
-            $price = $data['price'];
+        if (isset($subscription->price)) {
+            // Ключ 'price' существует, можно использовать $data->price
+            $price = $subscription->price;
         }
-        $price = $data['price'] ?? 0;
         if ($subscription) {
             // Теперь мы можем получить цену подписки
             $price = $subscription->getPrice();
