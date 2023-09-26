@@ -56,7 +56,6 @@ Route::post('balance/withdraw/{course}/{subscription}', [UserWalletController::c
 
 
 Route::post('login', [AuthController::class, 'login']);
-Route::post('verify-phone', [AuthController::class, 'verifyPhoneNumber']);
 
 Route::get('course', [CourseController::class, 'index']);
 
@@ -67,10 +66,6 @@ Route::get('topic/{topic}/lessons', [LessonController::class, 'index']);
 // });
 
 Route::middleware(['auth:sanctum'])->group(function () {
-
-
-    Route::put('profile', [ProfileController::class, 'updateProfile']);
-
 
     Route::middleware(['access:' . UserType::Admin])->group(function () {
 
@@ -163,9 +158,14 @@ Route::middleware(['auth:sanctum'])->group(function () {
     });
 
     Route::middleware('access:' . implode(',', [UserType::Student]))->group(function () {
+        
+        Route::put('profile', [ProfileController::class, 'updateProfile']);
+        Route::post('verify-phone', [AuthController::class, 'verifyPhoneNumber']);
     });
 
     Route::post('logout', [AuthController::class, 'logout']);
+    
+
 
     Route::get('/account', function () {
         return response()->json(Auth::check() ? [auth()->user(), 200] : [null, 401]);

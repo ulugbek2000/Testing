@@ -68,7 +68,7 @@ class AuthController extends Controller
 
     function verifyPhoneNumber(Request $request)
     {
-        $user = Auth::guard('web')->user();
+        $user = Auth::guard()->user();
         return $user->verifyCode($request->input('verification')) === true
             ? response()->json(['message' => 'Verification Completed'], 200)
             : response()->json(['message' => 'Verification Failed'], 406);
