@@ -46,11 +46,6 @@ class BalanceController extends Controller
     {
         $subscriptionId = 2;
         $subscription = Subscription::find($subscriptionId); // Предполагается, что вы ищете подписку по какому-то идентификатору.
-        if ($subscription) {
-            // Теперь вы можете получить цену подписки
-            $price = $subscription->price;
-            dd($price);
-        }
         $user = Auth::user();
 
         if (!$course) {
