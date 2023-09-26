@@ -52,7 +52,7 @@ class BalanceController extends Controller
         if (isset($subscription->price)) {
             // Ключ 'price' существует, можно использовать $data->price
             $price = $subscription->price;
-            dd($price)
+            dd($price);
         }
         if ($subscription) {
             // Теперь мы можем получить цену подписки
