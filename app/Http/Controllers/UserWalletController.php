@@ -14,34 +14,34 @@ class UserWalletController extends Controller
     public function deposit(Request $request)
     {
         $user = Auth::user();
-        $balances = $request->input('balance');
+        $newBalance = $request->input('balance');
 
-        if ($balances <= 0) {
+        if ($newBalance <= 0) {
             return response()->json(['error' => 'Invalid amount'], 400);
         }
 
         // Получаем объект баланса пользователя
-        $balances = $user->balance;
+        $userBalance = $user->balance;
 
         // Проверяем, существует ли объект баланса
-        if (!$balances) {
+        if (!$userBalance) {
             // Если объект баланса отсутствует, создаем новый
-            $balance = new UserWallet();
-            $balance->balance = 0; // Устанавливаем начальный баланс
-            $balance->user()->associate($user); // Связываем с пользователем
-            $balance->save(); // Сохраняем баланс
+            $userBalance = new UserWallet();
+            $userBalance->balance = 0; // Устанавливаем начальный баланс
+            $userBalance->user()->associate($user); // Связываем с пользователем
+            $userBalance->save(); // Сохраняем баланс
         }
 
         // Увеличиваем баланс
-        $balance->balance += $balances;
+        $userBalance->balance += $newBalance;
 
         // Сохраняем изменения
-        $balances->save();
+        $userBalance->save();
 
         return response()->json(['success' => 'Balance updated successfully'], 200);
     }
 
-    public function purchaseCourse(Course $course,Subscription $subscription, UserCourse $user_course)
+    public function purchaseCourse(Course $course, Subscription $subscription, UserCourse $user_course)
     {
         $user = Auth::user();
 
