@@ -26,6 +26,6 @@ class Subscription extends Model
     }
     public function getPrice()
     {
-        return $this->attributes('price');
+        return $this->attributes['price'];
     }
 }
