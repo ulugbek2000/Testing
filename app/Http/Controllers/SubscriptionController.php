@@ -76,7 +76,9 @@ class SubscriptionController extends Controller
      */
     public function show(Subscription $subscription)
     {
-        //
+        return response()->json([
+            'subscription' => $subscription
+        ], 200);
     }
 
     /**
