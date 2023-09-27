@@ -188,12 +188,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
         //Верификация на номер:
         Route::post('verify-phone', [AuthController::class, 'verifyPhoneNumber']);
-        
     });
-
+    Route::post('logout', [AuthController::class, 'logout']);
+    
     Route::get('/account', function () {
         return response()->json(Auth::check() ? [auth()->user(), 200] : [null, 401]);
-        Route::post('logout', [AuthController::class, 'logout']);
     });
- 
 });
