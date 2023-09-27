@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
 use App\Models\User;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Foundation\Auth\RegistersUsers;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
@@ -89,5 +91,37 @@ class RegisterController extends Controller
             'date_of_birth' => $data['date_of_birth'] ?? null,
             'photo' => $photoPath,
         ]);
+    }
+
+    /**
+     * Handle a registration request for the application.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\JsonResponse
+     */
+    public function register(Request $request)
+    {
+        $this->validator($request->all())->validate();
+
+        event(new Registered($user = $this->create($request->all())));
+
+        $this->guard()->login($user);
+
+        if ($response = $this->registered($request, $user)) {
+            return $response;
+        }
+
+        $token = $user->createToken('api-token')->plainTextToken;
+        $role = $user->roles()->first()->id;
+        $cookie = cookie('jwt', $token);
+        $response = [
+            'message' => $token,
+            'user_role' => $role,
+            'is_phone_verified' => $user->phone_verified_at != null
+        ];
+
+        return $request->wantsJson()
+                    ? new JsonResponse([$response], 201)
+                    : redirect($this->redirectPath());
     }
 }
