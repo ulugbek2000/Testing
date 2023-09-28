@@ -84,9 +84,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('getStudents', [ProfileController::class, 'getAllStudents']);
         Route::get('getTeachers', [ProfileController::class, 'getAllTeachers']);
         Route::get('user/{user}', [ProfileController::class, 'getUserById']);
-        
+
         //Start Courses
-        Route::get('course', [CourseController::class, 'index']);
+        // Route::get('course', [CourseController::class, 'index']);
         Route::get('course/{course}', [CourseController::class, 'show']);
         Route::post('course', [CourseController::class, 'store']);
         Route::put('course/{course}', [CourseController::class, 'update']);
