@@ -86,7 +86,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('user/{user}', [ProfileController::class, 'getUserById']);
 
         //Start Courses
-        // Route::get('course', [CourseController::class, 'index']);
+        Route::get('admin/course', [CourseController::class, 'index']);
         Route::get('course/{course}', [CourseController::class, 'show']);
         Route::post('course', [CourseController::class, 'store']);
         Route::put('course/{course}', [CourseController::class, 'update']);
@@ -167,7 +167,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::put('profile', [ProfileController::class, 'updateProfile']);
 
         //Получение списка доступных курсов:
-        Route::get('course', [CourseController::class, 'index']);
+        Route::get('student/course', [CourseController::class, 'index']);
 
         //Просмотр информации о курсе:
         Route::get('course/{course}', [CourseController::class, 'show']);
