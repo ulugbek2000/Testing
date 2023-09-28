@@ -198,5 +198,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
             return response()->json(Auth::check() ? [auth()->user(), 200] : [null, 401]);
         });
     });
+
+    Route::get('/account', function () {
+        return response()->json(Auth::check() ? [auth()->user(), 200] : [null, 401]);
+    });
     Route::post('logout', [AuthController::class, 'logout']);
 });
