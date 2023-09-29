@@ -48,7 +48,7 @@ class CourseSkillsController extends Controller
             ];
             CourseSkills::create($data);
             return response()->json([
-                'message' => "Topic succefully created."
+                'message' => "Skill course succefully created."
             ], 200);
         } catch (\Exception $e) {
             //Return response Json
