@@ -167,10 +167,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::put('profile', [ProfileController::class, 'updateProfile']);
 
         //Получение списка доступных курсов:
-        Route::get('student/course', [CourseController::class, 'index']);
+        Route::get('course', [CourseController::class, 'index']);
 
         //Просмотр информации о курсе:
-        Route::get('student/course/{course}', [CourseController::class, 'show']);
+        Route::get('course/{course}', [CourseController::class, 'show']);
 
         //Пополнение баланс:
         Route::post('balance/deposit', [UserWalletController::class, 'deposit']);
