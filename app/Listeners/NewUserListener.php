@@ -3,7 +3,7 @@
 namespace App\Listeners;
 
 use App\Enums\UserType;
-use App\Notifications\SmsVerification;
+use App\Notifications\VerificationNotification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 
@@ -27,11 +27,6 @@ class NewUserListener
        
         // Send sms verification notification
         $verificationNumber = rand(1000, 9999);
-        $event->user->notify(new SmsVerification(
-            [
-                'text' => "Ваш проверочный номер {$verificationNumber}",
-                'verification' => $verificationNumber
-            ]
-        ));
+        $event->user->notify(new VerificationNotification($verificationNumber));
     }
 }

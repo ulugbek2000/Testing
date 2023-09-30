@@ -10,7 +10,7 @@ use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use OsonSMS\SMSGateway\SMSGateway;
 
-class SmsVerification extends Notification
+class VerificationNotification extends Notification
 {
     use Queueable;
 
@@ -19,9 +19,9 @@ class SmsVerification extends Notification
     /**
      * Create a new notification instance.
      */
-    public function __construct($message)
+    public function __construct($verificationNumber)
     {
-        $this->message = $message;
+        $this->message = "Ваш проверочный номер {$verificationNumber}";
     }
 
     /**
@@ -31,7 +31,16 @@ class SmsVerification extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['database', SmsChannel::class];
+        return $notifiable->phone != null ? ['database', SmsChannel::class] : ['database', 'email'];
+    }
+
+    /**
+     * Get the mail representation of the notification.
+     */
+    public function toMail(object $notifiable): MailMessage
+    {
+        return (new MailMessage)
+                    ->line($this->message);
     }
 
     /**
@@ -41,9 +50,7 @@ class SmsVerification extends Notification
      */
     public function toArray(object $notifiable): array
     {
-        return $this->message;
-
-
+        return [$this->message];
     }
 
     public function toSms($notifiable)
@@ -51,7 +58,7 @@ class SmsVerification extends Notification
         return (new SmsMessage)
                     ->from(config('app.name'))
                     ->to($notifiable->phone)
-                    ->line($this->message['text']);
+                    ->line($this->message);
     }
 
 }

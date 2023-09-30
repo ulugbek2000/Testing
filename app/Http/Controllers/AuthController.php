@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Enums\UserType;
 use App\Models\User;
 use App\Models\UserSkills;
-use App\Notifications\SmsVerification;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
