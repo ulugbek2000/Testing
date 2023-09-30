@@ -95,4 +95,8 @@ class User extends Authenticatable
         $result && $notification->markAsRead();
         return $result;
     }
+
+    function phoneVerified() : bool {
+        return $this->phone_verified_at != null;
+    }
 }

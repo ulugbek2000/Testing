@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Enums\UserType;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,6 +16,8 @@ class RoleMiddleware
      */
     public function handle(Request $request, Closure $next, ...$args): Response
     {
+        if($args == UserType::Student && !$request->user()->phoneVerified())
+            return abort(403, 'Verification required');
         if($request->user()->hasAnyRole($args))
             return $next($request);
         else return abort(401);
