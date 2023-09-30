@@ -40,7 +40,9 @@ class VerificationNotification extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-                    ->line($this->message);
+                    ->greeting('Здавствуйте')
+                    ->line($this->message)
+                    ->salutation('С наилучшими пожеланиями');
     }
 
     /**
