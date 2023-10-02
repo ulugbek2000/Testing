@@ -64,9 +64,7 @@ Route::get('course/{course}/subscriptions', [SubscriptionController::class, 'ind
 Route::post('login', [AuthController::class, 'login']);
 
 
-Route::get('/account', function () {
-    return response()->json(Auth::check() ? [auth()->user(), 200] : [null, 401]);
-})->middleware('access');
+
 
 // });
 
@@ -206,3 +204,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::post('logout', [AuthController::class, 'logout']);
 });
+Route::get('/account', function () {
+    return response()->json(Auth::check() ? [auth()->user(), 200] : [null, 401]);
+})->middleware('access');
