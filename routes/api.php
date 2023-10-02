@@ -64,13 +64,15 @@ Route::get('course/{course}/subscriptions', [SubscriptionController::class, 'ind
 Route::post('login', [AuthController::class, 'login']);
 
 
-
+Route::get('/account', function () {
+    return response()->json(Auth::check() ? [auth()->user(), 200] : [null, 401]);
+})->middleware('access');
 
 // });
 
 Route::middleware(['auth:sanctum'])->group(function () {
 
-    Route::middleware(['access:'. UserType::Admin])->group(function () {
+    Route::middleware(['access:' . UserType::Admin])->group(function () {
         //  Route::middleware('access:' . implode(',', [UserType::Student]))->group(function () {
 
         //Данный админ
@@ -79,7 +81,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         // });
 
         //Update mentor with help Admin
-        Route::put('/user/{user}',  [ProfileController::class, 'updateTeacher']);
+        Route::put('admin/user/{user}',  [ProfileController::class, 'updateTeacher']);
 
         //get all users
         Route::get('getStudents', [ProfileController::class, 'getAllStudents']);
@@ -87,8 +89,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('user/{user}', [ProfileController::class, 'getUserById']);
 
         //Start Courses
-        Route::get('course', [CourseController::class, 'index']);
-        Route::get('course/{course}', [CourseController::class, 'show']);
+        Route::get('admin/course', [CourseController::class, 'index']);
+        Route::get('admin/course/{course}', [CourseController::class, 'show']);
         Route::post('course', [CourseController::class, 'store']);
         Route::put('course/{course}', [CourseController::class, 'update']);
         Route::delete('course/{course}', [CourseController::class, 'destroy']);
@@ -97,16 +99,16 @@ Route::middleware(['auth:sanctum'])->group(function () {
         //End Courses
 
         //Start Topics
-        Route::get('course/{course}/topics', [TopicController::class, 'index']);
-        Route::get('topic/{topic}', [TopicController::class, 'show']);
+        Route::get('admin/course/{course}/topics', [TopicController::class, 'index']);
+        Route::get('admin/topic/{topic}', [TopicController::class, 'show']);
         Route::post('topic', [TopicController::class, 'store']);
         Route::put('topic/{topic}', [TopicController::class, 'update']);
         Route::delete('topic/{topic}', [TopicController::class, 'destroy']);
         //End Topics
 
         //Start Lessons
-        Route::get('topic/{topic}/lessons', [LessonController::class, 'index']);
-        Route::get('lesson/{lesson}', [LessonController::class, 'show']);
+        Route::get('admin/topic/{topic}/lessons', [LessonController::class, 'index']);
+        Route::get('admin/lesson/{lesson}', [LessonController::class, 'show']);
         Route::post('lesson', [LessonController::class, 'store']);
         Route::put('lesson/{lesson}', [LessonController::class, 'update']);
         Route::delete('lesson/{lesson}', [LessonController::class, 'destroy']);
@@ -165,31 +167,33 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::middleware('access:' . implode(',', [UserType::Student]))->group(function () {
 
         //Обновление своего профиля:
-        Route::put('profile', [ProfileController::class, 'updateProfile']);
+        Route::put('student/profile', [ProfileController::class, 'updateProfile']);
 
         //Получение списка доступных курсов:
-        Route::get('course', [CourseController::class, 'index']);
+        Route::get('student/course', [CourseController::class, 'index']);
 
         //Просмотр информации о курсе:
-        Route::get('course/{course}', [CourseController::class, 'show']);
+        Route::get('student/course/{course}', [CourseController::class, 'show']);
 
         //Пополнение баланс:
-        Route::post('balance/deposit', [UserWalletController::class, 'deposit']);
+        Route::post('student/balance/deposit', [UserWalletController::class, 'deposit']);
 
         //Покупка курса:
-        Route::post('balance/withdraw/{course}/{subscription}', [UserWalletController::class, 'purchaseCourse']);
+        Route::post('student/balance/withdraw/{course}/{subscription}', [UserWalletController::class, 'purchaseCourse']);
 
         //Получение списка доступных подписок:
-        Route::get('course/{course}/subscriptions', [SubscriptionController::class, 'index']);
+        Route::get('student/course/{course}/subscriptions', [SubscriptionController::class, 'index']);
 
         //Просмотр информации о подписке:
-        Route::get('subscription/{subscription}', [SubscriptionController::class, 'show']);
+        Route::get('student/subscription/{subscription}', [SubscriptionController::class, 'show']);
 
         // Получение темы доступных курс:
-        Route::get('course/{course}/topics', [TopicController::class, 'index']);
-
+        Route::get('student/course/{course}/topics', [TopicController::class, 'index']);
+        Route::get('student/topic/{topic}', [TopicController::class, 'show']);
         // Получение уроки доступных темы:
-        Route::get('topic/{topic}/lessons', [LessonController::class, 'index']);
+        Route::get('student/topic/{topic}/lessons', [LessonController::class, 'index']);
+
+        Route::get('student/lesson/{lesson}', [LessonController::class, 'show']);
 
         //Верификация на номер:
         Route::post('verify-phone', [AuthController::class, 'verifyPhoneNumber']);
@@ -200,8 +204,5 @@ Route::middleware(['auth:sanctum'])->group(function () {
         // });
     });
 
-    Route::get('/account', function () {
-        return response()->json(Auth::check() ? [auth()->user(), 200] : [null, 401]);
-    })->middleware(RoleMiddleware::class); 
     Route::post('logout', [AuthController::class, 'logout']);
 });
