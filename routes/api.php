@@ -15,6 +15,7 @@ use App\Http\Controllers\TopicController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\UserTransactionController;
 use App\Http\Controllers\UserWalletController;
+use App\Http\Middleware\RoleMiddleware;
 use App\Models\UserTransaction;
 use App\Models\UserWallet;
 use Illuminate\Http\Request;
@@ -75,7 +76,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         //Данный админ
         Route::get('/account', function () {
             return response()->json(Auth::check() ? [auth()->user(), 200] : [null, 401]);
-        })->name('admin');
+        })->middleware(RoleMiddleware::class);
 
         //Update mentor with help Admin
         Route::put('/user/{user}',  [ProfileController::class, 'updateTeacher']);
@@ -196,7 +197,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         // Получение данных своего профиля:
         Route::get('/account', function () {
             return response()->json(Auth::check() ? [auth()->user(), 200] : [null, 401]);
-        })->name('student');
+        })->middleware(RoleMiddleware::class);
     });
 
     // Route::get('/account', function () {
