@@ -74,7 +74,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         //  Route::middleware('access:' . implode(',', [UserType::Student]))->group(function () {
 
         //Данный админ
-        Route::get('/account', [ProfileController::class, 'getProfile'])->name('admin-profile');
+        Route::get('admin/account', [ProfileController::class, 'getProfile']);
 
         //Update mentor with help Admin
         Route::put('admin/user/{user}',  [ProfileController::class, 'updateTeacher']);
@@ -194,7 +194,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         //Верификация на номер:
         Route::post('verify-phone', [AuthController::class, 'verifyPhoneNumber']);
 
-        Route::get('/account', [ProfileController::class, 'getProfile'])->name('user-profile');
+        Route::get('student/account', [ProfileController::class, 'getProfile']);
     });
 
 

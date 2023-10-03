@@ -23,7 +23,7 @@ class ProfileController extends Controller
         return response()->json(Auth::check() ? [auth()->user(), 200] : [null, 401]);
     }
 
-    
+
     public function updateProfile(Request $request)
     {
 
@@ -31,7 +31,7 @@ class ProfileController extends Controller
         $validator = null; // Инициализация валидатора
 
         if (UserType::Student || UserType::Teacher) {
-            // Валидация общих полей для Студента и Преподавателя
+            // Валидация общих полей для Студента или Преподавателя
             $validator = Validator::make($request->all(), [
                 'name' => 'string',
                 'surname' => 'string',
