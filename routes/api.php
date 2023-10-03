@@ -74,9 +74,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         //  Route::middleware('access:' . implode(',', [UserType::Student]))->group(function () {
 
         //Данный админ
-        // Route::get('/account', function () {
-        //     return response()->json(Auth::check() ? [auth()->user(), 200] : [null, 401]);
-        // });
+        Route::get('/account', [ProfileController::class, 'getProfile'])->name('admin-profile');
 
         //Update mentor with help Admin
         Route::put('admin/user/{user}',  [ProfileController::class, 'updateTeacher']);
@@ -196,14 +194,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
         //Верификация на номер:
         Route::post('verify-phone', [AuthController::class, 'verifyPhoneNumber']);
 
-        // Получение данных своего профиля:
-        // Route::get('/account', function () {
-        //     return response()->json(Auth::check() ? [auth()->user(), 200] : [null, 401]);
-        // });
+        Route::get('/account', [ProfileController::class, 'getProfile'])->name('user-profile');
     });
+
+
 
     Route::post('logout', [AuthController::class, 'logout']);
 });
-Route::get('/account', function () {
-    return response()->json(Auth::check() ? [auth()->user(), 200] : [null, 401]);
-})->middleware('access');

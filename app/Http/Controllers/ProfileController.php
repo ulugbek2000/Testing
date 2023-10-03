@@ -19,6 +19,11 @@ class ProfileController extends Controller
 {
 
 
+    function getProfile() {
+        return response()->json(Auth::check() ? [auth()->user(), 200] : [null, 401]);
+    }
+
+    
     public function updateProfile(Request $request)
     {
 
