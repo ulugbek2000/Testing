@@ -45,7 +45,7 @@ class AuthController extends Controller
                 'message' => $token,
                 'user_type' => $role,
                 'is_phone_verified' => $user->phone_verified_at != null,
-            ])->withCookie($cookie);
+            ]);
         } else {
 
             return response()->json(['message' => 'Unauthorize'], 401);
