@@ -33,25 +33,27 @@ class AuthController extends Controller
         $credentials = $request->only('email_or_phone', 'password');
     
         $field = filter_var($credentials['email_or_phone'], FILTER_VALIDATE_EMAIL) ? 'email' : 'phone';
+        $token = null;
+        $token = Auth::attempt([$field => $credentials['email_or_phone'], 'password' => $credentials['password']]);
         
-        if (Auth::attempt([$field => $credentials['email_or_phone'], 'password' => $credentials['password']])) {
+        if ($token != null) {
             $user = Auth::user();
-            $role = $user->roles()->first()->id;
+            // $role = $user->roles()->first()->id;
             // Создайте пользовательские данные для токена
-            $customClaims = [
-                'user_type' => $role,
-                'is_phone_verified' => $user->phone_verified_at != null,
-                'email'=>$user->email,
-                'name'=>$user->name,
-            ];
+            // $customClaims = [
+            //     'user_type' => $role,
+            //     'is_phone_verified' => $user->phone_verified_at != null,
+            //     'email'=>$user->email,
+            //     'name'=>$user->name,
+            // ];
     
             // Создайте JWT токен с пользовательскими данными
-            $token = JWTAuth::claims($customClaims)->fromUser($user);
-    
+            // $token = 
+                
             return response([
                 'message' => $token,
-                'user_type' => $role,
-                'is_phone_verified' => $user->phone_verified_at != null,
+                // 'user_type' => $role,
+                // 'is_phone_verified' => $user->phone_verified_at != null,
             ]);
         } else {
             return response()->json(['message' => 'Unauthorized'], 401);

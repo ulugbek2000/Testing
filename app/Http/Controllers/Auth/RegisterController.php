@@ -105,19 +105,23 @@ class RegisterController extends Controller
 
         event(new Registered($user = $this->create($request->all())));
 
-        $this->guard()->login($user);
+        $token = $this->guard()->login($user);
 
         if ($response = $this->registered($request, $user)) {
             return $response;
         }
 
-        $token = $user->createToken('api-token')->plainTextToken;
-        $role = $user->roles()->first()->id;
-        $cookie = cookie('jwt', $token);
+        // $token = $user->createToken('api-token')->plainTextToken;
+        // $role = $user->roles()->first()->id;
+        // $cookie = cookie('jwt', $token);
+        // $response = [
+        //     'message' => $token,
+        //     'user_role' => $role,
+        //     'is_phone_verified' => $user->phone_verified_at != null
+        // ];
+
         $response = [
-            'message' => $token,
-            'user_role' => $role,
-            'is_phone_verified' => $user->phone_verified_at != null
+            'message' =>  $token
         ];
 
         return $request->wantsJson()

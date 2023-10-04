@@ -68,7 +68,7 @@ Route::post('login', [AuthController::class, 'login']);
 
 // });
 
-Route::middleware(['auth:sanctum'])->group(function () {
+Route::middleware(['auth:api'])->group(function () {
 
     Route::middleware(['access:' . UserType::Admin])->group(function () {
         //  Route::middleware('access:' . implode(',', [UserType::Student]))->group(function () {
