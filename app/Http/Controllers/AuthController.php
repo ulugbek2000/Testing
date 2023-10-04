@@ -92,9 +92,6 @@ class AuthController extends Controller
 
     public function logout()
     {
-        // Auth::guard('web')->logout();
-
-
         Auth::logout();
         if ($user = auth()->user()) {
             // User is logged in and you can access the tokens
@@ -102,14 +99,13 @@ class AuthController extends Controller
                 $token->revoke();
             });
         }
-
-        function verifyPhoneNumber(Request $request)
-        {
-            // dd($request);
-            $user = Auth::user();
-            return $user->verifyCode($request->input('verification')) === true
-                ? response()->json(['message' => 'Verification Completed'], 200)
-                : response()->json(['message' => 'Verification Failed'], 406);
-        }
+    }
+    function verifyPhoneNumber(Request $request)
+    {
+        // dd($request);
+        $user = Auth::user();
+        return $user->verifyCode($request->input('verification')) === true
+            ? response()->json(['message' => 'Verification Completed'], 200)
+            : response()->json(['message' => 'Verification Failed'], 406);
     }
 }
