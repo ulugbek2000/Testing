@@ -110,20 +110,15 @@ class RegisterController extends Controller
 
         $token = Auth::login($user);
         return response()->json([
-            'status' => 'success',
-            'message' => 'User created successfully',
-            'user' => $user,
-            'authorisation' => [
                 'token' => $token,
                 'type' => 'bearer',
-            ]
         ]);
 
         // $token = $this->guard()->login($user);
 
         // if ($response = $this->registered($request, $user)) {
         //     return $response;
-        // }
+         // }
 
         // $token = $user->createToken('api-token')->plainTextToken;
         // $role = $user->roles()->first()->id;

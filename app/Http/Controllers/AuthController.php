@@ -94,8 +94,9 @@ class AuthController extends Controller
     {
         // Auth::guard('web')->logout();
 
-        // auth()->user()->tokens()->delete();
+        
         Auth::logout();
+        auth()->user()->tokens()->delete();
         return response()->json([
             'status' => 'success',
             'message' => 'Successfully logged out',
