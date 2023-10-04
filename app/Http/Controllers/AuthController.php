@@ -36,7 +36,7 @@ class AuthController extends Controller
 
         if (Auth::attempt([$field => $credentials['email_or_phone'], 'password' => $credentials['password']])) {
             $user = Auth::user();
-            $role = $user->roles()->first()->id;
+            $role = $user->role()->first()->id;
             dd($role);
             // Создайте пользовательские данные для токена
             $customClaims = [
