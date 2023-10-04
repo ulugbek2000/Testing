@@ -133,7 +133,8 @@ class ProfileController extends Controller
 
     public function updateTeacher(Request $request, User $user)
     {
-        if (UserType::Admin) {
+        // if (UserType::Admin)
+        if ($user->user_type === 'admin') {
             $validator = null;
             $validator = Validator::make($request->all(), [
                 'name' => 'string',

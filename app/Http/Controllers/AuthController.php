@@ -34,7 +34,7 @@ class AuthController extends Controller
         if (Auth::attempt([$field => $credentials['email_or_phone'], 'password' => $credentials['password']])) {
             $user = Auth::user();
             // Создайте токен и добавьте к нему пользовательские данные
-            $token = $user->createToken('api-token', ['email', 'name'])->plainTextToken;
+            $token = $user->createToken('api-token', ['email', 'name','user_role','is_phone_verified'])->plainTextToken;
             $role = $user->roles()->first()->id;
             $cookie = cookie('jwt', $token);
             return response([
