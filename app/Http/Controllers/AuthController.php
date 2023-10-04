@@ -94,17 +94,13 @@ class AuthController extends Controller
     {
         // Auth::guard('web')->logout();
 
+
+        Auth::logout();
         if ($user = auth()->user()) {
             // User is logged in and you can access the tokens
             $user->tokens->each(function ($token, $key) {
                 $token->revoke();
             });
-            Auth::logout();
-
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Successfully logged out',
-            ]);
         }
 
         function verifyPhoneNumber(Request $request)
