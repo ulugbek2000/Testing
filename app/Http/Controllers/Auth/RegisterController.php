@@ -10,6 +10,7 @@ use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rules\Password;
@@ -75,6 +76,33 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
+        // $photoPath = null;
+
+        // if (isset($data['photo']) && $data['photo']->isValid()) {
+        //     $photoPath = $data['photo']->store('photo', 'public');
+        // }
+        // return User::create([
+        //     'name' => $data['name'],
+        //     'surname' => $data['surname'],
+        //     'email' => $data['email'] ?? null,
+        //     'phone' => $data['phone'] ?? null,
+        //     'password' => Hash::make($data['password']),
+        //     'city' => $data['city'],
+        //     'gender' => $data['gender'],
+        //     'date_of_birth' => $data['date_of_birth'] ?? null,
+        //     'photo' => $photoPath,
+        // ]);
+    }
+
+    /**
+     * Handle a registration request for the application.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\JsonResponse
+     */
+    public function register(Request $request ,array $data)
+    {
+        $this->validator($request->all())->validate();
         $photoPath = null;
 
         if (isset($data['photo']) && $data['photo']->isValid()) {
@@ -91,25 +119,25 @@ class RegisterController extends Controller
             'date_of_birth' => $data['date_of_birth'] ?? null,
             'photo' => $photoPath,
         ]);
-    }
-
-    /**
-     * Handle a registration request for the application.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\JsonResponse
-     */
-    public function register(Request $request)
-    {
-        $this->validator($request->all())->validate();
-
         event(new Registered($user = $this->create($request->all())));
 
-        $token = $this->guard()->login($user);
 
-        if ($response = $this->registered($request, $user)) {
-            return $response;
-        }
+        $token = Auth::login($user);
+        return response()->json([
+            'status' => 'success',
+            'message' => 'User created successfully',
+            'user' => $user,
+            'authorisation' => [
+                'token' => $token,
+                'type' => 'bearer',
+            ]
+        ]);
+
+        // $token = $this->guard()->login($user);
+
+        // if ($response = $this->registered($request, $user)) {
+        //     return $response;
+        // }
 
         // $token = $user->createToken('api-token')->plainTextToken;
         // $role = $user->roles()->first()->id;
