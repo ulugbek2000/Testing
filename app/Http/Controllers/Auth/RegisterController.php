@@ -104,7 +104,7 @@ class RegisterController extends Controller
     {
         $this->validator($request->all())->validate();
 
-        event(new Registered($user = $this->create($request->all())));
+        $user = event(new Registered($this->create($request->all())));
         // event($user = $this->create($request->all()));
 
 
