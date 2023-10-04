@@ -33,19 +33,19 @@ class AuthController extends Controller
 
         if (Auth::attempt([$field => $credentials['email_or_phone'], 'password' => $credentials['password']])) {
             $user = Auth::user();
+
             // Создайте токен и добавьте к нему пользовательские данные
             $token = $user->createToken('api-token', ['email', 'name'])->plainTextToken;
             $role = $user->roles()->first()->id;
-            $tokenData = [
-                'user_role' => $role,
-                'is_phone_verified' => $user->phone_verified_at != null
-            ];
+            $user->user_role = $role;
+            $user->is_phone_verified = $user->phone_verified_at !== null;
+            $user->save();
             $cookie = cookie('jwt', $token);
             return response([
                 'message' => $token,
-                // 'user_role' => $role,
-                // 'is_phone_verified' => $user->phone_verified_at != null
-            ])->withCookie($cookie)->withClaims($tokenData);
+                'user_role' => $role,
+                'is_phone_verified' => $user->phone_verified_at != null
+            ])->withCookie($cookie);
         } else {
 
             return response()->json(['message' => 'Unauthorize'], 401);
