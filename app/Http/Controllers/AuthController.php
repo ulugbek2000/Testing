@@ -97,7 +97,7 @@ class AuthController extends Controller
         
         Auth::logout();
         auth()->user()->tokens->each(function ($token, $key) {
-            $token->delete();
+            $token->revoke();
         });
         return response()->json([
             'status' => 'success',
