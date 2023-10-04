@@ -32,6 +32,7 @@ class User extends Authenticatable
         'city',
         'photo',
         'user_type',
+        'is_phone_verified',
         'gender',
         'description',
         'position',

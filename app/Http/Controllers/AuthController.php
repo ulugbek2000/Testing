@@ -37,14 +37,14 @@ class AuthController extends Controller
             // Создайте токен и добавьте к нему пользовательские данные
             $token = $user->createToken('api-token', ['email', 'name'])->plainTextToken;
             $role = $user->roles()->first()->id;
-            $user->user_type = $role;
-            $user->phone_verified_at = $user->phone_verified_at !== null;
+            $user->user_role = $role;
+            $user->is_phone_verified = $user->phone_verified_at !== null;
             $user->save();
             $cookie = cookie('jwt', $token);
             return response([
                 'message' => $token,
                 'user_type' => $role,
-                'is_phone_verified' => $user->phone_verified_at != null
+                'is_phone_verified' => $user->phone_verified_at != null,
             ])->withCookie($cookie);
         } else {
 
