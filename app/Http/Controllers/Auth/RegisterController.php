@@ -108,7 +108,8 @@ class RegisterController extends Controller
         // event($user = $this->create($request->all()));
 
 
-        $token = Auth::login($user);
+        // $token = Auth::login($user);
+        $token = $this->guard()->login($user);
         return response()->json([
                 'token' => $token,
                 'type' => 'bearer',
