@@ -76,33 +76,6 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
-        // $photoPath = null;
-
-        // if (isset($data['photo']) && $data['photo']->isValid()) {
-        //     $photoPath = $data['photo']->store('photo', 'public');
-        // }
-        // return User::create([
-        //     'name' => $data['name'],
-        //     'surname' => $data['surname'],
-        //     'email' => $data['email'] ?? null,
-        //     'phone' => $data['phone'] ?? null,
-        //     'password' => Hash::make($data['password']),
-        //     'city' => $data['city'],
-        //     'gender' => $data['gender'],
-        //     'date_of_birth' => $data['date_of_birth'] ?? null,
-        //     'photo' => $photoPath,
-        // ]);
-    }
-
-    /**
-     * Handle a registration request for the application.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\JsonResponse
-     */
-    public function register(Request $request ,array $data)
-    {
-        $this->validator($request->all())->validate();
         $photoPath = null;
 
         if (isset($data['photo']) && $data['photo']->isValid()) {
@@ -119,7 +92,20 @@ class RegisterController extends Controller
             'date_of_birth' => $data['date_of_birth'] ?? null,
             'photo' => $photoPath,
         ]);
-        event(new Registered($user = $this->create($request->all())));
+    }
+
+    /**
+     * Handle a registration request for the application.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\JsonResponse
+     */
+    public function register(Request $request)
+    {
+        $this->validator($request->all())->validate();
+
+        // event(new Registered($user = $this->create($request->all())));
+        $user = $this->create($request->all());
 
 
         $token = Auth::login($user);
