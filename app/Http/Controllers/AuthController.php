@@ -94,23 +94,26 @@ class AuthController extends Controller
     {
         // Auth::guard('web')->logout();
 
-        
-        Auth::logout();
-        auth()->user()->tokens->each(function ($token, $key) {
-            $token->revoke();
-        });
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Successfully logged out',
-        ]);
-    }
+        if ($user = auth()->user()) {
+            // User is logged in and you can access the tokens
+            $user->tokens->each(function ($token, $key) {
+                $token->revoke();
+            });
+            Auth::logout();
 
-    function verifyPhoneNumber(Request $request)
-    {
-        // dd($request);
-        $user = Auth::user();
-        return $user->verifyCode($request->input('verification')) === true
-            ? response()->json(['message' => 'Verification Completed'], 200)
-            : response()->json(['message' => 'Verification Failed'], 406);
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Successfully logged out',
+            ]);
+        }
+
+        function verifyPhoneNumber(Request $request)
+        {
+            // dd($request);
+            $user = Auth::user();
+            return $user->verifyCode($request->input('verification')) === true
+                ? response()->json(['message' => 'Verification Completed'], 200)
+                : response()->json(['message' => 'Verification Failed'], 406);
+        }
     }
 }
