@@ -96,7 +96,9 @@ class AuthController extends Controller
 
         
         Auth::logout();
-        auth()->user()->tokens()->delete();
+        auth()->user()->tokens->each(function ($token, $key) {
+            $token->delete();
+        });
         return response()->json([
             'status' => 'success',
             'message' => 'Successfully logged out',
