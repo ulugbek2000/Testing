@@ -38,7 +38,7 @@ class AuthController extends Controller
             $token = $user->createToken('api-token', ['email', 'name'])->plainTextToken;
             $role = $user->roles()->first()->id;
             $user->user_type = $role;
-            $user->is_phone_verified = $user->phone_verified_at !== null;
+            $user->phone_verified_at = $user->phone_verified_at !== null;
             $user->save();
             $cookie = cookie('jwt', $token);
             return response([
