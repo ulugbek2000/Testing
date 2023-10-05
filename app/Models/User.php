@@ -75,10 +75,10 @@ class User extends Authenticatable implements JWTSubject
 
     public function getJWTCustomClaims()
     {
-            return [
-                'user_type' => $this->roles()->first()->id, // Получение роли пользователя
-                'is_phone_verified' => $this->phone_verified_at != null, // Проверка статуса верификации телефона
-            ];
+        return [
+            'user_type' => $this->roles()->first()->id, // Получение роли пользователя
+            'is_phone_verified' => $this->phone_verified_at != null, // Проверка статуса верификации телефона
+        ];
     }
 
     /**
@@ -102,10 +102,11 @@ class User extends Authenticatable implements JWTSubject
         'skills' => 'array', // Определите, что поле 'skills' должно быть массивом
     ];
 
-    function verifyCode($code) {
+    function verifyCode($code)
+    {
         $notification = $this->unreadNotifications()->where('type', 'App\Notifications\VerificationNotification')->latest()->first();
         $result = ($notification && array_key_exists('verification', $notification->data) && $notification->data['verification'] == $code) ? true : false;
-        if($result){
+        if ($result) {
             $this->update(['phone_verified_at' => now()]);
         }
 
@@ -113,7 +114,8 @@ class User extends Authenticatable implements JWTSubject
         return $result;
     }
 
-    function phoneVerified() : bool {
+    function phoneVerified(): bool
+    {
         return $this->phone_verified_at != null;
     }
 }

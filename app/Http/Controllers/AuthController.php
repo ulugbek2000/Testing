@@ -50,7 +50,7 @@ class AuthController extends Controller
             $token = JWTAuth::claims($customClaims)->fromUser($user);
 
             return response([
-                'message' => $token,
+                'token' => $token,
             ]);
         } else {
             return response()->json(['message' => 'Unauthorized'], 401);
