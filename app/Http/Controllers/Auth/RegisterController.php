@@ -108,10 +108,13 @@ class RegisterController extends Controller
         $user = $this->create($request->all());
         event(new Registered($user));
         $token = Auth::login($user);
-    
+        $role = $user->roles()->first()->id;
         return response()->json([
             'token' => $token,
             'type' => 'bearer',
+            'user_type' => $role,
+            'is_phone_verified' => $user->phone_verified_at != null,
+            
         ]);
 
         // $token = $this->guard()->login($user);
@@ -128,11 +131,10 @@ class RegisterController extends Controller
         //     'user_role' => $role,
         //     'is_phone_verified' => $user->phone_verified_at != null
         // ];
-        $role = $user->roles()->first()->id;
+
         $response = [
             'message' =>  $token,
-            'user_type' => $role,
-            'is_phone_verified' => $user->phone_verified_at != null,
+
         ];
 
         return $request->wantsJson()
