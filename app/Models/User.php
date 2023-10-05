@@ -76,8 +76,8 @@ class User extends Authenticatable implements JWTSubject
     public function getJWTCustomClaims()
     {
             return [
-                'role' => $this->roles()->first()->id, // Получение роли пользователя
-                'phone_verified' => $this->phone_verified_at != null, // Проверка статуса верификации телефона
+                'user_type' => $this->roles()->first()->id, // Получение роли пользователя
+                'is_phone_verified' => $this->phone_verified_at != null, // Проверка статуса верификации телефона
             ];
     }
 
