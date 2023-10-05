@@ -102,6 +102,7 @@ class AuthController extends Controller
     function verifyCode(Request $request)
     {
         $user = Auth::user();
+        dd()->verifyCode();
         return $user->verifyCode($request->input('verification')) === true
       
             ? response()->json(['message' => 'Verification Completed'], 200)
