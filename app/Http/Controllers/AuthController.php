@@ -99,7 +99,7 @@ class AuthController extends Controller
             });
         }
     }
-    public function verifyPhoneNumber(Request $request)
+    function verifyCode(Request $request)
     {
         $user = Auth::user();
         return $user->verifyCode($request->input('verification')) === true
