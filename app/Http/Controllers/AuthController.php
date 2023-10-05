@@ -99,14 +99,11 @@ class AuthController extends Controller
             });
         }
     }
-    function verifications(Request $request)
+    function verifyPhoneNumber(Request $request)
     {
         $user = Auth::user();
-        dd($this->verifyCode());
         return $user->verifyCode($request->input('verification')) === true
-   
             ? response()->json(['message' => 'Verification Completed'], 200)
             : response()->json(['message' => 'Verification Failed'], 406);
-           
     }
 }
