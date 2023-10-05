@@ -128,9 +128,11 @@ class RegisterController extends Controller
         //     'user_role' => $role,
         //     'is_phone_verified' => $user->phone_verified_at != null
         // ];
-
+        $role = $user->roles()->first()->id;
         $response = [
-            'message' =>  $token
+            'message' =>  $token,
+            'user_type' => $role,
+            'is_phone_verified' => $user->phone_verified_at != null,
         ];
 
         return $request->wantsJson()
