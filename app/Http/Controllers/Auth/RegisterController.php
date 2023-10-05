@@ -111,9 +111,6 @@ class RegisterController extends Controller
         return response()->json([
             'token' => $token,
             'type' => 'bearer',
-            'user_type' => $role,
-            'is_phone_verified' => $user->phone_verified_at != null,
-            
         ]);
 
         // $token = $this->guard()->login($user);
