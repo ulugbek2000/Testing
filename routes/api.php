@@ -193,7 +193,7 @@ Route::middleware(['jwt.auth'])->group(function () {
         Route::get('student/lesson/{lesson}', [LessonController::class, 'show']);
 
         //Верификация на номер:
-        Route::post('verify-phone', [AuthController::class, 'verifyCode']);
+        Route::post('verify-phone', [AuthController::class, 'verifications']);
 
         Route::get('student/account', [ProfileController::class, 'getProfile']);
     });
