@@ -14,7 +14,7 @@ class VerificationNotification extends Notification
 {
     use Queueable;
 
-    private $message;
+    private $message, $no;
 
     /**
      * Create a new notification instance.
@@ -22,6 +22,7 @@ class VerificationNotification extends Notification
     public function __construct($verificationNumber)
     {
         $this->message = "Ваш проверочный номер {$verificationNumber}";
+        $this->no = $verificationNumber;
     }
 
     /**
@@ -52,7 +53,7 @@ class VerificationNotification extends Notification
      */
     public function toArray(object $notifiable): array
     {
-        return [$this->message];
+        return [$this->message, 'verification' => $this->no];
     }
 
     public function toSms($notifiable)
