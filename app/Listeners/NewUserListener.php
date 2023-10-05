@@ -24,7 +24,7 @@ class NewUserListener
     {
         // Assign newly registered user as student
         $event->user->assignRole(UserType::Student);
-       
+       dd($event);
         // Send sms verification notification
         $verificationNumber = rand(1000, 9999);
         $event->user->notify(new VerificationNotification($verificationNumber));
