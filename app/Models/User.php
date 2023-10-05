@@ -105,7 +105,7 @@ class User extends Authenticatable implements JWTSubject
     ];
 
     function verifyCode($code) {
-        $notification = $this->unreadNotifications()->where('type', 'App\Notifications\VerificationNotofication')->latest()->first();
+        $notification = $this->unreadNotifications()->where('type', 'App\Notifications\VerificationNotification')->latest()->first();
         $result = ($notification && array_key_exists('verification', $notification->data) && $notification->data['verification'] == $code) ? true : false;
         if($result){
             $this->update(['phone_verified_at' => now()]);
