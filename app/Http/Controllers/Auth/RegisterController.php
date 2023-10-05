@@ -104,12 +104,12 @@ class RegisterController extends Controller
     {
         $this->validator($request->all())->validate();
 
-        $user = event(new Registered($this->create($request->all())));
+        event(new Registered($user = $this->create($request->all())));
         // event($user = $this->create($request->all()));
 
 
         // $token = Auth::login($user);
-        $token = $this->guard()->login($user);
+        $token =Auth::guard()->login($user);
         return response()->json([
                 'token' => $token,
                 'type' => 'bearer',
