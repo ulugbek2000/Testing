@@ -59,13 +59,16 @@ Route::get('course/{course}', [CourseController::class, 'show']);
 Route::get('course/{course}/topics', [TopicController::class, 'index']);
 
 Route::get('topic/{topic}/lessons', [LessonController::class, 'index']);
+Route::get('admin/lesson/{lesson}', [LessonController::class, 'show']);
 
 Route::get('course/{course}/subscriptions', [SubscriptionController::class, 'index']);
 
 Route::post('login', [AuthController::class, 'login']);
 
+Route::get('course/{course}/skill', [CourseSkillsController::class, 'index']);
+Route::post('skill', [CourseSkillsController::class, 'store']);
 
-
+Route::get('course/{course}/subscriptions', [SubscriptionController::class, 'index']);
 
 // });
 
