@@ -11,7 +11,7 @@ use App\Traits\HasRolesAndPermissions;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Spatie\Permission\Traits\HasRoles;
 use Tymon\JWTAuth\Contracts\JWTSubject;
-
+use App\Notifications\VerificationNotification;
 // use Tymon\JWTAuth\Contracts\JWTSubject;
 
 // use Illuminate\Foundation\Auth\User as Authenticatable;
