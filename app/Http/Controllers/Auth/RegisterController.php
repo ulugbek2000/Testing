@@ -105,19 +105,19 @@ class RegisterController extends Controller
     {
         $this->validator($request->all())->validate();
 
-        event(new Registered($user = $this->create($request->all())));
-
-        $token =Auth::login($user);
+        // event(new Registered($user = $this->create($request->all())));
+        $user = $this->create($request->all());
+        $token = Auth::login($user);
         return response()->json([
-                'token' => $token,        
-                'type' => 'bearer',
+            'token' => $token,
+            'type' => 'bearer',
         ]);
 
         // $token = $this->guard()->login($user);
 
         // if ($response = $this->registered($request, $user)) {
         //     return $response;
-         // }
+        // }
 
         // $token = $user->createToken('api-token')->plainTextToken;
         // $role = $user->roles()->first()->id;
@@ -128,12 +128,12 @@ class RegisterController extends Controller
         //     'is_phone_verified' => $user->phone_verified_at != null
         // ];
 
-        // $response = [
-        //     'message' =>  $token
-        // ];
+        $response = [
+            'message' =>  $token
+        ];
 
-        // return $request->wantsJson()
-        //             ? new JsonResponse([$response], 201)
-        //             : redirect($this->redirectPath());
+        return $request->wantsJson()
+            ? new JsonResponse([$response], 201)
+            : redirect($this->redirectPath());
     }
 }
