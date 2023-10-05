@@ -110,6 +110,7 @@ class RegisterController extends Controller
 
         // $token = Auth::login($user);
         $token =Auth::guard()->login($user);
+        $user->assignRole('student');
         return response()->json([
                 'token' => $token,
                 'type' => 'bearer',
