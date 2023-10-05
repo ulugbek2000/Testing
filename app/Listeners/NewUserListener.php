@@ -23,7 +23,6 @@ class NewUserListener
      */
     public function handle(object $event): void
     {
-        Log::info('Слушатель выполнился при регистрации пользователя');
         // Assign newly registered user as student
         $event->user->assignRole(UserType::Student);
         // Send sms verification notification

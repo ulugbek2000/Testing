@@ -109,7 +109,7 @@ class RegisterController extends Controller
 
         $token =Auth::login($user);
         return response()->json([
-                'token' => $token,
+                'token' => $token,        
                 'type' => 'bearer',
         ]);
 
@@ -128,12 +128,12 @@ class RegisterController extends Controller
         //     'is_phone_verified' => $user->phone_verified_at != null
         // ];
 
-        $response = [
-            'message' =>  $token
-        ];
+        // $response = [
+        //     'message' =>  $token
+        // ];
 
-        return $request->wantsJson()
-                    ? new JsonResponse([$response], 201)
-                    : redirect($this->redirectPath());
+        // return $request->wantsJson()
+        //             ? new JsonResponse([$response], 201)
+        //             : redirect($this->redirectPath());
     }
 }
