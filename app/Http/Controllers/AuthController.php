@@ -113,6 +113,7 @@ class AuthController extends Controller
         // Создайте JWT токен с пользовательскими данными
         $token = JWTAuth::claims($customClaims)->fromUser($user);
         return $user->verifyCode($request->input('verification')) === true
+        
             ? response()->json(['message' => 'Verification Completed', 'token' => $token], 200)
             : response()->json(['message' => 'Verification Failed'], 406);
     }
