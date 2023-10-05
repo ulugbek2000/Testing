@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Enums\UserType;
 use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
 use App\Models\User;
@@ -110,7 +111,7 @@ class RegisterController extends Controller
 
         // $token = Auth::login($user);
         $token =Auth::guard()->login($user);
-        $user->assignRole('student');
+        $user->assignRole(UserType::Student);
         return response()->json([
                 'token' => $token,
                 'type' => 'bearer',
