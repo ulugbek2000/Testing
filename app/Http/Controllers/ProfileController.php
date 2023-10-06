@@ -65,11 +65,11 @@ class ProfileController extends Controller
     
         // Проверяем, существует ли новый номер телефона или email в базе данных
         if ($newPhone && $newPhone !== $user->phone && User::where('phone', $newPhone)->exists()) {
-            return response()->json(['message' => 'The phone number is already in use'], 422);
+            return response()->json(['message' => 'The phone number is already exist'], 422);
         }
     
         if ($newEmail && $newEmail !== $user->email && User::where('email', $newEmail)->exists()) {
-            return response()->json(['message' => 'The email is already in use'], 422);
+            return response()->json(['message' => 'The email is already exist'], 422);
         }
     
 
@@ -160,11 +160,23 @@ class ProfileController extends Controller
                 return response()->json(['errors' => $validator->errors()], 422);
             }
 
+            $newPhone = $request->input('phone');
+            $newEmail = $request->input('email');
+        
+            // Проверяем, существует ли новый номер телефона или email в базе данных
+            if ($newPhone && $newPhone !== $user->phone && User::where('phone', $newPhone)->exists()) {
+                return response()->json(['message' => 'The phone number is already exist'], 422);
+            }
+        
+            if ($newEmail && $newEmail !== $user->email && User::where('email', $newEmail)->exists()) {
+                return response()->json(['message' => 'The email is already exist'], 422);
+            }    
+
             $data = [
                 'name' => $request->input('name', $user->name),
                 'surname' => $request->input('surname', $user->surname),
-                'email' => $request->input('email', $user->email),
-                'phone' => $request->input('phone', $user->phone),
+                // 'email' => $request->input('email', $user->email),
+                // 'phone' => $request->input('phone', $user->phone),
                 'city' => $request->input('city', $user->city),
                 'gender' => $request->input('gender', $user->gender),
                 'date_of_birth' => $request->input('date_of_birth', $user->date_of_birth),
