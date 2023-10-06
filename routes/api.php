@@ -115,8 +115,8 @@ Route::middleware(['jwt.auth'])->group(function () {
         //End Lessons
 
         //Start CourseSkills
-        Route::get('course/{course}/skill', [CourseSkillsController::class, 'index']);
-        Route::post('skill', [CourseSkillsController::class, 'store']);
+        Route::get('admin/course/{course}/skill', [CourseSkillsController::class, 'index']);
+        Route::post('admin/skill', [CourseSkillsController::class, 'store']);
         Route::put('skill/{courseSkills}', [CourseSkillsController::class, 'update']);
         Route::delete('skill/{courseSkills}', [CourseSkillsController::class, 'destroy']);
         //End CourseSkills
