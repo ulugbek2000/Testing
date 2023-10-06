@@ -60,16 +60,6 @@ class ProfileController extends Controller
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        $newPhone = $request->input('phone');
-        if ($newPhone && $newPhone !== $user->phone && User::where('phone', $newPhone)->exists()) {
-            return response()->json(['message' => 'The phone number is already in use'], 422);
-        }
-    
-        $newEmail = $request->input('email');
-        if ($newEmail && $newEmail !== $user->email && User::where('email', $newEmail)->exists()) {
-            return response()->json(['message' => 'The email is already in use'], 422);
-        }
-
         $data = [
             'name' => $request->input('name', $user->name),
             'surname' => $request->input('surname', $user->surname),
@@ -113,6 +103,15 @@ class ProfileController extends Controller
             $user->save();
         }
 
+        $newPhone = $request->input('phone');
+        if ($newPhone && $newPhone !== $user->phone && User::where('phone', $newPhone)->exists()) {
+            return response()->json(['message' => 'The phone number is already in use'], 422);
+        }
+
+        $newEmail = $request->input('email');
+        if ($newEmail && $newEmail !== $user->email && User::where('email', $newEmail)->exists()) {
+            return response()->json(['message' => 'The email is already in use'], 422);
+        }
 
         if (UserType::Teacher) {
             // dd($request->file('skills'), $request->has('skills'), is_array($request->file('skills')));
@@ -216,7 +215,7 @@ class ProfileController extends Controller
     public function getAllTeachers()
     {
         $teachers = User::where('user_type', UserType::Teacher)
-        ->with('userSkills') ->get();
+            ->with('userSkills')->get();
 
         return response()->json($teachers);
     }
