@@ -60,7 +60,15 @@ class ProfileController extends Controller
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        
+        $newPhone = $request->input('phone');
+        if ($newPhone && $newPhone !== $user->phone && User::where('phone', $newPhone)->exists()) {
+            return response()->json(['message' => 'The phone number is already in use'], 422);
+        }
+    
+        $newEmail = $request->input('email');
+        if ($newEmail && $newEmail !== $user->email && User::where('email', $newEmail)->exists()) {
+            return response()->json(['message' => 'The email is already in use'], 422);
+        }
 
         $data = [
             'name' => $request->input('name', $user->name),
@@ -71,16 +79,6 @@ class ProfileController extends Controller
             'gender' => $request->input('gender', $user->gender),
             'date_of_birth' => $request->input('date_of_birth', $user->date_of_birth),
         ];
-
-        $newPhone = $request->input('phone');
-        if ($newPhone && $newPhone !== $user->phone && User::where('phone', $newPhone)->exists()) {
-            return response()->json(['message' => 'The phone number is already in use'], 422);
-        }
-    
-        $newEmail = $request->input('email');
-        if ($newEmail && $newEmail !== $user->email && User::where('email', $newEmail)->exists()) {
-            return response()->json(['message' => 'The email is already in use'], 422);
-        }
 
         $photoPath = $user->photo;
 
