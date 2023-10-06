@@ -64,11 +64,11 @@ class ProfileController extends Controller
         $newEmail = $request->input('email');
     
         // Проверяем, существует ли новый номер телефона или email в базе данных
-        if ($newPhone !== $user->phone && User::where('phone', $newPhone)->exists()) {
+        if ($newPhone && $newPhone !== $user->phone && User::where('phone', $newPhone)->exists()) {
             return response()->json(['message' => 'The phone number is already in use'], 422);
         }
     
-        if ($newEmail !== $user->email && User::where('email', $newEmail)->exists()) {
+        if ($newEmail && $newEmail !== $user->email && User::where('email', $newEmail)->exists()) {
             return response()->json(['message' => 'The email is already in use'], 422);
         }
     
