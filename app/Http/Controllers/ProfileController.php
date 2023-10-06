@@ -60,6 +60,8 @@ class ProfileController extends Controller
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
+        
+
         $data = [
             'name' => $request->input('name', $user->name),
             'surname' => $request->input('surname', $user->surname),
@@ -69,6 +71,16 @@ class ProfileController extends Controller
             'gender' => $request->input('gender', $user->gender),
             'date_of_birth' => $request->input('date_of_birth', $user->date_of_birth),
         ];
+
+        $newPhone = $request->input('phone');
+        if ($newPhone && $newPhone !== $user->phone && User::where('phone', $newPhone)->exists()) {
+            return response()->json(['message' => 'The phone number is already in use'], 422);
+        }
+    
+        $newEmail = $request->input('email');
+        if ($newEmail && $newEmail !== $user->email && User::where('email', $newEmail)->exists()) {
+            return response()->json(['message' => 'The email is already in use'], 422);
+        }
 
         $photoPath = $user->photo;
 
@@ -90,13 +102,6 @@ class ProfileController extends Controller
             // Update the user's profile with the new photo path
             $data['photo'] = $photoPath;
         }
-
-        // $photoPath = $user->photo;
-        // if (is_string($photoPath) && Storage::exists($photoPath)) {
-        //     Storage::delete($photoPath);
-        //     $photoPath = $request->file('photo')->store('photo', 'public');
-        //     $data['photo'] = $photoPath;
-        // }
 
         if (UserType::Teacher) {
             $data['position'] = $request->input('position', $user->position);
@@ -214,7 +219,7 @@ class ProfileController extends Controller
     {
         $teachers = User::where('user_type', UserType::Teacher)
         ->with('userSkills') ->get();
-        
+
         return response()->json($teachers);
     }
 

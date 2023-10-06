@@ -117,8 +117,6 @@ class AuthController extends Controller
         $customClaims = [
             'user_type' => $role,
             'is_phone_verified' => $user->phone_verified_at != null,
-            'email' => $user->email,
-            'name' => $user->name,
         ];
     
         // Создаем новый JWT токен с обновленными пользовательскими данными
@@ -128,23 +126,4 @@ class AuthController extends Controller
             ? response()->json(['message' => 'Verification Completed', 'token' => $token], 200)
             : response()->json(['message' => 'Verification Failed'], 406);
     }
-
-    // function verifyPhoneNumber(Request $request)
-    // {
-    //     $user = Auth::user();
-    //     $role = $user->roles()->first()->id;
-    //     $customClaims = [
-    //         'user_type' => $role,
-    //         'is_phone_verified' => $user->phone_verified_at != null,
-    //         'email' => $user->email,
-    //         'name' => $user->name,
-    //     ];
-       
-    //     // Создайте JWT токен с пользовательскими данными
-    //     $token = JWTAuth::claims($customClaims)->fromUser($user);
-    //     return $user->verifyCode($request->input('verification')) === true
-        
-    //         ? response()->json(['message' => 'Verification Completed', 'token' => $token], 200)
-    //         : response()->json(['message' => 'Verification Failed'], 406);
-    // }
 }
