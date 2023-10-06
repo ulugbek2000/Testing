@@ -63,12 +63,12 @@ Route::get('lesson/{lesson}', [LessonController::class, 'show']);
 
 Route::get('course/{course}/subscriptions', [SubscriptionController::class, 'index']);
 
-Route::post('login', [AuthController::class, 'login']);
+Route::get('course/{course}/subscriptions', [SubscriptionController::class, 'index']);
 
 Route::get('course/{course}/skill', [CourseSkillsController::class, 'index']);
 
+Route::post('login', [AuthController::class, 'login']);
 
-Route::get('course/{course}/subscriptions', [SubscriptionController::class, 'index']);
 
 // });
 
@@ -122,8 +122,8 @@ Route::middleware(['jwt.auth'])->group(function () {
         //End CourseSkills
 
         //Start SubscriptionCourse
-        Route::get('course/{course}/subscriptions', [SubscriptionController::class, 'index']);
-        Route::get('subscription/{subscription}', [SubscriptionController::class, 'show']);
+        Route::get('admin/course/{course}/subscriptions', [SubscriptionController::class, 'index']);
+        Route::get('admin/subscription/{subscription}', [SubscriptionController::class, 'show']);
         Route::post('subscription', [SubscriptionController::class, 'store']);
         Route::put('subscription/{subscription_id}', [SubscriptionController::class, 'update']);
         Route::delete('subscription/{subscription}', [SubscriptionController::class, 'destroy']);

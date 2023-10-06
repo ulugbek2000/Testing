@@ -19,7 +19,8 @@ class ProfileController extends Controller
 {
 
 
-    function getProfile() {
+    function getProfile()
+    {
         return response()->json(Auth::check() ? [auth()->user(), 200] : [null, 401]);
     }
 
@@ -126,15 +127,12 @@ class ProfileController extends Controller
                 }
             }
         }
-
         return response()->json(['message' => 'Profile updated successfully']);
     }
 
-
     public function updateTeacher(Request $request, User $user)
     {
-        // if (UserType::Admin)
-        if ($user->user_type === 'admin') {
+        if (UserType::Admin) {
             $validator = null;
             $validator = Validator::make($request->all(), [
                 'name' => 'string',
@@ -214,8 +212,9 @@ class ProfileController extends Controller
 
     public function getAllTeachers()
     {
-        $teachers = User::where('user_type', UserType::Teacher)->with('userSkills')->get();
-
+        $teachers = User::where('user_type', UserType::Teacher)
+        ->with('userSkills') ->get();
+        
         return response()->json($teachers);
     }
 
