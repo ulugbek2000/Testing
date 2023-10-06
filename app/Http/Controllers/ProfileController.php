@@ -65,8 +65,8 @@ class ProfileController extends Controller
         $data = [
             'name' => $request->input('name', $user->name),
             'surname' => $request->input('surname', $user->surname),
-            'email' => $request->input('email', $user->email),
-            'phone' => $request->input('phone', $user->phone),
+            // 'email' => $request->input('email', $user->email),
+            // 'phone' => $request->input('phone', $user->phone),
             'city' => $request->input('city', $user->city),
             'gender' => $request->input('gender', $user->gender),
             'date_of_birth' => $request->input('date_of_birth', $user->date_of_birth),
