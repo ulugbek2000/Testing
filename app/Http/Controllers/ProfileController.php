@@ -67,11 +67,12 @@ class ProfileController extends Controller
         if ($newPhone && $newPhone !== $user->phone && User::where('phone', $newPhone)->exists()) {
             return response()->json(['message' => 'The phone number is already exist'], 422);
         }
+        $data['phone'] = $newPhone;
     
         if ($newEmail && $newEmail !== $user->email && User::where('email', $newEmail)->exists()) {
             return response()->json(['message' => 'The email is already exist'], 422);
         }
-    
+        $data['email'] = $newEmail;
 
         $data = [
             'name' => $request->input('name', $user->name),
