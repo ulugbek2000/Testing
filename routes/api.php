@@ -194,6 +194,8 @@ Route::middleware(['jwt.auth'])->group(function () {
         Route::get('student/topic/{topic}/lessons', [LessonController::class, 'index']);
 
         Route::get('student/lesson/{lesson}', [LessonController::class, 'show']);
+        //получение скиллы 
+        Route::get('student/course/{course}/skill', [CourseSkillsController::class, 'index']);
 
         //Верификация на номер:
         Route::post('verify-phone', [AuthController::class, 'verifyPhoneNumber']);

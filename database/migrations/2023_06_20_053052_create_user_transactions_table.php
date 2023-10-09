@@ -20,10 +20,8 @@ return new class extends Migration
                     $table->foreignId('wallet_id')->references('id')->on('user_wallets')->onDelete('cascade');
                     $table->decimal('amount', 10, 2);
                     $table->string('description')->nullable();
-                    // $table->enum('method', TransactionMethod::getValues())->default(TransactionMethod::CASH());
-                    $table->enum('method', ['cash', 'mobile', 'online'])->default('Cash');
-                    // $table->enum('status', TransactionStatus::getValues())->default(TransactionStatus::PENDING());
-                    $table->enum('status', ['pending', 'success', 'fail', 'processing'])->default('Pending');
+                    $table->enum('method', TransactionMethod::getValues())->default(TransactionMethod::Cash);
+                    $table->enum('status', TransactionStatus::getValues())->default(TransactionStatus::Pending);
                     $table->timestamps();
                     $table->softDeletes();
                 });
