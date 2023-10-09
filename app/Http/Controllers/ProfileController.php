@@ -87,21 +87,21 @@ class ProfileController extends Controller
         $photoPath = $user->photo;
 
         if (is_string($photoPath) && Storage::exists($photoPath)) {
-            // Delete the old photo
+            // Удалить старую фотографию
             Storage::delete($photoPath);
         }
 
         if ($request->hasFile('photo')) {
-            // Ensure that a file was uploaded
+            // Убедитесь, что файл был загружен
             $uploadedPhoto = $request->file('photo');
 
-            // Generate a unique filename (you can modify this as needed)
+            // Создайте уникальное имя файла (вы можете изменить его по мере необходимости)
             $photoFileName = uniqid('photo_') . '.' . $uploadedPhoto->getClientOriginalExtension();
 
-            // Store the new photo with the generated filename in the 'public/photo' directory
+            // Сохраните новую фотографию со сгенерированным именем файла в каталоге public/photo.
             $photoPath = $uploadedPhoto->storeAs('photo', $photoFileName, 'public');
 
-            // Update the user's profile with the new photo path
+            // Обновите профиль пользователя, указав новый путь к фотографии.
             $data['photo'] = $photoPath;
         }
 
