@@ -14,7 +14,7 @@ class CourseSkillsController extends Controller
      */
     public function index(Course $course)
     {
-        $courseSkills = $course->courseSkills();
+        $courseSkills = $course->courseSkills;
         return response()->json($courseSkills);
     }
 
