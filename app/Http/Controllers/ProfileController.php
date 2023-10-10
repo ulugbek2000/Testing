@@ -140,7 +140,7 @@ class ProfileController extends Controller
                 }
             }
         }
-        $user->update($data);
+        $user->save($data);
         return response()->json(['message' => 'Profile updated successfully']);
     }
 

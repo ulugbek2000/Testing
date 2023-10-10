@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\TransactionMethod;
+use App\Enums\TransactionStatus;
 use App\Models\UserTransaction;
+use App\Models\UserWallet;
 use Illuminate\Http\Request;
 
 class UserTransactionController extends Controller
@@ -10,7 +13,7 @@ class UserTransactionController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         $transaction = UserTransaction::all();
         // Return Json Response
@@ -22,34 +25,44 @@ class UserTransactionController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(UserTransaction $transaction)
     {
         //
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    
+    public function topUpWallet(Request $request)
     {
-        try {
-            $data = [
-                'wallet_id' => $request->wallet_id,
-                'amount' => $request->amount,
-                'description' => $request->description,
-                'method' => $request->method,
-                'status' => $request->status
-            ];
-            UserTransaction::create($data);
-            return response()->json([
-                'message' => "Transaction succefully created."
-            ], 200);
-        } catch (\Exception $e) {
-            //Return response Json
-            return response()->json([
-                'message' => $e,
-            ], 500);
-        }
+        // Валидация данных
+        $request->validate([
+            'wallet_id' => 'required|exists:user_wallets,id',
+            'amount' => 'required|numeric|min:0.01', // Минимальная сумма для пополнения
+        ]);
+
+        $wallet = UserWallet::findOrFail($request->input('wallet_id'));
+
+        // Создание записи о транзакции
+        $transaction = new UserTransaction([
+            'amount' => $request->input('amount'),
+            'description' => 'Пополнение счета через карту',
+            'method' => TransactionMethod::Cash, // Предполагаем, что вы используете "Cash" как метод пополнения
+            'status' => TransactionStatus::Pending, // Предполагаем, что начальный статус "Pending"
+        ]);
+
+        $wallet->transactions()->save($transaction);
+
+        // Дополнительная логика для выполнения платежа через карту
+        // Здесь вы можете использовать сторонние платежные шлюзы, например, Stripe, Braintree, PayPal, и др.
+
+        // Если платеж успешен, обновите статус транзакции и сумму на счете
+        // Пример:
+        // $transaction->update([
+        //     'status' => TransactionStatus::Completed,
+        // ]);
+        // $wallet->increment('balance', $request->input('amount'));
+
+        // Верните ответ в формате JSON
+        return response()->json(['message' => 'Счет успешно пополнен']);
     }
 
     /**
