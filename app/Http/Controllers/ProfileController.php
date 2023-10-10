@@ -32,18 +32,19 @@ class ProfileController extends Controller
         $validator = null; // Инициализация валидатора
 
         if (UserType::Student || UserType::Teacher) {
-            // Валидация общих полей для Студента или Преподавателя
-            $validator = Validator::make($request->all(), [
-                'name' => 'string',
-                'surname' => 'string',
-                'email' => 'required_without:phone|email|unique:users,email,' . $user->id,
-                'phone' => 'required_without:email|string|unique:users,phone,' . $user->id,
-                'password' => 'string|min:8',
-                'city' => 'string',
-                'photo' => 'nullable|mimes:jpeg,png,jpg,gif,mov',
-                'gender' => 'string|in:male,female,other',
-                'date_of_birth' => 'date',
-            ]);
+                // Валидация общих полей для Студента или Преподавателя
+                $validator = Validator::make($request->all(), [
+                    'name' => 'string',
+                    'surname' => 'string',
+                    'email' => 'required_without:phone|email|unique:users,email,' . $user->id,
+                    'phone' => 'required_without:email|string|unique:users,phone,' . $user->id,
+                    'password' => 'string|min:8',
+                    'city' => 'string',
+                    'photo' => 'nullable|mimes:jpeg,png,jpg,gif,mov',
+                    'gender' => 'string|in:male,female,other',
+                    'date_of_birth' => 'date',
+                ]);
+          
         }
 
         if (UserType::Teacher) {
@@ -73,7 +74,6 @@ class ProfileController extends Controller
         }
 
         if ($request->has('email')) {
-
             if ($newEmail && $newEmail !== $user->email && User::where('email', $newEmail)->exists()) {
                 return response()->json(['message' => 'The email is already exist'], 422);
             }
@@ -90,7 +90,7 @@ class ProfileController extends Controller
             'gender' => $request->input('gender', $user->gender),
             'date_of_birth' => $request->input('date_of_birth', $user->date_of_birth),
         ];
-
+        $user->update($data);
         $photoPath = $user->photo;
 
         if (is_string($photoPath) && Storage::exists($photoPath)) {
@@ -140,7 +140,6 @@ class ProfileController extends Controller
                 }
             }
         }
-        $user->save($data);
         return response()->json(['message' => 'Profile updated successfully']);
     }
 
@@ -173,12 +172,21 @@ class ProfileController extends Controller
             $newEmail = $request->input('email');
 
             // Проверяем, существует ли новый номер телефона или email в базе данных
-            if ($newPhone && $newPhone !== $user->phone && User::where('phone', $newPhone)->exists()) {
-                return response()->json(['message' => 'The phone number is already exist'], 422);
+            if ($request->has('phone')) {
+                // Проверяем, существует ли новый номер телефона или email в базе данных
+                if ($newPhone && $newPhone !== $user->phone && User::where('phone', $newPhone)->exists()) {
+                    return response()->json(['message' => 'The phone number is already exist'], 422);
+                }
+            } else {
+                $data['phone'] = $user->phone; // Используем значение из базы данных
             }
-
-            if ($newEmail && $newEmail !== $user->email && User::where('email', $newEmail)->exists()) {
-                return response()->json(['message' => 'The email is already exist'], 422);
+    
+            if ($request->has('email')) {
+                if ($newEmail && $newEmail !== $user->email && User::where('email', $newEmail)->exists()) {
+                    return response()->json(['message' => 'The email is already exist'], 422);
+                }
+            } else {
+                $data['email'] = $user->email; // Используем значение из базы данных
             }
 
             $data = [
