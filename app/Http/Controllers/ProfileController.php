@@ -29,7 +29,6 @@ class ProfileController extends Controller
     {
 
         $user = Auth::user();
-        dd($user);
         $validator = null; // Инициализация валидатора
 
         if ($user->hasRole(UserType::Student, UserType::Teacher)) {
@@ -47,7 +46,7 @@ class ProfileController extends Controller
                 ]);
           
         }
-
+        dd($user,$validator);
         if ($user->hasRole(UserType::Teacher)) {
 
             $validator = Validator::make($request->all(), [
