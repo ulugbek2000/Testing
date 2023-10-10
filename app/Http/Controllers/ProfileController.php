@@ -32,21 +32,20 @@ class ProfileController extends Controller
         $validator = null; // Инициализация валидатора
 
         if ($user->hasRole(UserType::Student, UserType::Teacher)) {
-                // Валидация общих полей для Студента или Преподавателя
-                $validator = Validator::make($request->all(), [
-                    'name' => 'string',
-                    'surname' => 'string',
-                    'email' => 'required_without:phone|email|unique:users,email,' . $user->id,
-                    'phone' => 'required_without:email|string|unique:users,phone,' . $user->id,
-                    'password' => 'string|min:8',
-                    'city' => 'string',
-                    'photo' => 'nullable|mimes:jpeg,png,jpg,gif,mov',
-                    'gender' => 'string|in:male,female,other',
-                    'date_of_birth' => 'date',
-                ]);
-          
+            // Валидация общих полей для Студента или Преподавателя
+            $validator = $request->validate([
+                'name' => 'string',
+                'surname' => 'string',
+                'email' => 'required_without:phone|email|unique:users,email,' . $user->id,
+                'phone' => 'required_without:email|string|unique:users,phone,' . $user->id,
+                'password' => 'string|min:8',
+                'city' => 'string',
+                'photo' => 'nullable|mimes:jpeg,png,jpg,gif,mov',
+                'gender' => 'string|in:male,female,other',
+                'date_of_birth' => 'date',
+            ]);
         }
-        dd($user,$validator);
+        dd($user, $validator);
         if ($user->hasRole(UserType::Teacher)) {
 
             $validator = Validator::make($request->all(), [
@@ -177,7 +176,7 @@ class ProfileController extends Controller
             } else {
                 $data['phone'] = $user->phone; // Используем значение из базы данных
             }
-    
+
             if ($request->has('email')) {
                 if ($newEmail && $newEmail !== $user->email && User::where('email', $newEmail)->exists()) {
                     return response()->json(['message' => 'The email is already exist'], 422);
