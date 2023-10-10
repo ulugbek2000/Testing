@@ -31,7 +31,7 @@ class ProfileController extends Controller
         $user = Auth::user();
         $validator = null; // Инициализация валидатора
 
-        if (UserType::Student || UserType::Teacher) {
+        if ($user->hasRole(UserType::Student, UserType::Teacher)) {
                 // Валидация общих полей для Студента или Преподавателя
                 $validator = Validator::make($request->all(), [
                     'name' => 'string',
@@ -47,7 +47,7 @@ class ProfileController extends Controller
           
         }
 
-        if (UserType::Teacher) {
+        if ($user->hasRole(UserType::Teacher)) {
 
             $validator = Validator::make($request->all(), [
                 'position' => 'nullable|string',
@@ -67,7 +67,7 @@ class ProfileController extends Controller
         if ($request->has('phone')) {
             // Проверяем, существует ли новый номер телефона или email в базе данных
             if ($newPhone && $newPhone !== $user->phone && User::where('phone', $newPhone)->exists()) {
-                return response()->json(['message' => 'The phone number is already exist'], 422);
+                return response()->json(['message' => 'The phone number is already in use'], 422);
             }
         } else {
             $data['phone'] = $user->phone; // Используем значение из базы данных
@@ -75,7 +75,7 @@ class ProfileController extends Controller
 
         if ($request->has('email')) {
             if ($newEmail && $newEmail !== $user->email && User::where('email', $newEmail)->exists()) {
-                return response()->json(['message' => 'The email is already exist'], 422);
+                return response()->json(['message' => 'The email is already in use'], 422);
             }
         } else {
             $data['email'] = $user->email; // Используем значение из базы данных
@@ -84,8 +84,6 @@ class ProfileController extends Controller
         $data = [
             'name' => $request->input('name', $user->name),
             'surname' => $request->input('surname', $user->surname),
-            // 'phone' => $request->input('phone'),
-            // 'email' => $request->input('email'),
             'city' => $request->input('city', $user->city),
             'gender' => $request->input('gender', $user->gender),
             'date_of_birth' => $request->input('date_of_birth', $user->date_of_birth),
@@ -112,7 +110,7 @@ class ProfileController extends Controller
             $data['photo'] = $photoPath;
         }
 
-        if (UserType::Teacher) {
+        if ($user->hasRole(UserType::Teacher)) {
             $data['position'] = $request->input('position', $user->position);
             $data['description'] = $request->input('description', $user->description);
         }
@@ -124,12 +122,11 @@ class ProfileController extends Controller
             $user->save();
         }
 
-        if (UserType::Teacher) {
+        if ($user->hasRole(UserType::Teacher)) {
             // dd($request->file('skills'), $request->has('skills'), is_array($request->file('skills')));
 
             if ($request->has('skills') && is_array($request->file('skills'))) {
                 foreach ($request->file('skills') as $skillImage) {
-
                     if ($skillImage->isValid()) {
                         $skillPath = $skillImage->store('skills', 'public');
                         UserSkills::create([
@@ -192,8 +189,6 @@ class ProfileController extends Controller
             $data = [
                 'name' => $request->input('name', $user->name),
                 'surname' => $request->input('surname', $user->surname),
-                // 'email' => $request->input('email', $user->email),
-                // 'phone' => $request->input('phone', $user->phone),
                 'city' => $request->input('city', $user->city),
                 'gender' => $request->input('gender', $user->gender),
                 'date_of_birth' => $request->input('date_of_birth', $user->date_of_birth),
