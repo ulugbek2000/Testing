@@ -74,25 +74,18 @@ class ProfileController extends Controller
         }
 
 
-        // $data = [
-        //     'name' => $request->input('name', $user->name),
-        //     'surname' => $request->input('surname', $user->surname),
-        //     'phone' => $request->input('phone'),
-        //     'email' => $request->input('email'),
-        //     'city' => $request->input('city', $user->city),
-        //     'gender' => $request->input('gender', $user->gender),
-        //     'date_of_birth' => $request->input('date_of_birth', $user->date_of_birth),
-        // ];
-        // $user->update($data);
+        $data = [
+            'name' => $request->input('name', $user->name),
+            'surname' => $request->input('surname', $user->surname),
+            'phone' => $request->input('phone'),
+            'email' => $request->input('email'),
+            'city' => $request->input('city', $user->city),
+            'gender' => $request->input('gender', $user->gender),
+            'date_of_birth' => $request->input('date_of_birth', $user->date_of_birth),
+        ];
 
-        $user->name = $request->input('name');
-        $user->surname = $request->input('surname');
-        $user->phone = $request->input('phone'); 
-        $user->email = $request->input('email');
-        $user->city = $request->input('city');
-        $user->gender = $request->input('gender');
-        $user->date_of_birth = $request->input('date_of_birth');
-        $user->save();
+
+
 
 
         $photoPath = $user->photo;
@@ -121,7 +114,7 @@ class ProfileController extends Controller
             $data['description'] = $request->input('description', $user->description);
         }
 
-        
+
 
         if ($request->has('password')) {
             $user->password = bcrypt($request->input('password'));
@@ -144,7 +137,7 @@ class ProfileController extends Controller
                 }
             }
         }
-       
+        $user->update($data);
         return response()->json(['message' => 'Profile updated successfully']);
     }
 
