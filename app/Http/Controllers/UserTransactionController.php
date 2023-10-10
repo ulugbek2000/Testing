@@ -7,13 +7,6 @@ use Illuminate\Http\Request;
 
 class UserTransactionController extends Controller
 {
-   /*  function __construct()
-    {
-        $this->middleware('permission:role-list|role-create|role-edit|role-delete', ['only' => ['index', 'store']]);
-        $this->middleware('permission:role-create', ['only' => ['create', 'store']]);
-        $this->middleware('permission:role-edit', ['only' => ['edit', 'update']]);
-        $this->middleware('permission:role-delete', ['only' => ['destroy']]);
-    } */
     /**
      * Display a listing of the resource.
      */
@@ -62,9 +55,8 @@ class UserTransactionController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show($id)
+    public function show(UserTransaction $transaction)
     {
-        $transaction = UserTransaction::find($id);
         if (!$transaction) {
             return response()->json([
                 'message' => 'Transaction not found.'
@@ -87,11 +79,10 @@ class UserTransactionController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, UserTransaction $transaction)
     {
         try {
             //find transaction
-            $transaction = UserTransaction::find($id);
             if (!$transaction) {
                 return response()->json([
                     'message' => 'Transaction not found!!'
@@ -120,9 +111,8 @@ class UserTransactionController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id)
+    public function destroy(UserTransaction $transaction)
     {
-        $transaction = UserTransaction::find($id);
         if (!$transaction) {
             return response()->json([
                 'message' => 'transaction not found.'

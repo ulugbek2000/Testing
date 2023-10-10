@@ -54,7 +54,7 @@ class LessonController extends Controller
         if ($type === 'text') {
             $lesson->content = $сontent;
         } elseif ($type === 'video' || $type === 'audio') {
-            $filePath = $request->file('content')->store('lessonContent');
+            $filePath = $request->file('content')->store('lessonContent','public');
         }
         $data = [
             'topic_id' => $request->topic_id,
