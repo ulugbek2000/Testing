@@ -71,12 +71,13 @@ class ProfileController extends Controller
         // $user->update($data);
         $photoPath = $user->photo;
 
+        if (is_string($photoPath) && Storage::exists($photoPath)) {
+            // Удалить старую фотографию
+            Storage::delete($photoPath);
+        }
+
         if ($request->hasFile('photo')) {
 
-            // if (is_string($photoPath) && Storage::exists($photoPath)) {
-            //     // Удалить старую фотографию
-            //     Storage::delete($photoPath);
-            // }
             // Убедитесь, что файл был загружен
             $uploadedPhoto = $request->file('photo');
 
