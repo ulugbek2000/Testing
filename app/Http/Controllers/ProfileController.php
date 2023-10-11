@@ -86,7 +86,7 @@ class ProfileController extends Controller
             $user->city = $request->input('city');
             $user->gender = $request->input('gender');
             $user->date_of_birth = $request->input('date_of_birth');
-            dd($request);
+            // dd($request);
         
         $user->save();
         $photoPath = $user->photo;
