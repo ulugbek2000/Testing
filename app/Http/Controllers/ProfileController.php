@@ -29,11 +29,10 @@ class ProfileController extends Controller
     {
         $user = Auth::user();
         $data = [];
-        // return response()->json([$request->all(), $user]);
+        return response()->json([$request->all(), $user]);
 
-        if ($user->hasRole(UserType::Student, UserType::Teacher)) {
+        if ($user->hasRole(UserType::Student)) {
             // Валидация общих полей для Студента или Преподавателя
-
             $request->validate([
                 'name' => 'string',
                 'surname' => 'string',
@@ -47,18 +46,18 @@ class ProfileController extends Controller
             ]);
         }
 
-        if ($user->hasRole(UserType::Teacher)) {
+        // if ($user->hasRole(UserType::Teacher)) {
 
-           $request->validate([
-                'position' => 'nullable|string',
-                'description' => 'nullable|string',
-                'skills' => 'nullable|array', // Убедитесь, что это массив
-                'skills.*' => 'image|mimes:jpeg,png,jpg,gif', // Проверка скиллов в виде изображений
-            ]);
+        //    $request->validate([
+        //         'position' => 'nullable|string',
+        //         'description' => 'nullable|string',
+        //         'skills' => 'nullable|array', // Убедитесь, что это массив
+        //         'skills.*' => 'image|mimes:jpeg,png,jpg,gif', // Проверка скиллов в виде изображений
+        //     ]);
 
-            $data['position'] = $request->input('position', $user->position);
-            $data['description'] = $request->input('description', $user->description);
-        }
+        //     $data['position'] = $request->input('position', $user->position);
+        //     $data['description'] = $request->input('description', $user->description);
+        // }
 
         // $newPhone = $request->input('phone');
         // $newEmail = $request->input('email');
@@ -116,20 +115,20 @@ class ProfileController extends Controller
             $user->save();
         }
 
-        if ($user->hasRole(UserType::Teacher)) {
+        // if ($user->hasRole(UserType::Teacher)) {
 
-            if ($request->has('skills') && is_array($request->file('skills'))) {
-                foreach ($request->file('skills') as $skillImage) {
-                    if ($skillImage->isValid()) {
-                        $skillPath = $skillImage->store('skills', 'public');
-                        UserSkills::create([
-                            'user_id' => $user->id,
-                            'skills' => $skillPath,
-                        ]);
-                    }
-                }
-            }
-        }
+        //     if ($request->has('skills') && is_array($request->file('skills'))) {
+        //         foreach ($request->file('skills') as $skillImage) {
+        //             if ($skillImage->isValid()) {
+        //                 $skillPath = $skillImage->store('skills', 'public');
+        //                 UserSkills::create([
+        //                     'user_id' => $user->id,
+        //                     'skills' => $skillPath,
+        //                 ]);
+        //             }
+        //         }
+        //     }
+        // }
         return response()->json(['message' => 'Profile updated successfully']);
     }
 
