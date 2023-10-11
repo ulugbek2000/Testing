@@ -162,8 +162,8 @@ class ProfileController extends Controller
         }
 
         if ($request->has('user_skills')) {
-            Log::info('files', [$request->file('user_skills')]);
-            foreach ($request->file('user_skills') as $skillImage) {
+            Log::info('files', [$request->input('user_skills')]);
+            foreach ($request->input('user_skills') as $skillImage) {
                 if ($skillImage->isValid()) {
                     $skillPath = $skillImage->store('skills', 'public');
                     UserSkills::create([
