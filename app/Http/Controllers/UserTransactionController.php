@@ -21,15 +21,6 @@ class UserTransactionController extends Controller
             'transaction' => $transaction
         ], 200);
     }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create(UserTransaction $transaction)
-    {
-        //
-    }
-
     
     public function topUpWallet(Request $request)
     {
@@ -44,25 +35,25 @@ class UserTransactionController extends Controller
         // Создание записи о транзакции
         $transaction = new UserTransaction([
             'amount' => $request->input('amount'),
-            'description' => 'Пополнение счета через карту',
+            'description' => 'Top up your account card',
             'method' => TransactionMethod::Cash, // Предполагаем, что вы используете "Cash" как метод пополнения
             'status' => TransactionStatus::Pending, // Предполагаем, что начальный статус "Pending"
         ]);
-
         $wallet->transactions()->save($transaction);
 
         // Дополнительная логика для выполнения платежа через карту
+
         // Здесь вы можете использовать сторонние платежные шлюзы, например, Stripe, Braintree, PayPal, и др.
 
         // Если платеж успешен, обновите статус транзакции и сумму на счете
         // Пример:
         // $transaction->update([
-        //     'status' => TransactionStatus::Completed,
+        //     'status' => TransactionStatus::Success,
         // ]);
         // $wallet->increment('balance', $request->input('amount'));
 
         // Верните ответ в формате JSON
-        return response()->json(['message' => 'Счет успешно пополнен']);
+        return response()->json(['message' => 'Account successfully replenished']);
     }
 
     /**

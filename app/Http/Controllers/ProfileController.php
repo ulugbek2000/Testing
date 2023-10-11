@@ -162,7 +162,7 @@ class ProfileController extends Controller
         }
 
         if ($request->has('user_skills')) {
-            Log::info('files', [$request->input('user_skills')]);
+            Log::info('files', [$request->file('user_skills')]);
             foreach ($request->input('user_skills') as $skillImage) {
                 if ($skillImage->isValid()) {
                     $skillPath = $skillImage->store('skills', 'public');
@@ -184,8 +184,9 @@ class ProfileController extends Controller
 
     public function getAllStudents(User $user)
     {
+        // $user = Auth::user();
         if ($user->hasRole(UserType::Student)) {
-            return response()->json($user);
+            $students = User::all();
         }
     }
 

@@ -20,7 +20,6 @@ class UserSkills extends Model
     }
 
     protected $casts = [
-
         'skills' => 'array', 
     ];
 }

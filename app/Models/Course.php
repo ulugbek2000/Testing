@@ -48,11 +48,6 @@ class Course extends Model
         return $this->hasMany(Topic::class);
     }
 
-    public function hasCertificate()
-    {
-        return $this->has_certificate !== null;
-    }
-
     public function students()
     {
         return $this->hasManyThrough(User::class, UserCourse::class, 'course_id', 'id');
