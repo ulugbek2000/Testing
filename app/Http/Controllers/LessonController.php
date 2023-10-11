@@ -55,7 +55,7 @@ class LessonController extends Controller
         if ($type === 'text') {
             $lesson->content = $сontent;
         } elseif ($type === 'video' || $type === 'audio') {
-            $filePath = $request->file('content')->store('lessonContent','public');
+            $filePath = $request->file('content')->store('content');
         }
         $data = [
             'topic_id' => $request->topic_id,
@@ -115,7 +115,7 @@ class LessonController extends Controller
                 // Delete old content file if needed
                 Storage::delete($lesson->content);
                 // Upload and store new content file
-                $content = $request->file('content')->store('content', 'public');
+                $content = $request->file('content')->store('content');
             }
         } else {
             $content = $request->content;
