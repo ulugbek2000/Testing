@@ -122,7 +122,7 @@ class ProfileController extends Controller
         // $user = Auth::user();
         if ($user->hasRole(UserType::Admin)) {
             $validator = null;
-            $validator = Validator::make($request->all(), [
+            $request->validate([
                 'name' => 'string',
                 'surname' => 'string',
                 'email' => 'required_without:phone|email|unique:users,' . $user->id,
@@ -139,9 +139,9 @@ class ProfileController extends Controller
             ]);
         }
 
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
+        // if ($validator->fails()) {
+        //     return response()->json(['errors' => $validator->errors()], 422);
+        // }
 
         $user->update($request->only([
             'name',
