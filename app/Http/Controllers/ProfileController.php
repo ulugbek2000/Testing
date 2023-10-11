@@ -29,7 +29,6 @@ class ProfileController extends Controller
     {
         $user = Auth::user();
         $data = null;
-        return response()->json([$request->all(), $user]);
 
         if ($user->hasRole(UserType::Student)) {
             // Валидация общих полей для Студента или Преподавателя
