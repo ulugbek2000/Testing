@@ -28,7 +28,7 @@ class ProfileController extends Controller
     public function updateProfile(Request $request)
     {
         $user = Auth::user();
-        $data = null;
+        $data = [];
 
         if ($user->hasRole(UserType::Student)) {
             // Валидация общих полей для Студента или Преподавателя
@@ -44,25 +44,25 @@ class ProfileController extends Controller
                 'date_of_birth' => 'date',
             ]);
         }
-        // $data = [
-        //     'email' => $request->input('email'),
-        //     'phone' => $request->input('phone'),
-        //     'name' => $request->input('name', $user->name),
-        //     'surname' => $request->input('surname', $user->surname),
-        //     'city' => $request->input('city', $user->city),
-        //     'gender' => $request->input('gender', $user->gender),
-        //     'date_of_birth' => $request->input('date_of_birth', $user->date_of_birth),
-        // ];
-        $user->update($request->only([
-            'email',
-            'phone',
-            'name',
-            'surname',
-            'city',
-            'gender',
-            'date_of_birth',
-        ]));
-        // $user->update($data);
+        $data = [
+            'email' => $request->input('email'),
+            'phone' => $request->input('phone'),
+            'name' => $request->input('name', $user->name),
+            'surname' => $request->input('surname', $user->surname),
+            'city' => $request->input('city', $user->city),
+            'gender' => $request->input('gender', $user->gender),
+            'date_of_birth' => $request->input('date_of_birth', $user->date_of_birth),
+        ];
+        // $user->update($request->only([
+        //     'email',
+        //     'phone',
+        //     'name',
+        //     'surname',
+        //     'city',
+        //     'gender',
+        //     'date_of_birth',
+        // ]));
+        $user->update($data);
         $photoPath = $user->photo;
 
         if ($request->hasFile('photo')) {
