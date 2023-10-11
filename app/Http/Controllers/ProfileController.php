@@ -156,6 +156,7 @@ class ProfileController extends Controller
         ]));
 
         $photoPath = $user->photo;
+        dd($photoPath);
 
         if ($request->hasFile('photo')) {
             // Delete old cover file if needed
