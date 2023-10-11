@@ -82,7 +82,7 @@ class ProfileController extends Controller
             $user->password = bcrypt($request->input('password'));
             $user->save();
         }
-        $user->update($data);
+        // $user->update($data);
         return response()->json(['message' => 'Profile updated successfully']);
     }
     // if ($user->hasRole(UserType::Teacher)) {
@@ -176,7 +176,7 @@ class ProfileController extends Controller
                 // Обновите профиль пользователя, указав новый путь к фотографии.
                 $data['photo'] = $photoPath;
             }
-            $user->update($data);
+            // $user->update($data);
 
             if ($request->has('password')) {
                 $user->password = bcrypt($request->input('password'));
