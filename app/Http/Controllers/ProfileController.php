@@ -45,26 +45,27 @@ class ProfileController extends Controller
             ]);
         // }
         
-        // dd($user,$request);
-        $data = [
-            'email' => $request->input('email'),
-            'phone' => $request->input('phone'),
-            'name' => $request->input('name', $user->name),
-            'surname' => $request->input('surname', $user->surname),
-            'city' => $request->input('city', $user->city),
-            'gender' => $request->input('gender', $user->gender),
-            'date_of_birth' => $request->input('date_of_birth', $user->date_of_birth),
-        ];
-        // $user->update($request->only([
-        //     'email',
-        //     'phone',
-        //     'name',
-        //     'surname',
-        //     'city',
-        //     'gender',
-        //     'date_of_birth',
-        // ]));
-        $user->update($data);
+    
+        // $data = [
+        //     'email' => $request->input('email'),
+        //     'phone' => $request->input('phone'),
+        //     'name' => $request->input('name', $user->name),
+        //     'surname' => $request->input('surname', $user->surname),
+        //     'city' => $request->input('city', $user->city),
+        //     'gender' => $request->input('gender', $user->gender),
+        //     'date_of_birth' => $request->input('date_of_birth', $user->date_of_birth),
+        // ];
+        $user->update($request->only([
+            'email',
+            'phone',
+            'name',
+            'surname',
+            'city',
+            'gender',
+            'date_of_birth',
+        ]));
+            dd($user,$request);
+        // $user->update($data);
         $photoPath = $user->photo;
 
         if ($request->hasFile('photo')) {
