@@ -79,21 +79,14 @@ class ProfileController extends Controller
         //     $data['email'] = $user->email; // Используем значение из базы данных
         // }
 
-        // $data = [
             $user->email = $request->input('email');
             $user->phone = $request->input('phone');
-            $user->name = $request->input('surname');
+            $user->name = $request->input('name');
+            $user->surname = $request->input('surname');
             $user->city = $request->input('city');
             $user->gender = $request->input('gender');
             $user->date_of_birth = $request->input('date_of_birth');
-            // 'email' => $request->input('email'),
-            // 'phone' => $request->input('phone'),
-            // 'name' => $request->input('name', $user->name),
-            // 'surname' => $request->input('surname', $user->surname),
-            // 'city' => $request->input('city', $user->city),
-            // 'gender' => $request->input('gender', $user->gender),
-            // 'date_of_birth' => $request->input('date_of_birth', $user->date_of_birth),
-        // ];
+        
         $user->save();
         $photoPath = $user->photo;
 
