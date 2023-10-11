@@ -29,7 +29,7 @@ class ProfileController extends Controller
     {
         $user = Auth::user();
         $data = [];
-        dd($user);
+        dd($user,$request);
 
         if ($user->hasRole(UserType::Student)) {
             // Валидация общих полей для Студента или Преподавателя
