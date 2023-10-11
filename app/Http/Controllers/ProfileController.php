@@ -117,11 +117,10 @@ class ProfileController extends Controller
     // }
 
 
-    public function updateTeacher(Request $request,User $user)
+    public function updateTeacher(Request $request, User $user)
     {
         // $user = Auth::user();
         if ($user->hasRole(UserType::Admin)) {
-            dd($user);
             $validator = null;
             $validator = Validator::make($request->all(), [
                 'name' => 'string',
@@ -138,70 +137,68 @@ class ProfileController extends Controller
                 'skills' => 'nullable|array',
                 'skills.*' => 'image|mimes:jpeg,png,jpg,gif',
             ]);
+        }
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
 
+        $user->update($request->only([
+            'name',
+            'email',
+            'phone',
+            'surname',
+            'city',
+            'gender',
+            'date_of_birth',
+            'position',
+            'description',
+        ]));
 
-            if ($validator->fails()) {
-                return response()->json(['errors' => $validator->errors()], 422);
-            }
+        $photoPath = $user->photo;
 
-            $user->update($request->only([
-                'name',
-                'email',
-                'phone',
-                'surname',
-                'city',
-                'gender',
-                'date_of_birth',
-                'position',
-                'description',
-            ]));
+        if (is_string($photoPath) && Storage::exists($photoPath)) {
+            // Удалить старую фотографию
+            Storage::delete($photoPath);
+        }
 
-            $photoPath = $user->photo;
+        if ($request->hasFile('photo')) {
 
-            if (is_string($photoPath) && Storage::exists($photoPath)) {
-                // Удалить старую фотографию
-                Storage::delete($photoPath);
-            }
+            // Убедитесь, что файл был загружен
+            $uploadedPhoto = $request->file('photo');
 
-            if ($request->hasFile('photo')) {
+            // Создайте уникальное имя файла (вы можете изменить его по мере необходимости)
+            $photoFileName = uniqid('photo_') . '.' . $uploadedPhoto->getClientOriginalExtension();
 
-                // Убедитесь, что файл был загружен
-                $uploadedPhoto = $request->file('photo');
+            // Сохраните новую фотографию со сгенерированным именем файла в каталоге public/photo.
+            $photoPath = $uploadedPhoto->storeAs('photo', $photoFileName, 'public');
 
-                // Создайте уникальное имя файла (вы можете изменить его по мере необходимости)
-                $photoFileName = uniqid('photo_') . '.' . $uploadedPhoto->getClientOriginalExtension();
+            // Обновите профиль пользователя, указав новый путь к фотографии.
+            $data['photo'] = $photoPath;
+        }
+        // $user->update($data);
 
-                // Сохраните новую фотографию со сгенерированным именем файла в каталоге public/photo.
-                $photoPath = $uploadedPhoto->storeAs('photo', $photoFileName, 'public');
+        if ($request->has('password')) {
+            $user->password = bcrypt($request->input('password'));
+            $user->save();
+        }
 
-                // Обновите профиль пользователя, указав новый путь к фотографии.
-                $data['photo'] = $photoPath;
-            }
-            // $user->update($data);
+        if ($request->has('skills') && is_array($request->file('skills'))) {
+            foreach ($request->file('skills') as $skillImage) {
 
-            if ($request->has('password')) {
-                $user->password = bcrypt($request->input('password'));
-                $user->save();
-            }
+                if ($skillImage->isValid()) {
+                    $skillPath = $skillImage->store('skills', 'public');
 
-            if ($request->has('skills') && is_array($request->file('skills'))) {
-                foreach ($request->file('skills') as $skillImage) {
-
-                    if ($skillImage->isValid()) {
-                        $skillPath = $skillImage->store('skills', 'public');
-
-                        UserSkills::create([
-                            'user_id' => $user->id,
-                            'skills' => $skillPath,
-                        ]);
-                    }
+                    UserSkills::create([
+                        'user_id' => $user->id,
+                        'skills' => $skillPath,
+                    ]);
                 }
             }
+        }
 
-            return response()->json(['message' => 'Mentor updated successfully']);
-            if ($user->hasRole( !UserType::Admin)) {
-                return response()->json(['error' => 'Access denied'], 403);
-            }
+        return response()->json(['message' => 'Mentor updated successfully']);
+        if ($user->hasRole(!UserType::Admin)) {
+            return response()->json(['error' => 'Access denied'], 403);
         }
     }
 
