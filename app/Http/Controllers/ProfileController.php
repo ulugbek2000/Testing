@@ -117,9 +117,9 @@ class ProfileController extends Controller
     // }
 
 
-    public function updateTeacher(Request $request)
+    public function updateTeacher(Request $request,User $user)
     {
-        $user = Auth::user();
+        // $user = Auth::user();
         if ($user->hasRole(UserType::Admin)) {
             $validator = null;
             $validator = Validator::make($request->all(), [
