@@ -162,8 +162,8 @@ class ProfileController extends Controller
         }
 
         
-        // Log::info('files', [$request->strpos()->merge($request->file())]);
-        Log::info('files', [$request->strpos('user_skills')]);
+        Log::info('files', [$request->collect()->merge($request->except('user_skills'))]);
+        // Log::info('files', [$request->strpos('user_skills')]);
         if ($request->has('user_skills')) {
             Log::info('files', [$request->file('user_skills')]);
             foreach ($request->input('user_skills') as $skillImage) {
