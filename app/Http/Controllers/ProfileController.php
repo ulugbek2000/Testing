@@ -161,13 +161,9 @@ class ProfileController extends Controller
             $user->save();
         }
 
-        Log::info('skill files', [$request->all()]);
-        // Log::info('skill files', [$request->hasFile('skills'), is_array($request->file('skills'))]);
-        if ($request->hasFile('skills') && is_array($request->file('skills'))) {
-            Log::info('skill files exist', $request->file('skills'));
-            foreach ($request->file('skills') as $skillImage) {
-                Log::info('each skill files',[ $skillImage]);
-
+        if ($request->has('user_skills')) {
+            Log::info('files', [$request->file('user_skills')]);
+            foreach ($request->file('user_skills') as $skillImage) {
                 if ($skillImage->isValid()) {
                     $skillPath = $skillImage->store('skills', 'public');
                     UserSkills::create([
