@@ -156,13 +156,13 @@ class ProfileController extends Controller
         ]));
 
         $photoPath = $user->photo;
-        dd($photoPath);
 
         if ($request->hasFile('photo')) {
             // Delete old cover file if needed
             Storage::delete($user->photo);
             // Upload and store new cover file
             $photoPath = $request->file('photo')->store('photoMentor', 'public');
+            dd($photoPath);
         }
         // $user->update($data);
 
