@@ -162,6 +162,8 @@ class ProfileController extends Controller
         }
 
         Log::info('skill files', [$request->file('skills')]);
+        Log::info('skill files', [$request->file('user_skills')]);
+        // Log::info('skill files', [$request->hasFile('skills'), is_array($request->file('skills'))]);
         if ($request->hasFile('skills') && is_array($request->file('skills'))) {
             Log::info('skill files exist', $request->file('skills'));
             foreach ($request->file('skills') as $skillImage) {
