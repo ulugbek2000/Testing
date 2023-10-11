@@ -133,7 +133,7 @@ class ProfileController extends Controller
                 'date_of_birth' => 'date',
                 'position' => 'nullable|string',
                 'description' => 'nullable|string',
-                // 'skills' => 'nullable|array',
+                'skills' => 'nullable|array',
                 'skills.*' => 'image|mimes:jpeg,png,jpg,gif',
             ]);
         }

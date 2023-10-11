@@ -19,8 +19,8 @@ class UserSkills extends Model
         return $this->belongsTo(User::class);
     }
 
-    // protected $casts = [
+    protected $casts = [
 
-    //     'skills' => 'array', 
-    // ];
+        'skills' => 'array', 
+    ];
 }

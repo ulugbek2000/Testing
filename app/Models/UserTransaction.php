@@ -15,4 +15,7 @@ class UserTransaction extends Model
         'method',
         'status'
     ];
+    function wallet(){
+        return $this
+    }
 }
