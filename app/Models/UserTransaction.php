@@ -16,6 +16,6 @@ class UserTransaction extends Model
         'status'
     ];
     function wallet(){
-        return $this
+        return $this->belongsTo(UserWallet::class);
     }
 }

@@ -161,11 +161,11 @@ class ProfileController extends Controller
             $user->save();
         }
 
-        Log::info('skill files', $request->file('skills'));
+        Log::info('skill files', [$request->file('skills')]);
         if ($request->hasFile('skills') && is_array($request->file('skills'))) {
             Log::info('skill files exist', $request->file('skills'));
             foreach ($request->file('skills') as $skillImage) {
-                Log::info('each skill files', $skillImage);
+                Log::info('each skill files',[ $skillImage]);
 
                 if ($skillImage->isValid()) {
                     $skillPath = $skillImage->store('skills', 'public');
@@ -173,7 +173,7 @@ class ProfileController extends Controller
                         'user_id' => $user->id,
                         'skills' => $skillPath,
                     ]);
-                    Log::info('skill file uploaded', $skillPath);
+                    Log::info('skill file uploaded',[ $skillPath]);
                 }
             }
         }
