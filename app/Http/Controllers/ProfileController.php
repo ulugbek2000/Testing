@@ -32,7 +32,7 @@ class ProfileController extends Controller
         $validator = null;
         if ($user->hasRole(UserType::Student)) {
             // Валидация общих полей для Студента или Преподавателя
-           
+
             $validator = Validator::make($request->all(), [
                 'name' => 'string',
                 'surname' => 'string',
@@ -85,7 +85,7 @@ class ProfileController extends Controller
             $photoFileName = uniqid('photo_') . '.' . $uploadedPhoto->getClientOriginalExtension();
 
             // Сохраните новую фотографию со сгенерированным именем файла в каталоге public/photo.
-            $photoPath = $uploadedPhoto->storeAs('photo', $photoFileName);
+            $photoPath = $uploadedPhoto->storeAs('photo', $photoFileName, 'public');
 
             // Обновите профиль пользователя, указав новый путь к фотографии.
             $data['photo'] = $photoPath;
@@ -96,7 +96,7 @@ class ProfileController extends Controller
             $user->password = bcrypt($request->input('password'));
             $user->save();
         }
-
+        $user->update($data);
         return response()->json(['message' => 'Profile updated successfully']);
     }
     // if ($user->hasRole(UserType::Teacher)) {
