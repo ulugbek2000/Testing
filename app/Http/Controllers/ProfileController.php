@@ -126,8 +126,8 @@ class ProfileController extends Controller
             $validator = Validator::make($request->all(), [
                 'name' => 'string',
                 'surname' => 'string',
-                'email' => 'required_without:phone|email|unique:users,email,' . $user->id,
-                'phone' => 'required_without:email|string|unique:users,phone,' . $user->id,
+                'email' => 'required_without:phone|email|unique:users,' . $user->id,
+                'phone' => 'required_without:email|string|unique:users,' . $user->id,
                 'password' => 'string|min:8',
                 'city' => 'string',
                 'photo' => 'nullable|mimes:jpeg,png,jpg,gif,mov',
@@ -144,36 +144,17 @@ class ProfileController extends Controller
                 return response()->json(['errors' => $validator->errors()], 422);
             }
 
-            $newPhone = $request->input('phone');
-            $newEmail = $request->input('email');
-
-            // Проверяем, существует ли новый номер телефона или email в базе данных
-            if ($request->has('phone')) {
-                // Проверяем, существует ли новый номер телефона или email в базе данных
-                if ($newPhone && $newPhone !== $user->phone && User::where('phone', $newPhone)->exists()) {
-                    return response()->json(['message' => 'The phone number is already exist'], 422);
-                }
-            } else {
-                $data['phone'] = $user->phone; // Используем значение из базы данных
-            }
-
-            if ($request->has('email')) {
-                if ($newEmail && $newEmail !== $user->email && User::where('email', $newEmail)->exists()) {
-                    return response()->json(['message' => 'The email is already exist'], 422);
-                }
-            } else {
-                $data['email'] = $user->email; // Используем значение из базы данных
-            }
-
-            $data = [
-                'name' => $request->input('name', $user->name),
-                'surname' => $request->input('surname', $user->surname),
-                'city' => $request->input('city', $user->city),
-                'gender' => $request->input('gender', $user->gender),
-                'date_of_birth' => $request->input('date_of_birth', $user->date_of_birth),
-                'position' => $request->input('position', $user->position),
-                'description' => $request->input('description', $user->description),
-            ];
+            $user->update($request->only([
+                'email',
+                'phone',
+                'name',
+                'surname',
+                'city',
+                'gender',
+                'date_of_birth',
+                'position',
+                'description',
+            ]));
 
             $photoPath = $user->photo;
             if (is_string($photoPath) && Storage::exists($photoPath)) {
@@ -209,21 +190,20 @@ class ProfileController extends Controller
         }
     }
 
-    public function getAllStudents()
+    public function getAllStudents(User $user)
     {
-        $students = User::all()->filter(function ($user) {
-            return $user->user_type === UserType::Student;
-        });
+        if ($user->hasRole(UserType::Student)) {
+            return response()->json($user);
+        }
 
-        return response()->json($students);
+       
     }
 
-    public function getAllTeachers()
+    public function getAllTeachers(User $user)
     {
-        $teachers = User::where('user_type', UserType::Teacher)
-            ->with('userSkills')->get();
-
-        return response()->json($teachers);
+            if ($user->hasRole(UserType::Teacher)) {
+                return response()->json($user)->with('userSkills')->get();
+            }
     }
 
     public function getUserById(Request $request, User $user)
@@ -234,7 +214,7 @@ class ProfileController extends Controller
         }
 
         // Проверим, является ли пользователь учителем
-        if ($user->user_type == UserType::Teacher) {
+        if ($user->hasRole(UserType::Teacher)) {
             $user->load('userSkills');
         }
 
