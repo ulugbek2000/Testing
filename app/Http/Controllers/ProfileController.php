@@ -117,11 +117,9 @@ class ProfileController extends Controller
     // }
 
 
-    public function updateTeacher(Request $request,User $user)
+    public function updateTeacher(Request $request, User $user)
     {
-        // $user = Auth::user();
         if ($user->hasRole(UserType::Admin)) {
-            $validator = null;
             $validator = Validator::make($request->all(), [
                 'name' => 'string',
                 'surname' => 'string',
@@ -137,7 +135,6 @@ class ProfileController extends Controller
                 'skills' => 'nullable|array',
                 'skills.*' => 'image|mimes:jpeg,png,jpg,gif',
             ]);
-
 
             if ($validator->fails()) {
                 return response()->json(['errors' => $validator->errors()], 422);
@@ -163,7 +160,6 @@ class ProfileController extends Controller
             }
 
             if ($request->hasFile('photo')) {
-
                 // Убедитесь, что файл был загружен
                 $uploadedPhoto = $request->file('photo');
 
@@ -174,9 +170,9 @@ class ProfileController extends Controller
                 $photoPath = $uploadedPhoto->storeAs('photo', $photoFileName, 'public');
 
                 // Обновите профиль пользователя, указав новый путь к фотографии.
-                $data['photo'] = $photoPath;
+                $user->photo = $photoPath;
+                $user->save();
             }
-            // $user->update($data);
 
             if ($request->has('password')) {
                 $user->password = bcrypt($request->input('password'));
@@ -185,10 +181,8 @@ class ProfileController extends Controller
 
             if ($request->has('skills') && is_array($request->file('skills'))) {
                 foreach ($request->file('skills') as $skillImage) {
-
                     if ($skillImage->isValid()) {
                         $skillPath = $skillImage->store('skills', 'public');
-
                         UserSkills::create([
                             'user_id' => $user->id,
                             'skills' => $skillPath,
@@ -198,9 +192,8 @@ class ProfileController extends Controller
             }
 
             return response()->json(['message' => 'Mentor updated successfully']);
-            if (!UserType::Admin) {
-                return response()->json(['error' => 'Access denied'], 403);
-            }
+        } else {
+            return response()->json(['error' => 'Access denied'], 403);
         }
     }
 
