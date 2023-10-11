@@ -201,7 +201,7 @@ class ProfileController extends Controller
 
     public function getAllTeachers(User $user)
     {
-        $teachers = User::role(UserType::Teacher)->with('userSkills')->get();
+        $teachers = User::hasRoles(UserType::Teacher)->with('userSkills')->get();
 
         return response()->json($teachers);
     }
