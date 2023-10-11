@@ -42,7 +42,6 @@ class LessonController extends Controller
             'name' => 'string',
             'cover' => 'image|mimes:jpeg,png,jpg,gif,mov',
             'duration' => 'string|nullable',
-            'content' => 'mimes:mp4,mov,avi,mpeg,mkv,mp3,mp4'
         ]);
         // dd()->response()->json($request);
         $type = $request->input('type');

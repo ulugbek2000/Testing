@@ -49,15 +49,6 @@ class ProfileController extends Controller
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        // $data = [
-        //     'email' => $request->input('email'),
-        //     'phone' => $request->input('phone'),
-        //     'name' => $request->input('name', $user->name),
-        //     'surname' => $request->input('surname', $user->surname),
-        //     'city' => $request->input('city', $user->city),
-        //     'gender' => $request->input('gender', $user->gender),
-        //     'date_of_birth' => $request->input('date_of_birth', $user->date_of_birth),
-        // ];
         $user->update($request->only([
             'email',
             'phone',
@@ -67,8 +58,6 @@ class ProfileController extends Controller
             'gender',
             'date_of_birth',
         ]));
-        // dd($user, $request);
-        // $user->update($data);
         $photoPath = $user->photo;
 
         if (is_string($photoPath) && Storage::exists($photoPath)) {
@@ -90,7 +79,6 @@ class ProfileController extends Controller
             // Обновите профиль пользователя, указав новый путь к фотографии.
             $data['photo'] = $photoPath;
         }
-
 
         if ($request->has('password')) {
             $user->password = bcrypt($request->input('password'));
