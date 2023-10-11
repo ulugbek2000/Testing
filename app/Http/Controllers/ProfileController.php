@@ -121,6 +121,7 @@ class ProfileController extends Controller
     {
         // $user = Auth::user();
         if ($user->hasRole(UserType::Admin)) {
+            dd($user);
             $validator = null;
             $validator = Validator::make($request->all(), [
                 'name' => 'string',
