@@ -162,12 +162,12 @@ class ProfileController extends Controller
                 $photoPath = $request->file('photo')->store('photo', 'public');
                 $data['photo'] = $photoPath;
             }
-            $user->update($data);
+           
             if ($request->has('password')) {
                 $user->password = bcrypt($request->input('password'));
                 $user->save();
             }
-
+            $user->update($data);
             if ($request->has('skills') && is_array($request->file('skills'))) {
                 foreach ($request->file('skills') as $skillImage) {
 
