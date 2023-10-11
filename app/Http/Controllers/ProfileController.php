@@ -121,7 +121,6 @@ class ProfileController extends Controller
     {
         // $user = Auth::user();
         if ($user->hasRole(UserType::Admin)) {
-            $validator = null;
             $request->validate([
                 'name' => 'string',
                 'surname' => 'string',
@@ -134,7 +133,7 @@ class ProfileController extends Controller
                 'date_of_birth' => 'date',
                 'position' => 'nullable|string',
                 'description' => 'nullable|string',
-                'skills' => 'nullable|array',
+                // 'skills' => 'nullable|array',
                 'skills.*' => 'image|mimes:jpeg,png,jpg,gif',
             ]);
         }
@@ -143,36 +142,30 @@ class ProfileController extends Controller
         //     return response()->json(['errors' => $validator->errors()], 422);
         // }
 
-        $user->update($request->only([
-            'name',
-            'email',
-            'phone',
-            'surname',
-            'city',
-            'gender',
-            'date_of_birth',
-            'position',
-            'description',
-        ]));
 
-        $photoPath = $user->photo;
+        $path = $user->photo;
 
         if ($request->hasFile('photo')) {
             // Delete old cover file if needed
             Storage::delete($user->photo);
             // Upload and store new cover file
-            $photoPath = $request->file('photo')->store('photoMentor', 'public');
-           
+            $path = $request->file('photo')->store('photoMentor', 'public');
         }
-        // $user->update($data);
+        $data = array_merge(
+            $request->only(['name', 'email', 'phone', 'surname', 'city', 'gender', 'date_of_birth', 'position', 'description',]),
+            ['photo' => $path]);
+
+        $user->update($data);
 
         if ($request->has('password')) {
-            $user->password = bcrypt($request->input('password'));
             $user->save();
         }
 
-        if ($request->has('skills') && is_array($request->file('skills'))) {
+        Log::info('skill files', $request->file('skills'));
+        if ($request->hasFile('skills') && is_array($request->file('skills'))) {
+            Log::info('skill files exist', $request->file('skills'));
             foreach ($request->file('skills') as $skillImage) {
+                Log::info('each skill files', $skillImage);
 
                 if ($skillImage->isValid()) {
                     $skillPath = $skillImage->store('skills', 'public');
@@ -180,10 +173,11 @@ class ProfileController extends Controller
                         'user_id' => $user->id,
                         'skills' => $skillPath,
                     ]);
+                    Log::info('skill file uploaded', $skillPath);
                 }
             }
         }
-        dd($photoPath,$request);
+
 
         return response()->json(['message' => 'Mentor updated successfully']);
         if ($user->hasRole(!UserType::Admin)) {
