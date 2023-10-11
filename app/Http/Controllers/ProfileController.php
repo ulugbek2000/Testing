@@ -29,6 +29,7 @@ class ProfileController extends Controller
     {
         $user = Auth::user();
         $data = [];
+        dd($user);
 
         if ($user->hasRole(UserType::Student)) {
             // Валидация общих полей для Студента или Преподавателя
@@ -106,24 +107,6 @@ class ProfileController extends Controller
 
     // $newPhone = $request->input('phone');
     // $newEmail = $request->input('email');
-
-    // if ($request->has('phone')) {
-    //     // Проверяем, существует ли новый номер телефона или email в базе данных
-    //     if ($newPhone && $newPhone !== $user->phone && User::where('phone', $newPhone)->exists()) {
-    //         return response()->json(['message' => 'The phone number is already in use'], 422);
-    //     }
-    // } else {
-    //     $data['phone'] = $user->phone; // Используем значение из базы данных
-    // }
-
-    // if ($request->has('email')) {
-    //     if ($newEmail && $newEmail !== $user->email && User::where('email', $newEmail)->exists()) {
-    //         return response()->json(['message' => 'The email is already in use'], 422);
-    //     }
-    // } else {
-    //     $data['email'] = $user->email; // Используем значение из базы данных
-    // }
-
 
     // if ($user->hasRole(UserType::Teacher)) {
 
