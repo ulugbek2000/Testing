@@ -28,11 +28,9 @@ class ProfileController extends Controller
     public function updateProfile(Request $request)
     {
         $user = Auth::user();
-        // $data = [];
         $validator = null;
         if ($user->hasRole(UserType::Student)) {
             // Валидация общих полей для Студента или Преподавателя
-
             $validator = Validator::make($request->all(), [
                 'name' => 'string',
                 'surname' => 'string',
@@ -119,8 +117,9 @@ class ProfileController extends Controller
     // }
 
 
-    public function updateTeacher(Request $request, User $user)
+    public function updateTeacher(Request $request)
     {
+        $user = Auth::user();
         if ($user->hasRole(UserType::Admin)) {
             $validator = null;
             $validator = Validator::make($request->all(), [
@@ -145,9 +144,9 @@ class ProfileController extends Controller
             }
 
             $user->update($request->only([
+                'name',
                 'email',
                 'phone',
-                'name',
                 'surname',
                 'city',
                 'gender',
@@ -162,27 +161,28 @@ class ProfileController extends Controller
                 // Удалить старую фотографию
                 Storage::delete($photoPath);
             }
-    
+
             if ($request->hasFile('photo')) {
-    
+
                 // Убедитесь, что файл был загружен
                 $uploadedPhoto = $request->file('photo');
-    
+
                 // Создайте уникальное имя файла (вы можете изменить его по мере необходимости)
                 $photoFileName = uniqid('photo_') . '.' . $uploadedPhoto->getClientOriginalExtension();
-    
+
                 // Сохраните новую фотографию со сгенерированным именем файла в каталоге public/photo.
                 $photoPath = $uploadedPhoto->storeAs('photo', $photoFileName, 'public');
-    
+
                 // Обновите профиль пользователя, указав новый путь к фотографии.
                 $data['photo'] = $photoPath;
             }
-           
+            $user->update($data);
+
             if ($request->has('password')) {
                 $user->password = bcrypt($request->input('password'));
                 $user->save();
             }
-            $user->update($data);
+
             if ($request->has('skills') && is_array($request->file('skills'))) {
                 foreach ($request->file('skills') as $skillImage) {
 
@@ -209,8 +209,6 @@ class ProfileController extends Controller
         if ($user->hasRole(UserType::Student)) {
             return response()->json($user);
         }
-
-       
     }
 
     public function getAllTeachers(User $user)
