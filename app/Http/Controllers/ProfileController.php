@@ -139,9 +139,9 @@ class ProfileController extends Controller
             ]);
         }
 
-        // if ($validator->fails()) {
-        //     return response()->json(['errors' => $validator->errors()], 422);
-        // }
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
 
         $user->update($request->only([
             'name',
@@ -175,7 +175,6 @@ class ProfileController extends Controller
 
                 if ($skillImage->isValid()) {
                     $skillPath = $skillImage->store('skills', 'public');
-
                     UserSkills::create([
                         'user_id' => $user->id,
                         'skills' => $skillPath,
