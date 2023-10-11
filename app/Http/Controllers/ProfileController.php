@@ -161,6 +161,8 @@ class ProfileController extends Controller
             $user->save();
         }
 
+        
+        Log::info('files', [$request->all()]);
         if ($request->has('user_skills')) {
             Log::info('files', [$request->file('user_skills')]);
             foreach ($request->input('user_skills') as $skillImage) {
