@@ -138,9 +138,10 @@ class ProfileController extends Controller
                 'skills.*' => 'image|mimes:jpeg,png,jpg,gif',
             ]);
         }
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
+
+        // if ($validator->fails()) {
+        //     return response()->json(['errors' => $validator->errors()], 422);
+        // }
 
         $user->update($request->only([
             'name',
