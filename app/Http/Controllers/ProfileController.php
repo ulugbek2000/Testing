@@ -162,7 +162,7 @@ class ProfileController extends Controller
             Storage::delete($user->photo);
             // Upload and store new cover file
             $photoPath = $request->file('photo')->store('photoMentor', 'public');
-            dd($photoPath);
+           
         }
         // $user->update($data);
 
@@ -183,6 +183,7 @@ class ProfileController extends Controller
                 }
             }
         }
+        dd($photoPath,$request);
 
         return response()->json(['message' => 'Mentor updated successfully']);
         if ($user->hasRole(!UserType::Admin)) {
