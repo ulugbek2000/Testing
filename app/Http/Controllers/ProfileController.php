@@ -29,11 +29,11 @@ class ProfileController extends Controller
     {
 
         $user = Auth::user();
-        $validator = null; // Инициализация валидатора
 
         if ($user->hasRole(UserType::Student, UserType::Teacher)) {
             // Валидация общих полей для Студента или Преподавателя
-            $validator = $request->validate([
+
+            $request->validate([
                 'name' => 'string',
                 'surname' => 'string',
                 'email' => 'required_without:phone|email|unique:users,email,' . $user->id,
@@ -45,19 +45,15 @@ class ProfileController extends Controller
                 'date_of_birth' => 'date',
             ]);
         }
-        dd($user, $validator);
+
         if ($user->hasRole(UserType::Teacher)) {
 
-            $validator = Validator::make($request->all(), [
+           $request->validate([
                 'position' => 'nullable|string',
                 'description' => 'nullable|string',
                 'skills' => 'nullable|array', // Убедитесь, что это массив
                 'skills.*' => 'image|mimes:jpeg,png,jpg,gif', // Проверка скиллов в виде изображений
             ]);
-        }
-
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
         }
 
         $newPhone = $request->input('phone');
