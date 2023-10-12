@@ -165,12 +165,13 @@ class ProfileController extends Controller
 
         $allFiles = $request->allFiles();
 
-       
+
         // Log::info('All Files', $allFiles);
         // Log::info('files', [$request->collect()->merge($request->file())]);
         if ($request->allFiles()) {
             $userSkillsFiles = $request->allFiles();
-            $skillPaths = [];
+            //for Log
+            // $skillPaths = [];
             foreach ($userSkillsFiles as $name => $file) {
                 if ($file->isValid() && str_contains($name, 'user_skills')) {
                     $skillPath = $file->store('skills', 'public');
@@ -178,14 +179,16 @@ class ProfileController extends Controller
                         'user_id' => $user->id,
                         'skills' => $skillPath,
                     ]);
-                    $skillPaths[] = $skillPath;
+                    //for Log
+                    // $skillPaths[] = $skillPath;
                 }
             }
-            
-            Log::info('All Files', [
-                'allFiles' => $allFiles,
-                'skillPaths' => $skillPaths,
-            ]);        }
+
+            // Log::info('All Files', [
+            //     'allFiles' => $allFiles,
+            //     'skillPaths' => $skillPaths,
+            // ]); 
+        }
         // Верните какой-либо ответ в формате JSON, чтобы уведомить фронтенд об успешной загрузке файлов
         return response()->json(['message' => 'Файлы успешно загружены и обработаны.']);
 
