@@ -174,7 +174,7 @@ class ProfileController extends Controller
         $currentSkills = $user->userSkills->pluck('skills')->all();
 
         $newSkills = $request->allFiles('user_skills');
-        dd($newSkills,$currentSkills);
+       
 
         // Создайте массив, содержащий имена файлов, загруженных с фронта
         $uploadedSkillNames = [];
@@ -188,7 +188,7 @@ class ProfileController extends Controller
                 $existingSkill = UserSkills::where('user_id', $user->id)
                     ->where('skills', $skillName)
                     ->first();
-
+                    dd($newSkills,$currentSkills,$skillName,$existingSkill);
                 if (!$existingSkill) {
                     // Если скилла с таким именем нет в базе, то сохраните новый файл
                     $skillPath = $file->store('skills', 'public');
