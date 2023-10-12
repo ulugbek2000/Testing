@@ -192,10 +192,10 @@ class ProfileController extends Controller
                         'skills' => $skillPath,
                     ]);
                 // }
-            }
-            if($file instanceof String ){
+            }else
+            // if($file instanceof String ){
                 $uploadedSkillNames[] = $file;
-            }
+            // }
         }
 
         dd($uploadedSkillNames, $currentSkills);
