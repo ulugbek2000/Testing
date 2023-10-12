@@ -179,7 +179,7 @@ class ProfileController extends Controller
                 }
             }
             
-        Log::info('All Files', $allFiles,'jkfjh',$userSkillsFiles, 'skill', $skillPath);
+        Log::info('All Files', $allFiles,'skill', $skillPath);
         }
         // Верните какой-либо ответ в формате JSON, чтобы уведомить фронтенд об успешной загрузке файлов
         return response()->json(['message' => 'Файлы успешно загружены и обработаны.']);
