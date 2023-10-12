@@ -185,15 +185,17 @@ class ProfileController extends Controller
                         'user_id' => $user->id,
                         'skills' => $skillPath,
                     ]);
+
+                    $uploadedSkillNames[] = $skillPath;
                 }else {
                     $uploadedSkillNames[] = $data;
                 }
             }
         }
-        // dd($skillName,$existingSkill,$skillPath);
+
         //! Remove skills that were not loaded from the front
         $currentSkills = UserSkills::where('user_id', $user->id)->whereNotIn('skills', $uploadedSkillNames)->delete();
-                   
+                  
         return response()->json(['message' => 'Файлы навыков пользователя успешно обновлены.']);
 
         if ($user->hasRole(!UserType::Admin)) {
