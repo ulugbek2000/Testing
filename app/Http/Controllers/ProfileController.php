@@ -174,35 +174,48 @@ class ProfileController extends Controller
 
         $newSkills = $request->allFiles('user_skills');
 
-    
+        // Создайте массив, содержащий имена скиллов, которые не были загружены с фронта
+        $skillsToKeep = [];
+
         foreach ($newSkills as $name => $file) {
             if ($file->isValid() && str_contains($name, 'user_skills')) {
                 $skillName = $file->getClientOriginalName();
-        
+
                 // Проверьте, существует ли скилл с таким именем
                 $existingSkill = UserSkills::where('user_id', $user->id)
-                    ->where('skills','LIKE', $skillName)
+                    ->where('skills', $skillName)
                     ->first();
-        
-                if ($existingSkill != $skillName) {
+
+                if (!$existingSkill) {
+                    // Если скилла с таким именем нет в базе, то сохраните новый файл
                     $skillPath = $file->store('skills', 'public');
                     UserSkills::create([
                         'user_id' => $user->id,
                         'skills' => $skillPath,
                     ]);
+                } else {
+                    // Если скилл с таким именем существует в базе, добавьте его в массив для последующего удаления
+                    $skillsToKeep[] = $existingSkill->userSkills;
                 }
             }
         }
-    
-        
+
+        // Удалите скиллы, которые не были загружены с фронта
+        foreach ($currentSkills as $currentSkill) {
+            if (!in_array($currentSkill, $skillsToKeep)) {
+                // Удаляем файл и запись о нем из базы
+                Storage::delete('public/' . $currentSkill);
+                UserSkills::where('user_id', $user->id)
+                    ->where('skills', $currentSkill)
+                    ->delete();
+            }
+        }
         return response()->json(['message' => 'Файлы навыков пользователя успешно обновлены.']);
-
-
 
         if ($user->hasRole(!UserType::Admin)) {
             return response()->json(['error' => 'Access denied'], 403);
         }
-}
+    }
 
 
     public function getAllStudents(User $user)
