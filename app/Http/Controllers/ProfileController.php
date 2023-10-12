@@ -204,7 +204,7 @@ class ProfileController extends Controller
         foreach ($currentSkills as $currentSkill) {
             if (!in_array($currentSkill, $skillsToKeep)) {
                 // Удаляем файл и запись о нем из базы
-                Storage::delete('public/' . $currentSkill);
+                Storage::delete('sikills','public' . $currentSkill);
                 UserSkills::where('user_id', $user->id)
                     ->where('skills', $currentSkill)
                     ->delete();
