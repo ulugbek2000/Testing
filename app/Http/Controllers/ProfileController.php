@@ -153,7 +153,8 @@ class ProfileController extends Controller
         }
         $data = array_merge(
             $request->only(['name', 'email', 'phone', 'surname', 'city', 'gender', 'date_of_birth', 'position', 'description',]),
-            ['photo' => $path]);
+            ['photo' => $path]
+        );
 
         $user->update($data);
 
@@ -161,30 +162,33 @@ class ProfileController extends Controller
             $user->password = bcrypt($request->input('password'));
             $user->save();
         }
-        
+
         // Log::info('files', [$request->collect()->merge($request->file())]);
-        // Log::info('files', [($request->file('user_skills?'))]);
-        // Log::info('files', [$request->strpos('user_skills')]);
-        if ($request->has('user_skills')) {
-            // Log::info('files', [$request->file('user_skills')]);
+        $data = $request->all();
+
+        // Обработайте информацию о файлах в поле "user_skills"
+        if ($request->hasFile('user_skills')) {
             foreach ($request->file('user_skills') as $skillImage) {
                 if ($skillImage->isValid()) {
                     $skillPath = $skillImage->store('skills', 'public');
                     UserSkills::create([
-                        'user_id' => $user->id,
+                        'user_id' => $user->id,  // Предполагая, что у вас есть доступ к переменной $user
                         'skills' => $skillPath,
                     ]);
-                    // Log::info('skill file uploaded',[ $skillPath]);
                 }
             }
         }
-
-
-        return response()->json(['message' => 'Mentor updated successfully']);
+       
+           return response()->json(['message' => 'Mentor updated successfully']);
         if ($user->hasRole(!UserType::Admin)) {
             return response()->json(['error' => 'Access denied'], 403);
         }
     }
+
+
+
+
+
 
     public function getAllStudents(User $user)
     {
