@@ -166,7 +166,7 @@ class ProfileController extends Controller
         $allFiles = $request->allFiles();
         // Log::info('All Files', $allFiles);
         // Log::info('files', [$request->collect()->merge($request->file())]);
-        
+         dd($allFiles);
         if ($request->has('user_skills')) {
             $userSkillsFiles = $allFiles['user_skills'];
           
@@ -179,7 +179,7 @@ class ProfileController extends Controller
                     ]);
                 }
             }
-            dd($file);   
+              
         }
 
         // Верните какой-либо ответ в формате JSON, чтобы уведомить фронтенд об успешной загрузке файлов
