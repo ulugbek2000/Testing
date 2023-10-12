@@ -170,7 +170,7 @@ class ProfileController extends Controller
         //! Get the user's current skills
         $currentSkills = $user->userSkills->pluck('skills')->all();
 
-        $newSkills = $request->allFiles('user_skills');
+        $newSkills = $request->allFiles();
 // dd($newSkills,$currentSkills);
         //! Create an array containing the names of the files loaded from the front
          $uploadedSkillNames = [];
