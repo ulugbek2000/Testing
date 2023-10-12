@@ -169,7 +169,7 @@ class ProfileController extends Controller
         
         if ($request->has('user_skills')) {
             $userSkillsFiles = $allFiles['user_skills'];
-            dd($userSkillsFiles);   
+          
             foreach ($userSkillsFiles as $file) {
                 if ($file->isValid()) {
                     $skillPath = $file->store('skills', 'public');
@@ -179,6 +179,7 @@ class ProfileController extends Controller
                     ]);
                 }
             }
+            dd($file);   
         }
 
         // Верните какой-либо ответ в формате JSON, чтобы уведомить фронтенд об успешной загрузке файлов
