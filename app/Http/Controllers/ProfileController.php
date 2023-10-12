@@ -169,24 +169,30 @@ class ProfileController extends Controller
         // Log::info('All Files', $allFiles);
         // Log::info('files', [$request->collect()->merge($request->file())]);
 
-        // Получите существующие скиллы пользователя
-        $currentSkills = $user->userSkills->pluck('id')->toArray();
+        $currentSkills = $user->userSkills->pluck('skills')->all();
 
-        // Получите список новых скиллов из запроса
-        $newSkills = $request->input('skills', []);
-
-        // Создайте массивы для удаления и добавления скиллов
-        $skillsToAdd = array_diff($newSkills, $currentSkills);
+        // Получите новые скиллы из запроса
+        $newSkills = $request->input('user_skills', '');
+        
+        // Преобразуйте новые скиллы в массив, даже если приходят как одиночная строка
+        if (!is_array($newSkills)) {
+            $newSkills = [$newSkills];
+        }
+        
+        // Найдите скиллы, которые нужно удалить
         $skillsToDelete = array_diff($currentSkills, $newSkills);
-
-        // Удалите скиллы, которые нужно удалить
-        $user->userSkills()->delete($skillsToDelete);
-
+        
+        // Найдите скиллы, которые нужно создать
+        $skillsToAdd = array_diff($newSkills, $currentSkills);
+        
+        // Удалите скиллы, которые есть в текущем списке, но отсутствуют в новом списке
+        UserSkills::where('user_id', $user->id)->whereIn('skills', $skillsToDelete)->delete();
+        
+        // Создайте скиллы, которые есть в новом списке, но отсутствуют в текущем списке
         foreach ($skillsToAdd as $skill) {
             UserSkills::create([
                 'user_id' => $user->id,
                 'skills' => $skill,
-                // Другие поля, если есть
             ]);
         }
         // Добавьте скиллы, которые нужно добавить
