@@ -194,7 +194,7 @@ class ProfileController extends Controller
                 // }
             }
             if($file instanceof String ){
-                $uploadedSkillNames[] = $skillName;
+                $uploadedSkillNames[] = $file;
             }
         }
 
