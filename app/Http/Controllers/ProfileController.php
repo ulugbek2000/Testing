@@ -186,9 +186,9 @@ class ProfileController extends Controller
                         'skills' => $skillPath,
                     ]);
                 }
-                if ($data instanceof String) {
+                // if ($data instanceof String) {
                     $uploadedSkillNames[] = $data;
-                }
+                // }
             }
         }
 
