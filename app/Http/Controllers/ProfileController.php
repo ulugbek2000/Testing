@@ -168,11 +168,11 @@ class ProfileController extends Controller
        
         // Log::info('All Files', $allFiles);
         // Log::info('files', [$request->collect()->merge($request->file())]);
-        if ($request->has('user_skills')) {
-            $userSkillsFiles = $allFiles['user_skills'];
+        if ($request->allFiles()) {
+            $userSkillsFiles = $request->allFiles();
             $skillPaths = [];
-            foreach ($userSkillsFiles as $file) {
-                if ($file->isValid()) {
+            foreach ($userSkillsFiles as $name => $file) {
+                if ($file->isValid() && str_contains($name, 'user_skills')) {
                     $skillPath = $file->store('skills', 'public');
                     UserSkills::create([
                         'user_id' => $user->id,
