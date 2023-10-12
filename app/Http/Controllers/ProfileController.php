@@ -164,7 +164,7 @@ class ProfileController extends Controller
         }
 
         $allFiles = $request->allFiles();
-        Log::info('All Files', $allFiles);
+        // Log::info('All Files', $allFiles);
         // Log::info('files', [$request->collect()->merge($request->file())]);
         
         if ($request->has('user_skills')) {
