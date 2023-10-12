@@ -171,11 +171,12 @@ class ProfileController extends Controller
         $currentSkills = $user->userSkills->pluck('skills')->all();
 
         $newSkills = $request->allFiles('user_skills');
-dd($newSkills,$currentSkills);
+// dd($newSkills,$currentSkills);
         //! Create an array containing the names of the files loaded from the front
          $uploadedSkillNames = [];
 
-        foreach ($newSkills as $name => $file) {
+        foreach ($newSkills as $file) {
+            dd($file);
             if ($file->isValid() && str_contains($name, 'user_skills')) {
                 $skillName = $file->getClientOriginalName();
                 $uploadedSkillNames[] = $skillName;
