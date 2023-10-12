@@ -184,7 +184,7 @@ class ProfileController extends Controller
                     ->where('skills', $skillName)
                     ->first();
         
-                if (!$existingSkill) {
+                if ($existingSkill != $skillName) {
                     $skillPath = $file->store('skills', 'public');
                     UserSkills::create([
                         'user_id' => $user->id,
