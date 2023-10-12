@@ -198,9 +198,9 @@ class ProfileController extends Controller
                     ]);
                 }
             }
-            dd($file,$skillName,$existingSkill,$skillPath);
+          
         }
-
+        dd($skillName,$existingSkill,$skillPath);
         // Удалите скиллы, которые не были загружены с фронта
         foreach ($currentSkills as $currentSkill) {
             if (!in_array($currentSkill, $uploadedSkillNames)) {
