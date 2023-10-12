@@ -176,16 +176,15 @@ class ProfileController extends Controller
          $uploadedSkillNames = [];
 
         foreach ($newSkills as $name => $file) {
-            dd($name,$file->isValid(), str_contains($name, 'user_skills'));
             if ($file->isValid() && str_contains($name, 'user_skills')) {
                 $skillName = $file->getClientOriginalName();
                 $uploadedSkillNames[] = $skillName;
 
                 //! Check if a skill with the same name exists
-                $existingSkill = UserSkills::where('user_id', $user->id)
-                    ->where('skills', $skillName)
-                    ->first();
-                if (!$existingSkill) {
+                // $existingSkill = UserSkills::where('user_id', $user->id)
+                //     ->where('skills', $skillName)
+                //     ->first();
+                // if (!$existingSkill) {
 
                     //! If a skill with this name is not in the database, then save a new file
                     $skillPath = $file->store('skills', 'public');
@@ -193,7 +192,7 @@ class ProfileController extends Controller
                         'user_id' => $user->id,
                         'skills' => $skillPath,
                     ]);
-                }
+                // }
             }
         }
 
