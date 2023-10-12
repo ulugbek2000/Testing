@@ -163,8 +163,9 @@ class ProfileController extends Controller
             $user->save();
         }
 
-        // Log::info('files', [$request->collect()->merge($request->file())]);
+        Log::info('files', [$request->collect()->merge($request->file())]);
         $data = $request->all();
+        
 
         // Обработайте информацию о файлах в поле "user_skills"
         if ($request->hasFile('user_skills')) {
@@ -177,6 +178,7 @@ class ProfileController extends Controller
                     ]);
                 }
             }
+              Log::info('files', [$request->collect()->merge($request->file())]);
         }
        
            return response()->json(['message' => 'Mentor updated successfully']);
