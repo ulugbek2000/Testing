@@ -168,6 +168,18 @@ class ProfileController extends Controller
 
         // Log::info('All Files', $allFiles);
         // Log::info('files', [$request->collect()->merge($request->file())]);
+        if ($request->hasFile('user_skills')) {
+            $userSkillsFiles = $request->file('user_skills');
+        
+            // Удалите старые файлы навыков пользователя, которые больше не присутствуют в запросе
+            $oldSkillPaths = UserSkills::where('user_id', $user->id)->pluck('skills')->toArray();
+            $filesToDelete = array_diff($oldSkillPaths, array_keys($userSkillsFiles));
+        
+            foreach ($filesToDelete as $pathToDelete) {
+                // Удалите старый файл
+                Storage::disk('skills','public')->delete($pathToDelete);
+            }
+
         if ($request->allFiles()) {
             $userSkillsFiles = $request->allFiles();
             //for Log
@@ -196,7 +208,7 @@ class ProfileController extends Controller
             return response()->json(['error' => 'Access denied'], 403);
         }
     }
-
+    }
 
     public function getAllStudents(User $user)
     {
