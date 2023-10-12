@@ -170,17 +170,19 @@ class ProfileController extends Controller
         // Log::info('files', [$request->collect()->merge($request->file())]);
 
         // Получите текущие скиллы пользователя
+        // Получите текущие скиллы пользователя
         $currentSkills = $user->userSkills->pluck('skills')->all();
 
         $newSkills = $request->allFiles('user_skills');
 
-        // Создайте массив, содержащий имена скиллов, которые не были загружены с фронта
-        $skillsToKeep = [];
+        // Создайте массив, содержащий имена файлов, загруженных с фронта
+        $uploadedSkillNames = [];
 
         foreach ($newSkills as $name => $file) {
             if ($file->isValid() && str_contains($name, 'user_skills')) {
                 $skillName = $file->getClientOriginalName();
                 $uploadedSkillNames[] = $skillName;
+
                 // Проверьте, существует ли скилл с таким именем
                 $existingSkill = UserSkills::where('user_id', $user->id)
                     ->where('skills', $skillName)
@@ -193,18 +195,15 @@ class ProfileController extends Controller
                         'user_id' => $user->id,
                         'skills' => $skillPath,
                     ]);
-                } else {
-                    // Если скилл с таким именем существует в базе, добавьте его в массив для последующего удаления
-                    $skillsToKeep[] = $existingSkill->userSkills;
                 }
             }
         }
 
         // Удалите скиллы, которые не были загружены с фронта
         foreach ($currentSkills as $currentSkill) {
-            if (!in_array($currentSkill, $skillsToKeep)) {
+            if (!in_array($currentSkill, $uploadedSkillNames)) {
                 // Удаляем файл и запись о нем из базы
-                Storage::delete('sikills','public' . $currentSkill);
+                Storage::delete('public/' . $currentSkill);
                 UserSkills::where('user_id', $user->id)
                     ->where('skills', $currentSkill)
                     ->delete();
