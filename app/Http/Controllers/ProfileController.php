@@ -174,7 +174,7 @@ class ProfileController extends Controller
         $currentSkills = $user->userSkills->pluck('skills')->all();
 
         $newSkills = $request->allFiles('user_skills');
-       
+
 
         // Создайте массив, содержащий имена файлов, загруженных с фронта
         $uploadedSkillNames = [];
@@ -183,12 +183,12 @@ class ProfileController extends Controller
             if ($file->isValid() && str_contains($name, 'user_skills')) {
                 $skillName = $file->getClientOriginalName();
                 $uploadedSkillNames[] = $skillName;
-
+                Log::info('name', $skillName);
                 // Проверьте, существует ли скилл с таким именем
                 $existingSkill = UserSkills::where('user_id', $user->id)
                     ->where('skills', $skillName)
                     ->first();
-
+                Log::info('exist', $existingSkill);
                 if (!$existingSkill) {
                     // Если скилла с таким именем нет в базе, то сохраните новый файл
                     $skillPath = $file->store('skills', 'public');
@@ -198,9 +198,9 @@ class ProfileController extends Controller
                     ]);
                 }
             }
-          
         }
-        dd($skillName,$existingSkill,$skillPath);
+
+        // dd($skillName,$existingSkill,$skillPath);
         // Удалите скиллы, которые не были загружены с фронта
         foreach ($currentSkills as $currentSkill) {
             if (!in_array($currentSkill, $uploadedSkillNames)) {
