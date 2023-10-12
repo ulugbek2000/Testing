@@ -218,9 +218,9 @@ class ProfileController extends Controller
         }
         
 
-        if ($user->hasRole(!UserType::Admin)) {
-            return response()->json(['error' => 'Access denied'], 403);
-        }
+        // if ($user->hasRole(!UserType::Admin)) {
+        //     return response()->json(['error' => 'Access denied'], 403);
+        // }
     }
     
 
