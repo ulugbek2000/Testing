@@ -169,47 +169,33 @@ class ProfileController extends Controller
         // Log::info('All Files', $allFiles);
         // Log::info('files', [$request->collect()->merge($request->file())]);
 
+        // Получите текущие скиллы пользователя
         $currentSkills = $user->userSkills->pluck('skills')->all();
 
-        // Получите новые скиллы из запроса
-        $newSkills = $request->input('user_skills', '');
-        
-        // Преобразуйте новые скиллы в массив, даже если приходят как одиночная строка
-        if (!is_array($newSkills)) {
-            $newSkills = [$newSkills];
-        }
-        
-        // Найдите скиллы, которые нужно удалить
-        $skillsToDelete = array_diff($currentSkills, $newSkills);
-        
-        // Найдите скиллы, которые нужно создать
-        $skillsToAdd = array_diff($newSkills, $currentSkills);
-        
-        // Удалите скиллы, которые есть в текущем списке, но отсутствуют в новом списке
-        UserSkills::where('user_id', $user->id)->whereIn('skills', $skillsToDelete)->delete();
-        
-        // // Создайте скиллы, которые есть в новом списке, но отсутствуют в текущем списке
-        foreach ($skillsToAdd as $skill) {
-            UserSkills::create([
-                'user_id' => $user->id,
-                'skills' => $skill,
-            ]);
-        }
-        // Добавьте скиллы, которые нужно добавить
-        // $user->userSkills()->create($skillsToAdd);
+        // Получите файлы, пришедшие с запросом
+        $userSkillsFiles = $request->allFiles();
 
-        // if ($request->allFiles()) {
-        //     $userSkillsFiles = $request->allFiles();
-        //     foreach ($userSkillsFiles as $name => $file) {
-        //         if ($file->isValid() && str_contains($name, 'user_skills')) {
-        //             $skillPath = $file->store('skills', 'public');
-        //             UserSkills::create([
-        //                 'user_id' => $user->id,
-        //                 'skills' => $skillPath,
-        //             ]);
-        //         }
-        //     }
-        // }
+        // Создайте массив для новых скиллов
+        $newSkills = [];
+
+        foreach ($userSkillsFiles as $name => $file) {
+            if ($file->isValid() && str_contains($name, 'user_skills')) {
+                // Извлеките имя файла и добавьте его к массиву новых скиллов
+                $filename = $file->getClientOriginalName();
+                $newSkills[] = $filename;
+
+                // Здесь вы можете сохранить файл, если это необходимо
+                $skillPath = $file->store('skills', 'public');
+                // UserSkills::create([
+                //     'user_id' => $user->id,
+                //     'skills' => $skillPath,
+                // ]);
+            }
+
+            // Удалите скилл, если он больше не в списке новых скиллов
+            $skillsToDelete = array_diff($currentSkills, $newSkills);
+            UserSkills::whereIn('skills', $skillsToDelete)->delete();
+        }
         return response()->json(['message' => 'Файлы навыков пользователя успешно обновлены.']);
 
 
