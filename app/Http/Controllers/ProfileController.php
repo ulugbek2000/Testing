@@ -180,7 +180,7 @@ class ProfileController extends Controller
         $skillsToDelete = array_diff($currentSkills, $newSkills);
 
         // Удалите скиллы, которые нужно удалить
-        $user->userSkills()->detach($skillsToDelete);
+        $user->userSkills()->delete($skillsToDelete);
 
         // Добавьте скиллы, которые нужно добавить
         $user->userSkills()->attach($skillsToAdd);
