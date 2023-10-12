@@ -177,7 +177,7 @@ class ProfileController extends Controller
         // Удалите скиллы, которые есть у пользователя, но отсутствуют в запросе
         foreach ($currentSkills as $currentSkill) {
             if (!in_array($currentSkill->id, $newSkills)) {
-                $user->userSkills()->sync($currentSkill->id);
+                $user->userSkills()->delete($currentSkill->id);
             }
         }
     
