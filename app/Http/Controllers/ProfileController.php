@@ -124,8 +124,8 @@ class ProfileController extends Controller
             $request->validate([
                 'name' => 'string',
                 'surname' => 'string',
-                'email' => 'required_without:phone|email|unique:users,' . $user->id,
-                'phone' => 'required_without:email|string|unique:users,' . $user->id,
+                'email' => 'required_without:phone|email|unique:users' . $user->id,
+                'phone' => 'required_without:email|string|unique:users' . $user->id,
                 'password' => 'string|min:8',
                 'city' => 'string',
                 'photo' => 'nullable|mimes:jpeg,png,jpg,gif,mov',
@@ -166,18 +166,19 @@ class ProfileController extends Controller
         // Log::info('files', [$request->collect()->merge($request->file())]);
         // Log::info('files', $request->allFiles());
 
-
+        $userSkillsFiles = $request->all();
         // Обработайте информацию о файлах в поле "user_skills"
-        if ($request->hasFile('user_skills')) {
+        if ($request->has('user_skills')) {
             $userSkills = $request->file('user_skills');
 
-            foreach ($userSkills as $key => $file) {
+            foreach ($userSkillsFiles as $file) {
                 if ($file->isValid()) {
                     $skillPath = $file->store('skills', 'public');
                     UserSkills::create([
-                        'user_id' => $user->id,  // Предполагая, что у вас есть доступ к переменной $user
+                        'user_id' => $user->id,
                         'skills' => $skillPath,
                     ]);
+
 
                     // Логирование или другие операции, если необходимо
                     // Log::info('File uploaded', ['filename' => $file->getClientOriginalName(), 'path' => $skillPath]);
