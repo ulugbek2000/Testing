@@ -168,6 +168,29 @@ class ProfileController extends Controller
 
         // Log::info('All Files', $allFiles);
         // Log::info('files', [$request->collect()->merge($request->file())]);
+    
+
+        // if ($request->allFiles()) {
+        //     $userSkillsFiles = $request->allFiles();
+        //     //for Log
+        //     // $skillPaths = [];
+        //     foreach ($userSkillsFiles as $name => $file) {
+        //         if ($file->isValid() && str_contains($name, 'user_skills')) {
+        //             $skillPath = $file->store('skills', 'public');
+        //             UserSkills::create([
+        //                 'user_id' => $user->id,
+        //                 'skills' => $skillPath,
+        //             ]);
+        //             //for Log
+        //             // $skillPaths[] = $skillPath;
+        //         }
+        //     }
+
+           
+        // }
+
+
+
         if ($request->hasFile('user_skills')) {
             $userSkillsFiles = $request->file('user_skills');
         
@@ -177,13 +200,9 @@ class ProfileController extends Controller
         
             foreach ($filesToDelete as $pathToDelete) {
                 // Удалите старый файл
-                Storage::disk('skills','public')->delete($pathToDelete);
+                Storage::disk('public')->delete($pathToDelete);
             }
-
-        if ($request->allFiles()) {
-            $userSkillsFiles = $request->allFiles();
-            //for Log
-            // $skillPaths = [];
+        
             foreach ($userSkillsFiles as $name => $file) {
                 if ($file->isValid() && str_contains($name, 'user_skills')) {
                     $skillPath = $file->store('skills', 'public');
@@ -191,24 +210,19 @@ class ProfileController extends Controller
                         'user_id' => $user->id,
                         'skills' => $skillPath,
                     ]);
-                    //for Log
-                    // $skillPaths[] = $skillPath;
                 }
             }
-
-            // Log::info('All Files', [
-            //     'allFiles' => $allFiles,
-            //     'skillPaths' => $skillPaths,
-            // ]); 
+        
+            // Верните какой-либо ответ в формате JSON, чтобы уведомить фронтенд об успешном обновлении файлов
+            return response()->json(['message' => 'Файлы навыков пользователя успешно обновлены.']);
         }
-        // Верните какой-либо ответ в формате JSON, чтобы уведомить фронтенд об успешной загрузке файлов
-        return response()->json(['message' => 'Файлы успешно загружены и обработаны.']);
+        
 
         if ($user->hasRole(!UserType::Admin)) {
             return response()->json(['error' => 'Access denied'], 403);
         }
     }
-    }
+    
 
     public function getAllStudents(User $user)
     {
