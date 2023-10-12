@@ -170,24 +170,24 @@ class ProfileController extends Controller
         // Обработайте информацию о файлах в поле "user_skills"
         if ($request->hasFile('user_skills')) {
             $userSkills = $request->file('user_skills');
-    
-            foreach ($userSkills as $file) {
+
+            foreach ($userSkills as $key => $file) {
                 if ($file->isValid()) {
                     $skillPath = $file->store('skills', 'public');
                     UserSkills::create([
                         'user_id' => $user->id,  // Предполагая, что у вас есть доступ к переменной $user
                         'skills' => $skillPath,
                     ]);
-    
+
                     // Логирование или другие операции, если необходимо
-                    Log::info('File uploaded', ['filename' => $file->getClientOriginalName(), 'path' => $skillPath]);
+                    // Log::info('File uploaded', ['filename' => $file->getClientOriginalName(), 'path' => $skillPath]);
                 }
             }
         }
-    
+
         // Верните какой-либо ответ в формате JSON, чтобы уведомить фронтенд об успешной загрузке файлов
         return response()->json(['message' => 'Файлы успешно загружены и обработаны.']);
-    
+
         if ($user->hasRole(!UserType::Admin)) {
             return response()->json(['error' => 'Access denied'], 403);
         }
