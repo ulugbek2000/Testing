@@ -170,32 +170,24 @@ class ProfileController extends Controller
         //! Get the user's current skills
         $currentSkills = $user->userSkills->pluck('skills')->all();
 
-        $newSkills = $request->allFiles();
+        $requestData = $request->all();
 // dd($newSkills,$currentSkills);
         //! Create an array containing the names of the files loaded from the front
          $uploadedSkillNames = [];
 
-        foreach ($newSkills as $name => $file) {
-            if ($file->isValid() && str_contains($name, 'user_skills')) {
-                $skillName = $file->getClientOriginalName();
-
-                //! Check if a skill with the same name exists
-                // $existingSkill = UserSkills::where('user_id', $user->id)
-                //     ->where('skills', $skillName)
-                //     ->first();
-                // if (!$existingSkill) {
-
-                    //! If a skill with this name is not in the database, then save a new file
-                    $skillPath = $file->store('skills', 'public');
+        foreach ($requestData as $name => $data) {
+            if ($data->isValid() && str_contains($name, 'user_skills')) {
+                $skillName = $data->getClientOriginalName();
+                    $skillPath = $data->store('skills', 'public');
                     UserSkills::create([
                         'user_id' => $user->id,
                         'skills' => $skillPath,
                     ]);
                 // }
             }
-            // if($file instanceof String ){
-                $uploadedSkillNames[] = $file;
-            // }
+            if($data instanceof String ){
+                $uploadedSkillNames[] = $data;
+            }
         }
 
         dd($uploadedSkillNames, $currentSkills);
