@@ -183,7 +183,7 @@ class ProfileController extends Controller
         $user->userSkills()->delete($skillsToDelete);
 
         // Добавьте скиллы, которые нужно добавить
-        $user->userSkills()->attach($skillsToAdd);
+        // $user->userSkills()->create($skillsToAdd);
 
         if ($request->allFiles()) {
             $userSkillsFiles = $request->allFiles();
