@@ -180,7 +180,7 @@ class ProfileController extends Controller
         foreach ($newSkills as $name => $file) {
             if ($file->isValid() && str_contains($name, 'user_skills')) {
                 $skillName = $file->getClientOriginalName();
-
+                $uploadedSkillNames[] = $skillName;
                 // Проверьте, существует ли скилл с таким именем
                 $existingSkill = UserSkills::where('user_id', $user->id)
                     ->where('skills', $skillName)
