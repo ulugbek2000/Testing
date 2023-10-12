@@ -172,30 +172,20 @@ class ProfileController extends Controller
         // Получите текущие скиллы пользователя
         $currentSkills = $user->userSkills->pluck('skills')->all();
 
-        // Получите файлы, пришедшие с запросом
-        $userSkillsFiles = $request->allFiles();
+        $newSkills = $request->allFiles('user_skills');
 
-        // Создайте массив для новых скиллов
-        $newSkills = [];
-
-        foreach ($userSkillsFiles as $name => $file) {
-            if ($file->isValid() && str_contains($name, 'user_skills')) {
-                // Извлеките имя файла и добавьте его к массиву новых скиллов
-                $filename = $file->getClientOriginalName();
-                $newSkills[] = $filename;
-
-                // Здесь вы можете сохранить файл, если это необходимо
+    
+        foreach ($newSkills as $name => $file) {
+            if ($file->isValid() && str_contains($name, 'user_skills') && !$currentSkills->contains($file->getClientOriginalName())) {
                 $skillPath = $file->store('skills', 'public');
                 UserSkills::create([
                     'user_id' => $user->id,
                     'skills' => $skillPath,
                 ]);
             }
-
-            // Удалите скилл, если он больше не в списке новых скиллов
-            $skillsToDelete = array_diff($currentSkills, $newSkills);
-            UserSkills::whereIn('skills', $skillsToDelete)->delete();
         }
+    
+        
         return response()->json(['message' => 'Файлы навыков пользователя успешно обновлены.']);
 
 
@@ -203,7 +193,7 @@ class ProfileController extends Controller
         if ($user->hasRole(!UserType::Admin)) {
             return response()->json(['error' => 'Access denied'], 403);
         }
-    }
+}
 
 
     public function getAllStudents(User $user)
