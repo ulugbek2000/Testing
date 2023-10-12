@@ -164,6 +164,7 @@ class ProfileController extends Controller
         }
 
         // Log::info('files', [$request->collect()->merge($request->file())]);
+        Log::info('files', $request->allFiles());
         $data = $request->all();
 
 
