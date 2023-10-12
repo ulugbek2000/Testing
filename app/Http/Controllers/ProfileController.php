@@ -189,27 +189,27 @@ class ProfileController extends Controller
         UserSkills::where('user_id', $user->id)->whereIn('skills', $skillsToDelete)->delete();
         
         // // Создайте скиллы, которые есть в новом списке, но отсутствуют в текущем списке
-        // foreach ($skillsToAdd as $skill) {
-        //     UserSkills::create([
-        //         'user_id' => $user->id,
-        //         'skills' => $skill,
-        //     ]);
-        // }
+        foreach ($skillsToAdd as $skill) {
+            UserSkills::create([
+                'user_id' => $user->id,
+                'skills' => $skill,
+            ]);
+        }
         // Добавьте скиллы, которые нужно добавить
         // $user->userSkills()->create($skillsToAdd);
 
-        if ($request->allFiles()) {
-            $userSkillsFiles = $request->allFiles();
-            foreach ($userSkillsFiles as $name => $file) {
-                if ($file->isValid() && str_contains($name, 'user_skills')) {
-                    $skillPath = $file->store('skills', 'public');
-                    UserSkills::create([
-                        'user_id' => $user->id,
-                        'skills' => $skillPath,
-                    ]);
-                }
-            }
-        }
+        // if ($request->allFiles()) {
+        //     $userSkillsFiles = $request->allFiles();
+        //     foreach ($userSkillsFiles as $name => $file) {
+        //         if ($file->isValid() && str_contains($name, 'user_skills')) {
+        //             $skillPath = $file->store('skills', 'public');
+        //             UserSkills::create([
+        //                 'user_id' => $user->id,
+        //                 'skills' => $skillPath,
+        //             ]);
+        //         }
+        //     }
+        // }
         return response()->json(['message' => 'Файлы навыков пользователя успешно обновлены.']);
 
 
