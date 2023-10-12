@@ -192,8 +192,7 @@ class ProfileController extends Controller
         }
         // dd($skillName,$existingSkill,$skillPath);
         //! Remove skills that were not loaded from the front
-        $currentSkills = UserSkills::where('user_id', $user->id)
-                    ->whereIn('skills', $uploadedSkillNames)->get();
+        $currentSkills = UserSkills::whereIn('skills', $uploadedSkillNames)->get();
         dd($currentSkills);
                    
         // foreach ($currentSkills as $currentSkill) {
