@@ -119,11 +119,8 @@ class ProfileController extends Controller
 
     public function updateTeacher(Request $request, User $user)
     {
-       
-        if (!$user->hasRole(UserType::Admin)) {
-            return response()->json(['error' => 'Access denied'], 403);
-        }
-     
+        // $user = Auth::user();
+        if ($user->hasRole(UserType::Admin)) {
             $request->validate([
                 'name' => 'string',
                 'surname' => 'string',
@@ -139,7 +136,7 @@ class ProfileController extends Controller
                 'skills' => 'nullable|array',
                 'skills.*' => 'image|mimes:jpeg,png,jpg,gif',
             ]);
-        
+        }
 
         // if ($validator->fails()) {
         //     return response()->json(['errors' => $validator->errors()], 422);
@@ -174,24 +171,27 @@ class ProfileController extends Controller
         // if ($request->has('user_skills')) {
         //     $userSkills = $request->file('user_skills');
 
-            foreach ($userSkillsFiles as $file) {
-                if ($file->isValid()) {
-                    $skillPath = $file->store('skills', 'public');
-                    UserSkills::create([
-                        'user_id' => $user->id,
-                        'skills' => $skillPath,
-                    ]);
+        foreach ($userSkillsFiles as $file) {
+            if ($file->isValid()) {
+                $skillPath = $file->store('skills', 'public');
+                UserSkills::create([
+                    'user_id' => $user->id,
+                    'skills' => $skillPath,
+                ]);
 
 
-                    // Логирование или другие операции, если необходимо
-                    // Log::info('File uploaded', ['filename' => $file->getClientOriginalName(), 'path' => $skillPath]);
-                }
+                // Логирование или другие операции, если необходимо
+                // Log::info('File uploaded', ['filename' => $file->getClientOriginalName(), 'path' => $skillPath]);
             }
-        
+        }
+
 
         // Верните какой-либо ответ в формате JSON, чтобы уведомить фронтенд об успешной загрузке файлов
         return response()->json(['message' => 'Файлы успешно загружены и обработаны.']);
 
+        if ($user->hasRole(!UserType::Admin)) {
+            return response()->json(['error' => 'Access denied'], 403);
+        }
     }
 
 
