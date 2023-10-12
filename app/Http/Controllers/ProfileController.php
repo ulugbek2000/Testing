@@ -188,7 +188,7 @@ class ProfileController extends Controller
                 $existingSkill = UserSkills::where('user_id', $user->id)
                     ->where('skills', $skillName)
                     ->first();
-                    dd($newSkills,$currentSkills,$skillName,$existingSkill);
+
                 if (!$existingSkill) {
                     // Если скилла с таким именем нет в базе, то сохраните новый файл
                     $skillPath = $file->store('skills', 'public');
@@ -198,6 +198,7 @@ class ProfileController extends Controller
                     ]);
                 }
             }
+            dd($file,$skillName,$existingSkill,$skillPath);
         }
 
         // Удалите скиллы, которые не были загружены с фронта
