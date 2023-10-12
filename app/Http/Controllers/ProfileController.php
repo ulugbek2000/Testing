@@ -192,18 +192,8 @@ class ProfileController extends Controller
         }
         // dd($skillName,$existingSkill,$skillPath);
         //! Remove skills that were not loaded from the front
-        $currentSkills = UserSkills::whereNotIn('skills', $uploadedSkillNames)->get();
-        dd($currentSkills, $uploadedSkillNames);
+        $currentSkills = UserSkills::where('user_id', $user->id)->whereNotIn('skills', $uploadedSkillNames)->delete();
                    
-        // foreach ($currentSkills as $currentSkill) {
-        //     if (!in_array($currentSkill, $uploadedSkillNames)) {
-        //         // Delete the file and its entry from the database
-        //         Storage::delete('public/' . $currentSkill);
-        //         UserSkills::where('user_id', $user->id)
-        //             ->where('skills', $currentSkill)
-        //             ->delete();
-        //     }
-        // }
         return response()->json(['message' => 'Файлы навыков пользователя успешно обновлены.']);
 
         if ($user->hasRole(!UserType::Admin)) {
