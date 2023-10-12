@@ -164,17 +164,16 @@ class ProfileController extends Controller
         }
 
         // Log::info('files', [$request->collect()->merge($request->file())]);
-        Log::info('files', $request->allFiles());
+        // Log::info('files', $request->allFiles());
 
 
         // Обработайте информацию о файлах в поле "user_skills"
         if ($request->hasFile('user_skills')) {
-            $userSkillsFiles = $request->file('user_skills');
+            $userSkills = $request->file('user_skills');
     
-            foreach ($userSkillsFiles as $key => $file) {
+            foreach ($userSkills as $file) {
                 if ($file->isValid()) {
                     $skillPath = $file->store('skills', 'public');
-                    // Создайте запись в базе данных с постоянным user_id и путем к файлу
                     UserSkills::create([
                         'user_id' => $user->id,  // Предполагая, что у вас есть доступ к переменной $user
                         'skills' => $skillPath,
