@@ -165,24 +165,30 @@ class ProfileController extends Controller
 
         // Log::info('files', [$request->collect()->merge($request->file())]);
         Log::info('files', $request->allFiles());
-        $data = $request->all();
 
 
         // Обработайте информацию о файлах в поле "user_skills"
-        if ($request->has('user_skills')) {
-            foreach ($request->file('user_skills') as $skillImage) {
-                if ($skillImage->isValid()) {
-                    $skillPath = $skillImage->store('skills', 'public');
+        if ($request->hasFile('user_skills')) {
+            $userSkillsFiles = $request->file('user_skills');
+    
+            foreach ($userSkillsFiles as $key => $file) {
+                if ($file->isValid()) {
+                    $skillPath = $file->store('skills', 'public');
+                    // Создайте запись в базе данных с постоянным user_id и путем к файлу
                     UserSkills::create([
                         'user_id' => $user->id,  // Предполагая, что у вас есть доступ к переменной $user
                         'skills' => $skillPath,
                     ]);
+    
+                    // Логирование или другие операции, если необходимо
+                    Log::info('File uploaded', ['filename' => $file->getClientOriginalName(), 'path' => $skillPath]);
                 }
             }
-              Log::info('files', [$request->collect()->merge($request->file())]);
         }
-       
-           return response()->json(['message' => 'Mentor updated successfully']);
+    
+        // Верните какой-либо ответ в формате JSON, чтобы уведомить фронтенд об успешной загрузке файлов
+        return response()->json(['message' => 'Файлы успешно загружены и обработаны.']);
+    
         if ($user->hasRole(!UserType::Admin)) {
             return response()->json(['error' => 'Access denied'], 403);
         }
