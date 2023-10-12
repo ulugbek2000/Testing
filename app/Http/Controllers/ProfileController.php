@@ -163,46 +163,17 @@ class ProfileController extends Controller
             $user->save();
         }
 
-        $allFiles = $request->allFiles();
+        Log::info( $allFiles = $request->allFiles());
 
 
-        // Log::info('All Files', $allFiles);
+        Log::info('All Files', $allFiles);
         // Log::info('files', [$request->collect()->merge($request->file())]);
     
 
-        // if ($request->allFiles()) {
-        //     $userSkillsFiles = $request->allFiles();
-        //     //for Log
-        //     // $skillPaths = [];
-        //     foreach ($userSkillsFiles as $name => $file) {
-        //         if ($file->isValid() && str_contains($name, 'user_skills')) {
-        //             $skillPath = $file->store('skills', 'public');
-        //             UserSkills::create([
-        //                 'user_id' => $user->id,
-        //                 'skills' => $skillPath,
-        //             ]);
-        //             //for Log
-        //             // $skillPaths[] = $skillPath;
-        //         }
-        //     }
-
-           
-        // }
-
-
-
-        if ($request->hasFile('user_skills')) {
-            $userSkillsFiles = $request->file('user_skills');
-        
-            // Удалите старые файлы навыков пользователя, которые больше не присутствуют в запросе
-            $oldSkillPaths = UserSkills::where('user_id', $user->id)->pluck('userSkills')->toArray();
-            $filesToDelete = array_diff($oldSkillPaths, array_keys($userSkillsFiles));
-        
-            foreach ($filesToDelete as $pathToDelete) {
-                // Удалите старый файл
-                Storage::disk('public')->delete($pathToDelete);
-            }
-        
+        if ($request->allFiles()) {
+            $userSkillsFiles = $request->allFiles();
+            //for Log
+            // $skillPaths = [];
             foreach ($userSkillsFiles as $name => $file) {
                 if ($file->isValid() && str_contains($name, 'user_skills')) {
                     $skillPath = $file->store('skills', 'public');
@@ -210,17 +181,19 @@ class ProfileController extends Controller
                         'user_id' => $user->id,
                         'skills' => $skillPath,
                     ]);
+                    //for Log
+                    // $skillPaths[] = $skillPath;
                 }
             }
-        
-            // Верните какой-либо ответ в формате JSON, чтобы уведомить фронтенд об успешном обновлении файлов
-            return response()->json(['message' => 'Файлы навыков пользователя успешно обновлены.']);
-        }
-        
 
-        // if ($user->hasRole(!UserType::Admin)) {
-        //     return response()->json(['error' => 'Access denied'], 403);
-        // }
+           
+        }
+
+
+
+        if ($user->hasRole(!UserType::Admin)) {
+            return response()->json(['error' => 'Access denied'], 403);
+        }
     }
     
 
