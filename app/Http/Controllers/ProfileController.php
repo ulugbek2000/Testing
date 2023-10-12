@@ -176,7 +176,7 @@ class ProfileController extends Controller
 
     
         foreach ($newSkills as $name => $file) {
-            if ($file->isValid() && str_contains($name, 'user_skills') && !$currentSkills->contains($file->getClientOriginalName())) {
+            if ($file->isValid() && str_contains($name, 'user_skills') && !in_array($file->getClientOriginalName(), $currentSkills)) {
                 $skillPath = $file->store('skills', 'public');
                 UserSkills::create([
                     'user_id' => $user->id,
