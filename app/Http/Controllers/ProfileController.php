@@ -188,13 +188,13 @@ class ProfileController extends Controller
         // Удалите скиллы, которые есть в текущем списке, но отсутствуют в новом списке
         UserSkills::where('user_id', $user->id)->whereIn('skills', $skillsToDelete)->delete();
         
-        // Создайте скиллы, которые есть в новом списке, но отсутствуют в текущем списке
-        foreach ($skillsToAdd as $skill) {
-            UserSkills::create([
-                'user_id' => $user->id,
-                'skills' => $skill,
-            ]);
-        }
+        // // Создайте скиллы, которые есть в новом списке, но отсутствуют в текущем списке
+        // foreach ($skillsToAdd as $skill) {
+        //     UserSkills::create([
+        //         'user_id' => $user->id,
+        //         'skills' => $skill,
+        //     ]);
+        // }
         // Добавьте скиллы, которые нужно добавить
         // $user->userSkills()->create($skillsToAdd);
 
