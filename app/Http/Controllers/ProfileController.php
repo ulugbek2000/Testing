@@ -182,10 +182,10 @@ class ProfileController extends Controller
         // Удалите скиллы, которые нужно удалить
         $user->userSkills()->delete($skillsToDelete);
 
-        foreach ($skillsToAdd as $skillId) {
+        foreach ($skillsToAdd as $skill) {
             UserSkills::create([
                 'user_id' => $user->id,
-                'skill_id' => $skillId,
+                'skills' => $skill,
                 // Другие поля, если есть
             ]);
         }
