@@ -186,10 +186,10 @@ class ProfileController extends Controller
 
                 // Здесь вы можете сохранить файл, если это необходимо
                 $skillPath = $file->store('skills', 'public');
-                // UserSkills::create([
-                //     'user_id' => $user->id,
-                //     'skills' => $skillPath,
-                // ]);
+                UserSkills::create([
+                    'user_id' => $user->id,
+                    'skills' => $skillPath,
+                ]);
             }
 
             // Удалите скилл, если он больше не в списке новых скиллов
