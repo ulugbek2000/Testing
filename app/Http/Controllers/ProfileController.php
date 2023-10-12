@@ -161,29 +161,24 @@ class ProfileController extends Controller
             $user->save();
         }
 
-        $data = $request->all();
-
-        // Создайте массив для хранения информации о файлах
-        $fileInfo = [];
-    
-        // Переберите ключи в данных запроса
-        foreach ($data as $key => $value) {
+        foreach ($request->all() as $key => $value) {
             if (strpos($key, 'user_skills') === 0) {
                 // Если ключ начинается с "user_skills", это файл
                 $file = $request->file($key);
                 if ($file) {
                     $filename = $file->getClientOriginalName();
                     $fileContents = file_get_contents($file);
-                    $fileInfo[$key] = [
-                        'filename' => $filename,
-                        'contents' => $fileContents,
-                    ];
+                    // Далее вы можете выполнить необходимую логику для обработки каждого файла
+                    // Например, сохранение файла или выполнение других операций с ним
+                    // Для каждого файла будет собрано и обработано отдельно
+                    Log::info('File', ['filename' => $filename, 'contents' => $fileContents]);
                 }
             }
         }
     
-        // Запишите информацию о файлах в журнал
-        Log::info('Files', $fileInfo);
+        // Верните какой-либо ответ в формате JSON, чтобы уведомить фронтенд об успешной загрузке файлов
+        return response()->json(['message' => 'Файлы успешно загружены.']);
+
 
 
         
