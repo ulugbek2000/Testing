@@ -166,10 +166,9 @@ class ProfileController extends Controller
         $allFiles = $request->allFiles();
         // Log::info('All Files', $allFiles);
         // Log::info('files', [$request->collect()->merge($request->file())]);
-         dd($allFiles);
         if ($request->has('user_skills')) {
             $userSkillsFiles = $allFiles['user_skills'];
-          
+
             foreach ($userSkillsFiles as $file) {
                 if ($file->isValid()) {
                     $skillPath = $file->store('skills', 'public');
@@ -179,16 +178,15 @@ class ProfileController extends Controller
                     ]);
                 }
             }
-              
         }
-
+        Log::info('All Files', $allFiles,'jkfjh',$userSkillsFiles, 'skill', $skillPath);
         // Верните какой-либо ответ в формате JSON, чтобы уведомить фронтенд об успешной загрузке файлов
         return response()->json(['message' => 'Файлы успешно загружены и обработаны.']);
 
         if ($user->hasRole(!UserType::Admin)) {
             return response()->json(['error' => 'Access denied'], 403);
         }
-}
+    }
 
 
     public function getAllStudents(User $user)
@@ -221,5 +219,4 @@ class ProfileController extends Controller
         // Вернем данные о пользователе
         return response()->json(['user' => $user], 200);
     }
-
 }
