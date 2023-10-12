@@ -195,7 +195,7 @@ class ProfileController extends Controller
             $userSkillsFiles = $request->file('user_skills');
         
             // Удалите старые файлы навыков пользователя, которые больше не присутствуют в запросе
-            $oldSkillPaths = UserSkills::where('user_id', $user->id)->pluck('skills')->toArray();
+            $oldSkillPaths = UserSkills::where('user_id', $user->id)->pluck('userSkills')->toArray();
             $filesToDelete = array_diff($oldSkillPaths, array_keys($userSkillsFiles));
         
             foreach ($filesToDelete as $pathToDelete) {
