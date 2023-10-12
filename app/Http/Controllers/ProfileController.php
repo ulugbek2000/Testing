@@ -166,7 +166,7 @@ class ProfileController extends Controller
         $allFiles = $request->allFiles();
         // Log::info('files', [$request->collect()->merge($request->file())]);
         
-        if ($request->has('user_skills')) {
+        if ($request->has('user_skills?')) {
             $userSkillsFiles = $allFiles['user_skills'];
             foreach ($userSkillsFiles as $key => $file) {
                 if ($file->isValid()) {
