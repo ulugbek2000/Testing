@@ -158,31 +158,12 @@ class ProfileController extends Controller
         $user->update($data);
 
         if ($request->has('password')) {
+            $user->password = bcrypt($request->input('password'));
             $user->save();
         }
-
-        foreach ($request->all() as $key => $value) {
-            if (strpos($key, 'user_skills') === 0) {
-                // Если ключ начинается с "user_skills", это файл
-                $file = $request->file($key);
-                if ($file) {
-                    $filename = $file->getClientOriginalName();
-                    $fileContents = file_get_contents($file);
-                    // Далее вы можете выполнить необходимую логику для обработки каждого файла
-                    // Например, сохранение файла или выполнение других операций с ним
-                    // Для каждого файла будет собрано и обработано отдельно
-                    Log::info('File', ['filename' => $filename, 'contents' => $fileContents]);
-                }
-            }
-        }
-    
-        // Верните какой-либо ответ в формате JSON, чтобы уведомить фронтенд об успешной загрузке файлов
-        return response()->json(['message' => 'Файлы успешно загружены.']);
-
-
-
         
         // Log::info('files', [$request->collect()->merge($request->file('user_skills?'))]);
+        Log::info('files', [($request->file('user_skills?'))]);
         // Log::info('files', [$request->strpos('user_skills')]);
         if ($request->has('user_skills')) {
             Log::info('files', [$request->file('user_skills')]);
