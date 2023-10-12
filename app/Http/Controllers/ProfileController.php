@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Models\UserSkills;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
@@ -171,22 +172,23 @@ class ProfileController extends Controller
         $currentSkills = $user->userSkills->pluck('skills')->all();
 
         $requestData = $request->all();
-// dd($newSkills,$currentSkills);
+        // dd($newSkills,$currentSkills);
         //! Create an array containing the names of the files loaded from the front
-         $uploadedSkillNames = [];
+        $uploadedSkillNames = [];
 
         foreach ($requestData as $name => $data) {
-            if ($data->isValid() && str_contains($name, 'user_skills')) {
-                $skillName = $data->getClientOriginalName();
+            if (str_contains($name, 'user_skills')) {
+                if ($data instanceof UploadedFile && $data->isValid()) {
+                    $skillName = $data->getClientOriginalName();
                     $skillPath = $data->store('skills', 'public');
                     UserSkills::create([
                         'user_id' => $user->id,
                         'skills' => $skillPath,
                     ]);
-                // }
-            }
-            if($data instanceof String ){
-                $uploadedSkillNames[] = $data;
+                }
+                if ($data instanceof String) {
+                    $uploadedSkillNames[] = $data;
+                }
             }
         }
 
