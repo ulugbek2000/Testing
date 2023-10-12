@@ -162,8 +162,8 @@ class ProfileController extends Controller
             $user->save();
         }
         
-        // Log::info('files', [$request->collect()->merge($request->file('user_skills?'))]);
-        Log::info('files', [($request->file('user_skills?'))]);
+        Log::info('files', [$request->collect()->merge($request->file())]);
+        // Log::info('files', [($request->file('user_skills?'))]);
         // Log::info('files', [$request->strpos('user_skills')]);
         if ($request->has('user_skills')) {
             Log::info('files', [$request->file('user_skills')]);
