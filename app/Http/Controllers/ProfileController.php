@@ -170,7 +170,7 @@ class ProfileController extends Controller
         // Log::info('files', [$request->collect()->merge($request->file())]);
 
         // Получите существующие скиллы пользователя
-        $currentSkills = $user->skills->pluck('id')->toArray();
+        $currentSkills = $user->userSkills->pluck('id')->toArray();
 
         // Получите список новых скиллов из запроса
         $newSkills = $request->input('skills', []);
@@ -180,10 +180,10 @@ class ProfileController extends Controller
         $skillsToDelete = array_diff($currentSkills, $newSkills);
 
         // Удалите скиллы, которые нужно удалить
-        $user->skills()->detach($skillsToDelete);
+        $user->userSkills()->detach($skillsToDelete);
 
         // Добавьте скиллы, которые нужно добавить
-        $user->skills()->attach($skillsToAdd);
+        $user->userSkills()->attach($skillsToAdd);
 
         if ($request->allFiles()) {
             $userSkillsFiles = $request->allFiles();
