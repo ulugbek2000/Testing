@@ -120,7 +120,7 @@ class ProfileController extends Controller
     public function updateTeacher(Request $request, User $user)
     {
        
-        if ($user->hasRole(!UserType::Admin)) {
+        if (!$user->hasRole(UserType::Admin)) {
             return response()->json(['error' => 'Access denied'], 403);
         }
      
