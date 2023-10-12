@@ -163,12 +163,12 @@ class ProfileController extends Controller
             $user->save();
         }
 
-        Log::info('files', [$request->collect()->merge($request->file())]);
+        // Log::info('files', [$request->collect()->merge($request->file())]);
         $data = $request->all();
-        
+
 
         // Обработайте информацию о файлах в поле "user_skills"
-        if ($request->hasFile('user_skills')) {
+        if ($request->has('user_skills')) {
             foreach ($request->file('user_skills') as $skillImage) {
                 if ($skillImage->isValid()) {
                     $skillPath = $skillImage->store('skills', 'public');
