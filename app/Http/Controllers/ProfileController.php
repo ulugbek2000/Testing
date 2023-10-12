@@ -164,57 +164,20 @@ class ProfileController extends Controller
         }
 
         $allFiles = $request->allFiles();
-
         // Log::info('files', [$request->collect()->merge($request->file())]);
-        foreach ($allFiles as $field => $files) {
-            foreach ($files as $file) {
-                // Переменная $field содержит имя поля, из которого пришел файл
-                $filename = $file->getClientOriginalName();
-                
-                // Генерируйте уникальное имя для сохранения файла, чтобы избежать перезаписи файлов с одинаковыми именами
-                $uniqueFilename = time() . '_' . $filename;
         
-                // Определите путь для сохранения файла
-                $path = storage_path('app/public/' . $uniqueFilename);
-        
-                // Сохраните файл
-                $file->move(public_path('storage'), $uniqueFilename);
-        
-                // Выполните другие операции с файлом, если необходимо
-        
-                // Пример: сохранить информацию о файле в базе данных
-                UserSkills::create([
-                    'field' => $field,
-                    'filename' => $uniqueFilename,
-                    'original_filename' => $filename,
-                    'user_id' => auth()->user()->id, // предполагая, что у вас есть аутентифицированный пользователь
-                ]);
-        
-                // Логирование или другие операции, если необходимо
+        if ($request->has('user_skills')) {
+            $userSkillsFiles = $allFiles['user_skills'];
+            foreach ($userSkillsFiles as $key => $file) {
+                if ($file->isValid()) {
+                    $skillPath = $file->store('skills', 'public');
+                    UserSkills::create([
+                        'user_id' => $user->id,
+                        'skills' => $skillPath,
+                    ]);
+                }
             }
         }
-        
-        
-        
-        
-        
-
-        // if ($request->has('user_skills')) {
-        //     Log::info('files', [$request->file('user_skills')]);
-        //     foreach ($request->input('user_skills') as $skillImage) {
-        //         if ($skillImage->isValid()) {
-        //             $skillPath = $skillImage->store('skills', 'public');
-        //             UserSkills::create([
-        //                 'user_id' => $user->id,
-        //                 'skills' => $skillPath,
-        //             ]);
-        //             Log::info('skill file uploaded', [$skillPath]);
-        //         }
-        //     }
-        // }
-
-
-
 
         // Верните какой-либо ответ в формате JSON, чтобы уведомить фронтенд об успешной загрузке файлов
         return response()->json(['message' => 'Файлы успешно загружены и обработаны.']);
@@ -223,10 +186,6 @@ class ProfileController extends Controller
             return response()->json(['error' => 'Access denied'], 403);
         }
 }
-
-
-
-
 
 
     public function getAllStudents(User $user)
