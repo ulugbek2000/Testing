@@ -176,7 +176,7 @@ class ProfileController extends Controller
          $uploadedSkillNames = [];
 
         foreach ($newSkills as $name => $file) {
-            dd($name,$file);
+            dd($name,$file->isValid(), str_contains($name, 'user_skills'));
             if ($file->isValid() && str_contains($name, 'user_skills')) {
                 $skillName = $file->getClientOriginalName();
                 $uploadedSkillNames[] = $skillName;
