@@ -161,32 +161,12 @@ class ProfileController extends Controller
             $user->password = bcrypt($request->input('password'));
             $user->save();
         }
-
-
-        $data = $request->all();
-
-        // Исключите неподходящие ключи из данных (не содержащие файлы)
-        $fileData = collect($data)->filter(function ($value, $key)use ($request) {
-            return $request->hasFile($key);
-        })->toArray();
-    
-        // Обработайте информацию о файлах
-        foreach ($fileData as $key => $file) {
-            $filename = $file->getClientOriginalName();
-            $fileContents = file_get_contents($file);
-            // Далее вы можете выполнить необходимую логику для обработки каждого файла
-            // Например, сохранение файла или выполнение других операций с ним
-            Log::info('File', ['filename' => $filename, 'contents' => $fileContents]);
-        }
-    
-        // Верните какой-либо ответ в формате JSON, чтобы уведомить фронтенд об успешной загрузке файлов
-        return response()->json(['message' => 'Файлы успешно загружены.']);
         
-        Log::info('files', [$request->collect()->merge($request->file())]);
+        // Log::info('files', [$request->collect()->merge($request->file())]);
         // Log::info('files', [($request->file('user_skills?'))]);
         // Log::info('files', [$request->strpos('user_skills')]);
         if ($request->has('user_skills')) {
-            Log::info('files', [$request->file('user_skills')]);
+            // Log::info('files', [$request->file('user_skills')]);
             foreach ($request->input('user_skills') as $skillImage) {
                 if ($skillImage->isValid()) {
                     $skillPath = $skillImage->store('skills', 'public');
@@ -194,7 +174,7 @@ class ProfileController extends Controller
                         'user_id' => $user->id,
                         'skills' => $skillPath,
                     ]);
-                    Log::info('skill file uploaded',[ $skillPath]);
+                    // Log::info('skill file uploaded',[ $skillPath]);
                 }
             }
         }
