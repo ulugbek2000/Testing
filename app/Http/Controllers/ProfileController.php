@@ -163,36 +163,30 @@ class ProfileController extends Controller
             $user->save();
         }
 
-         $skill = $request->allFiles();
+        $skill = $request->allFiles();
 
 
         // Log::info('All Files', $allFiles);
         // Log::info('files', [$request->collect()->merge($request->file())]);
 
-        $currentSkills = $user->userSkills;
+        // Получите существующие скиллы пользователя
+        $currentSkills = $user->skills->pluck('id')->toArray();
 
-        // Проверьте, есть ли скиллы, которые были отправлены в запросе
+        // Получите список новых скиллов из запроса
         $newSkills = $request->input('skills', []);
-    
-        // Удалите скиллы, которые есть у пользователя, но отсутствуют в запросе
-        foreach ($currentSkills as $currentSkill) {
-            if (!in_array($currentSkill->id, $newSkills)) {
-                $user->userSkills()->delete($currentSkill->id);
-            }
-        }
-    
-        // // Добавьте новые скиллы
-        // foreach ($newSkills as $newSkill) {
-        //     if (!$currentSkills->contains($newSkill)) {
-        //         $user->skills()->attach($newSkill);
-        //     }
-        // }
 
+        // Создайте массивы для удаления и добавления скиллов
+        $skillsToAdd = array_diff($newSkills, $currentSkills);
+        $skillsToDelete = array_diff($currentSkills, $newSkills);
+
+        // Удалите скиллы, которые нужно удалить
+        $user->skills()->detach($skillsToDelete);
+
+        // Добавьте скиллы, которые нужно добавить
+        $user->skills()->attach($skillsToAdd);
 
         if ($request->allFiles()) {
             $userSkillsFiles = $request->allFiles();
-            //for Log
-            // $skillPaths = [];
             foreach ($userSkillsFiles as $name => $file) {
                 if ($file->isValid() && str_contains($name, 'user_skills')) {
                     $skillPath = $file->store('skills', 'public');
@@ -200,8 +194,6 @@ class ProfileController extends Controller
                         'user_id' => $user->id,
                         'skills' => $skillPath,
                     ]);
-                    //for Log
-                    // $skillPaths[] = $skillPath;
                 }
             }
         }
