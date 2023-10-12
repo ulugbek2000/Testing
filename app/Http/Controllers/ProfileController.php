@@ -169,7 +169,7 @@ class ProfileController extends Controller
         
         if ($request->has('user_skills')) {
             $userSkillsFiles = $allFiles['user_skills'];
-            Log::info('User Skills Files', $userSkillsFiles);   
+            dd($userSkillsFiles);   
             foreach ($userSkillsFiles as $file) {
                 if ($file->isValid()) {
                     $skillPath = $file->store('skills', 'public');
