@@ -163,32 +163,30 @@ class ProfileController extends Controller
             $user->save();
         }
 
-        $skill = $request->allFiles();
-
+        // $skill = $request->allFiles();
 
         // Log::info('All Files', $allFiles);
 
-        // Получите текущие скиллы пользователя
+        //! Get the user's current skills
         $currentSkills = $user->userSkills->pluck('skills')->all();
 
         $newSkills = $request->allFiles('user_skills');
-
-
-        // Создайте массив, содержащий имена файлов, загруженных с фронта
-        $uploadedSkillNames = [];
+dd($newSkills,$currentSkills);
+        //! Create an array containing the names of the files loaded from the front
+         $uploadedSkillNames = [];
 
         foreach ($newSkills as $name => $file) {
             if ($file->isValid() && str_contains($name, 'user_skills')) {
                 $skillName = $file->getClientOriginalName();
-                 echo("Skill Name: " . $skillName);
                 $uploadedSkillNames[] = $skillName;
 
-                // Проверьте, существует ли скилл с таким именем
+                //! Check if a skill with the same name exists
                 $existingSkill = UserSkills::where('user_id', $user->id)
                     ->where('skills', $skillName)
                     ->first();
                 if (!$existingSkill) {
-                    // Если скилла с таким именем нет в базе, то сохраните новый файл
+
+                    //! If a skill with this name is not in the database, then save a new file
                     $skillPath = $file->store('skills', 'public');
                     UserSkills::create([
                         'user_id' => $user->id,
@@ -199,10 +197,10 @@ class ProfileController extends Controller
         }
 
         // dd($skillName,$existingSkill,$skillPath);
-        // Удалите скиллы, которые не были загружены с фронта
+        //! Remove skills that were not loaded from the front
         foreach ($currentSkills as $currentSkill) {
             if (!in_array($currentSkill, $uploadedSkillNames)) {
-                // Удаляем файл и запись о нем из базы
+                // Delete the file and its entry from the database
                 Storage::delete('public/' . $currentSkill);
                 UserSkills::where('user_id', $user->id)
                     ->where('skills', $currentSkill)
