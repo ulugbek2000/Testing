@@ -167,9 +167,7 @@ class ProfileController extends Controller
 
 
         // Log::info('All Files', $allFiles);
-        // Log::info('files', [$request->collect()->merge($request->file())]);
 
-        // Получите текущие скиллы пользователя
         // Получите текущие скиллы пользователя
         $currentSkills = $user->userSkills->pluck('skills')->all();
 
@@ -181,14 +179,13 @@ class ProfileController extends Controller
 
         foreach ($newSkills as $name => $file) {
             if ($file->isValid() && str_contains($name, 'user_skills')) {
-                $skillName = $file->getClientOriginalName();
+               dd( $skillName = $file->getClientOriginalName());
                 $uploadedSkillNames[] = $skillName;
-                Log::info('name', $skillName);
+
                 // Проверьте, существует ли скилл с таким именем
                 $existingSkill = UserSkills::where('user_id', $user->id)
                     ->where('skills', $skillName)
                     ->first();
-                Log::info('exist', $existingSkill);
                 if (!$existingSkill) {
                     // Если скилла с таким именем нет в базе, то сохраните новый файл
                     $skillPath = $file->store('skills', 'public');
