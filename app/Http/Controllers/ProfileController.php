@@ -161,8 +161,33 @@ class ProfileController extends Controller
             $user->save();
         }
 
+        $data = $request->all();
+
+        // Создайте массив для хранения информации о файлах
+        $fileInfo = [];
+    
+        // Переберите ключи в данных запроса
+        foreach ($data as $key => $value) {
+            if (strpos($key, 'user_skills') === 0) {
+                // Если ключ начинается с "user_skills", это файл
+                $file = $request->file($key);
+                if ($file) {
+                    $filename = $file->getClientOriginalName();
+                    $fileContents = file_get_contents($file);
+                    $fileInfo[$key] = [
+                        'filename' => $filename,
+                        'contents' => $fileContents,
+                    ];
+                }
+            }
+        }
+    
+        // Запишите информацию о файлах в журнал
+        Log::info('Files', $fileInfo);
+
+
         
-        Log::info('files', [$request->collect()->merge($request->file('user_skills?'))]);
+        // Log::info('files', [$request->collect()->merge($request->file('user_skills?'))]);
         // Log::info('files', [$request->strpos('user_skills')]);
         if ($request->has('user_skills')) {
             Log::info('files', [$request->file('user_skills')]);
