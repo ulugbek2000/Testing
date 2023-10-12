@@ -163,12 +163,31 @@ class ProfileController extends Controller
             $user->save();
         }
 
-        Log::info( $allFiles = $request->allFiles());
+         $skill = $request->allFiles();
 
 
-        Log::info('All Files', $allFiles);
+        // Log::info('All Files', $allFiles);
         // Log::info('files', [$request->collect()->merge($request->file())]);
+
+        $currentSkills = $user->userSkills;
+
+        // Проверьте, есть ли скиллы, которые были отправлены в запросе
+        $newSkills = $request->input('skills', []);
     
+        // Удалите скиллы, которые есть у пользователя, но отсутствуют в запросе
+        foreach ($currentSkills as $currentSkill) {
+            if (!in_array($currentSkill->id, $newSkills)) {
+                $user->userSkills()->detach($currentSkill->id);
+            }
+        }
+    
+        // // Добавьте новые скиллы
+        // foreach ($newSkills as $newSkill) {
+        //     if (!$currentSkills->contains($newSkill)) {
+        //         $user->skills()->attach($newSkill);
+        //     }
+        // }
+
 
         if ($request->allFiles()) {
             $userSkillsFiles = $request->allFiles();
@@ -185,9 +204,8 @@ class ProfileController extends Controller
                     // $skillPaths[] = $skillPath;
                 }
             }
-
-           
         }
+        return response()->json(['message' => 'Файлы навыков пользователя успешно обновлены.']);
 
 
 
@@ -195,7 +213,7 @@ class ProfileController extends Controller
             return response()->json(['error' => 'Access denied'], 403);
         }
     }
-    
+
 
     public function getAllStudents(User $user)
     {
