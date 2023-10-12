@@ -181,7 +181,7 @@ class ProfileController extends Controller
         
                 // Проверьте, существует ли скилл с таким именем
                 $existingSkill = UserSkills::where('user_id', $user->id)
-                    ->where('skills', $skillName)
+                    ->where('skills','LIKE', $skillName)
                     ->first();
         
                 if ($existingSkill != $skillName) {
