@@ -189,13 +189,13 @@ class CourseController extends Controller
         return response()->json(['message' => $userCourse->wasRecentlyCreated ? "User enrolled to course successfuly." : "User already enrolled!"], 200);
     }
 
-    public function addTeachersToCourse(Request $request, Course $course,User $user)
+    public function addTeachersToCourse(Request $request, Course $course, User $user)
     {
         $teacherIds = $request->input('teacher_ids', []);
-       
+
         if (count($teacherIds) > 0) {
             $teachers = User::whereIn('id', $teacherIds)->role(UserType::Teacher)->get();
-           
+
             if ($teachers->isNotEmpty()) {
                 $course->users()->syncWithoutDetaching($teachers->pluck('id'));
                 return response()->json(['message' => 'Teachers enrolled successfully.'], 200);
@@ -207,6 +207,24 @@ class CourseController extends Controller
 
     public function getTeacherInCourse(Course $course, User $user)
     {
+        // Ищем учителя для данного курса, где роль - 'teacher'
+        $teacher = $course->users->filter(function ($user) {
+            return $user->hasRole(UserType::Teacher);
+        })->first();
 
+        if ($teacher) {
+            // Учителю можно получить доступ к его информации, например, имя и email
+            $teacherName = $teacher->name;
+            // $teacherEmail = $teacher->email;
+
+            return response()->json([
+                'teacher' => [
+                    'name' => $teacherName,
+                    // 'email' => $teacherEmail,
+                ]
+            ], 200);
+        }
+
+        return response()->json(['message' => 'No teacher found for this course.'], 404);
     }
 }
