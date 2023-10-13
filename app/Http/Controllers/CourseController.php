@@ -194,10 +194,8 @@ class CourseController extends Controller
         $teacherIds = $request->input('teacher_ids', []);
        
         if (count($teacherIds) > 0) {
-            dd($teacherIds,($user->hasRole(UserType::Teacher)))->get();
-            $teachers = User::whereIn('id', $teacherIds)->where($user->hasRole(UserType::Teacher))->get();
+            $teachers = User::whereIn('id', $teacherIds)->whereHasRole('Teacher')->get();
            
-
             if ($teachers->isNotEmpty()) {
                 $course->users()->syncWithoutDetaching($teachers->pluck('id'));
                 return response()->json(['message' => 'Teachers enrolled successfully.'], 200);
