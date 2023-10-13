@@ -189,19 +189,24 @@ class CourseController extends Controller
         return response()->json(['message' => $userCourse->wasRecentlyCreated ? "User enrolled to course successfuly." : "User already enrolled!"], 200);
     }
 
-    public function addTeachersToCourse(Request $request, Course $course)
+    public function addTeachersToCourse(Request $request, Course $course,User $user)
     {
         $teacherIds = $request->input('teacher_ids', []);
 
         if (count($teacherIds) > 0) {
-            $teachers = User::whereIn('id', $teacherIds)->where('user_type', UserType::Teacher)->get();
-    
+            $teachers = User::whereIn('id', $teacherIds)->where($user->hasRole(UserType::Teacher))->get();
+
             if ($teachers->isNotEmpty()) {
                 $course->users()->syncWithoutDetaching($teachers->pluck('id'));
                 return response()->json(['message' => 'Teachers enrolled successfully.'], 200);
             }
         }
-    
+
         return response()->json(['message' => 'No teachers selected or incorrect type.'], 400);
+    }
+
+    public function getTeacherInCourse(Course $course, User $user)
+    {
+
     }
 }
