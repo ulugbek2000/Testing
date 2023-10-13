@@ -194,7 +194,7 @@ class CourseController extends Controller
         $teacherIds = $request->input('teacher_ids', []);
        
         if (count($teacherIds) > 0) {
-            dd($teacherIds,count($teacherIds) > 0);
+            dd($teacherIds,($user->hasRole(UserType::Teacher)));
             $teachers = User::whereIn('id', $teacherIds)->where($user->hasRole(UserType::Teacher))->get();
            
 
