@@ -45,16 +45,17 @@ class LessonController extends Controller
         ]);
         // dd()->response()->json($request);
         $type = $request->input('type');
-        $сontent = $request->input('content');
+        $content = $request->input('content');
         $cover = $request->file('cover')->store('cover', 'public');
 
         $lesson = new Lesson();
         $lesson->type = $type;
 
         if ($type === 'text') {
-            $lesson->content = $сontent;
+            $lesson->content = $content;
         } elseif ($type === 'video' || $type === 'audio') {
-            $filePath = $request->file('content')->store('content');
+            $filePath = $request->file('content')->store('content','public');
+            $lesson->content = $filePath;
         }
         $data = [
             'topic_id' => $request->topic_id,

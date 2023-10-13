@@ -139,11 +139,6 @@ class ProfileController extends Controller
             ]);
         }
 
-        // if ($validator->fails()) {
-        //     return response()->json(['errors' => $validator->errors()], 422);
-        // }
-
-
         $path = $user->photo;
 
         if ($request->hasFile('photo')) {
@@ -164,15 +159,12 @@ class ProfileController extends Controller
             $user->save();
         }
 
-        // $skill = $request->allFiles();
-
         // Log::info('All Files', $allFiles);
-
         //! Get the user's current skills
         $currentSkills = $user->userSkills->pluck('skills')->all();
 
         $requestData = $request->all();
-        // dd($newSkills,$currentSkills);
+
         //! Create an array containing the names of the files loaded from the front
         $uploadedSkillNames = [];
 
@@ -185,7 +177,6 @@ class ProfileController extends Controller
                         'user_id' => $user->id,
                         'skills' => $skillPath,
                     ]);
-
                     $uploadedSkillNames[] = $skillPath;
                 }else {
                     $uploadedSkillNames[] = $data;
@@ -196,13 +187,12 @@ class ProfileController extends Controller
         //! Remove skills that were not loaded from the front
         $currentSkills = UserSkills::where('user_id', $user->id)->whereNotIn('skills', $uploadedSkillNames)->delete();
                   
-        return response()->json(['message' => 'Файлы навыков пользователя успешно обновлены.']);
+        return response()->json(['message' => 'The files skills are updated successfully.']);
 
         if ($user->hasRole(!UserType::Admin)) {
             return response()->json(['error' => 'Access denied'], 403);
         }
     }
-
 
     public function getAllStudents(User $user)
     {
