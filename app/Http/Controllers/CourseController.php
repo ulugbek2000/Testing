@@ -9,6 +9,7 @@ use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Str;
 use app\Http\Requests\CourseStoreRequest;
 use App\Http\Resources\CourseResource;
+use App\Models\CourseSkills;
 use App\Models\User;
 use App\Models\UserCourse;
 use Carbon\Carbon;
@@ -205,22 +206,29 @@ class CourseController extends Controller
         return response()->json(['message' => 'No teachers selected or incorrect type.'], 400);
     }
 
-    public function getTeacherInCourse(Course $course, User $user)
+    public function getTeacherInCourse(Course $course, User $user,CourseSkills $skill)
     {
         // Ищем учителя для данного курса, где роль - 'teacher'
-        $teacher = $course->users->filter(function ($user) {
+        $teacher = $course->userSkills->users->filter(function ($user) {
             return $user->hasRole(UserType::Teacher);
         })->first();
+
 
         if ($teacher) {
             // Учителю можно получить доступ к его информации, например, имя и email
             $teacherName = $teacher->name;
+            $teacherDescription = $teacher->description;
+            $teacherPhoto = $teacher->photo;
+            $teacherSkills = $teacher->skill;
+
             // $teacherEmail = $teacher->email;
 
             return response()->json([
                 'teacher' => [
                     'name' => $teacherName,
-                    // 'email' => $teacherEmail,
+                    'description' => $teacherDescription,
+                    'photo' => $teacherPhoto,
+                    'skills' => $teacherSkills,
                 ]
             ], 200);
         }
