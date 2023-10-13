@@ -194,7 +194,7 @@ class CourseController extends Controller
         $teacherIds = $request->input('teacher_ids', []);
        
         if (count($teacherIds) > 0) {
-            $teachers = User::whereIn('id', $teacherIds)->hasRole(UserType::Teacher)->get();
+            $teachers = User::whereIn('id', $teacherIds)->$user->hasRole(UserType::Teacher)->get();
            
             if ($teachers->isNotEmpty()) {
                 $course->users()->syncWithoutDetaching($teachers->pluck('id'));
