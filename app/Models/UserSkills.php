@@ -11,7 +11,8 @@ class UserSkills extends Model
     protected $fillable = [
         'skills',
         // 'certificate',
-        'user_id'
+        'user_id',
+        'course_id',
     ];
 
     public  function user()
