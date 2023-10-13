@@ -192,10 +192,10 @@ class CourseController extends Controller
     public function addTeachersToCourse(Request $request, Course $course,User $user)
     {
         $teacherIds = $request->input('teacher_ids', []);
-
+        dd($teacherIds);
         if (count($teacherIds) > 0) {
             $teachers = User::whereIn('id', $teacherIds)->where($user->hasRole(UserType::Teacher))->get();
-            dd($teachers);
+           
 
             if ($teachers->isNotEmpty()) {
                 $course->users()->syncWithoutDetaching($teachers->pluck('id'));
