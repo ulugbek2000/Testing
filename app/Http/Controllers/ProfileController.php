@@ -29,7 +29,6 @@ class ProfileController extends Controller
     public function updateProfile(Request $request)
     {
         $user = Auth::user();
-        $validator = null;
         if ($user->hasRole(UserType::Student)) {
             $request->validate([
                 'name' => 'string',
@@ -54,10 +53,10 @@ class ProfileController extends Controller
             // Delete old cover file if needed
             Storage::delete($user->photo);
             // Upload and store new cover file
-            $path = $request->file('photo')->store('photoMentor', 'public');
+            $path = $request->file('photo')->store('photoStudent', 'public');
         }
         $data = array_merge(
-            $request->only(['name', 'email', 'phone', 'surname', 'city', 'gender', 'date_of_birth', 'position', 'description',]),
+            $request->only(['name', 'email', 'phone', 'surname', 'city', 'gender', 'date_of_birth']),
             ['photo' => $path]
         );
 
