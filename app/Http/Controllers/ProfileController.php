@@ -30,7 +30,7 @@ class ProfileController extends Controller
     {
         $user = Auth::user(); 
         // dd($user,$request);
-        if (UserType::Student) {
+        if ($user->hasRole(UserType::Student)) {
             $request->validate([
                 'name' => 'string',
                 'surname' => 'string',
