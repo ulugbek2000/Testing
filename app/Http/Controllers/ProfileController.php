@@ -173,11 +173,13 @@ class ProfileController extends Controller
         }
     }
 
-    public function getAllStudents(User $user)
+    public function getAllStudents()
     {
         // $user = Auth::user();
-        if ($user->hasRole(UserType::Student)) {
-            $students = User::all();
+        $students = User::all();
+        dd($students);
+        if ($students->hasRole(UserType::Student)) {
+            
             return response()->json($students);
         }
     }
