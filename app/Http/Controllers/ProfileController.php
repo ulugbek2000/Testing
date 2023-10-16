@@ -30,19 +30,19 @@ class ProfileController extends Controller
     {
         $user = Auth::user(); 
         // dd($user,$request);
-        if ($user->hasRole(UserType::Student)) {
-            $request->validate([
-                'name' => 'string',
-                'surname' => 'string',
-                'email' => 'required_without:phone|email|unique:user,' . $user->id,
-                'phone' => 'required_without:email|string|unique:user,' . $user->id,
-                'password' => 'string|min:8',
-                'city' => 'string',
-                'photo' => 'nullable|mimes:jpeg,png,jpg,gif,mov',
-                'gender' => 'string|in:male,female,other',
-                'date_of_birth' => 'date',
-            ]);
-        }
+        // if ($user->hasRole(UserType::Student)) {
+        //     $request->validate([
+        //         'name' => 'string',
+        //         'surname' => 'string',
+        //         'email' => 'required_without:phone|email|unique:users,' . $user->id,
+        //         'phone' => 'required_without:email|string|unique:users,' . $user->id,
+        //         'password' => 'string|min:8',
+        //         'city' => 'string',
+        //         'photo' => 'nullable|mimes:jpeg,png,jpg,gif,mov',
+        //         'gender' => 'string|in:male,female,other',
+        //         'date_of_birth' => 'date',
+        //     ]);
+        // }
       
         $photoPath = $user->photo;
 
