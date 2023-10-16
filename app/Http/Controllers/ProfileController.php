@@ -42,29 +42,18 @@ class ProfileController extends Controller
             'date_of_birth' => 'date',
         ]);
     
-        $data = $request->only([
-            'email',
-            'phone',
-            'name',
-            'surname',
-            'city',
-            'gender',
-            'date_of_birth',
-        ]);
-    
-        // Обработка загрузки фотографии
+        $path = $user->photo;
+
         if ($request->hasFile('photo')) {
-            $uploadedPhoto = $request->file('photo');
-            $photoFileName = uniqid('photo_') . '.' . $uploadedPhoto->getClientOriginalExtension();
-            $photoPath = $uploadedPhoto->storeAs('photo', $photoFileName, 'public');
-            $data['photo'] = $photoPath;
-    
-            // Удаление предыдущей фотографии, если она существует
-            if (!empty($user->photo) && Storage::exists($user->photo)) {
-                Storage::delete($user->photo);
-            }
+            // Delete old cover file if needed
+            Storage::delete($user->photo);
+            // Upload and store new cover file
+            $path = $request->file('photo')->store('photoMentor', 'public');
         }
-    
+        $data = array_merge(
+            $request->only(['name', 'email', 'phone', 'surname', 'city', 'gender', 'date_of_birth',]),
+            ['photo' => $path]
+        );
         // Обновление профиля пользователя
         $user->update($data);
     
