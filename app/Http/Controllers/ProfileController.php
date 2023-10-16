@@ -47,17 +47,17 @@ class ProfileController extends Controller
             ]);
         }
       
-        $Photopath = $user->photo;
+        $photoPath = $user->photo;
 
         if ($request->hasFile('photo')) {
             // Delete old cover file if needed
             Storage::delete($user->photo);
             // Upload and store new cover file
-            $Photopath = $request->file('photo')->store('photoStudent', 'public');
+            $photoPath = $request->file('photo')->store('photoStudent', 'public');
         }
         $data = array_merge(
             $request->only(['name', 'email', 'phone', 'surname', 'city', 'gender', 'date_of_birth']),
-            ['photo' => $Photopath]
+            ['photo' => $photoPath]
         );
 
         $user->update($data);
