@@ -31,24 +31,24 @@ class ProfileController extends Controller
         $user = Auth::user(); 
         // dd($user,$request);
 
-      $validator = null;
-        if ($user->hasRole(UserType::Student)) {
-            // Валидация общих полей для Студента или Преподавателя
-            $validator = Validator::make($request->all(), [
-                'name' => 'string',
-                'surname' => 'string',
-                'email' => 'required_without:phone|email|unique:users,' . $user->id,
-                'phone' => 'required_without:email|string|unique:users,' . $user->id,
-                'password' => 'string|min:8',
-                'city' => 'string',
-                'photo' => 'nullable|mimes:jpeg,png,jpg,gif,mov',
-                'gender' => 'string|in:male,female,other',
-                'date_of_birth' => 'date',
-            ]);
-        }
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
+    //   $validator = null;
+    //     if ($user->hasRole(UserType::Student)) {
+    //         // Валидация общих полей для Студента или Преподавателя
+    //         $validator = Validator::make($request->all(), [
+    //             'name' => 'string',
+    //             'surname' => 'string',
+    //             'email' => 'required_without:phone|email|unique:users,' . $user->id,
+    //             'phone' => 'required_without:email|string|unique:users,' . $user->id,
+    //             'password' => 'string|min:8',
+    //             'city' => 'string',
+    //             'photo' => 'nullable|mimes:jpeg,png,jpg,gif,mov',
+    //             'gender' => 'string|in:male,female,other',
+    //             'date_of_birth' => 'date',
+    //         ]);
+    //     }
+    //     if ($validator->fails()) {
+    //         return response()->json(['errors' => $validator->errors()], 422);
+    //     }
       
         $user->update($request->only([
             'email',
