@@ -99,7 +99,7 @@ class ProfileController extends Controller
 
     public function updateTeacher(Request $request, User $user)
     {
-        $user = Auth::user();
+        // $user = Auth::user();
         if ($user->hasRole(UserType::Admin)) {
             $request->validate([
                 'name' => 'string',
