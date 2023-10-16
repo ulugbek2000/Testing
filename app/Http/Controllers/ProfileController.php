@@ -73,7 +73,7 @@ class ProfileController extends Controller
             $photoFileName = uniqid('photo_') . '.' . $uploadedPhoto->getClientOriginalExtension();
 
             // Сохраните новую фотографию со сгенерированным именем файла в каталоге public/photo.
-            $photoPath = $uploadedPhoto->storeAs('photo', $photoFileName, 'photo','public');
+            $photoPath = $uploadedPhoto->storeAs('photo', $photoFileName, 'photo');
 
             // Обновите профиль пользователя, указав новый путь к фотографии.
             $data['photo'] = $photoPath;
@@ -225,3 +225,4 @@ class ProfileController extends Controller
         return response()->json(['user' => $user], 200);
     }
 }
+
