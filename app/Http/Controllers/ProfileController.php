@@ -29,7 +29,7 @@ class ProfileController extends Controller
     public function updateProfile(Request $request)
     {
         $user = Auth::user();
-    
+
         $request->validate([
             'email' => 'required_without:phone|email|unique:users,email,' . $user->id,
             'phone' => 'required_without:email|string|unique:users,phone,' . $user->id,
@@ -41,7 +41,7 @@ class ProfileController extends Controller
             'gender' => 'string|in:male,female,other',
             'date_of_birth' => 'date',
         ]);
-    
+
         $path = $user->photo;
 
         if ($request->hasFile('photo')) {
@@ -56,15 +56,15 @@ class ProfileController extends Controller
         );
         // Обновление профиля пользователя
         $user->update($data);
-    
+
         if ($request->has('password')) {
             $user->password = bcrypt($request->input('password'));
             $user->save();
         }
-    
+
         return response()->json(['message' => 'Profile updated successfully']);
     }
-    
+
     // if ($user->hasRole(UserType::Teacher)) {
 
     //    $request->validate([
@@ -157,7 +157,7 @@ class ProfileController extends Controller
                         'skills' => $skillPath,
                     ]);
                     $uploadedSkillNames[] = $skillPath;
-                }else {
+                } else {
                     $uploadedSkillNames[] = $data;
                 }
             }
@@ -165,7 +165,7 @@ class ProfileController extends Controller
 
         //! Remove skills that were not loaded from the front
         $currentSkills = UserSkills::where('user_id', $user->id)->whereNotIn('skills', $uploadedSkillNames)->delete();
-                  
+
         return response()->json(['message' => 'The files skills are updated successfully.']);
 
         if ($user->hasRole(!UserType::Admin)) {
@@ -178,17 +178,16 @@ class ProfileController extends Controller
         // $user = Auth::user();
         if ($user->hasRole(UserType::Student)) {
             $students = User::all();
-             return response()->json($students);
+            return response()->json($students);
         }
-       
     }
 
     public function getAllTeachers(User $user)
     {
-       if ($user->hasRole(UserType::Teacher)) {
+        if ($user->hasRole(UserType::Teacher)) {
             $teachers = User::all();
+            return response()->json($teachers)->with('userSkills')->get();
         }
-        return response()->json($teachers)->with('userSkills')->get();
     }
 
     public function getUserById(Request $request, User $user)
@@ -207,4 +206,3 @@ class ProfileController extends Controller
         return response()->json(['user' => $user], 200);
     }
 }
-
