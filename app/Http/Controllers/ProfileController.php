@@ -41,13 +41,8 @@ class ProfileController extends Controller
                 'photo' => 'nullable|mimes:jpeg,png,jpg,gif,mov',
                 'gender' => 'string|in:male,female,other',
                 'date_of_birth' => 'date',
-                'position' => 'nullable|string',
-                'description' => 'nullable|string',
-                'skills' => 'nullable|array',
-                'skills.*' => 'image|mimes:jpeg,png,jpg,gif',
             ]);
         }
-          dd($user,$request);
       
         $photoPath = $user->photo;
 
