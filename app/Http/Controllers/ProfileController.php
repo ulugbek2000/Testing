@@ -29,6 +29,7 @@ class ProfileController extends Controller
     public function updateProfile(Request $request)
     {
         $user = Auth::user(); 
+        dd($user,$request);
         if ($user->hasRole(UserType::Student)) {
             $request->validate([
                 'name' => 'string',
