@@ -28,29 +28,21 @@ class ProfileController extends Controller
 
     public function updateProfile(Request $request)
     {
-        $user = Auth::user(); 
-        // dd($user,$request);
-
-    //   $validator = null;
-    //     if ($user->hasRole(UserType::Student)) {
-    //         // Валидация общих полей для Студента или Преподавателя
-    //         $validator = Validator::make($request->all(), [
-    //             'name' => 'string',
-    //             'surname' => 'string',
-    //             'email' => 'required_without:phone|email|unique:users,' . $user->id,
-    //             'phone' => 'required_without:email|string|unique:users,' . $user->id,
-    //             'password' => 'string|min:8',
-    //             'city' => 'string',
-    //             'photo' => 'nullable|mimes:jpeg,png,jpg,gif,mov',
-    //             'gender' => 'string|in:male,female,other',
-    //             'date_of_birth' => 'date',
-    //         ]);
-    //     }
-    //     if ($validator->fails()) {
-    //         return response()->json(['errors' => $validator->errors()], 422);
-    //     }
-      
-        $user->update($request->only([
+        $user = Auth::user();
+    
+        $request->validate([
+            'email' => 'required_without:phone|email|unique:users,email,' . $user->id,
+            'phone' => 'required_without:email|string|unique:users,phone,' . $user->id,
+            'name' => 'string',
+            'surname' => 'string',
+            'password' => 'string|min:8',
+            'city' => 'string',
+            'photo' => 'nullable|mimes:jpeg,png,jpg,gif,mov',
+            'gender' => 'string|in:male,female,other',
+            'date_of_birth' => 'date',
+        ]);
+    
+        $data = $request->only([
             'email',
             'phone',
             'name',
@@ -58,37 +50,32 @@ class ProfileController extends Controller
             'city',
             'gender',
             'date_of_birth',
-        ]));
-
-        $photoPath = $user->photo;
-
-        if (is_string($photoPath) && Storage::exists($photoPath)) {
-            // Удалить старую фотографию
-            Storage::delete($photoPath);
-        }
-
+        ]);
+    
+        // Обработка загрузки фотографии
         if ($request->hasFile('photo')) {
-
-            // Убедитесь, что файл был загружен
             $uploadedPhoto = $request->file('photo');
-
-            // Создайте уникальное имя файла (вы можете изменить его по мере необходимости)
             $photoFileName = uniqid('photo_') . '.' . $uploadedPhoto->getClientOriginalExtension();
-
-            // Сохраните новую фотографию со сгенерированным именем файла в каталоге public/photo.
             $photoPath = $uploadedPhoto->storeAs('photo', $photoFileName, 'public');
-
-            // Обновите профиль пользователя, указав новый путь к фотографии.
             $data['photo'] = $photoPath;
+    
+            // Удаление предыдущей фотографии, если она существует
+            if (!empty($user->photo) && Storage::exists($user->photo)) {
+                Storage::delete($user->photo);
+            }
         }
-
+    
+        // Обновление профиля пользователя
+        $user->update($data);
+    
         if ($request->has('password')) {
             $user->password = bcrypt($request->input('password'));
             $user->save();
         }
-        // $user->update($data);
+    
         return response()->json(['message' => 'Profile updated successfully']);
     }
+    
     // if ($user->hasRole(UserType::Teacher)) {
 
     //    $request->validate([
