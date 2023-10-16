@@ -177,7 +177,7 @@ class ProfileController extends Controller
     {
         // $user = Auth::user();
         $students = User::all();
-        dd($students);
+        // dd($students);
         if ($students->hasRole(UserType::Student)) {
             
             return response()->json($students);
