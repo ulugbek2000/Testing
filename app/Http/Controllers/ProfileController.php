@@ -48,36 +48,21 @@ class ProfileController extends Controller
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        $user->update($request->only([
-            'email',
-            'phone',
-            'name',
-            'surname',
-            'city',
-            'gender',
-            'date_of_birth',
-        ]));
-        $photoPath = $user->photo;
-
-        if (is_string($photoPath) && Storage::exists($photoPath)) {
-            // Удалить старую фотографию
-            Storage::delete($photoPath);
-        }
+      
+        $path = $user->photo;
 
         if ($request->hasFile('photo')) {
-
-            // Убедитесь, что файл был загружен
-            $uploadedPhoto = $request->file('photo');
-
-            // Создайте уникальное имя файла (вы можете изменить его по мере необходимости)
-            $photoFileName = uniqid('photo_') . '.' . $uploadedPhoto->getClientOriginalExtension();
-
-            // Сохраните новую фотографию со сгенерированным именем файла в каталоге public/photo.
-            $photoPath = $uploadedPhoto->storeAs('photo', $photoFileName, 'photo');
-
-            // Обновите профиль пользователя, указав новый путь к фотографии.
-            $data['photo'] = $photoPath;
+            // Delete old cover file if needed
+            Storage::delete($user->photo);
+            // Upload and store new cover file
+            $path = $request->file('photo')->store('photoMentor', 'public');
         }
+        $data = array_merge(
+            $request->only(['name', 'email', 'phone', 'surname', 'city', 'gender', 'date_of_birth', 'position', 'description',]),
+            ['photo' => $path]
+        );
+
+        $user->update($data);
 
         if ($request->has('password')) {
             $user->password = bcrypt($request->input('password'));
