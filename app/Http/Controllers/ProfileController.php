@@ -179,7 +179,7 @@ class ProfileController extends Controller
        
         // dd($students);
         if ($user->hasRole(UserType::Student)) {
-           
+           dd($user);
             return response()->json($user);
         }
     }
