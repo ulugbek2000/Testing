@@ -31,8 +31,8 @@ class ProfileController extends Controller
         $user = Auth::user();
     
         $request->validate([
-            'email' => 'required_without:phone|email|unique:users,' . $user->id,
-            'phone' => 'required_without:email|string|unique:users,' . $user->id,
+            'email' => 'required_without:phone|email|unique:users,email,' . $user->id,
+            'phone' => 'required_without:email|string|unique:users,phone,' . $user->id,
             'name' => 'string',
             'surname' => 'string',
             'password' => 'string|min:8',
@@ -42,7 +42,7 @@ class ProfileController extends Controller
             'date_of_birth' => 'date',
         ]);
     
-$data = $request->only([
+        $data = $request->only([
             'email',
             'phone',
             'name',
