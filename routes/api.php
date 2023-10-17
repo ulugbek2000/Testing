@@ -54,7 +54,7 @@ Auth::routes([
 
 
 Route::get('course', [CourseController::class, 'index']);
-Route::get('courseByTeacher/{course}', [CourseController::class, 'getCourseByTeacher']);
+Route::get('teacherByCourse/{course}', [CourseController::class, 'getTeacherByCourse']);
 Route::get('course/{course}', [CourseController::class, 'show']);
 
 Route::get('course/{course}/topics', [TopicController::class, 'index']);

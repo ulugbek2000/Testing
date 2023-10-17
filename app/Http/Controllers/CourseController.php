@@ -206,7 +206,7 @@ class CourseController extends Controller
         return response()->json(['message' => 'No teacher selected or incorrect type.'], 400);
     }
 
-    public function getCourseByTeacher(Course $course)
+    public function getTeacherByCourse(Course $course)
     {
         // Загружаем учителей для данного курса
         $course->load('teachers');
