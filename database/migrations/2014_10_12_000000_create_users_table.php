@@ -20,7 +20,7 @@ return new class extends Migration
                 $table->string('phone')->nullable();
                 $table->string('gender')->nullable();
                 $table->string('city')->nullable();
-                $table->string('description')->nullable();
+                $table->text('description')->nullable();
                 $table->string('position')->nullable();
                 $table->string('user_type')->nullable();
                 // $table->foreignId('role_id')->references('id')->on('roles')->onDelete('cascade');

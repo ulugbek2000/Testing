@@ -92,11 +92,12 @@ Route::middleware(['jwt.auth'])->group(function () {
         //Start Courses
         Route::get('admin/course', [CourseController::class, 'index']);
         Route::get('admin/course/{course}', [CourseController::class, 'show']);
+        Route::get('admin/teacherByCourse/{course}', [CourseController::class, 'getTeacherByCourse']);
         Route::post('course', [CourseController::class, 'store']);
         Route::put('course/{course}', [CourseController::class, 'update']);
         Route::delete('course/{course}', [CourseController::class, 'destroy']);
         Route::post('enroll/{course}/{user}', [CourseController::class, 'enroll']);
-        Route::get('course/{course}/teacher', [CourseController::class,'getTeacherInCourse']);
+        Route::get('course/{course}/teacher', [CourseController::class, 'getTeacherInCourse']);
         Route::post('/courses/{course}/add-teachers', [CourseController::class, 'addTeachersToCourse']);
         //End Courses
 
@@ -175,6 +176,7 @@ Route::middleware(['jwt.auth'])->group(function () {
         Route::get('student/course', [CourseController::class, 'index']);
 
         //Просмотр информации о курсе:
+        Route::get('student/teacherByCourse/{course}', [CourseController::class, 'getTeacherByCourse']);
         Route::get('student/course/{course}', [CourseController::class, 'show']);
 
         //Пополнение баланс:
@@ -192,12 +194,12 @@ Route::middleware(['jwt.auth'])->group(function () {
         // Получение темы доступных курс:
         Route::get('student/course/{course}/topics', [TopicController::class, 'index']);
         Route::get('student/topic/{topic}', [TopicController::class, 'show']);
-        
+
         // Получение уроки доступных темы:
         Route::get('student/topic/{topic}/lessons', [LessonController::class, 'index']);
 
         Route::get('student/lesson/{lesson}', [LessonController::class, 'show']);
-        
+
         //получение скиллы 
         Route::get('student/course/{course}/skill', [CourseSkillsController::class, 'index']);
 
