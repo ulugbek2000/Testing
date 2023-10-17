@@ -184,9 +184,10 @@ class ProfileController extends Controller
         // $teachers = User::role(UserType::Teacher)->with('')->get();
        
 
-        $teachers = User::with('userSkills')->get()->filter(
-            fn ($user) => $user->roles->where(UserType::Teacher));
-         return response()->json($teachers);
+        $superAdminCount = User::with('roles')->get()->filter(
+            fn ($user) => $user->roles->where('name', 'Teacher')->toArray()
+        )->count();
+        return response()->json($superAdminCount);
     }
 
     public function getUserById(Request $request, User $user)
