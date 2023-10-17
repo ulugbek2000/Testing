@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\UserType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -39,7 +40,7 @@ class Course extends Model
     public function teachers()
     {
         return $this->belongsToMany(User::class, 'user_courses', 'course_id', 'user_id')
-            ->where('name', 'Teacher');
+            ->where('name', UserType::Teacher);
     }
 
     public function users()
