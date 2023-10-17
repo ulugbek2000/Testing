@@ -61,7 +61,7 @@ class RegisterController extends Controller
             'surname' => 'required|string',
             'email' => 'required_without:phone|email|unique:users',
             'phone' => 'required_without:email|string|unique:users',
-            'password' => 'required|string|min:8,confirmed',
+            'password' => ['required', 'string', 'min:8','confirmed'],
             'city' => 'nullable|string',
             'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,mov',
             'gender' => 'nullable|string|in:male,female,other',
