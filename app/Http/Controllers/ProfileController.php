@@ -112,7 +112,7 @@ class ProfileController extends Controller
                 'gender' => 'string|in:male,female,other',
                 'date_of_birth' => 'date',
                 'position' => 'nullable|string',
-                'description' => 'nullable|string',
+                'description' => 'nullable|text',
                 'skills' => 'nullable|array',
                 'skills.*' => 'image|mimes:jpeg,png,jpg,gif',
             ]);
