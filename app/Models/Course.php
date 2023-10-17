@@ -42,7 +42,7 @@ class Course extends Model
         return $this->belongsToMany(User::class, 'user_skills', 'user_courses', 'course_id', 'user_id')
             ->whereHas('roles', function ($query) {
                 $query->where('name', UserType::Teacher);
-            });
+            })->with('userSkills');
     }
 
 
