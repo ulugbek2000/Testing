@@ -108,7 +108,7 @@ class ProfileController extends Controller
                 'phone' => 'required_without:email|string|unique:users,' . $user->id,
                 'password' => ['string','min:8','confirmed'],
                 'city' => 'string',
-                'photo' => 'nullable|mimes:jpeg,png,jpg,gif,mov',
+                'photo' => 'nullable|file',
                 'gender' => 'string|in:male,female,other',
                 'date_of_birth' => 'date',
                 'position' => 'nullable|string',
