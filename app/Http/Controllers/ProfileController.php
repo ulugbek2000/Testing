@@ -122,7 +122,9 @@ class ProfileController extends Controller
 
         if ($request->hasFile('photo')) {
             // Delete old cover file if needed
-            Storage::delete($user->photo);
+            if ($user->photo !== null) {
+                Storage::delete($user->photo);
+            }
             // Upload and store new cover file
             $path = $request->file('photo')->store('photoMentor', 'public');
         }
