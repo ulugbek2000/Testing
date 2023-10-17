@@ -199,48 +199,18 @@ class CourseController extends Controller
 
             if ($teachers->isNotEmpty()) {
                 $course->users()->syncWithoutDetaching($teachers->pluck('id'));
-                return response()->json(['message' => 'Teachers enrolled successfully.'], 200);
+                return response()->json(['message' => 'Teacher enrolled successfully.'], 200);
             }
         }
 
-        return response()->json(['message' => 'No teachers selected or incorrect type.'], 400);
-    }
-
-
-
-    public function getTeacherInCourse(Course $course, User $user, CourseSkills $skill)
-    {
-        // Ищем учителя для данного курса, где роль - 'teacher'
-        $teacher = $course->userSkills->users->filter(function ($user) {
-            return $user->hasRole(UserType::Teacher);
-        })->first();
-
-
-        if ($teacher) {
-            // Учителю можно получить доступ к его информации, например, имя и email
-            $teacherName = $teacher->name;
-            $teacherDescription = $teacher->description;
-            $teacherPhoto = $teacher->photo;
-            $teacherSkills = $teacher->skill;
-
-            // $teacherEmail = $teacher->email;
-
-            return response()->json([
-                'teacher' => [
-                    'name' => $teacherName,
-                    'description' => $teacherDescription,
-                    'photo' => $teacherPhoto,
-                    'skills' => $teacherSkills,
-                ]
-            ], 200);
-        }
-        return response()->json(['message' => 'No teacher found for this course.'], 404);
+        return response()->json(['message' => 'No teacher selected or incorrect type.'], 400);
     }
 
     public function getCourseByTeacher(Course $course)
     {
-        $course->load('teachers'); // Загружаем учителей для данного курса
+        $course->load('teachers'); //* Загружаем учителей для данного курса
 
         return response()->json($course);
     }
+
 }

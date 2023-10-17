@@ -182,7 +182,7 @@ class ProfileController extends Controller
     public function getAllTeachers()
     {  
         $teachers = User::whereHas('roles', function ($query) {
-            $query->where('name', 'Teacher');
+            $query->where('name', UserType::Teacher);
         })->with('userSkills')->get(); 
         return response()->json($teachers);
     }
