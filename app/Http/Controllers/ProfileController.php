@@ -178,7 +178,7 @@ class ProfileController extends Controller
         $user = Auth::user();
         // dd($user->hasRole(UserType::Student));
         // $teachers = User::all();
-
+dd($user,$users);
         if ($user->hasRole(UserType::Admin)) {
             // Если пользователь администратор, получите всех студентов
             if ($users->hasRole(UserType::Student)){
