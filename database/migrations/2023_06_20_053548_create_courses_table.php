@@ -14,6 +14,7 @@ return new class extends Migration
         if (!Schema::hasTable('courses'))
             Schema::create('courses', function (Blueprint $table) {
                 $table->id();
+                $table->foreignId('user_id')->references('id')->on('users')->onDelete('cascade');
                 $table->string('logo')->nullable();
                 $table->string('name');
                 $table->string('slug');
