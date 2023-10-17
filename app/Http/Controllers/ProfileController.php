@@ -51,7 +51,7 @@ class ProfileController extends Controller
             $path = $request->file('photo')->store('photoMentor', 'public');
         }
         $data = array_merge(
-            $request->only(['name', 'email', 'phone', 'surname', 'city', 'gender', 'date_of_birth',]),
+            $request->only(['name', 'email', 'phone', 'surname', 'city', 'gender', 'date_of_birth']),
             ['photo' => $path]
         );
         // Обновление профиля пользователя
@@ -127,7 +127,7 @@ class ProfileController extends Controller
             $path = $request->file('photo')->store('photoMentor', 'public');
         }
         $data = array_merge(
-            $request->only(['name', 'email', 'phone', 'surname', 'city', 'gender', 'date_of_birth', 'position', 'description',]),
+            $request->only(['name', 'email', 'phone', 'surname', 'city', 'gender', 'date_of_birth', 'position', 'description']),
             ['photo' => $path]
         );
 
