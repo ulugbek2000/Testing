@@ -175,26 +175,14 @@ class ProfileController extends Controller
 
     public function getAllStudents()
     {
-        // $user = Auth::user();
-        // dd($user->hasRole(UserType::Student));
-
-        // Если пользователь администратор, получите всех студентов
-        // if ($user->hasRole(UserType::Student)) {
-        //     return response()->json($user);
-        // }
-
         $students = User::role(UserType::Student)->get();
         return response()->json($students);
     }
 
-
-
-    public function getAllTeachers(User $user)
+    public function getAllTeachers()
     {
-        if ($user->hasRole(UserType::Teacher)) {
-            $teachers = User::with('userSkills')->get();
-            return response()->json($teachers);
-        }
+        $teachers = User::role(UserType::Teacher)->with('userSkills')->get();
+        return response()->json($teachers);
     }
 
     public function getUserById(Request $request, User $user)
