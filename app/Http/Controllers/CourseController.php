@@ -206,7 +206,9 @@ class CourseController extends Controller
         return response()->json(['message' => 'No teachers selected or incorrect type.'], 400);
     }
 
-    public function getTeacherInCourse(Course $course, User $user,CourseSkills $skill)
+
+
+    public function getTeacherInCourse(Course $course, User $user, CourseSkills $skill)
     {
         // Ищем учителя для данного курса, где роль - 'teacher'
         $teacher = $course->userSkills->users->filter(function ($user) {
@@ -232,7 +234,11 @@ class CourseController extends Controller
                 ]
             ], 200);
         }
-
         return response()->json(['message' => 'No teacher found for this course.'], 404);
+    }
+
+    public function getCourseByTeacher(Course $course)
+    {
+
     }
 }

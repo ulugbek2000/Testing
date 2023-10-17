@@ -36,7 +36,11 @@ class Course extends Model
             ->saveSlugsTo('slug');
     }
 
-
+    public function teachers()
+    {
+        return $this->belongsToMany(User::class, 'user_courses', 'course_id', 'user_id')
+            ->where('role', 'Teacher');
+    }
 
     public function users()
     {
@@ -60,7 +64,8 @@ class Course extends Model
     {
         return $this->hasMany(Subscription::class);
     }
-    public function userSkills(){
+    public function userSkills()
+    {
         return $this->hasMany(UserSkills::class);
     }
 }
