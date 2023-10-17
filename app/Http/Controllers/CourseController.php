@@ -190,7 +190,7 @@ class CourseController extends Controller
         return response()->json(['message' => $userCourse->wasRecentlyCreated ? "User enrolled to course successfuly." : "User already enrolled!"], 200);
     }
 
-    public function addTeachersToCourse(Request $request, Course $course, User $user)
+    public function addTeachersToCourse(Request $request, Course $course)
     {
         $teacherIds = $request->input('teacher_ids', []);
 
@@ -209,7 +209,6 @@ class CourseController extends Controller
     public function getCourseByTeacher(Course $course)
     {
         // Загружаем учителей для данного курса
-
         $course->load('teachers');
 
         return response()->json($course);
