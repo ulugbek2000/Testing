@@ -208,9 +208,9 @@ class CourseController extends Controller
 
     public function getCourseByTeacher(Course $course)
     {
-        $course->load('teachers'); //* Загружаем учителей для данного курса
+        //* Загружаем учителей для данного курса
+        $course->load('teachers');
 
         return response()->json($course);
     }
-
 }

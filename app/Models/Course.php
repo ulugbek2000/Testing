@@ -39,8 +39,9 @@ class Course extends Model
 
     public function teachers()
     {
+
         return $this->belongsToMany(User::class, 'user_courses', 'course_id', 'user_id')
-            ->where('roles', UserType::Teacher);
+            ->where('name', UserType::Teacher);
     }
 
     public function users()
