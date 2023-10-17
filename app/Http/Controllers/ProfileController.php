@@ -180,14 +180,10 @@ class ProfileController extends Controller
     }
 
     public function getAllTeachers()
-    {
-        // $teachers = User::role(UserType::Teacher)->with('')->get();
-       
-
+    {  
         $teachers = User::whereHas('roles', function ($query) {
             $query->where('name', 'Teacher');
-        })->with('userSkills')->get();
-        
+        })->with('userSkills')->get(); 
         return response()->json($teachers);
     }
 
