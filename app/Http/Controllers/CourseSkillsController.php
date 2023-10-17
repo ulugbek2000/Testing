@@ -33,7 +33,7 @@ class CourseSkillsController extends Controller
     {
         $request->validate([
             'name' => 'required|string',
-            'icon' => 'nullable|image|mimes:jpeg,png,jpg,gif,mov',
+            'icon' => 'nullable|file',
             'description' => 'required|string|max:255',
             'course_id' => 'required|integer',
         ]);
