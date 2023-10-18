@@ -196,42 +196,33 @@ class CourseController extends Controller
 
     // Получите идентификаторы текущих учителей курса
     $currentTeacherIds = $course->users()
-        ->where('name', UserType::Teacher)
-        ->pluck('id')
+        ->whereHas('roles', function ($query) {
+            $query->where('name', UserType::Teacher);
+        })
+        ->pluck('users.id')
         ->toArray();
-
-    // Идентификаторы новых учителей
-    $newTeacherIds = array_diff($teacherIds, $currentTeacherIds);
-
-    // Идентификаторы учителей, которых нужно удалить
+    
+    // Определите идентификаторы учителей для удаления
     $teachersToRemove = array_diff($currentTeacherIds, $teacherIds);
-
+    
     // Удалите учителей, которых нужно удалить
     if (!empty($teachersToRemove)) {
         $course->users()->detach($teachersToRemove);
     }
-
+    
+    // Определите идентификаторы новых учителей
+    $newTeacherIds = array_diff($teacherIds, $currentTeacherIds);
+    
     // Добавьте новых учителей
     if (!empty($newTeacherIds)) {
         $newTeachers = User::whereIn('id', $newTeacherIds)->get();
-        $course->users()->attach($newTeachers);
+        $course->users()->syncWithoutDetaching($newTeachers);
     }
-
+    
     return response()->json(['message' => 'Teachers updated successfully.'], 200);
+    
 }
 
-    // $teacherIds = $request->input('teacher_ids', []);
-
-    // if (count($teacherIds) > 0) {
-    //     $teachers = User::whereIn('id', $teacherIds)->role(UserType::Teacher)->get();
-
-    //     if ($teachers->isNotEmpty()) {
-    //         $course->users()->syncWithoutDetaching($teachers->pluck('id'));
-    //         return response()->json(['message' => 'Teacher enrolled successfully.'], 200);
-    //     }
-    // }
-
-    // return response()->json(['message' => 'No teacher selected or incorrect type.'], 400);
 
 
     public function getTeacherByCourse(Course $course)
