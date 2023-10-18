@@ -35,7 +35,7 @@ class ProfileController extends Controller
             'phone' => 'required_without:email|string|unique:users,phone,' . $user->id,
             'name' => 'string',
             'surname' => 'string',
-            'password' => ['string','min:8','confirmed'],
+            'password' => ['string', 'min:8', 'confirmed'],
             'city' => 'string',
             'photo' => 'nullable|mimes:jpeg,png,jpg,gif,mov',
             'gender' => 'string|in:male,female,other',
@@ -46,7 +46,9 @@ class ProfileController extends Controller
 
         if ($request->hasFile('photo')) {
             // Delete old cover file if needed
-            Storage::delete($user->photo);
+            if ($user->photo !== null) {
+                Storage::delete($user->photo);
+            }
             // Upload and store new cover file
             $path = $request->file('photo')->store('photoMentor', 'public');
         }
@@ -106,7 +108,7 @@ class ProfileController extends Controller
                 'surname' => 'string',
                 'email' => 'required_without:phone|email|unique:users,' . $user->id,
                 'phone' => 'required_without:email|string|unique:users,' . $user->id,
-                'password' => ['string','min:8','confirmed'],
+                'password' => ['string', 'min:8', 'confirmed'],
                 'city' => 'string',
                 'photo' => 'nullable|file',
                 'gender' => 'string|in:male,female,other',
@@ -182,10 +184,10 @@ class ProfileController extends Controller
     }
 
     public function getAllTeachers()
-    {  
+    {
         $teachers = User::whereHas('roles', function ($query) {
             $query->where('name', UserType::Teacher);
-        })->with('userSkills')->get(); 
+        })->with('userSkills')->get();
         return response()->json($teachers);
     }
 

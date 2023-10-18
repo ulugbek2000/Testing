@@ -39,7 +39,7 @@ class UserTransactionController extends Controller
             'method' => TransactionMethod::Cash, // Предполагаем, что вы используете "Cash" как метод пополнения
             'status' => TransactionStatus::Pending, // Предполагаем, что начальный статус "Pending"
         ]);
-        $wallet->transactions()->save($transaction);
+        $wallet->transactions   ()->save($transaction);
 
         // Дополнительная логика для выполнения платежа через карту
 
