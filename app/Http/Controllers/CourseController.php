@@ -194,17 +194,44 @@ class CourseController extends Controller
     {
         $teacherIds = $request->input('teacher_ids', []);
 
-        if (count($teacherIds) > 0) {
-            $teachers = User::whereIn('id', $teacherIds)->role(UserType::Teacher)->get();
+        // Получите текущих учителей курса
+        $currentTeachers = $course->users()->where('role', UserType::Teacher)->get();
 
-            if ($teachers->isNotEmpty()) {
-                $course->users()->syncWithoutDetaching($teachers->pluck('id'));
-                return response()->json(['message' => 'Teacher enrolled successfully.'], 200);
-            }
+        // Идентификаторы текущих учителей
+        $currentTeacherIds = $currentTeachers->pluck('id')->toArray();
+
+        // Идентификаторы новых учителей
+        $newTeacherIds = array_diff($teacherIds, $currentTeacherIds);
+
+        // Идентификаторы учителей, которых нужно удалить
+        $teachersToRemove = array_diff($currentTeacherIds, $teacherIds);
+
+        // Удалите учителей, которых нужно удалить
+        if (!empty($teachersToRemove)) {
+            $course->users()->detach($teachersToRemove);
         }
 
-        return response()->json(['message' => 'No teacher selected or incorrect type.'], 400);
+        // Добавьте новых учителей
+        if (!empty($newTeacherIds)) {
+            $newTeachers = User::whereIn('id', $newTeacherIds)->get();
+            $course->users()->attach($newTeachers);
+        }
+
+        return response()->json(['message' => 'Teachers updated successfully.'], 200);
     }
+    // $teacherIds = $request->input('teacher_ids', []);
+
+    // if (count($teacherIds) > 0) {
+    //     $teachers = User::whereIn('id', $teacherIds)->role(UserType::Teacher)->get();
+
+    //     if ($teachers->isNotEmpty()) {
+    //         $course->users()->syncWithoutDetaching($teachers->pluck('id'));
+    //         return response()->json(['message' => 'Teacher enrolled successfully.'], 200);
+    //     }
+    // }
+
+    // return response()->json(['message' => 'No teacher selected or incorrect type.'], 400);
+
 
     public function getTeacherByCourse(Course $course)
     {
