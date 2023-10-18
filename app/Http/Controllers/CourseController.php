@@ -13,7 +13,6 @@ use App\Models\CourseSkills;
 use App\Models\User;
 use App\Models\UserCourse;
 use Carbon\Carbon;
-use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Nette\Utils\Random;
@@ -191,44 +190,35 @@ class CourseController extends Controller
         return response()->json(['message' => $userCourse->wasRecentlyCreated ? "User enrolled to course successfuly." : "User already enrolled!"], 200);
     }
 
-    public function addTeachersToCourse(Request $request, Course $course)
-    {
-        $teacherIds = $request->input('teacher_ids', []);
+  public function addTeachersToCourse(Request $request, Course $course)
+{
+    $teacherIds = $request->input('teacher_ids', []);
 
-        // Получите идентификаторы текущих учителей курса
-        $currentTeacherIds = $course->users()
-        ->select('users.id')
-        ->join('user_courses', 'users.id', '=', 'user_courses.user_id')
-        ->whereExists(function ($query) {
-            $query->select(new Expression('1'))
-                ->from('roles')
-                ->join('model_has_roles', 'roles.id', '=', 'model_has_roles.role_id')
-                ->whereColumn('users.id', 'model_has_roles.model_id')
-                ->where('model_has_roles.model_type', 'App\\Models\\User')
-                ->where('name', UserType::Teacher);
-        })
+    // Получите идентификаторы текущих учителей курса
+    $currentTeacherIds = $course->users()
+        ->where('name', UserType::Teacher)
         ->pluck('id')
         ->toArray();
 
-        // Идентификаторы новых учителей
-        $newTeacherIds = array_diff($teacherIds, $currentTeacherIds);
+    // Идентификаторы новых учителей
+    $newTeacherIds = array_diff($teacherIds, $currentTeacherIds);
 
-        // Идентификаторы учителей, которых нужно удалить
-        $teachersToRemove = array_diff($currentTeacherIds, $teacherIds);
+    // Идентификаторы учителей, которых нужно удалить
+    $teachersToRemove = array_diff($currentTeacherIds, $teacherIds);
 
-        // Удалите учителей, которых нужно удалить
-        if (!empty($teachersToRemove)) {
-            $course->users()->detach($teachersToRemove);
-        }
-
-        // Добавьте новых учителей
-        if (!empty($newTeacherIds)) {
-            $newTeachers = User::whereIn('id', $newTeacherIds)->get();
-            $course->users()->attach($newTeachers);
-        }
-
-        return response()->json(['message' => 'Teachers updated successfully.'], 200);
+    // Удалите учителей, которых нужно удалить
+    if (!empty($teachersToRemove)) {
+        $course->users()->detach($teachersToRemove);
     }
+
+    // Добавьте новых учителей
+    if (!empty($newTeacherIds)) {
+        $newTeachers = User::whereIn('id', $newTeacherIds)->get();
+        $course->users()->attach($newTeachers);
+    }
+
+    return response()->json(['message' => 'Teachers updated successfully.'], 200);
+}
 
     // $teacherIds = $request->input('teacher_ids', []);
 
