@@ -194,11 +194,13 @@ class CourseController extends Controller
     {
         $teacherIds = $request->input('teacher_ids', []);
 
-        // Получите текущих учителей курса
-        $currentTeachers = $course->users()->where('name', UserType::Teacher)->get();
-
-        // Идентификаторы текущих учителей
-        $currentTeacherIds = $currentTeachers->pluck('id')->toArray();
+        // Получите идентификаторы текущих учителей курса
+        $currentTeacherIds = $course->users()
+        ->whereHas('roles', function ($query) {
+            $query->where('name', UserType::Teacher);
+        })
+            ->pluck('id')
+            ->toArray();
 
         // Идентификаторы новых учителей
         $newTeacherIds = array_diff($teacherIds, $currentTeacherIds);
@@ -219,6 +221,7 @@ class CourseController extends Controller
 
         return response()->json(['message' => 'Teachers updated successfully.'], 200);
     }
+
     // $teacherIds = $request->input('teacher_ids', []);
 
     // if (count($teacherIds) > 0) {
