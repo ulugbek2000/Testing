@@ -201,7 +201,6 @@ class CourseController extends Controller
         })
         ->pluck('users.id')
         ->toArray();
-    
     // Определите идентификаторы учителей для удаления
     $teachersToRemove = array_diff($currentTeacherIds, $teacherIds);
     
