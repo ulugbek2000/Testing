@@ -211,6 +211,9 @@ Route::middleware(['jwt.auth'])->group(function () {
         Route::post('verify-phone', [AuthController::class, 'verifyPhoneNumber']);
 
         Route::get('student/account', [ProfileController::class, 'getProfile']);
+
+
+        Route::get('/courses/{course}/buyers', [UserWalletController::class,'getCourseBuyers']);
     });
 
 
