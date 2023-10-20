@@ -93,4 +93,16 @@ class UserWalletController extends Controller
             return response()->json(['message' => 'User or course not found'], 404);
         }
     }
+    
+    public function getCourseBuyers(Course $course)
+    {
+        if (!$course) {
+            return response()->json(['message' => 'Course not found'], 404);
+        }
+
+        // Получите список пользователей, купивших этот курс
+        $buyers = $course->users;
+
+        return response()->json(['buyers' => $buyers], 200);
+    }
 }

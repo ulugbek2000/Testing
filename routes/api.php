@@ -99,6 +99,8 @@ Route::middleware(['jwt.auth'])->group(function () {
         Route::post('enroll/{course}/{user}', [CourseController::class, 'enroll']);
         Route::get('course/{course}/teacher', [CourseController::class, 'getTeacherInCourse']);
         Route::post('/courses/{course}/add-teachers', [CourseController::class, 'addTeachersToCourse']);
+        Route::get('/courses/{course}/buyers', [UserWalletController::class,'getCourseBuyers']);
+
         //End Courses
 
         //Start Topics
