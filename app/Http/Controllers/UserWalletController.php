@@ -97,15 +97,15 @@ class UserWalletController extends Controller
         }
     }
 
-    public function getCourseBuyers(Course $course)
+    public function getMyPurchases()
     {
-        if (!$course) {
-            return response()->json(['message' => 'Course not found'], 404);
-        }
+        $user = Auth::user();
 
-        // Получите список пользователей, купивших этот курс
-        $buyers = $course->users;
+        // Получите список курсов, которые пользователь купил
+        $purchasedCourses = $user->courses;
 
-        return response()->json(['buyers' => $buyers], 200);
+        return response()->json(['purchases' => $purchasedCourses], 200);
     }
+
+  
 }
