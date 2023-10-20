@@ -168,6 +168,8 @@ Route::middleware(['jwt.auth'])->group(function () {
     });
 
     Route::middleware('access:' . implode(',', [UserType::Student]))->group(function () {
+        
+        Route::get('/user/balance', [UserWalletController::class,'getBalance']);
 
         //Обновление своего профиля:
         Route::put('student/profile', [ProfileController::class, 'updateProfile']);

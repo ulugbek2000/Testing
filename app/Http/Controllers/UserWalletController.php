@@ -41,6 +41,21 @@ class UserWalletController extends Controller
         return response()->json(['success' => 'Balance updated successfully'], 200);
     }
 
+    public function getBalance()
+    {
+        $user = Auth::user();
+        $userBalance = $user->balance;
+
+        if (!$userBalance) {
+            // Если объект баланса отсутствует, верните 0 баланс
+            $balance = 0;
+        } else {
+            $balance = $userBalance->balance;
+        }
+
+        return response()->json(['balance' => $balance], 200);
+    }
+
     public function purchaseCourse(Course $course, Subscription $subscription, UserCourse $user_course)
     {
         $user = Auth::user();
