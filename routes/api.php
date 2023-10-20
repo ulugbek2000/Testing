@@ -98,8 +98,8 @@ Route::middleware(['jwt.auth'])->group(function () {
         Route::delete('course/{course}', [CourseController::class, 'destroy']);
         Route::post('enroll/{course}/{user}', [CourseController::class, 'enroll']);
         Route::get('course/{course}/teacher', [CourseController::class, 'getTeacherInCourse']);
-        Route::post('/courses/{course}/add-teachers', [CourseController::class, 'addTeachersToCourse']);
-        Route::get('/courses/{course}/buyers', [UserWalletController::class,'getCourseBuyers']);
+        Route::post('courses/{course}/add-teachers', [CourseController::class, 'addTeachersToCourse']);
+        Route::get('courses/{course}/buyers', [UserWalletController::class,'getCourseBuyers']);
 
         //End Courses
 
@@ -213,7 +213,7 @@ Route::middleware(['jwt.auth'])->group(function () {
         Route::get('student/account', [ProfileController::class, 'getProfile']);
 
 
-        Route::get('/courses/{course}/buyers', [UserWalletController::class,'getCourseBuyers']);
+        // Route::get('/courses/{course}/buyers', [UserWalletController::class,'getCourseBuyers']);
     });
 
 

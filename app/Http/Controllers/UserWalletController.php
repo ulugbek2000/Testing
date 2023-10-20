@@ -83,6 +83,9 @@ class UserWalletController extends Controller
 
         // Уменьшаем сумму на балансе пользователя
         if ($user_course) {
+            if ($userBalance->balance < $price) {
+                return response()->json(['message' => 'Top up your balance']);
+            }
             $userBalance->balance -= $price;
             $userBalance->save();
 
@@ -93,7 +96,7 @@ class UserWalletController extends Controller
             return response()->json(['message' => 'User or course not found'], 404);
         }
     }
-    
+
     public function getCourseBuyers(Course $course)
     {
         if (!$course) {
