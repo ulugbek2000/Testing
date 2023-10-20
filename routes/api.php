@@ -183,7 +183,7 @@ Route::middleware(['jwt.auth'])->group(function () {
         Route::post('student/balance/deposit', [UserWalletController::class, 'deposit']);
 
         //Покупка курса:
-        Route::post('student/balance/withdraw/{course}', [UserWalletController::class, 'purchaseCourse']);
+        Route::post('student/balance/withdraw/{course}/{subscription}', [UserWalletController::class, 'purchaseCourse']);
 
         //Получение списка доступных подписок:
         Route::get('student/course/{course}/subscriptions', [SubscriptionController::class, 'index']);
