@@ -60,13 +60,6 @@ class UserWalletController extends Controller
     {
         $user = Auth::user();
 
-        // Проверяем, имеет ли пользователь уже купленный курс
-        $hasPurchasedCourse = $user->courses->isNotEmpty();
-
-        if ($hasPurchasedCourse) {
-            return response()->json(['message' => 'You can only purchase one course'], 400);
-        }
-
         if (!$course) {
             return response()->json(['message' => 'Course not found']);
         }
@@ -111,10 +104,14 @@ class UserWalletController extends Controller
         // Получите список курсов, которые пользователь купил
         $purchasedCourses = $user->courses;
 
-        $subscriptions = $purchasedCourses->map(function ($course) {
-            return $course->subscription;
+        $purchasesWithSubscriptions = $purchasedCourses->map(function ($course) {
+            $subscription = $course->subscription;
+            return [
+                'course' => $course,
+                'subscription' => $subscription,
+            ];
         });
 
-        return response()->json(['purchases' => $purchasedCourses, 'subscriptions' => $subscriptions], 200);
+        return response()->json(['purchases' => $purchasesWithSubscriptions], 200);
     }
 }
