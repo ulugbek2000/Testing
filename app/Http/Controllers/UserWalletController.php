@@ -100,18 +100,16 @@ class UserWalletController extends Controller
     public function getMyPurchases()
     {
         $user = Auth::user();
-    
+
         // Получите список курсов, которые пользователь купил, включая информацию о подписке
         $purchasedCoursesWithSubscriptions = $user->courses->map(function ($course) {
-            $subscriptionId = $course->subscription ? $course->subscription->id : null;
+
             return [
                 'course' => $course,
-                'subscription_id' => $subscriptionId,
+                'subscription_id' => $course->subscription->id ?? null,
             ];
         });
-    
+
         return response()->json(['purchases' => $purchasedCoursesWithSubscriptions], 200);
     }
-    
-    
 }
