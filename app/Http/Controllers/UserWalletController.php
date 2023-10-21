@@ -97,32 +97,19 @@ class UserWalletController extends Controller
         }
     }
 
+
     public function getMyPurchases()
     {
         $user = Auth::user();
-        $purchasedCourses = $user->courses;
-    
-        // Создайте массив с информацией о купленных курсах и информацией о подписке
-        $purchasedCoursesInfo = $purchasedCourses->map(function ($course) {
+
+        // Получите список курсов, которые пользователь купил, включая информацию о подписке
+        $purchasedCourses = $user->courses->map(function ($course) {
             return [
-                'course' => [
-                    'id' => $course->id,
-                    'logo' => $course->logo,
-                    'name' => $course->name,
-                    'slug' => $course->slug,
-                    'quantity_lessons' => $course->quantity_lessons,
-                    'hours_lessons' => $course->hours_lessons,
-                    'short_description' => $course->short_description,
-                    'video' => $course->video,
-                    'has_certificate' => $course->has_certificate,
-                    'created_at' => $course->created_at,
-                    'updated_at' => $course->updated_at,
-                ],
-                'subscription' => $course->subscription, // Включите информацию о подписке
+                'course' => $course,
+                'subscription' => $course->subscription,
             ];
         });
-    
-        return response()->json(['purchased' => $purchasedCoursesInfo], 200);
+
+        return response()->json(['purchases' => $purchasedCourses], 200);
     }
-    
 }
