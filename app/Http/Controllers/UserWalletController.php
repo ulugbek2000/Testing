@@ -103,8 +103,8 @@ class UserWalletController extends Controller
         $purchasedCourses = $user->courses;
 
         // Получите список ID подписок для купленных курсов
-        $subscriptionIds = $user->courses->pluck('subscription.id')->toArray();
+        // $subscriptionIds = $user->courses->pluck('subscription.id')->toArray();
 
-        return response()->json(['purchases' => $subscriptionIds, 'purachassed' => $purchasedCourses], 200);
+        return response()->json(['purachassed' => $purchasedCourses], 200);
     }
 }
