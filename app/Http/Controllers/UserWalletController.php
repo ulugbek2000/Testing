@@ -59,52 +59,42 @@ class UserWalletController extends Controller
     public function purchaseCourse(Course $course, Subscription $subscription, UserCourse $user_course)
     {
         $user = Auth::user();
-
+    
         if (!$course) {
             return response()->json(['message' => 'Course not found']);
         }
-
-        if ($subscription) {
+    
+        if (!$user_course) {
             // Теперь мы можем получить цену подписки
             $price = $subscription->getPrice();
-        }
-
-        // Получаем сумму на балансе пользователя через свойство объекта баланса
-        $userBalance = $user->balance;
-
-        // Проверяем, существует ли объект баланса
-        if (!$userBalance) {
-            // Если объект баланса отсутствует, создаем новый
-            $userBalance = new UserWallet();
-            $userBalance->balance = 0; // Устанавливаем начальный баланс
-            $userBalance->user()->associate($user); // Связываем с пользователем
-            $userBalance->save(); // Сохраняем баланс
-        }
-
-        // Уменьшаем сумму на балансе пользователя
-        if (!$user_course) {
+    
+            // Получаем сумму на балансе пользователя через свойство объекта баланса
+            $userBalance = $user->balance;
+    
+            // Проверяем, существует ли объект баланса
+            if (!$userBalance) {
+                // Если объект баланса отсутствует, создаем новый
+                $userBalance = new UserWallet();
+                $userBalance->balance = 0; // Устанавливаем начальный баланс
+                $userBalance->user()->associate($user); // Связываем с пользователем
+                $userBalance->save(); // Сохраняем баланс
+            }
+    
             if ($userBalance->balance < $price) {
                 return response()->json(['message' => 'Top up your balance']);
             }
-
-            // Получите subscription_id для курса, который пользователь пытается купить
-            $courseSubscriptionId = $course->subscription_id;
-
-            // Проверьте, был ли хотя бы один курс пользователя из этой подписки
-            if ($user->courses->where('subscription_id', $courseSubscriptionId)->count() > 0) {
-                $userBalance->balance -= $price;
-                $userBalance->save();
-
-                $user->courses()->save($course);
-
-                return response()->json(['success' => 'Course purchased successfully']);
-            } else {
-                return response()->json(['message' => 'You can only purchase courses from this subscription after purchasing at least one course from it']);
-            }
+    
+            // Покупаем курс и уменьшаем сумму на балансе пользователя
+            $userBalance->balance -= $price;
+            $userBalance->save();
+            $user->courses()->save($course);
+    
+            return response()->json(['success' => 'Course purchased successfully']);
         } else {
             return response()->json(['message' => 'Please study the course you purchased first']);
         }
     }
+    
 
     public function getMyPurchases()
     {
