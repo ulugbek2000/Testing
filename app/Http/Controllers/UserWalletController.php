@@ -106,7 +106,7 @@ class UserWalletController extends Controller
         $purchasedCourses = $user->courses->map(function ($course) {
             return [
                 'course' => $course,
-                'subscription' => $course->subscription,
+                'subscription' => $course->subscription->id,
             ];
         });
 
