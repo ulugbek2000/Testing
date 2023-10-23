@@ -69,7 +69,6 @@ class CourseController extends Controller
             // 'duration' => 'required|integer',
             // 'duration_type' => 'required',
             'video' => 'required|mimes:mp4,mov,avi,mpeg,mkv',
-            // 'price' => 'required',
         ]);
         $logo = $request->file('logo')->store('images', 'public');
         $video = $request->file('video')->store('videos', 'public');
@@ -88,7 +87,6 @@ class CourseController extends Controller
                 // 'duration_type' => $request->duration_type,
                 'video' => Storage::url($video),
                 'has_certificate' => $request->has_certificate,
-                // 'price' => $request->price,
             ];
             Course::create($data);
             return response()->json([
@@ -106,18 +104,6 @@ class CourseController extends Controller
      */
     public function show(Course $course)
     {
-        //Course detail
-        // $course = Course::find($id);
-        // if (!$course) {
-        //     return response()->json([
-        //         'message' => 'Course not found.'
-        //     ], 404);
-        // }
-        // // Return Json Response
-        // return response()->json([
-        //     'courses' => $course
-        // ], 200);
-
         return new CourseResource($course);
     }
     /**
