@@ -86,12 +86,21 @@ class UserWalletController extends Controller
             if ($userBalance->balance < $price) {
                 return response()->json(['message' => 'Top up your balance']);
             }
-            $userBalance->balance -= $price;
-            $userBalance->save();
 
-            $user->courses()->save($course);
+            // Получите subscription_id для курса, который пользователь пытается купить
+            $courseSubscriptionId = $course->subscription_id;
 
-            return response()->json(['success' => 'Course purchased successfully']);
+            // Проверьте, был ли хотя бы один курс пользователя из этой подписки
+            if ($user->courses->where('subscription_id', $courseSubscriptionId)->count() > 0) {
+                $userBalance->balance -= $price;
+                $userBalance->save();
+
+                $user->courses()->save($course);
+
+                return response()->json(['success' => 'Course purchased successfully']);
+            } else {
+                return response()->json(['message' => 'You can only purchase courses from this subscription after purchasing at least one course from it']);
+            }
         } else {
             return response()->json(['message' => 'Please study the course you purchased first']);
         }
@@ -104,7 +113,7 @@ class UserWalletController extends Controller
         // Получите список курсов, которые пользователь купил, включая информацию о подписке
         $purchasedCourses = $user->courses->map(function ($course) {
             return [
-                'course_id' => $course, // Получение ID курса
+                'course' => $course, // Получение ID курса
                 'subscription_id' => $course->subscription->first()->id, // Получение ID подписки
             ];
         });
