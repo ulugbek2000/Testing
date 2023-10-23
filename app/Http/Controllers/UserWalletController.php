@@ -65,10 +65,10 @@ class UserWalletController extends Controller
         }
     
         // Замените ID желаемой подписки, из которой пользователь может покупать курсы
-        $desiredSubscriptionIds = [1, 2, 3];
+        $desiredSubscriptionIds = 1;
     
         // Проверяем, соответствует ли подписка курса одной из желаемых подписок
-        if (!in_array($subscription->id, $desiredSubscriptionIds)) {
+        if ($subscription->id !== $desiredSubscriptionIds) {
             return response()->json(['message' => 'You can only purchase courses from the desired subscriptions']);
         }
     
