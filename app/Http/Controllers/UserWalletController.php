@@ -61,62 +61,65 @@ class UserWalletController extends Controller
     public function purchaseCourse(Course $course, Subscription $subscription, UserSubscription $user_subscription)
     {
         $user = Auth::user();
-    
+
         if (!$course) {
             return response()->json(['message' => 'Course not found']);
         }
-    
+
         // Проверяем, существует ли у пользователя активная подписка с переданным ID подписки
         $userSubscription = $user_subscription->where('subscription_id', $subscription->id)
             ->where('user_id', $user->id)
             ->first();
-    
-        if (!$userSubscription) {
+
+        if ($userSubscription !== $user_subscription->where('subscription_id', $subscription->id)
+            ->where('user_id', $user->id)
+            ->first()
+        `) {
             // Если подписка не существует, создаём её
             $newUserSubscription = new UserSubscription();
             $newUserSubscription->user_id = $user->id;
             $newUserSubscription->subscription_id = $subscription->id;
             $newUserSubscription->save();
         }
-    
+
         // Теперь мы можем получить цену подписки
         $price = $subscription->getPrice();
-    
+
         // Получаем сумму на балансе пользователя через свойство объекта баланса
         $userBalance = $user->balance;
-    
+
         if (!$userBalance) {
             $userBalance = new UserWallet();
             $userBalance->balance = 0;
             $userBalance->user()->associate($user);
             $userBalance->save();
         }
-    
+
         if ($userBalance->balance < $price) {
             return response()->json(['message' => 'Top up your balance']);
         }
-    
+
         // Покупаем курс и уменьшаем сумму на балансе пользователя
         $userBalance->balance -= $price;
         $userBalance->save();
         $user->courses()->save($course);
-    
+
         return response()->json(['success' => 'Course purchased successfully']);
     }
-    
+
 
 
     public function getMyPurchases()
     {
         $user = Auth::user();
-    
+
         // Получите список курсов, которые пользователь купил, включая информацию о подписке
         $purchasedCourses = $user->courses->map(function ($course) {
             $subscription = $course->subscription;
-    
+
             // Учитывая, что у каждого курса есть обязательная подписка, можно предположить,
             // что для каждого курса будет ровно одна связанная подписка.
-            
+
             // Получите информацию о курсе и его подписке
             return [
                 'course' => $course,
@@ -126,9 +129,7 @@ class UserWalletController extends Controller
                 // Другие поля подписки, которые вам нужны
             ];
         });
-    
+
         return response()->json(['purchases' => $purchasedCourses], 200);
     }
-    
-    
 }
