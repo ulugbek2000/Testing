@@ -68,7 +68,7 @@ class UserWalletController extends Controller
 
         // Проверяем, существует ли запись UserSubscription для этого пользователя и курса
         $userSubscription = UserSubscription::where('user_id', $user->id)
-            ->where('subscription_id', $subscription->id)
+            ->where('course_id', $course->id)
             ->first();
 
         if ($userSubscription) {
