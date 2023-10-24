@@ -66,38 +66,40 @@ class UserWalletController extends Controller
             return response()->json(['message' => 'Course not found']);
         }
     
-        // Создаем запись UserSubscription для пользователя и подписки
-        $userSubscription = new UserSubscription();
-        $userSubscription->user_id = $user->id;
-        $userSubscription->subscription_id = $subscription->id;
-        $userSubscription->save();
+        // Проверяем, существует ли у пользователя активная подписка с переданным ID подписки
+        $userSubscription = $user->subscriptions->where('id', $subscription->id)->first();
     
-        // Теперь мы можем получить цену подписки
-        $price = $subscription->getPrice();
+        if ($userSubscription) {
+            // Теперь мы можем получить цену подписки
+            $price = $subscription->getPrice();
     
-        // Получаем сумму на балансе пользователя через свойство объекта баланса
-        $userBalance = $user->balance;
+            // Получаем сумму на балансе пользователя через свойство объекта баланса
+            $userBalance = $user->balance;
     
-        // Проверяем, существует ли объект баланса
-        if (!$userBalance) {
-            // Если объект баланса отсутствует, создаем новый
-            $userBalance = new UserWallet();
-            $userBalance->balance = 0; // Устанавливаем начальный баланс
-            $userBalance->user()->associate($user); // Связываем с пользователем
-            $userBalance->save(); // Сохраняем баланс
+            // Проверяем, существует ли объект баланса
+            if (!$userBalance) {
+                // Если объект баланса отсутствует, создаем новый
+                $userBalance = new UserWallet();
+                $userBalance->balance = 0; // Устанавливаем начальный баланс
+                $userBalance->user()->associate($user); // Связываем с пользователем
+                $userBalance->save(); // Сохраняем баланс
+            }
+    
+            if ($userBalance->balance < $price) {
+                return response()->json(['message' => 'Top up your balance']);
+            }
+    
+            // Покупаем курс и уменьшаем сумму на балансе пользователя
+            $userBalance->balance -= $price;
+            $userBalance->save();
+            $user->courses()->save($course);
+    
+            return response()->json(['success' => 'Course purchased successfully']);
+        } else {
+            return response()->json(['message' => 'You do not have an active subscription for this course']);
         }
+    }
     
-        if ($userBalance->balance < $price) {
-            return response()->json(['message' => 'Top up your balance']);
-        }
-    
-        // Покупаем курс и уменьшаем сумму на балансе пользователя
-        $userBalance->balance -= $price;
-        $userBalance->save();
-        $user->courses()->save($course);
-    
-        return response()->json(['success' => 'Course purchased successfully']);
-    }    
 
     public function getMyPurchases()
     {
