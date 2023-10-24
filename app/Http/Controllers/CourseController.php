@@ -90,7 +90,7 @@ class CourseController extends Controller
                 'has_certificate' => $request->has_certificate,
             ]);
             CourseSubscription::create([
-                'course_id' => $request->$course->id,
+                'course_id' => $course->id,
                 'subscription_id' => $request->subscription_id,
             ]);
 
