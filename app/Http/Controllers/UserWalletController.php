@@ -74,7 +74,7 @@ class UserWalletController extends Controller
         if ($userSubscription !== $user_subscription->where('subscription_id', $subscription->id)
             ->where('user_id', $user->id)
             ->first()
-        `) {
+        ) {
             // Если подписка не существует, создаём её
             $newUserSubscription = new UserSubscription();
             $newUserSubscription->user_id = $user->id;
