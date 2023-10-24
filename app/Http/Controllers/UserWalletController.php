@@ -61,44 +61,49 @@ class UserWalletController extends Controller
     public function purchaseCourse(Course $course, Subscription $subscription, UserSubscription $user_subscription)
     {
         $user = Auth::user();
-
+    
         if (!$course) {
             return response()->json(['message' => 'Course not found']);
         }
-
+    
         // Проверяем, существует ли у пользователя активная подписка с переданным ID подписки
-        $userSubscription = $user_subscription->where('subscription_id', $subscription->id)->first();
-
-        if ($userSubscription) {
-            // Теперь мы можем получить цену подписки
-            $price = $subscription->getPrice();
-
-            // Получаем сумму на балансе пользователя через свойство объекта баланса
-            $userBalance = $user->balance;
-
-            // Проверяем, существует ли объект баланса
-            if (!$userBalance) {
-                // Если объект баланса отсутствует, создаем новый
-                $userBalance = new UserWallet();
-                $userBalance->balance = 0; // Устанавливаем начальный баланс
-                $userBalance->user()->associate($user); // Связываем с пользователем
-                $userBalance->save(); // Сохраняем баланс
-            }
-
-            if ($userBalance->balance < $price) {
-                return response()->json(['message' => 'Top up your balance']);
-            }
-
-            // Покупаем курс и уменьшаем сумму на балансе пользователя
-            $userBalance->balance -= $price;
-            $userBalance->save();
-            $user->courses()->save($course);
-
-            return response()->json(['success' => 'Course purchased successfully']);
-        } else {
-            return response()->json(['message' => 'You do not have an active subscription for this course']);
+        $userSubscription = $user_subscription->where('subscription_id', $subscription->id)
+            ->where('user_id', $user->id)
+            ->first();
+    
+        if (!$userSubscription) {
+            // Если подписка не существует, создаём её
+            $newUserSubscription = new UserSubscription();
+            $newUserSubscription->user_id = $user->id;
+            $newUserSubscription->subscription_id = $subscription->id;
+            $newUserSubscription->save();
         }
+    
+        // Теперь мы можем получить цену подписки
+        $price = $subscription->getPrice();
+    
+        // Получаем сумму на балансе пользователя через свойство объекта баланса
+        $userBalance = $user->balance;
+    
+        if (!$userBalance) {
+            $userBalance = new UserWallet();
+            $userBalance->balance = 0;
+            $userBalance->user()->associate($user);
+            $userBalance->save();
+        }
+    
+        if ($userBalance->balance < $price) {
+            return response()->json(['message' => 'Top up your balance']);
+        }
+    
+        // Покупаем курс и уменьшаем сумму на балансе пользователя
+        $userBalance->balance -= $price;
+        $userBalance->save();
+        $user->courses()->save($course);
+    
+        return response()->json(['success' => 'Course purchased successfully']);
     }
+    
 
 
     public function getMyPurchases()
