@@ -10,6 +10,7 @@ use Illuminate\Support\Str;
 use app\Http\Requests\CourseStoreRequest;
 use App\Http\Resources\CourseResource;
 use App\Models\CourseSkills;
+use App\Models\CourseSubscription;
 use App\Models\User;
 use App\Models\UserCourse;
 use Carbon\Carbon;
@@ -76,7 +77,7 @@ class CourseController extends Controller
         // Сохранение видео в папку storage/app/public/videos
 
         try {
-            $data = [
+            $course = Course::create([
                 'logo' => Storage::url($logo),
                 'name' => $request->name,
                 'slug' => $request->slug,
@@ -87,8 +88,12 @@ class CourseController extends Controller
                 // 'duration_type' => $request->duration_type,
                 'video' => Storage::url($video),
                 'has_certificate' => $request->has_certificate,
-            ];
-            Course::create($data);
+            ]);
+            CourseSubscription::create([
+                'course_id' => $request->$course->id,
+                'subscription_id' => $request->subscription_id,
+            ]);
+
             return response()->json([
                 'message' => "Course succefully created."
             ], 200);
@@ -176,37 +181,36 @@ class CourseController extends Controller
         return response()->json(['message' => $userCourse->wasRecentlyCreated ? "User enrolled to course successfuly." : "User already enrolled!"], 200);
     }
 
-  public function addTeachersToCourse(Request $request, Course $course)
-{
-    $teacherIds = $request->input('teacher_ids', []);
+    public function addTeachersToCourse(Request $request, Course $course)
+    {
+        $teacherIds = $request->input('teacher_ids', []);
 
-    // Получите идентификаторы текущих учителей курса
-    $currentTeacherIds = $course->users()
-        ->whereHas('roles', function ($query) {
-            $query->where('name', UserType::Teacher);
-        })
-        ->pluck('users.id')
-        ->toArray();
-    // Определите идентификаторы учителей для удаления
-    $teachersToRemove = array_diff($currentTeacherIds, $teacherIds);
-    
-    // Удалите учителей, которых нужно удалить
-    if (!empty($teachersToRemove)) {
-        $course->users()->detach($teachersToRemove);
+        // Получите идентификаторы текущих учителей курса
+        $currentTeacherIds = $course->users()
+            ->whereHas('roles', function ($query) {
+                $query->where('name', UserType::Teacher);
+            })
+            ->pluck('users.id')
+            ->toArray();
+        // Определите идентификаторы учителей для удаления
+        $teachersToRemove = array_diff($currentTeacherIds, $teacherIds);
+
+        // Удалите учителей, которых нужно удалить
+        if (!empty($teachersToRemove)) {
+            $course->users()->detach($teachersToRemove);
+        }
+
+        // Определите идентификаторы новых учителей
+        $newTeacherIds = array_diff($teacherIds, $currentTeacherIds);
+
+        // Добавьте новых учителей
+        if (!empty($newTeacherIds)) {
+            $newTeachers = User::whereIn('id', $newTeacherIds)->get();
+            $course->users()->syncWithoutDetaching($newTeachers);
+        }
+
+        return response()->json(['message' => 'Teachers updated successfully.'], 200);
     }
-    
-    // Определите идентификаторы новых учителей
-    $newTeacherIds = array_diff($teacherIds, $currentTeacherIds);
-    
-    // Добавьте новых учителей
-    if (!empty($newTeacherIds)) {
-        $newTeachers = User::whereIn('id', $newTeacherIds)->get();
-        $course->users()->syncWithoutDetaching($newTeachers);
-    }
-    
-    return response()->json(['message' => 'Teachers updated successfully.'], 200);
-    
-}
 
 
 
