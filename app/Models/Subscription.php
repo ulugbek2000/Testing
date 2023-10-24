@@ -22,7 +22,7 @@ class Subscription extends Model
     }
     public function user()
     {
-        return $this->belongsToMany(Course::class, 'course_id', 'id');
+        return $this->belongsToMany(User::class);
     }
     public function description()
     {
