@@ -83,7 +83,7 @@ class UserWalletController extends Controller
         }
 
         // Уменьшаем сумму на балансе пользователя
-        if ($course_subscription) {
+        if (!$course_subscription) {
             $userBalance->balance -= $price;
             $userBalance->save();
 
