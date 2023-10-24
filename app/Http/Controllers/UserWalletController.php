@@ -57,7 +57,7 @@ class UserWalletController extends Controller
         return response()->json(['balance' => $balance], 200);
     }
 
-    public function purchaseCourse(Course $course)
+    public function purchaseCourse(Course $course,Subscription $subscription)
     {
         $user = Auth::user();
 
@@ -82,7 +82,7 @@ class UserWalletController extends Controller
         }
 
         // Теперь мы можем получить цену подписки
-        $price = $course->subscription->price;
+        $price = $subscription->getPrice();
 
         // Получаем сумму на балансе пользователя через свойство объекта баланса
         $userBalance = $user->balance;
