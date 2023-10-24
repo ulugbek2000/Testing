@@ -20,6 +20,10 @@ class Subscription extends Model
     {
         return $this->belongsToMany(Course::class, 'course_id', 'id');
     }
+    public function user()
+    {
+        return $this->belongsToMany(Course::class, 'course_id', 'id');
+    }
     public function description()
     {
         return $this->hasMany(Description::class);
