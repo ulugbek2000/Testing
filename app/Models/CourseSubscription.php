@@ -12,4 +12,12 @@ class CourseSubscription extends Model
         'course_id',
         'subscription_id'
     ];
+
+    public function course(){
+        return $this->belongsTo(Course::class, 'course_id'); 
+    }
+    public function subscription(){
+        return $this->belongsTo(Subscription::class, 'subscription_id'); 
+    }
+
 }

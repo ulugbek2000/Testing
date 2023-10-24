@@ -24,6 +24,10 @@ class Subscription extends Model
     {
         return $this->hasMany(Description::class);
     }
+    public function courseSubscription()
+    {
+        return $this->hasMany(CourseSubscription::class);
+    }
     public function getPrice()
     {
         return $this->attributes['price'];
