@@ -67,6 +67,7 @@ class UserWalletController extends Controller
 
         // Определите, какая подписка соответствует курсу
         $courseSubscription = CourseSubscription::where('course_id', $course->id)->first();
+        dd($courseSubscription);
 
         if (!$courseSubscription) {
             return response()->json(['message' => 'Course subscription not found']);
