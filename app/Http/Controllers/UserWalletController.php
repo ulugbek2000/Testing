@@ -58,6 +58,7 @@ class UserWalletController extends Controller
 
         return response()->json(['wallet' => $wallet], 200);
     }
+    
     public function getMyPurchases()
     {
         $user = Auth::user();
@@ -67,7 +68,7 @@ class UserWalletController extends Controller
             $subscription = $course->subscription;
     
             // Проверка на наличие подписки
-            if ($subscription) {
+            if ($subscription instanceof Subscription) {
                 // Получите информацию о курсе и его подписке
                 return [
                     'course_id' => $course->id, // Получение ID курса
@@ -77,7 +78,7 @@ class UserWalletController extends Controller
                     // Другие поля подписки, которые вам нужны
                 ];
             } else {
-                // Если подписки нет, просто верните информацию о курсе
+                // Если подписки нет, просто верните информацию о курсе с пустыми значениями
                 return [
                     'course_id' => $course->id, // Получение ID курса
                     'subscription_id' => null,
@@ -89,7 +90,7 @@ class UserWalletController extends Controller
         });
     
         return response()->json(['purchases' => $purchasedCourses], 200);
-    }
+    }    
     
 
 }
