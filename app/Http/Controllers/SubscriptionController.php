@@ -34,7 +34,7 @@ class SubscriptionController extends Controller
      * Store a newly created resource in storage.
      */
 
-    public function store(Request $request, Subscription $subscription,Course $course)
+    public function store(Request $request, Subscription $subscription)
     {
         $data = $request->validate([
             'name' => 'required|string',
@@ -58,7 +58,7 @@ class SubscriptionController extends Controller
                 $description = Description::create([
                     'subscription_id' => $subscription->id,
                     'description' => $descriptionData['description'],
-                ]);
+                ]);    
 
                 // Добавим отладочную информацию
                 if (!$description) {

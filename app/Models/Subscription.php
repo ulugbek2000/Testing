@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -16,24 +17,29 @@ class Subscription extends Model
         'course_id',
     ];
 
+    function getDurationDateTime() {
+        $date = Carbon::now();
+        if($this->duration_type == 'year')
+            $date->addYears($this->duration);
+        if($this->duration_type == 'month')
+            $date->addMonths($this->duration);
+        if($this->duration_type == 'week')
+            $date->addWeeks($this->duration);
+
+        return $date;
+    }
+
     public function course()
     {
         return $this->belongsToMany(Course::class, 'course_id', 'id');
     }
-    public function user()
-    {
-        return $this->belongsToMany(User::class);
-    }
+   
     public function description()
     {
         return $this->hasMany(Description::class);
     }
-    public function courseSubscription()
-    {
-        return $this->hasMany(CourseSubscription::class);
-    }
-    public function getPrice()
-    {
-        return $this->attributes['price'];
-    }
+    // public function getPrice()
+    // {
+    //     return $this->attributes['price'];
+    // }
 }

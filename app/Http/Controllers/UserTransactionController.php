@@ -35,10 +35,11 @@ class UserTransactionController extends Controller
         // Создание записи о транзакции
         $transaction = new UserTransaction([
             'amount' => $request->input('amount'),
-            'description' => 'Top up your account card',
+            'description' => $request->input('description') ?? 'Пополнить кошелек',
             'method' => TransactionMethod::Cash, // Предполагаем, что вы используете "Cash" как метод пополнения
             'status' => TransactionStatus::Pending, // Предполагаем, что начальный статус "Pending"
         ]);
+
         $wallet->transactions()->save($transaction);
 
         // Дополнительная логика для выполнения платежа через карту

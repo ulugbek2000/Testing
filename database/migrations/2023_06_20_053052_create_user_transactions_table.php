@@ -16,7 +16,7 @@ return new class extends Migration
         try {
             if (!Schema::hasTable('user_transactions'))
                 Schema::create('user_transactions', function (Blueprint $table) {
-                    $table->increments('id');
+                    $table->id();
                     $table->foreignId('wallet_id')->references('id')->on('user_wallets')->onDelete('cascade');
                     $table->decimal('amount', 10, 2);
                     $table->string('description')->nullable();

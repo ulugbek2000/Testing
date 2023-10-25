@@ -77,7 +77,7 @@ class CourseController extends Controller
         // Сохранение видео в папку storage/app/public/videos
 
         try {
-            $course = Course::create([
+            Course::create([
                 'logo' => Storage::url($logo),
                 'name' => $request->name,
                 'slug' => $request->slug,
@@ -89,11 +89,6 @@ class CourseController extends Controller
                 'video' => Storage::url($video),
                 'has_certificate' => $request->has_certificate,
             ]);
-            CourseSubscription::create([
-                'course_id' => $course->id,
-                'subscription_id' => $request->subscription_id,
-            ]);
-
             return response()->json([
                 'message' => "Course succefully created."
             ], 200);

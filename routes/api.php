@@ -70,7 +70,8 @@ Route::get('course/{course}/skill', [CourseSkillsController::class, 'index']);
 
 Route::post('login', [AuthController::class, 'login']);
 
-
+//Пополнение баланс:
+Route::post('student/{user}/balance/deposit', [UserWalletController::class, 'deposit']);
 // });
 
 Route::middleware(['jwt.auth'])->group(function () {
@@ -154,10 +155,8 @@ Route::middleware(['jwt.auth'])->group(function () {
 
         //Start Transaction
         Route::get('transactions', [UserTransactionController::class, 'index']);
-        Route::post('transactions', [UserTransactionController::class, 'store']);
+        Route::post('transactions', [UserTransactionController::class, 'topUpWallet']);
         Route::get('transactions/{id}', [UserTransactionController::class, 'show']);
-        Route::put('transactionupdate/{id}', [UserTransactionController::class, 'update']);
-        Route::delete('transactiondelete/{id}', [UserTransactionController::class, 'destroy']);
         //End Transaction
 
         //Start role
@@ -183,9 +182,6 @@ Route::middleware(['jwt.auth'])->group(function () {
         //Просмотр информации о курсе:
         Route::get('student/teacherByCourse/{course}', [CourseController::class, 'getTeacherByCourse']);
         Route::get('student/course/{course}', [CourseController::class, 'show']);
-
-        //Пополнение баланс:
-        Route::post('student/balance/deposit', [UserWalletController::class, 'deposit']);
 
         //Покупка курса:
         Route::post('student/balance/withdraw/{course}/{subscription}', [UserWalletController::class, 'purchaseCourse']);
