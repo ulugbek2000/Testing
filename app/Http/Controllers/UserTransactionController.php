@@ -27,23 +27,46 @@ class UserTransactionController extends Controller
 
     public function topUpWallet(Request $request)
     {
+        $user = Auth::user();
         // Валидация данных
         $request->validate([
             'wallet_id' => 'required|exists:user_wallets,id',
             'amount' => 'required|numeric|min:0.01', // Минимальная сумма для пополнения
         ]);
 
-        $wallet = UserWallet::findOrFail($request->input('wallet_id'));
+        $newWallet = $request->input('wallet');
 
-        // Создание записи о транзакции
-        $transaction = new UserTransaction([
-            'amount' => $request->input('amount'),
-            'description' => $request->input('description') ?? 'Пополнить кошелек',
-            'method' => TransactionMethod::Cash, // Предполагаем, что вы используете "Cash" как метод пополнения
-            'status' => TransactionStatus::Pending, // Предполагаем, что начальный статус "Pending"
-        ]);
+        if ($newWallet <= 0) {
+            return response()->json(['error' => 'Invalid amount'], 400);
+        }
 
-        $wallet->transactions()->save($transaction);
+        // Получаем объект баланса пользователя
+        $userWallet = $user->wallet;
+
+        // Проверяем, существует ли объект баланса
+        if (!$userWallet) {
+            // Если объект баланса отсутствует, создаем новый
+            $userWallet = new UserWallet();
+            $userWallet->wallet = 0; // Устанавливаем начальный баланс
+            $userWallet->user()->associate($user); // Связываем с пользователем
+            $userWallet->save(); // Сохраняем баланс
+        }
+
+        $transaction = new UserTransaction();
+        $transaction->wallet_id = $userWallet->id; // Связываем транзакцию с кошельком
+        $transaction->amount = $newWallet;
+        $transaction->description = 'Пополнение кошелька';
+        $transaction->method = TransactionMethod::Cash;
+        $transaction->status = TransactionStatus::Success; // Предполагая, что пополнение всегда успешно
+        $transaction->save();
+
+        // Увеличиваем баланс
+        $userWallet->wallet += $newWallet;
+
+        // Сохраняем изменения
+        $userWallet->save();
+
+        return response()->json(['success' => 'Wallet updated successfully'], 200);
 
         // Дополнительная логика для выполнения платежа через карту
 

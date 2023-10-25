@@ -14,36 +14,6 @@ use Illuminate\Support\Facades\Auth;
 
 class UserWalletController extends Controller
 {
-    public function deposit(Request $request)
-    {
-        $user = Auth::user();
-        $newWallet = $request->input('wallet');
-
-        if ($newWallet <= 0) {
-            return response()->json(['error' => 'Invalid amount'], 400);
-        }
-
-        // Получаем объект баланса пользователя
-        $userWallet = $user->wallet;
-
-        // Проверяем, существует ли объект баланса
-        if (!$userWallet) {
-            // Если объект баланса отсутствует, создаем новый
-            $userWallet = new UserWallet();
-            $userWallet->wallet = 0; // Устанавливаем начальный баланс
-            $userWallet->user()->associate($user); // Связываем с пользователем
-            $userWallet->save(); // Сохраняем баланс
-        }
-
-        // Увеличиваем баланс
-        $userWallet->wallet += $newWallet;
-
-        // Сохраняем изменения
-        $userWallet->save();
-
-        return response()->json(['success' => 'Balance updated successfully'], 200);
-    }
-
     public function getBalance()
     {
         $user = Auth::user();
@@ -75,7 +45,6 @@ class UserWalletController extends Controller
                 'subscription_price' => $subscription->price,
             ];
         });
-
         return response()->json(['purchases' => $purchasedCourses], 200);
     }
 }
