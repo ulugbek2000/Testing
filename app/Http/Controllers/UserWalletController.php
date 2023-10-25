@@ -75,12 +75,12 @@ class UserWalletController extends Controller
         $price = $subscription->price;
     
         // Проверяем, достаточно ли средств на балансе
-        if ($userWallet->balance < $price) {
+        if ($userWallet->wallet < $price) {
             return response()->json(['error' => 'Недостаточно средств на балансе'], 400);
         }
     
         // Уменьшаем сумму на балансе пользователя
-        $userWallet->balance -= $price;
+        $userWallet->wallet -= $price;
         $userWallet->save();
     
         // Создаем запись о подписке
