@@ -80,7 +80,7 @@ class UserTransactionController extends Controller
         // $wallet->increment('balance', $request->input('amount'));
 
         // Верните ответ в формате JSON
-        return response()->json(['message' => 'Account successfully replenished']);
+        // return response()->json(['message' => 'Account successfully replenished']);
     }
 
     public function purchaseCourse(Course $course, Subscription $subscription)

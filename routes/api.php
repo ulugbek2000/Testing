@@ -71,7 +71,7 @@ Route::get('course/{course}/skill', [CourseSkillsController::class, 'index']);
 Route::post('login', [AuthController::class, 'login']);
 
 //Пополнение баланс:
-Route::post('student/balance/deposit', [UserWalletController::class, 'deposit']);
+Route::post('student/balance/deposit', [UserTransactionController::class, 'topUpWallet']);
 // });
 
 Route::middleware(['jwt.auth'])->group(function () {
