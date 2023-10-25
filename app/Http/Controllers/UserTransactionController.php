@@ -30,8 +30,8 @@ class UserTransactionController extends Controller
         $user = Auth::user();
         // Валидация данных
         $request->validate([
-            // 'wallet_id' => 'required|exists:user_wallets,id',
-            'amount' => 'required|numeric|min:0.01', // Минимальная сумма для пополнения
+            'wallet_id' => 'required|exists:user_wallets,id',
+            'wallet' => 'required|numeric|min:0.01', // Минимальная сумма для пополнения
         ]);
 
         $newWallet = $request->input('wallet');
