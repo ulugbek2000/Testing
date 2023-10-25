@@ -106,8 +106,8 @@ class UserTransactionController extends Controller
 
         $user->transaction()->create([
             'wallet_id' => $userWallet->id,
-            'amount' => $price,
-            'description' => 'Описание транзакции',
+            'amount' => -$price,
+            'description' => 'Покупка курс',
             'method' => TransactionMethod::Cash,
             'status' => TransactionStatus::Pending,
         ]);
