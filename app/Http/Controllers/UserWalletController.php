@@ -58,28 +58,37 @@ class UserWalletController extends Controller
 
         return response()->json(['wallet' => $wallet], 200);
     }
-
     public function getMyPurchases()
     {
         $user = Auth::user();
-
+    
         // Получите список курсов, которые пользователь купил, включая информацию о подписке
         $purchasedCourses = $user->courses->map(function ($course) {
             $subscription = $course->subscription;
-
-            // Учитывая, что у каждого курса есть обязательная подписка, можно предположить,
-            // что для каждого курса будет ровно одна связанная подписка.
-
-            // Получите информацию о курсе и его подписке
-            return [
-                'course' => $course,
-                // 'subscription_id' => $subscription->id,
-                // 'subscription_name' => $subscription->name, // Замените на соответствующие поля подписки
-                // 'subscription_price' => $subscription->price,
-                // Другие поля подписки, которые вам нужны       
-            ];
+    
+            // Проверка на наличие подписки
+            if ($subscription) {
+                // Получите информацию о курсе и его подписке
+                return [
+                    'course' => $course,
+                    'subscription_id' => $subscription->id,
+                    'subscription_name' => $subscription->name, // Замените на соответствующие поля подписки
+                    'subscription_price' => $subscription->price,
+                    // Другие поля подписки, которые вам нужны
+                ];
+            } else {
+                // Если подписки нет, просто верните информацию о курсе
+                return [
+                    'course' => $course,
+                    'subscription_id' => null,
+                    'subscription_name' => null,
+                    'subscription_price' => null,
+                    // Другие поля подписки, которые вам нужны
+                ];
+            }
         });
-
+    
         return response()->json(['purchases' => $purchasedCourses], 200);
     }
+
 }
