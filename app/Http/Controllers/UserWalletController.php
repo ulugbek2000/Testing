@@ -72,9 +72,9 @@ class UserWalletController extends Controller
             // Получите информацию о курсе и его подписке
             return [
                 'course_id' => $course,
-                'subscription_id' => $subscription->id,
-                'subscription_name' => $subscription->name,
-                'subscription_price' => $subscription->price,
+                // 'subscription_id' => $subscription->id,
+                // 'subscription_name' => $subscription->name,
+                // 'subscription_price' => $subscription->price,
             ];
         });
 
