@@ -69,7 +69,7 @@ class UserWalletController extends Controller
             $subscription = $purchase->subscription;
 
             return [
-                'course_id' => $course,
+                'course' => $course,
                 'subscription_id' => $subscription->id,
                 'subscription_name' => $subscription->name,
                 'subscription_price' => $subscription->price,
