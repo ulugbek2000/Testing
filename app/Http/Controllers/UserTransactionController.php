@@ -58,6 +58,7 @@ class UserTransactionController extends Controller
         $transaction->description = 'Пополнение кошелька';
         $transaction->method = TransactionMethod::Cash;
         $transaction->status = TransactionStatus::Success; // Предполагая, что пополнение всегда успешно
+        $transaction->user_id = $user->id;
         $transaction->save();
 
         // Увеличиваем баланс
