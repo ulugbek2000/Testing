@@ -59,9 +59,6 @@ class UserWalletController extends Controller
         return response()->json(['wallet' => $wallet], 200);
     }
 
-
-    
-
     public function getMyPurchases()
     {
         $user = Auth::user();
@@ -78,7 +75,7 @@ class UserWalletController extends Controller
                 'course' => $course,
                 'subscription_id' => $subscription->id,
                 'subscription_name' => $subscription->name, // Замените на соответствующие поля подписки
-                'subscription_price' => $subscription->price,
+                // 'subscription_price' => $subscription->price,
                 // Другие поля подписки, которые вам нужны       
             ];
         });

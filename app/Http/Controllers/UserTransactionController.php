@@ -80,21 +80,21 @@ class UserTransactionController extends Controller
             return response()->json(['error' => 'Недостаточно средств на балансе'], 400);
         }
 
-        $user->transaction()->create([ 
-            'wallet_id' => $userWallet->id, 
+        $user->transaction()->create([
+            'wallet_id' => $userWallet->id,
             'amount' => $price,
-            'description' => 'Описание транзакции', 
-            'method' => TransactionMethod::Cash, 
-            'status' => TransactionStatus::Pending, 
+            'description' => 'Описание транзакции',
+            'method' => TransactionMethod::Cash,
+            'status' => TransactionStatus::Pending,
         ]);
-      
+
 
         // Уменьшаем сумму на балансе пользователя
         $userWallet->wallet -= $price;
         $userWallet->save();
 
         // Создаем запись о подписке
-         $user->subscriptions()->create([
+        $user->subscriptions()->create([
             'course_id' => $course->id,
             'subscription_id' => $subscription->id,
             'price' => $subscription->price,
