@@ -70,16 +70,16 @@ class UserWalletController extends Controller
             if ($subscription) {
                 // Получите информацию о курсе и его подписке
                 return [
-                    'course' => $course,
+                    'course_id' => $course->id, // Получение ID курса
                     'subscription_id' => $subscription->id,
-                    'subscription_name' => $subscription->name, // Замените на соответствующие поля подписки
+                    'subscription_name' => $subscription->name,
                     'subscription_price' => $subscription->price,
                     // Другие поля подписки, которые вам нужны
                 ];
             } else {
                 // Если подписки нет, просто верните информацию о курсе
                 return [
-                    'course' => $course,
+                    'course_id' => $course->id, // Получение ID курса
                     'subscription_id' => null,
                     'subscription_name' => null,
                     'subscription_price' => null,
@@ -90,5 +90,6 @@ class UserWalletController extends Controller
     
         return response()->json(['purchases' => $purchasedCourses], 200);
     }
+    
 
 }
