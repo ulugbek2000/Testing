@@ -18,23 +18,24 @@ class UserSubscription extends Model
 
     protected static function booted()
     {
-        static::creating(function () {
-            if (!Course::find($this->course_id)) {
-                return response()->json(['Курс не существует']);
+        static::creating(function ($model) {
+            if (!Course::find($model->course_id)) {
+                throw new \Exception('Курс не существует');
             }
-
-            if (!User::find($this->user_id)) {
-                return response()->json(['Пользователь не существует']);
+        
+            if (!User::find($model->user_id)) {
+                throw new \Exception('Пользователь не существует');
             }
-
-            if (!Subscription::find($this->user_id)) {
-                return response()->json(['Подписка не существует']);
+        
+            if (!Subscription::find($model->subscription_id)) {
+                throw new \Exception('Подписка не существует');
             }
-
-            if ($this->price < 0) {
-                return response()->json(['Цена должна быть больше или равна 0.']);
+        
+            if ($model->price < 0) {
+                throw new \Exception('Цена должна быть больше или равна 0.');
             }
         });
+        
     }
 
     function course()
