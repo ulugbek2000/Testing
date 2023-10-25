@@ -61,7 +61,7 @@ class CourseController extends Controller
     {
 
         $request->validate([
-            'logo' => 'required|mimes:jpeg,png,jpg,gif,mov',
+            'logo' => 'required|mimes:jpeg,png,jpg,gif,mov,svg',
             'name' => 'required|string',
             'slug' => 'required|string|max:255',
             'quantity_lessons' => 'required',
@@ -124,7 +124,7 @@ class CourseController extends Controller
             'quantity_lessons' => 'required|string',
             'hours_lessons' => 'required|string',
             'short_description' => 'required|string',
-            'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,mov',
+            'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,mov,svg',
             'video' => 'nullable|mimes:mp4,mov,avi,mpeg,mkv,max:102400',
         ]);
         if ($request->hasFile('logo')) {
