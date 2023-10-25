@@ -59,43 +59,7 @@ class UserWalletController extends Controller
         return response()->json(['wallet' => $wallet], 200);
     }
 
-    public function purchaseCourse(Course $course, Subscription $subscription)
-    {
-        $user = Auth::user();
-        $previousSubscription = $user->subscriptions()->where('course_id', $course->id)->where('subscription_id', $subscription->id)->first();
-    
-        if ($previousSubscription) {
-            return response()->json(['message' => 'Уже подписан на этот пакет'], 200);
-        }
-    
-        // Получаем сумму на балансе пользователя через свойство объекта баланса
-        $userWallet = $user->wallet;
-    
-        // Получаем цену подписки
-        $price = $subscription->price;
-    
-        // Проверяем, достаточно ли средств на балансе
-        if ($userWallet->wallet < $price) {
-            return response()->json(['error' => 'Недостаточно средств на балансе'], 400);
-        }
-    
-        // Уменьшаем сумму на балансе пользователя
-        $userWallet->wallet -= $price;
-        $userWallet->save();
-    
-        // Создаем запись о подписке
-        $userSubscription = $user->subscriptions()->create([
-            'course_id' => $course->id,
-            'subscription_id' => $subscription->id,
-            'price' => $subscription->price,
-            'deleted_at' => $subscription->getDurationDateTime()
-        ]);
-    
-        // Предоставляем доступ к курсу
-        $user->courses()->attach($course->id);
-    
-        return response()->json(['success' => 'Курс успешно куплен']);
-    }
+
     
 
     public function getMyPurchases()

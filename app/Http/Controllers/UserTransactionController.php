@@ -4,9 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Enums\TransactionMethod;
 use App\Enums\TransactionStatus;
+use App\Models\Course;
+use App\Models\Subscription;
 use App\Models\UserTransaction;
 use App\Models\UserWallet;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class UserTransactionController extends Controller
 {
@@ -21,7 +24,7 @@ class UserTransactionController extends Controller
             'transaction' => $transaction
         ], 200);
     }
-    
+
     public function topUpWallet(Request $request)
     {
         // Валидация данных
@@ -57,6 +60,54 @@ class UserTransactionController extends Controller
         return response()->json(['message' => 'Account successfully replenished']);
     }
 
+    public function purchaseCourse(Course $course, Subscription $subscription)
+    {
+        $user = Auth::user();
+        $previousSubscription = $user->subscriptions()->where('course_id', $course->id)->where('subscription_id', $subscription->id)->first();
+
+        if ($previousSubscription) {
+            return response()->json(['message' => 'Уже подписан на этот пакет'], 200);
+        }
+
+        // Получаем сумму на балансе пользователя через свойство объекта баланса
+        $userWallet = $user->wallet;
+
+        // Получаем цену подписки
+        $price = $subscription->price;
+
+        // Проверяем, достаточно ли средств на балансе
+        if ($userWallet->wallet < $price) {
+            return response()->json(['error' => 'Недостаточно средств на балансе'], 400);
+        }
+
+        $user->transactions()->create([ 
+            'wallet_id' => $userWallet->id, 
+            'amount' => $price,
+            'description' => 'Описание транзакции', 
+            'method' => TransactionMethod::Cash, 
+            'status' => TransactionStatus::Pending, 
+        ]);
+      
+
+        // Уменьшаем сумму на балансе пользователя
+        $userWallet->wallet -= $price;
+        $userWallet->save();
+
+        // Создаем запись о подписке
+         $user->subscriptions()->create([
+            'course_id' => $course->id,
+            'subscription_id' => $subscription->id,
+            'price' => $subscription->price,
+            'deleted_at' => $subscription->getDurationDateTime()
+        ]);
+
+        // Предоставляем доступ к курсу
+        $user->courses()->attach($course->id);
+
+        return response()->json(['success' => 'Курс успешно куплен']);
+    }
+
+
     /**
      * Display the specified resource.
      */
@@ -70,62 +121,6 @@ class UserTransactionController extends Controller
         // Return Json Response
         return response()->json([
             'transaction' => $transaction
-        ], 200);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, UserTransaction $transaction)
-    {
-        try {
-            //find transaction
-            if (!$transaction) {
-                return response()->json([
-                    'message' => 'Transaction not found!!'
-                ], 404);
-            }
-            $data = [
-                $transaction->wallet_id = $request->wallet_id,
-                $transaction->amount = $request->amount,
-                $transaction->description = $request->description,
-                $transaction->method = $request->method,
-                $transaction->status = $request->status
-            ];
-            $transaction->save($data);
-            //Return Json Response
-            return response()->json([
-                'message' => "transaction succefully updated."
-            ], 200);
-        } catch (\Exception $e) {
-            //Return Json Response
-            return response()->json([
-                'message' => $e,
-            ], 500);
-        }
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(UserTransaction $transaction)
-    {
-        if (!$transaction) {
-            return response()->json([
-                'message' => 'transaction not found.'
-            ], 404);
-        }
-        $transaction->delete();
-        return response()->json([
-            'message' => "transaction succefully deleted."
         ], 200);
     }
 }
