@@ -73,8 +73,8 @@ class UserWalletController extends Controller
             // Получите информацию о курсе и его подписке
             return [
                 'course' => $course,
-                'subscription_id' => $subscription->id,
-                'subscription_name' => $subscription->name, // Замените на соответствующие поля подписки
+                // 'subscription_id' => $subscription->id,
+                // 'subscription_name' => $subscription->name, // Замените на соответствующие поля подписки
                 // 'subscription_price' => $subscription->price,
                 // Другие поля подписки, которые вам нужны       
             ];
