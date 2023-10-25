@@ -80,7 +80,7 @@ class UserTransactionController extends Controller
             return response()->json(['error' => 'Недостаточно средств на балансе'], 400);
         }
 
-        $user->transactions()->create([ 
+        $user->transaction()->create([ 
             'wallet_id' => $userWallet->id, 
             'amount' => $price,
             'description' => 'Описание транзакции', 
