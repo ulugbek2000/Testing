@@ -184,7 +184,7 @@ Route::middleware(['jwt.auth'])->group(function () {
         Route::get('student/course/{course}', [CourseController::class, 'show']);
 
         //Покупка курса:
-        Route::post('student/balance/withdraw/{course}/{subscription}', [UserWalletController::class, 'purchaseCourse']);
+        Route::post('student/balance/withdraw/{course}/{subscription}', [UserTransactionController::class, 'purchaseCourse']);
 
         //Получение списка доступных подписок:
         Route::get('student/course/{course}/subscriptions', [SubscriptionController::class, 'index']);
