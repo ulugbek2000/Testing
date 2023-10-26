@@ -76,7 +76,7 @@ Route::middleware(['jwt.auth'])->group(function () {
     Route::middleware(['access:' . UserType::Admin])->group(function () {
 
         //Пополнение баланс:
-        Route::post('student/balance/deposit', [UserTransactionController::class, 'topUpWallet']);
+        Route::post('admin/balance/deposit', [UserTransactionController::class, 'topUpWallet']);
 
         //Данный админ
         Route::get('admin/account', [ProfileController::class, 'getProfile']);
