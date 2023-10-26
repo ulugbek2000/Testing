@@ -21,38 +21,11 @@ use Symfony\Contracts\Service\Attribute\Required;
 
 class CourseController extends Controller
 {
-
-    // function __construct()
-    // {
-    //     $this->middleware('course');
-    // }
-
-    /**
-     * Display a listing of the resource.
-     */
     public function index(Request $request)
     {
-
-
         $per_page = $request->per_page ?? 12;
-        // All Courses
-        // $perPage = $request->input('per_page', 2);
-        // $courses = Course::all();
-        // $courses = Course::paginate($perPage);
-        // $courses->setPath(url('/api/courses'));
-        // // Return Json Response
-        // return response()->json([
-        //     'courses' => $courses
-        // ], 200);
 
         return CourseResource::collection(Course::paginate($per_page));
-    }
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
     }
     /**
      * Store a newly created resource in storage.
@@ -67,8 +40,6 @@ class CourseController extends Controller
             'quantity_lessons' => 'required',
             'hours_lessons' => 'required',
             'short_description' => 'required',
-            // 'duration' => 'required|integer',
-            // 'duration_type' => 'required',
             'video' => 'required|mimes:mp4,mov,avi,mpeg,mkv',
         ]);
         $logo = $request->file('logo')->store('images', 'public');
@@ -84,8 +55,6 @@ class CourseController extends Controller
                 'quantity_lessons' => $request->quantity_lessons,
                 'hours_lessons' => $request->hours_lessons,
                 'short_description' => $request->short_description,
-                // 'duration' => $request->duration,
-                // 'duration_type' => $request->duration_type,
                 'video' => Storage::url($video),
                 'has_certificate' => $request->has_certificate,
             ]);
@@ -105,13 +74,6 @@ class CourseController extends Controller
     public function show(Course $course)
     {
         return new CourseResource($course);
-    }
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Course $course)
-    {
-        //
     }
     /**
      * Update the specified resource in storage.

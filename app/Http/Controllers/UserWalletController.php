@@ -32,12 +32,12 @@ class UserWalletController extends Controller
     public function getMyPurchases()
     {
         $user = Auth::user();
-    
+
         // Получите список покупок пользователя, включая информацию о курсах и их подписках
         $purchasedCourses = $user->purchases->groupBy('course_id')->map(function ($purchases) {
             $latestPurchase = $purchases->sortByDesc('created_at')->first();
             $course = $latestPurchase->course;
-    
+
             return [
                 'course' => $course,
                 'subscription_id' => $latestPurchase->subscription->id,
@@ -45,8 +45,24 @@ class UserWalletController extends Controller
                 'subscription_price' => $latestPurchase->subscription->price,
             ];
         });
-    
+
         return response()->json(['purchases' => $purchasedCourses->values()], 200);
     }
-    
+    public function getPurchasesByCourseId($courseId)
+    {
+        $user = Auth::user();
+
+        // Получите список покупок пользователя для конкретного курса
+        $purchases = $user->purchases()->where('course_id', $courseId)->get();
+
+        $purchasesInfo = $purchases->map(function ($purchase) {
+            return [
+                'subscription_id' => $purchase->subscription->id,
+                'subscription_name' => $purchase->subscription->name,
+                'subscription_price' => $purchase->subscription->price,
+            ];
+        });
+
+        return response()->json(['purchases' => $purchasesInfo], 200);
+    }
 }
