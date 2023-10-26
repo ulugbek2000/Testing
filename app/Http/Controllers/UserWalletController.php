@@ -40,9 +40,10 @@ class UserWalletController extends Controller
 
             return [
                 'course' => $course,
-                'subscription_id' => $subscription->id,
-                'subscription_name' => $subscription->name,
-                'subscription_price' => $subscription->price,
+                'latest_subscrition_id'=>$course->latest_subscrition_id,
+                // 'subscription_id' => $subscription->id,
+                // 'subscription_name' => $subscription->name,
+                // 'subscription_price' => $subscription->price,
             ];
         });
         return response()->json(['purchases' => $purchasedCourses], 200);
