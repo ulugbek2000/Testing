@@ -57,11 +57,6 @@ class Course extends Model
         return $this->hasMany(Topic::class);
     }
 
-    public function latestSubscription()
-    {
-        return $this->belongsTo(Subscription::class, 'latest_subscription_id');
-    }
-
     public function students()
     {
         return $this->hasManyThrough(User::class, UserCourse::class, 'course_id', 'id');
