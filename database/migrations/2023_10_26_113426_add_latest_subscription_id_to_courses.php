@@ -6,14 +6,11 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up()
     {
         Schema::table('courses', function (Blueprint $table) {
-            $table->unsignedBigInteger('latest_subscription_id')->nullable();
-            $table->foreign('latest_subscription_id')->references('id')->on('subscriptions');
+            // $table->unsignedBigInteger('latest_subscription_id')->nullable();
+            $table->foreignId('latest_subscription_id')->references('id')->on('subscriptions');
         });
     }
 
