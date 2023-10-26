@@ -29,8 +29,8 @@ class UserTransactionController extends Controller
     public function topUpWallet(Request $request)
     {
         $request->validate([
-            'phone' => 'required|string', // Поле для ввода номера телефона
-            'wallet' => 'required|numeric|min:0.01', // Минимальная сумма для пополнения
+            'phone' => 'required|string',
+            'wallet' => 'required|numeric|min:0.01',
         ]);
 
         $phone = $request->input('phone');
@@ -110,13 +110,12 @@ class UserTransactionController extends Controller
             'status' => TransactionStatus::Pending,
         ]);
 
-
         // Уменьшаем сумму на балансе пользователя
         $userWallet->wallet -= $price;
         $userWallet->save();
 
         // Создаем запись о подписке
-        $user->subscriptions()->create([
+        $userSubscription = $user->subscriptions()->create([
             'course_id' => $course->id,
             'subscription_id' => $subscription->id,
             'price' => $subscription->price,
@@ -125,6 +124,10 @@ class UserTransactionController extends Controller
 
         // Предоставляем доступ к курсу
         $user->courses()->attach($course->id);
+
+        // Обновляем поле в модели Course для хранения последней подписки
+        $course->latest_subscription_id = $userSubscription->id;
+        $course->save();
 
         return response()->json(['success' => 'Курс успешно куплен']);
     }

@@ -24,6 +24,7 @@ class Course extends Model
         'duration_type',
         'video',
         'has_certificate',
+        'latest_subscription_id',
     ];
 
 
@@ -54,6 +55,11 @@ class Course extends Model
     public function topics()
     {
         return $this->hasMany(Topic::class);
+    }
+
+    public function latestSubscription()
+    {
+        return $this->belongsTo(Subscription::class, 'latest_subscription_id');
     }
 
     public function students()
