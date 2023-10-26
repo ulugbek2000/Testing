@@ -51,6 +51,7 @@ class UserWalletController extends Controller
     public function getPurchasesByCourseId(Course $course)
     {
         $user = Auth::user();
+        dd($course);
 
         // Получите список покупок пользователя для конкретного курса
         $purchases = $user->purchases()->where('course_id', $course)->get();
