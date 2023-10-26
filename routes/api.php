@@ -70,14 +70,13 @@ Route::get('course/{course}/skill', [CourseSkillsController::class, 'index']);
 
 Route::post('login', [AuthController::class, 'login']);
 
-//Пополнение баланс:
-Route::post('student/balance/deposit', [UserTransactionController::class, 'topUpWallet']);
-// });
 
 Route::middleware(['jwt.auth'])->group(function () {
 
     Route::middleware(['access:' . UserType::Admin])->group(function () {
-        //  Route::middleware('access:' . implode(',', [UserType::Student]))->group(function () {
+
+        //Пополнение баланс:
+        Route::post('student/balance/deposit', [UserTransactionController::class, 'topUpWallet']);
 
         //Данный админ
         Route::get('admin/account', [ProfileController::class, 'getProfile']);
@@ -100,7 +99,7 @@ Route::middleware(['jwt.auth'])->group(function () {
         Route::post('enroll/{course}/{user}', [CourseController::class, 'enroll']);
         Route::get('course/{course}/teacher', [CourseController::class, 'getTeacherInCourse']);
         Route::post('courses/{course}/add-teachers', [CourseController::class, 'addTeachersToCourse']);
-        Route::get('courses/{course}/buyers', [CourseController::class,'getCourseBuyers']);
+        Route::get('courses/{course}/buyers', [CourseController::class, 'getCourseBuyers']);
 
         //End Courses
 
@@ -171,7 +170,7 @@ Route::middleware(['jwt.auth'])->group(function () {
     Route::middleware('access:' . implode(',', [UserType::Student]))->group(function () {
 
         Route::get('student/user/balance', [UserWalletController::class, 'getBalance']);
-        Route::get('student/my-purchases', [UserWalletController::class,'getMyPurchases']);
+        Route::get('student/my-purchases', [UserWalletController::class, 'getMyPurchases']);
 
         //Обновление своего профиля:
         Route::put('student/profile', [ProfileController::class, 'updateProfile']);

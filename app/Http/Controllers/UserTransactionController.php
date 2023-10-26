@@ -6,6 +6,7 @@ use App\Enums\TransactionMethod;
 use App\Enums\TransactionStatus;
 use App\Models\Course;
 use App\Models\Subscription;
+use App\Models\User;
 use App\Models\UserTransaction;
 use App\Models\UserWallet;
 use Illuminate\Http\Request;
@@ -27,20 +28,27 @@ class UserTransactionController extends Controller
 
     public function topUpWallet(Request $request)
     {
-        $user = Auth::user();
-        // Валидация данных
         $request->validate([
-            'wallet_id' => 'required|exists:user_wallets,id',
+            'phone' => 'required|string', // Поле для ввода номера телефона
             'wallet' => 'required|numeric|min:0.01', // Минимальная сумма для пополнения
         ]);
 
+        $phone = $request->input('phone');
         $newWallet = $request->input('wallet');
+
+        // Найдите пользователя по номеру телефона
+        $user = User::where('phone', $phone)->first();
+
+        if (!$user) {
+            return response()->json(['error' => 'User not found'], 404);
+        }
 
         if ($newWallet <= 0) {
             return response()->json(['error' => 'Invalid amount'], 400);
         }
 
         // Получаем объект баланса пользователя
+
         $userWallet = $user->wallet;
 
         // Проверяем, существует ли объект баланса
@@ -69,18 +77,8 @@ class UserTransactionController extends Controller
 
         return response()->json(['success' => 'Wallet updated successfully'], 200);
 
-        // Дополнительная логика для выполнения платежа через карту
-
-        // Здесь вы можете использовать сторонние платежные шлюзы, например, Stripe, Braintree, PayPal, и др.
-
-        // Если платеж успешен, обновите статус транзакции и сумму на счете
-        // Пример:
-        // $transaction->update([
-        //     'status' => TransactionStatus::Success,
-        // ]);
         // $wallet->increment('balance', $request->input('amount'));
 
-        // Верните ответ в формате JSON
         // return response()->json(['message' => 'Account successfully replenished']);
     }
 
