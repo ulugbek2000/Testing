@@ -54,7 +54,7 @@ class UserWalletController extends Controller
        
 
         // Получите список покупок пользователя для конкретного курса
-        $purchases = $user->purchases()->where('course_id', $course)->get();
+        $purchases = $user->purchases->where('course_id', $course)->get();
         dd($purchases);
         $purchasesInfo = $purchases->map(function ($purchase) {
             return [
