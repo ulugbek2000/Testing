@@ -49,15 +49,18 @@ class UserWalletController extends Controller
         return response()->json(['purchases' => $purchasedCourses->values()], 200);
     }
 
-    public function getPurchasesByCourseId($courseId)
+    public function getLastPurchase()
     {
         $user = Auth::user();
-        $purchase = $user->purchases()
-        ->latest()
-            ->first(); // Получаем только одну запись, так как ищем для конкретного курса
-            $purchasedCourses = $user->purchases;
-        if ($purchase) {
-            $courseInfo = $purchase->course;
+    
+        $latestPurchase = $user->purchases()
+            ->latest()
+            ->first();
+    
+        if ($latestPurchase) {
+            $courseInfo = $latestPurchase->course;
+            $courseName = $courseInfo->name; // Получаем имя курса
+    
             $purchasesInfo = [
                 'purchases' => [
                     [
@@ -71,19 +74,18 @@ class UserWalletController extends Controller
                             'short_description' => $courseInfo->short_description,
                             'video' => $courseInfo->video,
                             'has_certificate' => $courseInfo->has_certificate,
-
                         ],
-                        'subscription_id' => $purchase->subscription_id,
-                        'subscription_price' => $purchase->price,
-                        'subscription_name' => $purchasedCourses->name,
+                        'subscription_id' => $latestPurchase->subscription_id,
+                        'subscription_price' => $latestPurchase->price,
+                        'subscription_name' => $courseName, 
                     ],
                 ],
             ];
-
+    
             return response()->json($purchasesInfo, 200);
         } else {
-            // Обработайте случай, если покупка не найдена
             return response()->json(['message' => 'Покупка не найдена'], 404);
         }
     }
+    
 }
