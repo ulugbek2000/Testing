@@ -40,7 +40,7 @@ class LessonController extends Controller
         $request->validate([
             'topic_id' => 'integer',
             'name' => 'string',
-            'cover' => 'image|mimes:jpeg,png,jpg,gif,mov',
+            'cover' => 'image|file',
             'duration' => 'string|nullable',
         ]);
         // dd()->response()->json($request);
@@ -95,7 +95,7 @@ class LessonController extends Controller
         $request->validate([
             'topic_id' => 'integer',
             'name' => 'string',
-            'cover' => 'nullable|mimes:jpeg,png,jpg,gif,mov',
+            'cover' => 'nullable|file',
             'duration' => 'string|nullable',
             'content' => 'nullable',
             // 'type' =>  [new Enum(LessonTypes::class)]

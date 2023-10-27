@@ -32,9 +32,13 @@ class TopicController extends Controller
      */
     public function store(Request $request)
     {
+        $request->validate([
+            'topic_name' => 'string|max:255',
+            'course_id' => 'required|integer'
+        ]);
+
         try {
             $data = [
-                'id' => $request->id,
                 'course_id' => $request->course_id,
                 'topic_name' => $request->topic_name,
             ];

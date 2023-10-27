@@ -37,7 +37,7 @@ class ProfileController extends Controller
             'surname' => 'string',
             'password' => ['string', 'min:8', 'confirmed'],
             'city' => 'string',
-            'photo' => 'nullable|mimes:jpeg,png,jpg,gif,mov',
+            'photo' => 'nullable|file',
             'gender' => 'string|in:male,female,other',
             'date_of_birth' => 'date',
         ]);
