@@ -174,7 +174,7 @@ Route::middleware(['jwt.auth'])->group(function () {
 
         Route::get('student/user/balance', [UserWalletController::class, 'getBalance']);
         Route::get('student/my-purchases', [UserWalletController::class, 'getMyPurchases']);
-        Route::get('student/get-MyLastPurchase', [UserWalletController::class, 'getLastPurchase']);
+        Route::get('student/my-purchasesByCourseId/{courseId}', [UserWalletController::class, 'getPurchasesByCourseId']);
 
         //Обновление своего профиля:
         Route::put('student/profile', [ProfileController::class, 'updateProfile']);

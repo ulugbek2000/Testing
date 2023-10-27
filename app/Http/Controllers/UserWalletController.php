@@ -49,21 +49,21 @@ class UserWalletController extends Controller
         return response()->json(['purchases' => $purchasedCourses->values()], 200);
     }
 
-    public function getLastPurchase()
+    public function getPurchasesByCourseId($courseId)
     {
         $user = Auth::user();
-
+    
         $latestPurchase = $user->purchases()
+            ->where('course_id', $courseId)
             ->latest()
             ->first();
-
+    
         if ($latestPurchase) {
             $courseInfo = $latestPurchase->course;
-
+    
             $subscription = Subscription::find($latestPurchase->subscription_id);
             $subscriptionName = $subscription->name;
-
-
+    
             $purchasesInfo = [
                 'purchases' => [
                     [
@@ -84,10 +84,11 @@ class UserWalletController extends Controller
                     ],
                 ],
             ];
-
+    
             return response()->json($purchasesInfo, 200);
         } else {
             return response()->json(['message' => 'Покупка не найдена'], 404);
         }
     }
+    
 }
