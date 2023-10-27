@@ -60,19 +60,32 @@ class UserWalletController extends Controller
         if ($purchase) {
             $courseInfo = $purchase->course;
 
-              $purchasesInfo = $courseInfo->map(function ($purchase) {
-        return [
-        
+            $purchasesInfo = [
+                'purchases' => [
+                    [
+                        'course' => [
+                            'id' => $courseInfo->id,
+                            'logo' => $courseInfo->logo,
+                            'name' => $courseInfo->name,
+                            'slug' => $courseInfo->slug,
+                            'quantity_lessons' => $courseInfo->quantity_lessons,
+                            'hours_lessons' => $courseInfo->hours_lessons,
+                            'short_description' => $courseInfo->short_description,
+                            'video' => $courseInfo->video,
+                            'has_certificate' => $courseInfo->has_certificate,
+
+                        ],
                         'subscription_id' => $purchase->subscription_id,
                         'subscription_name' => $purchase->subscription_name,
                         'subscription_price' => $purchase->subscription_price,
-                 
-                
-        ];
-        });
+                    ],
+                ],
+            ];
 
             return response()->json($purchasesInfo, 200);
-        
-    }
+        } else {
+            // Обработайте случай, если покупка не найдена
+            return response()->json(['message' => 'Покупка не найдена'], 404);
+        }
     }
 }
