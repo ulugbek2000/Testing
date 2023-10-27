@@ -32,7 +32,7 @@ class CourseController extends Controller
     {
         $name = $request->input('name');
 
-        if (empty($name)) {
+        if (!empty($name)) {
             return response()->json(['error' => 'Параметр "name" отсутствует или пуст.'], 400);
         }
 
