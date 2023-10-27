@@ -27,6 +27,25 @@ class CourseController extends Controller
 
         return CourseResource::collection(Course::paginate($per_page));
     }
+
+    public function search(Request $request)
+    {
+        $name = $request->input('name');
+
+        if (empty($name)) {
+            return response()->json(['error' => 'Параметр "name" отсутствует или пуст.'], 400);
+        }
+
+        $courses = Course::where('name', 'ilike', '%' . $name . '%')->get();
+
+        if ($courses->isEmpty()) {
+            return response()->json(['message' => 'Нет результатов для вашего запроса.'], 200);
+        }
+
+        return response()->json(['courses' => $courses], 200);
+    }
+
+
     /**
      * Store a newly created resource in storage.
      */
