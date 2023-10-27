@@ -180,7 +180,7 @@ Route::middleware(['jwt.auth'])->group(function () {
         Route::get('student/course', [CourseController::class, 'index']);
 
         //Просмотр информации о курсе:
-        Route::get('student/teacherByCourse/{course}', [CourseController::class, 'getTeacherByCourse']);
+        Route::get('student/teacherByCourse', [CourseController::class, 'getTeacherByCourse']);
         Route::get('student/course/{course}', [CourseController::class, 'show']);
 
         //Покупка курса:
