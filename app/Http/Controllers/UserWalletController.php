@@ -76,7 +76,6 @@ class UserWalletController extends Controller
 
                         ],
                         'subscription_id' => $purchase->subscription_id,
-                        'subscription_name' => $purchase->name,
                         'subscription_price' => $purchase->price,
                     ],
                 ],
