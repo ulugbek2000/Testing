@@ -26,6 +26,7 @@ class CourseController extends Controller
         $per_page = $request->per_page ?? 12;
 
         return CourseResource::collection(Course::paginate($per_page));
+        
     }
 
     public function search(Request $request)

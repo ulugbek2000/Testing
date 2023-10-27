@@ -13,6 +13,10 @@ use Illuminate\Validation\Rules\Enum;
 use Symfony\Contracts\Service\Attribute\Required;
 use Nette\Utils\Random;
 use Carbon\Carbon;
+// use getID3 ;
+use FFMpeg\FFMpeg;
+include_once('pathto/getid3.php');
+// require 'vendor/autoload.php';
 
 class LessonController extends Controller
 {
@@ -22,8 +26,12 @@ class LessonController extends Controller
     public function index(Topic $topic)
     {
         $lessons = $topic->lessons;
+
         return response()->json($lessons);
     }
+
+
+
     /**
      * Show the form for creating a new resource.
      */
@@ -48,13 +56,23 @@ class LessonController extends Controller
         $content = $request->input('content');
         $cover = $request->file('cover')->store('cover', 'public');
 
-        $lesson = new Lesson();
+
+        // $lesson = new Lesson();
         $lesson->type = $type;
+
+    //! GET DURATION VIDEO 
+
+        // $getID3 = new getID3;
+        // $file = $getID3->analyze($filename);
+        // echo("Duration: ".$file['playtime_string'].
+        // " / Dimensions: ".$file['video']['resolution_x']." wide by ".$file['video']['resolution_y']." tall".
+        // " / Filesize: ".$file['filesize']." bytes<br />");
+
 
         if ($type === 'text') {
             $lesson->content = $content;
         } elseif ($type === 'video' || $type === 'audio') {
-            $filePath = $request->file('content')->store('content','public');
+            $filePath = $request->file('content')->store('content', 'public');
             $lesson->content = $filePath;
         }
         $data = [
@@ -65,7 +83,6 @@ class LessonController extends Controller
             'content' => in_array($request->type, [LessonTypes::Video, LessonTypes::Audio]) ? $filePath : $request->content,
             'type' => $request->type,
         ];
-
         Lesson::create($data);
 
         return response()->json(['message' => 'Lesson created successfully.']);
@@ -98,7 +115,6 @@ class LessonController extends Controller
             'cover' => 'nullable|file',
             'duration' => 'string|nullable',
             'content' => 'nullable',
-            // 'type' =>  [new Enum(LessonTypes::class)]
         ]);
 
         $coverpath = $lesson->cover;
