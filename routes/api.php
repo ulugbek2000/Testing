@@ -171,7 +171,7 @@ Route::middleware(['jwt.auth'])->group(function () {
 
         Route::get('student/user/balance', [UserWalletController::class, 'getBalance']);
         Route::get('student/my-purchases', [UserWalletController::class, 'getMyPurchases']);
-        Route::get('student/my-purchasesByCourseId/{course}', [UserWalletController::class, 'getPurchasesByCourseId']);
+        Route::get('student/my-purchasesByCourseId', [UserWalletController::class, 'getPurchasesByCourseId']);
 
         //Обновление своего профиля:
         Route::put('student/profile', [ProfileController::class, 'updateProfile']);
@@ -180,7 +180,7 @@ Route::middleware(['jwt.auth'])->group(function () {
         Route::get('student/course', [CourseController::class, 'index']);
 
         //Просмотр информации о курсе:
-        Route::get('student/teacherByCourse', [CourseController::class, 'getTeacherByCourse']);
+        Route::get('student/teacherByCourse/{course}', [CourseController::class, 'getTeacherByCourse']);
         Route::get('student/course/{course}', [CourseController::class, 'show']);
 
         //Покупка курса:
