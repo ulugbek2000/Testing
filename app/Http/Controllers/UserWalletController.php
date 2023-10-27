@@ -55,7 +55,7 @@ class UserWalletController extends Controller
         $purchase = $user->purchases()
         ->latest()
             ->first(); // Получаем только одну запись, так как ищем для конкретного курса
-
+            $purchasedCourses = $user->purchases;
         if ($purchase) {
             $courseInfo = $purchase->course;
             $purchasesInfo = [
@@ -75,6 +75,7 @@ class UserWalletController extends Controller
                         ],
                         'subscription_id' => $purchase->subscription_id,
                         'subscription_price' => $purchase->price,
+                        'subscription_name' => $purchasedCourses->name,
                     ],
                 ],
             ];
