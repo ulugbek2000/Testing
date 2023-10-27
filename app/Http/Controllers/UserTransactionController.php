@@ -125,10 +125,6 @@ class UserTransactionController extends Controller
         // Предоставляем доступ к курсу
         $user->courses()->attach($course->id);
 
-        // Обновляем поле в модели Course для хранения последней подписки
-        $course->latest_subscription_id = $userSubscription->id;
-        $course->save();
-
         return response()->json(['success' => 'Курс успешно куплен']);
     }
 
