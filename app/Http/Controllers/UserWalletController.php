@@ -53,7 +53,7 @@ class UserWalletController extends Controller
     {
         $user = Auth::user();
         $purchase = $user->purchases()
-        ->latest('course_id', $courseId)
+        ->latest()
             ->first(); // Получаем только одну запись, так как ищем для конкретного курса
 
         if ($purchase) {
