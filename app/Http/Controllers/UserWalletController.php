@@ -64,6 +64,6 @@ class UserWalletController extends Controller
             ];
         });
 
-        return response()->json(['purchases' => $purchasesInfo], 200);
+        return response()->json(['purchases' => $purchasesInfo, 'purchases1' => $purchases ], 200);
     }
 }
