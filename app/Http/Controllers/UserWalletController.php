@@ -52,14 +52,12 @@ class UserWalletController extends Controller
     public function getPurchasesByCourseId($courseId)
     {
         $user = Auth::user();
-
         $purchase = $user->purchases()
-            ->where('course_id', $courseId)
-            ->first(); // Получите только одну запись, так как ищем для конкретного курса
+        ->latest('course_id', $courseId)
+            ->first(); // Получаем только одну запись, так как ищем для конкретного курса
 
         if ($purchase) {
             $courseInfo = $purchase->course;
-
             $purchasesInfo = [
                 'purchases' => [
                     [
