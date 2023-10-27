@@ -52,15 +52,23 @@ class UserWalletController extends Controller
     public function getPurchasesByCourseId()
     {
         $user = Auth::user();
-    
+
         $latestPurchase = $user->purchases()
             ->latest()
             ->first();
-    
+
         if ($latestPurchase) {
             $courseInfo = $latestPurchase->course;
-            $courseName = $courseInfo->name; // Получаем имя курса
-    
+
+            // Получаем информацию о подписке по subscription_id
+            $subscription = Subscription::find($latestPurchase->subscription_id);
+
+            if ($subscription) {
+                $subscriptionName = $subscription->name; // Получаем имя подписки
+            } else {
+                $subscriptionName = 'Название подписки не найдено';
+            }
+
             $purchasesInfo = [
                 'purchases' => [
                     [
@@ -77,16 +85,14 @@ class UserWalletController extends Controller
                         ],
                         'subscription_id' => $latestPurchase->subscription_id,
                         'subscription_price' => $latestPurchase->price,
-                        'subscription_name' => $courseName, // Используем имя курса
+                        'subscription_name' => $subscriptionName,
                     ],
                 ],
             ];
-    
+
             return response()->json($purchasesInfo, 200);
         } else {
             return response()->json(['message' => 'Покупка не найдена'], 404);
         }
     }
-    
-    
 }
