@@ -4,11 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\UserLessonsProgress;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class UserLessonProgressController extends Controller
 {
-    public function getCourseProgress(Request $request, $user_id)
+    public function getCourseProgress(Request $request)
     {
+        $user_id = Auth::user();
         $userProgress = UserLessonsProgress::where('user_id', $user_id)->get();
         $totalLessons = count($userProgress);
         $completedLessons = $userProgress->where('completed', true)->count();
