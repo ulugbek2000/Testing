@@ -33,37 +33,38 @@ class UserWalletController extends Controller
     public function getMyPurchases()
     {
         $user = Auth::user();
-
-        $userProgress = UserLessonsProgress::where('user_id', $user)->get();
-        $totalLessons = count($userProgress);
-        $completedLessons = $userProgress->where('completed', true)->count();
-        if ($totalLessons === 0) {
-            $progressPercentage = 0; // Set progress to 0 if there are no lessons.
-        } else {
-            $progressPercentage = ($completedLessons / $totalLessons) * 100;
-        }
+    
         // Получите список покупок пользователя, включая информацию о курсах и их подписках
-        $purchasedCourses = $user->purchases->groupBy('course_id')->map(function ($purchases) {
+        $purchasedCourses = $user->purchases->groupBy('course_id')->map(function ($purchases) use ($user) {
             $latestPurchase = $purchases->sortByDesc('created_at')->first();
             $course = $latestPurchase->course;
-
-
-
+    
+            // Определите прогресс для пользователя в контексте этого курса
+            $userProgress = UserLessonsProgress::where('user_id', $user->id)
+                ->whereIn('lesson_id', $course->lessons->pluck('id'))
+                ->get();
+    
+            $completedLessons = $userProgress->where('completed', true)->count();
+            $totalLessons = $userProgress->count();
+            $remainingLessons = $totalLessons - $completedLessons;
+    
+            $progressPercentage = $totalLessons === 0 ? 0 : ($completedLessons / $totalLessons) * 100;
+    
             return [
                 'course' => $course,
                 'subscription_id' => $latestPurchase->subscription->id,
                 'subscription_name' => $latestPurchase->subscription->name,
                 'subscription_price' => $latestPurchase->subscription->price,
+                'total_lessons' => $totalLessons,
+                'completed_lessons' => $completedLessons,
+                'remaining_lessons' => $remainingLessons,
+                'progress_percentage' => $progressPercentage,
             ];
         });
-
-        return response()->json([
-            'purchases' => $purchasedCourses->values(), 
-            'total_lessons' => $totalLessons,
-            'completed_lessons' => $completedLessons,
-            'progress_percentage' => $progressPercentage,
-        ], 200);
+    
+        return response()->json(['purchases' => $purchasedCourses->values()], 200);
     }
+    
 
 
     public function getPurchasesByCourseId($courseId)
