@@ -74,8 +74,8 @@ class UserWalletController extends Controller
                 $progressPercentage = $totalLessons === 0 ? 0 : ($completedLessons / $totalLessons) * 100;
     
                 $progressData[] = [
-                    'topic_name' => $topic->name,
-                    'total_lessons' => $totalLessons,
+                    // 'topic_name' => $topic->name,
+                    // 'total_lessons' => $totalLessons,
                     'completed_lessons' => $completedLessons,
                     'remaining_lessons' => $remainingLessons,
                     'progress_percentage' => $progressPercentage,
