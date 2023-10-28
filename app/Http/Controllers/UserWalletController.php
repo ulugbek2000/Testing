@@ -60,9 +60,8 @@ class UserWalletController extends Controller
             $remainingLessons = $totalLessons - $completedLessons;
             $progressPercentage = $totalLessons === 0 ? 0 : ($completedLessons / $totalLessons) * 100;
 
-            return [
-                'course' => [
-                    'course_data' => $course->id,
+            return  [
+                    'course' => $course->id,
                     'logo' => $course->logo,
                     'name' => $course->name,
                     'slug' => $course->slug,
@@ -77,11 +76,11 @@ class UserWalletController extends Controller
                     'completed_lessons' => $completedLessons,
                     'remaining_lessons' => $remainingLessons,
                     'progress_percentage' => $progressPercentage,
-                ],
-
-
-
             ];
+
+
+
+            
         });
 
         return response()->json(['purchases' => $purchasedCourses->values()], 200);
