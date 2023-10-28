@@ -62,17 +62,17 @@ class UserWalletController extends Controller
     
             return [
                 'course' => [
-                    'id' => $course->id,
-                    'name' => $course->name,
+                    'course_data' => $course,
                     'subscription_id' => $latestPurchase->subscription->id,
                     'subscription_name' => $latestPurchase->subscription->name,
                     'subscription_price' => $latestPurchase->subscription->price,
-                ],
-                'progress_data' => [
                     'completed_lessons' => $completedLessons,
                     'remaining_lessons' => $remainingLessons,
                     'progress_percentage' => $progressPercentage,
                 ],
+                
+                  
+                
             ];
         });
     
