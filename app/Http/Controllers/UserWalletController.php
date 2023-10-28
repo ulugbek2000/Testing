@@ -55,7 +55,7 @@ class UserWalletController extends Controller
             
 
                 $totalLessons++;
-                dd($completedLessons,$totalLessons);
+                // dd($completedLessons,$totalLessons);`
             }
         }
 
