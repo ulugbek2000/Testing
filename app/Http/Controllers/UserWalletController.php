@@ -41,7 +41,7 @@ class UserWalletController extends Controller
             $user = Auth::user();
             // Определите прогресс для этого курса на основе данных о пользователях
             $userProgress = UserLessonsProgress::where('user_id', $user->id)
-                ->whereIn('lesson_id', $course->lessons->pluck('id'))
+                ->whereIn('lesson_id', $course->topics->lessons->pluck('id'))
                 ->get();
     
             $completedLessons = $userProgress->where('completed', true)->count();
