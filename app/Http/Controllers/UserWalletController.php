@@ -33,36 +33,44 @@ class UserWalletController extends Controller
     public function getMyPurchases()
     {
         $user = Auth::user();
-    
+
         // Получите список покупок пользователя, включая информацию о курсах и их подписках
         $purchasedCourses = $user->purchases->groupBy('course_id')->map(function ($purchases) use ($user) {
             $latestPurchase = $purchases->sortByDesc('created_at')->first();
             $course = Course::find($latestPurchase->course_id);
-    
+
             $totalLessons = 0;
             $completedLessons = 0;
-    
+
             foreach ($course->topics as $topic) {
                 foreach ($topic->lessons as $lesson) {
                     // Проверьте прогресс пользователя для этого урока
                     $lessonProgress = UserLessonsProgress::where('user_id', $user->id)
                         ->where('lesson_id', $lesson->id)
                         ->first();
-    
+
                     if ($lessonProgress && $lessonProgress->completed) {
                         $completedLessons++;
                     }
-    
+
                     $totalLessons++;
                 }
             }
-    
+
             $remainingLessons = $totalLessons - $completedLessons;
             $progressPercentage = $totalLessons === 0 ? 0 : ($completedLessons / $totalLessons) * 100;
-    
+
             return [
                 'course' => [
-                    'course_data' => $course,
+                    'course_data' => $course->id,
+                    'logo' => $course->logo,
+                    'name' => $course->name,
+                    'slug' => $course->slug,
+                    'quantity_lessons' => $course->quantity_lessons,
+                    'hours_lessons' => $course->hours_lessons,
+                    'short_description' => $course->id,
+                    'video' => $course->video,
+                    'has_certificate' => $course->has_certificate,
                     'subscription_id' => $latestPurchase->subscription->id,
                     'subscription_name' => $latestPurchase->subscription->name,
                     'subscription_price' => $latestPurchase->subscription->price,
@@ -70,17 +78,17 @@ class UserWalletController extends Controller
                     'remaining_lessons' => $remainingLessons,
                     'progress_percentage' => $progressPercentage,
                 ],
-                
-                  
-                
+
+
+
             ];
         });
-    
+
         return response()->json(['purchases' => $purchasedCourses->values()], 200);
     }
-    
-    
-    
+
+
+
     public function getPurchasesByCourseId($courseId)
     {
         $user = Auth::user();
