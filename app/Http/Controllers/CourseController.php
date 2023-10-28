@@ -214,7 +214,7 @@ class CourseController extends Controller
         return response()->json(['buyers' => $buyers], 200);
     }
 
-    public function getUserLessonProgress()
+    public function getCourseProgress()
     {
         // Получаем текущего пользователя
         $user = Auth::user();
