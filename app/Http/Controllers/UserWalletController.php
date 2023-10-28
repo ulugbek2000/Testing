@@ -7,6 +7,7 @@ use App\Models\CourseSubscription;
 use App\Models\Subscription;
 use App\Models\User;
 use App\Models\UserCourse;
+use App\Models\UserLessonsProgress;
 use App\Models\UserSubscription;
 use App\Models\UserWallet;
 use Illuminate\Http\Request;
@@ -32,22 +33,36 @@ class UserWalletController extends Controller
     public function getMyPurchases()
     {
         $user = Auth::user();
-
-        // Получите список покупок пользователя, включая информацию о курсах и их подписках
-        $purchasedCourses = $user->purchases->groupBy('course_id')->map(function ($purchases) {
+    
+        $purchasedCourses = $user->purchases->groupBy('course_id')->map(function ($purchases) use ($user) {
             $latestPurchase = $purchases->sortByDesc('created_at')->first();
             $course = $latestPurchase->course;
-
+    
+            // Определите прогресс для этого курса на основе данных о пользователях
+            $userProgress = UserLessonsProgress::where('user_id', $user->id)
+                ->whereHas('lesson', function ($query) use ($course) {
+                    $query->where('course_id', $course->id);
+                })
+                ->get();
+            
+            $completedLessons = $userProgress->where('completed', true)->count();
+            $totalLessons = $userProgress->count();
+            $remainingLessons = $totalLessons - $completedLessons;
+    
             return [
                 'course' => $course,
                 'subscription_id' => $latestPurchase->subscription->id,
                 'subscription_name' => $latestPurchase->subscription->name,
                 'subscription_price' => $latestPurchase->subscription->price,
+                'total_lessons' => $totalLessons,
+                'completed_lessons' => $completedLessons,
+                'remaining_lessons' => $remainingLessons,
             ];
         });
-
+    
         return response()->json(['purchases' => $purchasedCourses->values()], 200);
     }
+    
 
     public function getPurchasesByCourseId($courseId)
     {
