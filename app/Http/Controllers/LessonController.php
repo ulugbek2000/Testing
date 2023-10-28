@@ -13,11 +13,11 @@ use Illuminate\Validation\Rules\Enum;
 use Symfony\Contracts\Service\Attribute\Required;
 use Nette\Utils\Random;
 use Carbon\Carbon;
-// use getID3 ;
-use FFMpeg\FFMpeg;
-use Illuminate\Support\Facades\Auth;
+// // use getID3 ;
+// use FFMpeg\FFMpeg;
+// use Illuminate\Support\Facades\Auth;
 
-include_once('pathto/getid3.php');
+// include_once('pathto/getid3.php');
 // require 'vendor/autoload.php';
 
 class LessonController extends Controller
