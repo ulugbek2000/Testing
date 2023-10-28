@@ -39,31 +39,61 @@ class UserWalletController extends Controller
             $latestPurchase = $purchases->sortByDesc('created_at')->first();
             $course = Course::find($course_id);
     
-            // Определите прогресс для этого курса на основе данных о пользователях
-            $userProgress = UserLessonsProgress::where('user_id', $user->id)
-                ->whereIn('lesson_id', $course->lessons->pluck('id'))
-                ->get();
+            // Получите все темы для данного курса
+            $topics = $course->topics;
     
-            $completedLessons = $userProgress->where('completed', true)->count();
-            $totalLessons = $userProgress->count();
-            $remainingLessons = $totalLessons - $completedLessons;
+            $progressData = [];
     
-            $progressPercentage = $totalLessons === 0 ? 0 : ($completedLessons / $totalLessons) * 100;
+            foreach ($topics as $topic) {
+                // Получите уроки, принадлежащие этой теме
+                $lessons = $topic->lessons;
+    
+                // Определите прогресс для каждого урока внутри темы
+                $topicProgress = [];
+    
+                foreach ($lessons as $lesson) {
+                    $userProgress = UserLessonsProgress::where('user_id', $user->id)
+                        ->where('lesson_id', $lesson->id)
+                        ->first();
+    
+                    if ($userProgress) {
+                        $topicProgress[] = [
+                            'lesson_name' => $lesson->name,
+                            'completed' => $userProgress->completed,
+                        ];
+                    }
+                }
+    
+                // Соберите информацию о прогрессе для этой темы
+                $completedLessons = count(array_filter($topicProgress, function ($lesson) {
+                    return $lesson['completed'];
+                }));
+                $totalLessons = count($topicProgress);
+                $remainingLessons = $totalLessons - $completedLessons;
+    
+                $progressPercentage = $totalLessons === 0 ? 0 : ($completedLessons / $totalLessons) * 100;
+    
+                $progressData[] = [
+                    'topic_name' => $topic->name,
+                    'total_lessons' => $totalLessons,
+                    'completed_lessons' => $completedLessons,
+                    'remaining_lessons' => $remainingLessons,
+                    'progress_percentage' => $progressPercentage,
+                ];
+            }
     
             return [
                 'course' => $course,
                 'subscription_id' => $latestPurchase->subscription->id,
                 'subscription_name' => $latestPurchase->subscription->name,
                 'subscription_price' => $latestPurchase->subscription->price,
-                'total_lessons' => $totalLessons,
-                'completed_lessons' => $completedLessons,
-                'remaining_lessons' => $remainingLessons,
-                'progress_percentage' => $progressPercentage,
+                'progress_data' => $progressData,
             ];
         });
     
         return response()->json(['purchases' => $purchasedCourses->values()], 200);
     }
+    
     
 
 
