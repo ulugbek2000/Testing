@@ -12,6 +12,7 @@ use App\Http\Controllers\SessionController;
 use App\Http\Controllers\SmsController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\TopicController;
+use App\Http\Controllers\UserLessonProgressController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\UserTransactionController;
 use App\Http\Controllers\UserWalletController;
@@ -191,7 +192,7 @@ Route::middleware(['jwt.auth'])->group(function () {
 
         //Получение списка доступных подписок:
         Route::get('student/course/{course}/subscriptions', [SubscriptionController::class, 'index']);
-        Route::get('student/course-progress/{lesson_id}', [LessonController::class,'getCourseProgress']);
+        Route::get('student/course-progress/{user_id}', [UserLessonProgressController::class,'getCourseProgress']);
 
         //Просмотр информации о подписке:
         Route::get('student/subscription/{subscription}', [SubscriptionController::class, 'show']);

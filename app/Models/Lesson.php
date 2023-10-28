@@ -24,12 +24,4 @@ class Lesson extends Model
     {
         return $this->belongsTo(Topic::class, 'topic_id', 'id');
     }
-    public function lessonCount()
-    {
-        return Lesson::where('topic_id', $this->topic_id)->count();
-    }
-    public function completedLessonCount()
-    {
-        return Lesson::where('topic_id', $this->topic_id)->where('completed', true)->count();
-    }
 }

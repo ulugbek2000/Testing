@@ -13,4 +13,13 @@ class UserLessonsProgress extends Model
         'lesson_id',
         'completed',
     ];
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function lesson()
+    {
+        return $this->belongsTo(Lesson::class);
+    }
 }
