@@ -7,6 +7,7 @@ use App\Models\CourseSubscription;
 use App\Models\Subscription;
 use App\Models\User;
 use App\Models\UserCourse;
+use App\Models\UserLessonsProgress;
 use App\Models\UserSubscription;
 use App\Models\UserWallet;
 use Illuminate\Http\Request;
@@ -33,10 +34,20 @@ class UserWalletController extends Controller
     {
         $user = Auth::user();
 
+        $userProgress = UserLessonsProgress::where('user_id', $user)->get();
+        $totalLessons = count($userProgress);
+        $completedLessons = $userProgress->where('completed', true)->count();
+        if ($totalLessons === 0) {
+            $progressPercentage = 0; // Set progress to 0 if there are no lessons.
+        } else {
+            $progressPercentage = ($completedLessons / $totalLessons) * 100;
+        }
         // Получите список покупок пользователя, включая информацию о курсах и их подписках
         $purchasedCourses = $user->purchases->groupBy('course_id')->map(function ($purchases) {
             $latestPurchase = $purchases->sortByDesc('created_at')->first();
             $course = $latestPurchase->course;
+
+
 
             return [
                 'course' => $course,
@@ -46,25 +57,30 @@ class UserWalletController extends Controller
             ];
         });
 
-        return response()->json(['purchases' => $purchasedCourses->values()], 200);
+        return response()->json([
+            'purchases' => $purchasedCourses->values(), 
+            'total_lessons' => $totalLessons,
+            'completed_lessons' => $completedLessons,
+            'progress_percentage' => $progressPercentage,
+        ], 200);
     }
 
 
     public function getPurchasesByCourseId($courseId)
     {
         $user = Auth::user();
-    
+
         $latestPurchase = $user->purchases()
             ->where('course_id', $courseId)
             ->latest()
             ->first();
-    
+
         if ($latestPurchase) {
             $courseInfo = $latestPurchase->course;
-    
+
             $subscription = Subscription::find($latestPurchase->subscription_id);
             $subscriptionName = $subscription->name;
-    
+
             $purchasesInfo = [
                 'purchases' => [
                     [
@@ -85,11 +101,10 @@ class UserWalletController extends Controller
                     ],
                 ],
             ];
-    
+
             return response()->json($purchasesInfo, 200);
         } else {
             return response()->json(['message' => 'Покупка не найдена'], 404);
         }
     }
-    
 }
