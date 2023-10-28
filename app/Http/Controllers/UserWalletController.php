@@ -34,29 +34,31 @@ class UserWalletController extends Controller
     {
         $user = Auth::user();
     
-        $purchasedCourses = $user->purchases->groupBy('course_id')->map(function ($purchases) use ($user) {
-            $latestPurchase = $purchases->sortByDesc('created_at')->first();
-            $course = $latestPurchase->course;
-    
+        
+        // Получите список покупок пользователя, включая информацию о курсах и их подписках
+        $purchasedCourses = $user->purchases->groupBy('course_id')->map(function ($purchases, $course_id) {
+            $course = Course::find($course_id);
+            $user = Auth::user();
             // Определите прогресс для этого курса на основе данных о пользователях
             $userProgress = UserLessonsProgress::where('user_id', $user->id)
-                ->whereHas('lesson', function ($query) use ($course) {
-                    $query->where('course_id', $course->id);
-                })
+                ->whereIn('lesson_id', $course->lessons->pluck('id'))
                 ->get();
-            
+    
             $completedLessons = $userProgress->where('completed', true)->count();
             $totalLessons = $userProgress->count();
             $remainingLessons = $totalLessons - $completedLessons;
     
+            $progressPercentage = $totalLessons === 0 ? 0 : ($completedLessons / $totalLessons) * 100;
+    
             return [
                 'course' => $course,
-                'subscription_id' => $latestPurchase->subscription->id,
-                'subscription_name' => $latestPurchase->subscription->name,
-                'subscription_price' => $latestPurchase->subscription->price,
+                'subscription_id' => $purchases->first()->subscription->id,
+                'subscription_name' => $purchases->first()->subscription->name,
+                'subscription_price' => $purchases->first()->subscription->price,
                 'total_lessons' => $totalLessons,
                 'completed_lessons' => $completedLessons,
                 'remaining_lessons' => $remainingLessons,
+                'progress_percentage' => $progressPercentage,
             ];
         });
     
