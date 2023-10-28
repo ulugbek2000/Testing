@@ -39,15 +39,25 @@ class UserWalletController extends Controller
             $latestPurchase = $purchases->sortByDesc('created_at')->first();
             $course = Course::find($latestPurchase->course_id);
     
-            // Получите прогресс пользователя для уроков этого курса
-            $lessonProgress = UserLessonsProgress::where('user_id', $user->id)
-                ->whereIn('lesson_id', $course->lessons->pluck('id'))
-                ->get();
+            $totalLessons = 0;
+            $completedLessons = 0;
     
-            $completedLessons = $lessonProgress->where('completed', true)->count();
-            $totalLessons = count($course->lessons);
+            foreach ($course->topics as $topic) {
+                foreach ($topic->lessons as $lesson) {
+                    // Проверьте прогресс пользователя для этого урока
+                    $lessonProgress = UserLessonsProgress::where('user_id', $user->id)
+                        ->where('lesson_id', $lesson->id)
+                        ->first();
+    
+                    if ($lessonProgress && $lessonProgress->completed) {
+                        $completedLessons++;
+                    }
+    
+                    $totalLessons++;
+                }
+            }
+    
             $remainingLessons = $totalLessons - $completedLessons;
-    
             $progressPercentage = $totalLessons === 0 ? 0 : ($completedLessons / $totalLessons) * 100;
     
             return [
@@ -65,6 +75,7 @@ class UserWalletController extends Controller
     
         return response()->json(['purchases' => $purchasedCourses->values()], 200);
     }
+    
     
     public function getPurchasesByCourseId($courseId)
     {
