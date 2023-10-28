@@ -52,6 +52,7 @@ class UserWalletController extends Controller
                 if ($lessonProgress && $lessonProgress->completed) {
                     $completedLessons++;
                 }
+                dd($completedLessons);
 
                 $totalLessons++;
             }
