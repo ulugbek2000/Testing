@@ -24,8 +24,8 @@ class Lesson extends Model
     {
         return $this->belongsTo(Topic::class, 'topic_id', 'id');
     }
-    public function users()
-    {
-        return $this->belongsToMany(User::class, 'lesson_user')->withPivot('completed');
-    }
+    // public function users()
+    // {
+    //     return $this->belongsToMany(User::class, 'lesson_user')->withPivot('completed');
+    // }
 }
