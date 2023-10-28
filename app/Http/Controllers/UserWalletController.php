@@ -31,61 +31,59 @@ class UserWalletController extends Controller
     }
 
     public function getMyPurchases()
-    {
-        $user = Auth::user();
+{
+    $user = Auth::user();
 
-        // Получите список покупок пользователя, включая информацию о курсах и их подписках
-        $purchasedCourses = $user->purchases->groupBy('course_id')->map(function ($purchases) use ($user) {
-            $latestPurchase = $purchases->sortByDesc('created_at')->first();
-            $course = Course::find($latestPurchase->course_id);
+    // Получите список покупок пользователя, включая информацию о курсах и их подписках
+    $purchasedCourses = $user->purchases->groupBy('course_id')->map(function ($purchases) use ($user) {
+        $latestPurchase = $purchases->sortByDesc('created_at')->first();
+        $course = Course::find($latestPurchase->course_id);
 
-            $totalLessons = 0;
-            $completedLessons = 0;
+        $totalLessons = 0;
+        $completedLessons = 0;
 
-            foreach ($course->topics as $topic) {
-                foreach ($topic->lessons as $lesson) {
-                    // Проверьте прогресс пользователя для этого урока
-                    $lessonProgress = UserLessonsProgress::where('user_id', $user->id)
-                        ->where('lesson_id', $lesson->id)
-                        ->first();
+        foreach ($course->topics as $topic) {
+            foreach ($topic->lessons as $lesson) {
+                // Проверьте прогресс пользователя для этого урока
+                $lessonProgress = UserLessonsProgress::where('user_id', $user->id)
+                    ->where('lesson_id', $lesson->id)
+                    ->first();
 
-                    if ($lessonProgress && $lessonProgress->completed) {
-                        $completedLessons++;
-                    }
-
-                    $totalLessons++;
+                if ($lessonProgress && $lessonProgress->completed) {
+                    $completedLessons++;
                 }
+
+                $totalLessons++;
             }
+        }
 
-            $remainingLessons = $totalLessons - $completedLessons;
-            $progressPercentage = $totalLessons === 0 ? 0 : ($completedLessons / $totalLessons) * 100;
+        $remainingLessons = $totalLessons - $completedLessons;
+        $progressPercentage = $totalLessons === 0 ? 0 : ($completedLessons / $totalLessons) * 100;
 
-            $data =   [
-                'course' => [
-                    [
-                        'course' => $course->id,
-                        'logo' => $course->logo,
-                        'name' => $course->name,
-                        'slug' => $course->slug,
-                        'quantity_lessons' => $course->quantity_lessons,
-                        'hours_lessons' => $course->hours_lessons,
-                        'short_description' => $course->id,
-                        'video' => $course->video,
-                        'has_certificate' => $course->has_certificate,
+        return [
+            'course' => [
+                'id' => $course->id,
+                'logo' => $course->logo,
+                'name' => $course->name,
+                'slug' => $course->slug,
+                'quantity_lessons' => $course->quantity_lessons,
+                'hours_lessons' => $course->hours_lessons,
+                'short_description' => $course->short_description,
+                'video' => $course->video,
+                'has_certificate' => $course->has_certificate,
+            ],
+            'subscription_id' => $latestPurchase->subscription->id,
+            'subscription_name' => $latestPurchase->subscription->name,
+            'subscription_price' => $latestPurchase->subscription->price,
+            'completed_lessons' => $completedLessons,
+            'remaining_lessons' => $remainingLessons,
+            'progress_percentage' => $progressPercentage,
+        ];
+    });
 
-                    ],
-                        'subscription_id' => $latestPurchase->subscription->id,
-                        'subscription_name' => $latestPurchase->subscription->name,
-                        'subscription_price' => $latestPurchase->subscription->price,
-                        'completed_lessons' => $completedLessons,
-                        'remaining_lessons' => $remainingLessons,
-                        'progress_percentage' => $progressPercentage,
-                ],
-            ];
-        });
+    return response()->json(['purchases' => $purchasedCourses->values()], 200);
+}
 
-        return response()->json(['purchases' => $purchasedCourses->values()], 200);
-    }
 
 
 
