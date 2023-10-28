@@ -60,27 +60,28 @@ class UserWalletController extends Controller
             $remainingLessons = $totalLessons - $completedLessons;
             $progressPercentage = $totalLessons === 0 ? 0 : ($completedLessons / $totalLessons) * 100;
 
-            return  [
-                    'course' => $course->id,
-                    'logo' => $course->logo,
-                    'name' => $course->name,
-                    'slug' => $course->slug,
-                    'quantity_lessons' => $course->quantity_lessons,
-                    'hours_lessons' => $course->hours_lessons,
-                    'short_description' => $course->id,
-                    'video' => $course->video,
-                    'has_certificate' => $course->has_certificate,
-                    'subscription_id' => $latestPurchase->subscription->id,
-                    'subscription_name' => $latestPurchase->subscription->name,
-                    'subscription_price' => $latestPurchase->subscription->price,
-                    'completed_lessons' => $completedLessons,
-                    'remaining_lessons' => $remainingLessons,
-                    'progress_percentage' => $progressPercentage,
+            $data =   [
+                'course' => [
+                    [
+                        'course' => $course->id,
+                        'logo' => $course->logo,
+                        'name' => $course->name,
+                        'slug' => $course->slug,
+                        'quantity_lessons' => $course->quantity_lessons,
+                        'hours_lessons' => $course->hours_lessons,
+                        'short_description' => $course->id,
+                        'video' => $course->video,
+                        'has_certificate' => $course->has_certificate,
+
+                    ],
+                        'subscription_id' => $latestPurchase->subscription->id,
+                        'subscription_name' => $latestPurchase->subscription->name,
+                        'subscription_price' => $latestPurchase->subscription->price,
+                        'completed_lessons' => $completedLessons,
+                        'remaining_lessons' => $remainingLessons,
+                        'progress_percentage' => $progressPercentage,
+                ],
             ];
-
-
-
-            
         });
 
         return response()->json(['purchases' => $purchasedCourses->values()], 200);
