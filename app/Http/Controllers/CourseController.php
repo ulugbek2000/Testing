@@ -14,6 +14,7 @@ use App\Models\CourseSubscription;
 use App\Models\User;
 use App\Models\UserCourse;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Nette\Utils\Random;
@@ -26,7 +27,6 @@ class CourseController extends Controller
         $per_page = $request->per_page ?? 12;
 
         return CourseResource::collection(Course::paginate($per_page));
-        
     }
 
     public function search(Request $request)
@@ -212,5 +212,30 @@ class CourseController extends Controller
         $buyers = $course->users;
 
         return response()->json(['buyers' => $buyers], 200);
+    }
+
+    public function getCourseProgress($courseId)
+    {
+        $user = Auth::user();
+        $course = Course::find($courseId);
+
+        if (!$course) {
+            return response()->json(['message' => 'Курс не найден'], 404);
+        }
+
+        $completedLessons = $user->lessons()
+            ->where('topic_id', $courseId)
+            ->wherePivot('completed', true)
+            ->count();
+
+        $totalLessons = $course->lessons->count();
+
+        $progressPercentage = $totalLessons > 0 ? ($completedLessons / $totalLessons) * 100 : 0;
+
+        return response()->json([
+            'total_lessons' => $totalLessons,
+            'completed_lessons' => $completedLessons,
+            'progress_percentage' => $progressPercentage,
+        ], 200);
     }
 }

@@ -15,6 +15,8 @@ use Nette\Utils\Random;
 use Carbon\Carbon;
 // use getID3 ;
 use FFMpeg\FFMpeg;
+use Illuminate\Support\Facades\Auth;
+
 include_once('pathto/getid3.php');
 // require 'vendor/autoload.php';
 
@@ -56,18 +58,8 @@ class LessonController extends Controller
         $content = $request->input('content');
         $cover = $request->file('cover')->store('cover', 'public');
 
-
         // $lesson = new Lesson();
         $lesson->type = $type;
-
-    //! GET DURATION VIDEO 
-
-        // $getID3 = new getID3;
-        // $file = $getID3->analyze($filename);
-        // echo("Duration: ".$file['playtime_string'].
-        // " / Dimensions: ".$file['video']['resolution_x']." wide by ".$file['video']['resolution_y']." tall".
-        // " / Filesize: ".$file['filesize']." bytes<br />");
-
 
         if ($type === 'text') {
             $lesson->content = $content;
@@ -83,10 +75,15 @@ class LessonController extends Controller
             'content' => in_array($request->type, [LessonTypes::Video, LessonTypes::Audio]) ? $filePath : $request->content,
             'type' => $request->type,
         ];
+
+        $user = Auth::user();
+        $lesson->users()->attach($user, ['completed' => false]);
+
         Lesson::create($data);
 
         return response()->json(['message' => 'Lesson created successfully.']);
-    }
+    } 
+
     /**
      * Display the specified resource.
      */

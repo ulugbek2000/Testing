@@ -31,6 +31,27 @@ class UsersController extends Controller
             'users' => $users
         ], 200);
     }
+    //! Search students
+    public function search(Request $request)
+    {
+        $name = $request->input('name');
+
+        if (empty($name)) {
+            return response()->json(['error' => 'Параметр "name" отсутствует или пуст.'], 400);
+        }
+
+        $name = strtolower($name); // Приводим значение к нижнему регистру
+
+        $courses = User::whereRaw('LOWER(`name`) LIKE ?', ['%' . $name . '%'])
+            ->whereNull('deleted_at')
+            ->get();
+
+        if ($courses->isEmpty()) {
+            return response()->json(['message' => 'Нет результатов для вашего запроса.'], 200);
+        }
+
+        return response()->json(['courses' => $courses], 200);
+    }
 
     /**
      * Show the form for creating a new resource.
@@ -172,6 +193,4 @@ class UsersController extends Controller
             return response()->json(['error' => 'User not found'], 404);
         }
     }
-
-   
 }

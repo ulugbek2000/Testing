@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('lesson_id');
-            $table->boolean('watched')->default(false);
+            $table->boolean('completed')->default(false);
             $table->foreign('user_id')->references('id')->on('users');
             $table->foreign('lesson_id')->references('id')->on('lessons');
             $table->timestamps();
