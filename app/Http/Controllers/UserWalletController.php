@@ -34,11 +34,11 @@ class UserWalletController extends Controller
     {
         $user = Auth::user();
     
-        
         // Получите список покупок пользователя, включая информацию о курсах и их подписках
-        $purchasedCourses = $user->purchases->groupBy('course_id')->map(function ($purchases, $course_id) {
+        $purchasedCourses = $user->purchases->groupBy('course_id')->map(function ($purchases, $course_id) use ($user) {
+            $latestPurchase = $purchases->sortByDesc('created_at')->first();
             $course = Course::find($course_id);
-            $user = Auth::user();
+    
             // Определите прогресс для этого курса на основе данных о пользователях
             $userProgress = UserLessonsProgress::where('user_id', $user->id)
                 ->whereIn('lesson_id', $course->lessons->pluck('id'))
@@ -52,9 +52,9 @@ class UserWalletController extends Controller
     
             return [
                 'course' => $course,
-                'subscription_id' => $purchases->first()->subscription->id,
-                'subscription_name' => $purchases->first()->subscription->name,
-                'subscription_price' => $purchases->first()->subscription->price,
+                'subscription_id' => $latestPurchase->subscription->id,
+                'subscription_name' => $latestPurchase->subscription->name,
+                'subscription_price' => $latestPurchase->subscription->price,
                 'total_lessons' => $totalLessons,
                 'completed_lessons' => $completedLessons,
                 'remaining_lessons' => $remainingLessons,
@@ -65,6 +65,7 @@ class UserWalletController extends Controller
         return response()->json(['purchases' => $purchasedCourses->values()], 200);
     }
     
+
 
     public function getPurchasesByCourseId($courseId)
     {
