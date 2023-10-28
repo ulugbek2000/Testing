@@ -61,10 +61,13 @@ class UserWalletController extends Controller
             $progressPercentage = $totalLessons === 0 ? 0 : ($completedLessons / $totalLessons) * 100;
     
             return [
-                'course' => $course,
-                'subscription_id' => $latestPurchase->subscription->id,
-                'subscription_name' => $latestPurchase->subscription->name,
-                'subscription_price' => $latestPurchase->subscription->price,
+                'course' => [
+                    'id' => $course->id,
+                    'name' => $course->name,
+                    'subscription_id' => $latestPurchase->subscription->id,
+                    'subscription_name' => $latestPurchase->subscription->name,
+                    'subscription_price' => $latestPurchase->subscription->price,
+                ],
                 'progress_data' => [
                     'completed_lessons' => $completedLessons,
                     'remaining_lessons' => $remainingLessons,
@@ -75,6 +78,7 @@ class UserWalletController extends Controller
     
         return response()->json(['purchases' => $purchasedCourses->values()], 200);
     }
+    
     
     
     public function getPurchasesByCourseId($courseId)
