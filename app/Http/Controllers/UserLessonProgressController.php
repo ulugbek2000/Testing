@@ -13,8 +13,11 @@ class UserLessonProgressController extends Controller
         $totalLessons = count($userProgress);
         $completedLessons = $userProgress->where('completed', true)->count();
 
-        $progressPercentage = ($completedLessons / $totalLessons) * 100;
-
+        if ($totalLessons === 0) {
+            $progressPercentage = 0; // Set progress to 0 if there are no lessons.
+        } else {
+            $progressPercentage = ($completedLessons / $totalLessons) * 100;
+        }
         return response()->json([
             'total_lessons' => $totalLessons,
             'completed_lessons' => $completedLessons,
