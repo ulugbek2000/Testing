@@ -83,7 +83,7 @@ class LessonController extends Controller
         Lesson::create($data);
 
         return response()->json(['message' => 'Lesson created successfully.']);
-    } 
+    }
 
     /**
      * Display the specified resource.
@@ -155,5 +155,21 @@ class LessonController extends Controller
         return response()->json([
             'message' => "Lesson succefully deleted."
         ], 200);
+    }
+
+    public function getCourseProgress(Request $request)
+    {
+        $lesson = Lesson::find($request->lesson_id); // Здесь предполагается, что вы знаете lesson_id, для которого вы хотите получить прогресс.
+
+        $lessonCount = $lesson->lessonCount();
+        $completedLessonCount = $lesson->completedLessonCount();
+
+        $progressPercentage = ($completedLessonCount / $lessonCount) * 100;
+
+        return response()->json([
+            'lesson_count' => $lessonCount,
+            'completed_lesson_count' => $completedLessonCount,
+            'progress_percentage' => $progressPercentage,
+        ]);
     }
 }

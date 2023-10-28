@@ -214,28 +214,4 @@ class CourseController extends Controller
         return response()->json(['buyers' => $buyers], 200);
     }
 
-    public function getCourseProgress($courseId)
-    {
-        $user = Auth::user();
-        $course = Course::find($courseId);
-
-        if (!$course) {
-            return response()->json(['message' => 'Курс не найден'], 404);
-        }
-
-        $completedLessons = $user->lessons()
-            ->where('topic_id', $courseId)
-            ->wherePivot('completed', true)
-            ->count();
-
-        $totalLessons = $course->lessons->count();
-
-        $progressPercentage = $totalLessons > 0 ? ($completedLessons / $totalLessons) * 100 : 0;
-
-        return response()->json([
-            'total_lessons' => $totalLessons,
-            'completed_lessons' => $completedLessons,
-            'progress_percentage' => $progressPercentage,
-        ], 200);
-    }
 }

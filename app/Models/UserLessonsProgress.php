@@ -11,6 +11,6 @@ class UserLessonsProgress extends Model
     protected $fillable = [
         'user_id',
         'lesson_id',
-        'watched',
+        'completed',
     ];
 }
