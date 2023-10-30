@@ -23,7 +23,7 @@ class User extends Authenticatable implements JWTSubject
     use  HasApiTokens, HasFactory;
 
     use Notifiable, HasRoles;
-     
+
     protected $table = 'users';
 
     /**
@@ -83,6 +83,11 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasMany(UserTransaction::class);
     }
 
+    public function lessonsProgress()
+    {
+        return $this->hasMany(UserLessonProgress::class, 'user_id', 'id');
+    }
+
     public function getJWTIdentifier()
     {
         return $this->getKey();
@@ -119,9 +124,9 @@ class User extends Authenticatable implements JWTSubject
     function verifyCode($code)
     {
         $notification = $this->unreadNotifications()->where('type', 'App\Notifications\VerificationNotification')->latest()->first();
-       
+
         $result = ($notification && array_key_exists('verification', $notification->data) && $notification->data['verification'] == $code) ? true : false;
-        
+
         if ($result) {
             $this->update(['phone_verified_at' => now()]);
         }
