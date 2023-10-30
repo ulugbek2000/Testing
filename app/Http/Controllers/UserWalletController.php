@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Course;
 use App\Models\CourseSubscription;
+use App\Models\Lesson;
 use App\Models\Subscription;
 use App\Models\User;
 use App\Models\UserCourse;
@@ -34,17 +35,29 @@ class UserWalletController extends Controller
     {
         $user = Auth::user();
     
+        // Получите список покупок пользователя, включая информацию о курсах и их подписках
         $purchasedCoursesData = $user->purchases->groupBy('course_id')->map(function ($purchases) use ($user) {
             $latestPurchase = $purchases->sortByDesc('created_at')->first();
             $course = Course::find($latestPurchase->course_id);
     
-            // Получите прогресс пользователя для этого курса через отношения
-            $userProgress = $user->lessonsProgress()
-                ->whereIn('lesson_id', $course->lessons->pluck('id'))
-                ->get();
+            $totalLessons = 0;
+            $completedLessons = 0;
     
-            $totalLessons = $course->lessons->count();
-            $completedLessons = $userProgress->where('completed', true)->count();
+            // Получите уроки, связанные с темами этого курса
+            $lessons = Lesson::whereIn('topic_id', $course->topics->pluck('id'))->get();
+    
+            // Здесь вы можете выполнить проверку прогресса пользователя для каждого урока
+            foreach ($lessons as $lesson) {
+                $lessonProgress = UserLessonsProgress::where('user_id', $user->id)
+                    ->where('lesson_id', $lesson->id)
+                    ->first();
+    
+                if ($lessonProgress && $lessonProgress->completed) {
+                    $completedLessons++;
+                }
+                $totalLessons++;
+            }
+    
             $remainingLessons = $totalLessons - $completedLessons;
             $progressPercentage = $totalLessons === 0 ? 0 : ($completedLessons / $totalLessons) * 100;
     
@@ -71,6 +84,7 @@ class UserWalletController extends Controller
     
         return response()->json(['purchases' => $purchasedCoursesData->values()], 200);
     }
+    
     
 
     public function getPurchasesByCourseId($courseId)
