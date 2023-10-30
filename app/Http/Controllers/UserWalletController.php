@@ -34,33 +34,33 @@ class UserWalletController extends Controller
     public function getMyPurchases()
     {
         $user = Auth::user();
-    
+
         // Получите список покупок пользователя, включая информацию о курсах и их подписках
         $purchasedCoursesData = $user->purchases->groupBy('course_id')->map(function ($purchases) use ($user) {
             $latestPurchase = $purchases->sortByDesc('created_at')->first();
             $course = Course::find($latestPurchase->course_id);
-    dd("course", $course ,'latestPurchase' ,$latestPurchase );
+            // dd($course, $latestPurchase);
             $totalLessons = 0;
             $completedLessons = 0;
-    
+
             // Получите уроки, связанные с темами этого курса
             $lessons = Lesson::whereIn('topic_id', $course->topics->pluck('id'))->get();
-    
+
             // Здесь вы можете выполнить проверку прогресса пользователя для каждого урока
             foreach ($lessons as $lesson) {
                 $lessonProgress = UserLessonsProgress::where('user_id', $user->id)
                     ->where('lesson_id', $lesson->id)
                     ->first();
-    
+
                 if ($lessonProgress && $lessonProgress->completed) {
                     $completedLessons++;
                 }
                 $totalLessons++;
             }
-    
+
             $remainingLessons = $totalLessons - $completedLessons;
             $progressPercentage = $totalLessons === 0 ? 0 : ($completedLessons / $totalLessons) * 100;
-    
+
             return [
                 'course' => [
                     'id' => $course->id,
@@ -81,7 +81,7 @@ class UserWalletController extends Controller
                 'progress_percentage' => $progressPercentage,
             ];
         });
-    
+
         return response()->json(['purchases' => $purchasedCoursesData->values()], 200);
     }
 
