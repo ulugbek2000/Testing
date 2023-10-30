@@ -39,7 +39,7 @@ class UserWalletController extends Controller
         $purchasedCoursesData = $user->purchases->groupBy('course_id')->map(function ($purchases) use ($user) {
             $latestPurchase = $purchases->sortByDesc('created_at')->first();
             $course = Course::find($latestPurchase->course_id);
-    
+    dd('course', $course ,'latestPurchase' ,$latestPurchase );
             $totalLessons = 0;
             $completedLessons = 0;
     
@@ -84,8 +84,6 @@ class UserWalletController extends Controller
     
         return response()->json(['purchases' => $purchasedCoursesData->values()], 200);
     }
-    
-    
 
     public function getPurchasesByCourseId($courseId)
     {
