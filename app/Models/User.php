@@ -83,11 +83,6 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasMany(UserTransaction::class);
     }
 
-    public function lessonsProgress()
-    {
-        return $this->hasMany(UserLessonsProgress::class, 'user_id', 'id');
-    }
-
     public function getJWTIdentifier()
     {
         return $this->getKey();

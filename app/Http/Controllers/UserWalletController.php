@@ -6,6 +6,7 @@ use App\Models\Course;
 use App\Models\CourseSubscription;
 use App\Models\Lesson;
 use App\Models\Subscription;
+use App\Models\Topic;
 use App\Models\User;
 use App\Models\UserCourse;
 use App\Models\UserLessonsProgress;
@@ -100,6 +101,30 @@ class UserWalletController extends Controller
             $subscription = Subscription::find($latestPurchase->subscription_id);
             $subscriptionName = $subscription->name;
 
+
+            // Получить все темы курса
+            $topics = Topic::where('course_id', $courseId)->get();
+
+            // Счетчик просмотренных видео
+            $watched = 0;
+
+            // Пройти по всем темам
+            foreach ($topics as $topic) {
+                // Получить все уроки темы
+                $lessons = Lesson::where('topic_id', $topic->id)->get();
+
+                // Пройти по всем урокам
+                foreach ($lessons as $lesson) {
+                    // Получить прогресс пользователя для урока
+                    $progress = UserLessonsProgress::where('user_id', auth()->user()->id)->where('lesson_id', $lesson->id)->first();
+
+                    // Если прогресс существует и урок завершен, увеличить счетчик
+                    if ($progress && $progress->completed) {
+                        $watched++;
+                    }
+                }
+            }
+
             $purchasesInfo = [
                 'purchases' => [
                     [
@@ -117,6 +142,8 @@ class UserWalletController extends Controller
                         'subscription_id' => $latestPurchase->subscription_id,
                         'subscription_price' => $latestPurchase->price,
                         'subscription_name' => $subscriptionName,
+                        'watched' => $watched,
+                        'total' => count($topics),
                     ],
                 ],
             ];
