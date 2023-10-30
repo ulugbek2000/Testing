@@ -124,7 +124,7 @@ class UserWalletController extends Controller
                     }
                 }
             }
-
+dd($watched);
             $purchasesInfo = [
                 'purchases' => [
                     [
