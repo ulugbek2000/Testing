@@ -101,30 +101,32 @@ class UserWalletController extends Controller
             $subscription = Subscription::find($latestPurchase->subscription_id);
             $subscriptionName = $subscription->name;
 
+            // Получите список тем для указанного курса
+            $courseTopics = $courseInfo->topics;
 
-            // Получить все темы курса
-            $topics = Topic::where('course_id', $courseId)->get();
+            $totalLessons = 0;
+            $completedLessons = 0;
 
-            // Счетчик просмотренных видео
-            $watched = 0;
+            foreach ($courseTopics as $topic) {
+                $topicLessons = $topic->lessons;
 
-            // Пройти по всем темам
-            foreach ($topics as $topic) {
-                // Получить все уроки темы
-                $lessons = Lesson::where('topic_id', $topic->id)->get();
+                foreach ($topicLessons as $lesson) {
+                    // Проверьте прогресс пользователя для этого урока
+                    $lessonProgress = UserLessonsProgress::where('user_id', $user->id)
+                        ->where('lesson_id', $lesson->id)
+                        ->first();
 
-                // Пройти по всем урокам
-                foreach ($lessons as $lesson) {
-                    // Получить прогресс пользователя для урока
-                    $progress = UserLessonsProgress::where('user_id', auth()->user()->id)->where('lesson_id', $lesson->id)->first();
-
-                    // Если прогресс существует и урок завершен, увеличить счетчик
-                    if ($progress && $progress->completed) {
-                        $watched++;
+                    if ($lessonProgress && $lessonProgress->completed) {
+                        $completedLessons++;
                     }
+
+                    $totalLessons++;
                 }
             }
-dd($watched);
+
+            // Вычислите процент завершения курса
+            $progressPercentage = $totalLessons === 0 ? 0 : ($completedLessons / $totalLessons) * 100;
+
             $purchasesInfo = [
                 'purchases' => [
                     [
@@ -142,8 +144,9 @@ dd($watched);
                         'subscription_id' => $latestPurchase->subscription_id,
                         'subscription_price' => $latestPurchase->price,
                         'subscription_name' => $subscriptionName,
-                        'watched' => $watched,
-                        'total' => count($topics),
+                        'completed_lessons' => $completedLessons,
+                        'total_lessons' => $totalLessons,
+                        'progress_percentage' => $progressPercentage,
                     ],
                 ],
             ];
