@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Request as FacadesRequest;
 use Illuminate\Support\Facades\Route;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -17,7 +18,7 @@ class HasSubscriptionToCourse
      */
     public function handle(Request $request, Closure $next): Response
     {
-        dd(Route::route()->getName());
+        dd(FacadesRequest::route()->getName());
         if( Auth::check() && Auth::user()->isSubscribed($request->get('course')) )
             return $next($request);
         else abort(403);
