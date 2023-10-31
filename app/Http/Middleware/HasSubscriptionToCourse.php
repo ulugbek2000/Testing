@@ -18,7 +18,7 @@ class HasSubscriptionToCourse
      */
     public function handle(Request $request, Closure $next): Response
     {
-        dd(FacadesRequest::route()->getName());
+        dd($request->routeIs('courseTopics'));
         if( Auth::check() && Auth::user()->isSubscribed($request->get('course')) )
             return $next($request);
         else abort(403);
