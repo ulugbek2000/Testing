@@ -77,8 +77,8 @@ class LessonController extends Controller
             'type' => $request->type,
         ];
 
-        $user = Auth::user();
-        $lesson->users()->attach($user, ['completed' => false]);
+        // $user = Auth::user();
+        // $lesson->users()->attach($user, ['completed' => false]);
 
         Lesson::create($data);
 
