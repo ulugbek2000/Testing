@@ -16,6 +16,7 @@ use App\Http\Controllers\UserLessonProgressController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\UserTransactionController;
 use App\Http\Controllers\UserWalletController;
+use App\Http\Middleware\HasSubscriptionToCourse;
 use App\Http\Middleware\RoleMiddleware;
 use App\Models\UserTransaction;
 use App\Models\UserWallet;
@@ -60,12 +61,6 @@ Route::get('course/{course}', [CourseController::class, 'show']);
 
 Route::get('courses/search', [CourseController::class, 'search']);
 
-
-Route::get('course/{course}/topics', [TopicController::class, 'index']);
-
-Route::get('topic/{topic}/lessons', [LessonController::class, 'index']);
-Route::get('lesson/{lesson}', [LessonController::class, 'show']);
-
 Route::get('course/{course}/subscriptions', [SubscriptionController::class, 'index']);
 
 Route::get('course/{course}/subscriptions', [SubscriptionController::class, 'index']);
@@ -74,6 +69,12 @@ Route::get('course/{course}/skill', [CourseSkillsController::class, 'index']);
 
 Route::post('login', [AuthController::class, 'login']);
 
+
+Route::middleware(HasSubscriptionToCourse::class)->group(function () {
+    Route::get('course/{course}/topics', [TopicController::class, 'index']);
+    Route::get('topic/{topic}/lessons', [LessonController::class, 'index']);
+    Route::get('lesson/{lesson}', [LessonController::class, 'show']);
+});
 
 Route::middleware(['jwt.auth'])->group(function () {
 

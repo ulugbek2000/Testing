@@ -14,6 +14,7 @@ class UserSubscription extends Model
         'subscription_id',
         'user_id',
         'price',
+        'deleted_at'
     ];
 
     protected static function booted()

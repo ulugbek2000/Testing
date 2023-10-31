@@ -26,7 +26,7 @@ class Kernel extends HttpKernel
         // \App\Http\Middleware\SendTokenToFrontend::class,
         // \Illuminate\Session\Middleware\StartSession::class,
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
-        
+        \App\Http\Middleware\HasSubscriptionToCourse::class,
         // \Illuminate\Session\Middleware\StartSession::class,
         // \Illuminate\View\Middleware\ShareErrorsFromSession::class,
     ];

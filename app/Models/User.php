@@ -142,4 +142,9 @@ class User extends Authenticatable implements JWTSubject
             ->where('status', 'active') // Подписка активна
             ->count() > 0;
     }
+
+    function isSubscribed(Course $course) {
+        return  $this->subscriptions()
+        ->where('course_id', $course->id)->exists();
+    }
 }

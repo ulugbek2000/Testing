@@ -23,30 +23,31 @@ use Illuminate\Support\Facades\Auth;
 
 class LessonController extends Controller
 {
+
     /**
      * Display a listing of the resource.
      */
-    // public function index(Topic $topic)
-    // {
-    //     $lessons = $topic->lessons;
-
-    //     return response()->json($lessons);
-    // }
-    public function showLesson(Lesson $lesson)
+    public function index(Topic $topic)
     {
-        $user = auth()->user();
+        $lessons = $topic->lessons;
 
-        // Проверьте, есть ли у пользователя подписка на курс, связанный с уроком
-        $hasSubscription = $user->hasSubscriptionToCourse($lesson->topic->course);
-    
-        if ($hasSubscription) {
-            // Если есть подписка, верните полный урок
-            return response()->json($lesson);
-        } else {
-            // Если нет подписки, верните только имя урока
-            return response()->json(['name' => $lesson->name]);
-        }
+        return response()->json($lessons);
     }
+    // public function showLesson(Lesson $lesson)
+    // {
+    //     $user = auth()->user();
+
+    //     // Проверьте, есть ли у пользователя подписка на курс, связанный с уроком
+    //     $hasSubscription = $user->hasSubscriptionToCourse($lesson->topic->course);
+    
+    //     if ($hasSubscription) {
+    //         // Если есть подписка, верните полный урок
+    //         return response()->json($lesson);
+    //     } else {
+    //         // Если нет подписки, верните только имя урока
+    //         return response()->json(['name' => $lesson->name]);
+    //     }
+    // }
 
     /**
      * Store a newly created resource in storage.
