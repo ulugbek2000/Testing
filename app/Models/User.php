@@ -135,14 +135,6 @@ class User extends Authenticatable implements JWTSubject
         return $this->phone_verified_at != null;
     }
 
-    public function hasSubscriptionToCourse(Course $course)
-    {
-        return $this->subscriptions()
-            ->where('course_id', $course->id)
-            ->where('status', 'active') // Подписка активна
-            ->count() > 0;
-    }
-
     function isSubscribed(Course $course) {
         return  $this->subscriptions()
         ->where('course_id', $course->id)->exists();

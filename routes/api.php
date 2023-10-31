@@ -71,9 +71,9 @@ Route::post('login', [AuthController::class, 'login']);
 
 
 Route::middleware(HasSubscriptionToCourse::class)->group(function () {
-    Route::get('course/{course}/topics', [TopicController::class, 'index']);
-    Route::get('topic/{topic}/lessons', [LessonController::class, 'index']);
-    Route::get('lesson/{lesson}', [LessonController::class, 'show']);
+    Route::get('course/{course}/topics', [TopicController::class, 'index']); //0
+    Route::get('topic/{topic}/lessons', [LessonController::class, 'index']); //0
+    Route::get('lesson/{lesson}', [LessonController::class, 'show']); //0
 });
 
 Route::middleware(['jwt.auth'])->group(function () {
@@ -193,8 +193,8 @@ Route::middleware(['jwt.auth'])->group(function () {
 
         //Получение списка доступных подписок:
         Route::get('student/course/{course}/subscriptions', [SubscriptionController::class, 'index']);
-        
-        Route::get('student/course-progress', [UserLessonProgressController::class,'getCourseProgress']);
+
+        Route::get('student/course-progress', [UserLessonProgressController::class, 'getCourseProgress']);
 
         //Просмотр информации о подписке:
         Route::get('student/subscription/{subscription}', [SubscriptionController::class, 'show']);

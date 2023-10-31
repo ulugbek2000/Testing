@@ -33,21 +33,6 @@ class LessonController extends Controller
 
         return response()->json($lessons);
     }
-    // public function showLesson(Lesson $lesson)
-    // {
-    //     $user = auth()->user();
-
-    //     // Проверьте, есть ли у пользователя подписка на курс, связанный с уроком
-    //     $hasSubscription = $user->hasSubscriptionToCourse($lesson->topic->course);
-    
-    //     if ($hasSubscription) {
-    //         // Если есть подписка, верните полный урок
-    //         return response()->json($lesson);
-    //     } else {
-    //         // Если нет подписки, верните только имя урока
-    //         return response()->json(['name' => $lesson->name]);
-    //     }
-    // }
 
     /**
      * Store a newly created resource in storage.
