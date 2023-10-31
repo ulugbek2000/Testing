@@ -16,7 +16,7 @@ class HasSubscriptionToCourse
      */
     public function handle(Request $request, Closure $next): Response
     {
-        dd($request->segments());
+        dd($request->route()->getName());
         if( Auth::check() && Auth::user()->isSubscribed($request->get('course')) )
             return $next($request);
         else abort(403);

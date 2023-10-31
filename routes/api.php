@@ -71,9 +71,9 @@ Route::post('login', [AuthController::class, 'login']);
 
 
 Route::middleware(HasSubscriptionToCourse::class)->group(function () {
-    Route::get('course/{course}/topics', [TopicController::class, 'index']); //0
-    Route::get('topic/{topic}/lessons', [LessonController::class, 'index']); //0
-    Route::get('lesson/{lesson}', [LessonController::class, 'show']); //0
+    Route::get('course/{course}/topics', [TopicController::class, 'index'])->name('courseTopics'); //0
+    Route::get('topic/{topic}/lessons', [LessonController::class, 'index'])->name('topicLessons'); //0
+    Route::get('lesson/{lesson}', [LessonController::class, 'show'])->name('lesson'); //0
 });
 
 Route::middleware(['jwt.auth'])->group(function () {
