@@ -26,21 +26,26 @@ class LessonController extends Controller
     /**
      * Display a listing of the resource.
      */
+    // public function index(Topic $topic)
+    // {
+    //     $lessons = $topic->lessons;
+
+    //     return response()->json($lessons);
+    // }
     public function index(Topic $topic)
     {
+        $user = auth()->user();
         $lessons = $topic->lessons;
 
+        $course = $topic->course;
+
+        if (!$user->hasPurchasedCourse($course)) {
+            $lessons = $lessons->map(function ($lesson) {
+                return ['name' => $lesson->name];
+            });
+        }
+
         return response()->json($lessons);
-    }
-
-
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
     }
 
     /**
@@ -54,12 +59,10 @@ class LessonController extends Controller
             'cover' => 'image|file',
             'duration' => 'string|nullable',
         ]);
-        // dd()->response()->json($request);
         $type = $request->input('type');
         $content = $request->input('content');
         $cover = $request->file('cover')->store('cover', 'public');
 
-        // $lesson = new Lesson();
         $lesson->type = $type;
 
         if ($type === 'text') {
