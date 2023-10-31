@@ -19,15 +19,15 @@ class HasSubscriptionToCourse
     public function handle(Request $request, Closure $next): Response
     {
         if($request->routeIs('courseTopics')) 
-            $courseId = $request->course;
+            $course = $request->course;
         if($request->routeIs('topicLessons')) 
-            $courseId = $request->topic;
+            $course = $request->topic->course;
         if($request->routeIs('lesson')) 
-            $courseId = $request->lesson;
+            $course = $request->lesson->topic->course;
         
-            dd($courseId);
-            
-        if( Auth::check() && Auth::user()->isSubscribed($request->get('course')) )
+            dd($course->id);
+
+        if( Auth::check() && Auth::user()->isSubscribed($course) )
             return $next($request);
         else abort(403);
     }
