@@ -32,20 +32,20 @@ class LessonController extends Controller
 
     //     return response()->json($lessons);
     // }
-    public function index(Topic $topic)
+    public function showLesson(Lesson $lesson)
     {
         $user = auth()->user();
-        $lessons = $topic->lessons;
 
-        $course = $topic->course;
-
-        if (!$user->hasPurchasedCourse($course)) {
-            $lessons = $lessons->map(function ($lesson) {
-                return ['name' => $lesson->name];
-            });
+        // Проверьте, есть ли у пользователя подписка на курс, связанный с уроком
+        $hasSubscription = $user->hasSubscriptionToCourse($lesson->topic->course);
+    
+        if ($hasSubscription) {
+            // Если есть подписка, верните полный урок
+            return response()->json($lesson);
+        } else {
+            // Если нет подписки, верните только имя урока
+            return response()->json(['name' => $lesson->name]);
         }
-
-        return response()->json($lessons);
     }
 
     /**
