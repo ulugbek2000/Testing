@@ -26,7 +26,7 @@ class Kernel extends HttpKernel
         // \App\Http\Middleware\SendTokenToFrontend::class,
         // \Illuminate\Session\Middleware\StartSession::class,
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
-        \App\Http\Middleware\HasSubscriptionToCourse::class,
+        // \App\Http\Middleware\HasSubscriptionToCourse::class,
         // \Illuminate\Session\Middleware\StartSession::class,
         // \Illuminate\View\Middleware\ShareErrorsFromSession::class,
     ];
@@ -87,5 +87,6 @@ class Kernel extends HttpKernel
         'auth.custom' => SendTokenToFrontend::class,
         'admin.api' => \App\Http\Middleware\AdminApiMiddleware::class,
         'access' => RoleMiddleware::class,
+        'subscriptionAccess' => \App\Http\Middleware\HasSubscriptionToCourse::class,
     ];
 }
