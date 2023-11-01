@@ -25,6 +25,8 @@ class HasSubscriptionToCourse
         if ($request->routeIs('lesson'))
             $course = $request->lesson->topic->course;
 
+        dd(Auth::check() && Auth::user()->isSubscribed($course), $course);
+
         if (Auth::check() && Auth::user()->isSubscribed($course)) {
                 return $next($request);
             } else {
