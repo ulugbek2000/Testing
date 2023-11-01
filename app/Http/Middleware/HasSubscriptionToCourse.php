@@ -41,19 +41,20 @@ class HasSubscriptionToCourse
     }
     private function showOnlyNamesOfLessons(Request $request, Closure $next)
     {
-    
         $response = $next($request);
-
+    
         $data = json_decode($response->content(), true);
-
+    
         if (is_array($data)) {
-            foreach ($data as &$item) {
-                $item = ['name' => $item['name']];
+            $filteredData = [];
+            foreach ($data as $item) {
+                $filteredData[] = ['name' => $item['name']];
             }
-
-            return response()->json($data);
+    
+            return response()->json($filteredData);
         }
-
+    
         return $response;
     }
+    
 }
