@@ -89,6 +89,7 @@ class LessonController extends Controller
     {
         if($lesson->topic->lessons()->first()->id == $lesson->id || (Auth::check() && Auth::user()->isSubscribed($lesson->topic->course)))
             return response()->json([
+                'id' => $lesson->id,
                 'lessons' => $lesson
             ], 200);
         
