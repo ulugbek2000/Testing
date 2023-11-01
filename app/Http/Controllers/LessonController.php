@@ -15,12 +15,6 @@ use Nette\Utils\Random;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 
-// // use getID3 ;
-// use FFMpeg\FFMpeg;
-
-// include_once('pathto/getid3.php');
-// require 'vendor/autoload.php';
-
 class LessonController extends Controller
 {
 
@@ -32,9 +26,10 @@ class LessonController extends Controller
         $lessons = $topic->lessons;
 
 
-        if (Auth::check() && Auth::user()->isSubscribed($topic->course)) {
+        if (Auth::check() && Auth::user()->isSubscribed($topic->course))
             return response()->json($lessons);
-        } elseif ($topic->lessons->isNotEmpty()) {
+
+        if ($topic->lessons->isNotEmpty()) {
             $data = array_merge([$topic->lessons()->first()], $topic->lessons->map(function ($v) {
                 return [
                     'id' => $v->id,
@@ -45,23 +40,6 @@ class LessonController extends Controller
         } else {
             return response()->json([]);
         }
-        // if(Auth::check() && Auth::user()->isSubscribed($topic->course))
-        //     return response()->json($lessons);
-
-        // $data = array_merge( [$topic->lessons()->first()], $topic->lessons->map(function ($v) {
-        //     return [
-        //         'id'=>$v->id,
-        //         'name'=>$v->name
-        //     ];
-        // })->toArray());
-        // return response()->json($data);
-        // if(($topic->lessons->isNotEmpty()))
-        //     return response()->json([]);
-
-
-
-
-
     }
 
     /**
@@ -96,9 +74,6 @@ class LessonController extends Controller
             'type' => $request->type,
         ];
 
-        // $user = Auth::user();
-        // $lesson->users()->attach($user, ['completed' => false]);
-
         Lesson::create($data);
 
         return response()->json(['message' => 'Lesson created successfully.']);
@@ -111,7 +86,6 @@ class LessonController extends Controller
     {
         if ($lesson->topic->lessons()->first()->id == $lesson->id || (Auth::check() && Auth::user()->isSubscribed($lesson->topic->course)))
             return response()->json([
-                // 'id' => $lesson->id,
                 'lessons' => $lesson
             ], 200);
 
