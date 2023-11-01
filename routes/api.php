@@ -70,7 +70,7 @@ Route::get('course/{course}/skill', [CourseSkillsController::class, 'index']);
 Route::post('login', [AuthController::class, 'login']);
 
 
-Route::middleware('subscriptionAccess')->group(function () {
+Route::middleware('subscriptionAccess:')->group(function () {
     Route::get('course/{course}/topics', [TopicController::class, 'index'])->name('courseTopics');
     Route::get('topic/{topic}/lessons', [LessonController::class, 'index'])->name('topicLessons');
     Route::get('lesson/{lesson}', [LessonController::class, 'show'])->name('lesson');

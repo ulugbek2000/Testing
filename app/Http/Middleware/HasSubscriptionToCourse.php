@@ -19,17 +19,17 @@ class HasSubscriptionToCourse
     public function handle(Request $request, Closure $next): Response
     {
         if (Auth::check() && Auth::user()->isSubscribed($course)) {
-            // Пользователь имеет подписку, позвольте доступ к полным урокам
             return $next($request);
         } else {
             return $this->showContentAsText($request, $next);
         }
+
         if ($request->routeIs('courseTopics'))
             $course = $request->course;
         if ($request->routeIs('topicLessons'))
             $course = $request->topic->course;
         if ($request->routeIs('lesson'))
-            $course = $request->lesson;
+            $course = $request->lesson->topic->course;
     }
 
     private function showContentAsText(Request $request, Closure $next)
