@@ -43,9 +43,7 @@ class HasSubscriptionToCourse
     private function showContentAsText(Request $request, Closure $next)
     {
         $response = $next($request);
-        dd($response);
         $data = json_decode($response->content(), true);
-      
 
         if (is_array($data)) {
             $filteredData = [];
