@@ -203,13 +203,6 @@ Route::middleware(['jwt.auth'])->group(function () {
         Route::get('student/course/{course}/topics', [TopicController::class, 'index']);
         Route::get('student/topic/{topic}', [TopicController::class, 'show']);
 
-        // Получение уроки доступных темы:
-        Route::get('student/topic/{topic}/lessons', [LessonController::class, 'index']);
-
-        Route::get('student/lesson/{lesson}/active', [LessonController::class, 'index']);
-
-        Route::get('student/lesson/{lesson}', [LessonController::class, 'show']);
-
         //получение скиллы 
         Route::get('student/course/{course}/skill', [CourseSkillsController::class, 'index']);
 
