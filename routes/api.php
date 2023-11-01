@@ -69,11 +69,11 @@ Route::get('course/{course}/skill', [CourseSkillsController::class, 'index']);
 
 Route::post('login', [AuthController::class, 'login']);
 
-Route::get('course/{course}/topics', [TopicController::class, 'index'])->name('courseTopics');
+Route::get('course/{course}/topics', [TopicController::class, 'index']);
 
 // Route::middleware('subscriptionAccess')->group(function () {
-    Route::get('topic/{topic}/lessons', [LessonController::class, 'index'])->name('topicLessons');
-    Route::get('lesson/{lesson}', [LessonController::class, 'show'])->name('lesson');
+    Route::get('topic/{topic}/lessons', [LessonController::class, 'index']);
+    Route::get('lesson/{lesson}', [LessonController::class, 'show']);
 // });
 
 Route::middleware(['jwt.auth'])->group(function () {
@@ -195,6 +195,9 @@ Route::middleware(['jwt.auth'])->group(function () {
         Route::get('student/course/{course}/subscriptions', [SubscriptionController::class, 'index']);
 
         Route::get('student/course-progress', [UserLessonProgressController::class, 'getCourseProgress']);
+
+        Route::get('topic/{topic}/lessons', [LessonController::class, 'index']);
+        Route::get('lesson/{lesson}', [LessonController::class, 'show']);
 
         //Просмотр информации о подписке:
         Route::get('student/subscription/{subscription}', [SubscriptionController::class, 'show']);
