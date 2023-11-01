@@ -42,10 +42,10 @@ class HasSubscriptionToCourse
         if (is_array($data)) {
             $filteredData = [];
             foreach ($data as $item) {
-            if (array_key_exists('name', $item)) {
+            if (array_key_exists('content', $item)) {
                 // Преобразование контента в строку
-                $contentAsString = (string) $item['name'];
-                $item['name'] = $contentAsString;
+                $contentAsString = (string) $item['content'];
+                $item['content'] = $contentAsString;
             }
             $filteredData[] = $item;
         
