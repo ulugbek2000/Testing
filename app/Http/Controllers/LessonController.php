@@ -33,17 +33,18 @@ class LessonController extends Controller
             $firstLesson = $topic->lessons()->first();
     
             if (!session()->has('first_lesson_shown')) {
+                $data = [];
                 $data = $firstLesson;
                 session(['first_lesson_shown' => true]);
             }
     
-            $data1 = array_merge($data, $lessons->slice(1)->map(function ($v) {
+            $data = array_merge($data, $lessons->slice(1)->map(function ($v) {
                 return [
                     'id' => $v->id,
                     'name' => $v->name
                 ];
             })->toArray());
-            return response()->json($data1);
+            return response()->json($data);
         } else {
             return response()->json([]);
         }
