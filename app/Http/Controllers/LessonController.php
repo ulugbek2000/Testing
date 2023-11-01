@@ -40,8 +40,10 @@ class LessonController extends Controller
                 'name'=>$v->name
             ];
         })->toArray());
-        if($data == null)
-        return [];
+        if($data == null){
+            return [];
+        }
+        
         return response()->json($data);
        
     }
