@@ -25,17 +25,14 @@ class HasSubscriptionToCourse
         if ($request->routeIs('lesson'))
             $course = $request->lesson->topic->course;
 
-        if (Auth::check()) {
-            // Пользователь аутентифицирован
-            if (Auth::user()->isSubscribed($course)) {
+        if (Auth::check() && Auth::user()->isSubscribed($course)) {
                 // Пользователь имеет подписку, позвольте доступ к полным урокам
                 return $next($request);
             } else {
                 return $this->showContentAsText($request, $next);
             }
         }
-    }
-
+    
     private function showContentAsText(Request $request, Closure $next)
     {
         $response = $next($request);
