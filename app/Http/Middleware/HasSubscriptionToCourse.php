@@ -48,9 +48,12 @@ class HasSubscriptionToCourse
         if (is_array($data)) {
             $filteredData = [];
             foreach ($data as $item) {
-                // Преобразование контента в строку
-                $contentAsString = (string) $item['content'];
-                $filteredData[] = ['content' => $contentAsString];
+                if (isset($item['content'])) {
+                    // Преобразование контента в строку
+                    $contentAsString = (string) $item['content'];
+                    $filteredData[] = ['content' => $contentAsString];
+                }
+            
             }
 
             return response()->json($filteredData);
