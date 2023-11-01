@@ -18,6 +18,7 @@ class HasSubscriptionToCourse
      */
     public function handle(Request $request, Closure $next): Response
     {
+        $course = 0;
         if ($request->routeIs('courseTopics'))
             $course = $request->course;
         if ($request->routeIs('topicLessons'))
@@ -25,9 +26,8 @@ class HasSubscriptionToCourse
         if ($request->routeIs('lesson'))
             $course = $request->lesson->topic->course;
 
-        dd(Auth::check() && Auth::user()->isSubscribed($course), $course);
-
         if (Auth::check() && Auth::user()->isSubscribed($course)) {
+            dd(Auth::check() && Auth::user()->isSubscribed($course), $course);
                 return $next($request);
             } else {
                 return $this->showContentAsText($request, $next);
