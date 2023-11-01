@@ -39,12 +39,13 @@ class HasSubscriptionToCourse
             return $this->showContentAsText($request, $next);
         }
     }
-    
+
     private function showContentAsText(Request $request, Closure $next)
     {
         $response = $next($request);
 
         $data = json_decode($response->content(), true);
+        dd($data);
 
         if (is_array($data)) {
             $filteredData = [];
