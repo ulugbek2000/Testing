@@ -36,7 +36,7 @@ class LessonController extends Controller
 
         $data = array_merge( [$topic->lessons()->first()], $topic->lessons->map(function ($v) {
             return ['name'=>$v->name];
-        }));
+        })->toArray());
         return response()->json($data);
     }
 
