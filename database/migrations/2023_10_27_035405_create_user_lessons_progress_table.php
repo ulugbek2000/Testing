@@ -15,10 +15,11 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('lesson_id');
-            $table->foreignId('course_id')->references('id')->on('courses')->nullOnDelete();
+            $table->unsignedBigInteger('course_id');
             $table->boolean('completed')->default(false);
             $table->foreign('user_id')->references('id')->on('users');
             $table->foreign('lesson_id')->references('id')->on('lessons');
+            $table->foreign('course_id')->references('id')->on('courses');
             $table->timestamps();
         });
     }
