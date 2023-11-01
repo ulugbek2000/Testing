@@ -40,11 +40,12 @@ class LessonController extends Controller
                 'name'=>$v->name
             ];
         })->toArray());
-        if($data === null){
-            return response()->json([]);
-        }
-        
         return response()->json($data);
+        if(($topic->lessons->isNotEmpty()))
+            return response()->json([]);
+        
+        
+      
        
     }
 
