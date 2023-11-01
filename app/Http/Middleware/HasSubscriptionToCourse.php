@@ -32,29 +32,31 @@ class HasSubscriptionToCourse
                 return $next($request);
             } else {
                 // Пользователь аутентифицирован, но не имеет подписку, верните только имя уроков
-                return $this->showOnlyNamesOfLessons($request, $next);
+                return $this->showContentAsText($request, $next);
             }
         } else {
             // Гость не имеет доступ к полным урокам, верните только имя уроков
-            return $this->showOnlyNamesOfLessons($request, $next);
+            return $this->showContentAsText($request, $next);
         }
     }
-    private function showOnlyNamesOfLessons(Request $request, Closure $next)
+    
+    private function showContentAsText(Request $request, Closure $next)
     {
         $response = $next($request);
-    
+
         $data = json_decode($response->content(), true);
-    
+
         if (is_array($data)) {
             $filteredData = [];
             foreach ($data as $item) {
-                $filteredData[] = ['name' => $item['name']];
+                // Преобразование контента в строку
+                $contentAsString = (string) $item['content'];
+                $filteredData[] = ['content' => $contentAsString];
             }
-    
+
             return response()->json($filteredData);
         }
-    
+
         return $response;
     }
-    
 }
