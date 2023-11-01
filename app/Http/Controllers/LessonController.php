@@ -30,29 +30,32 @@ class LessonController extends Controller
         }
     
         if ($topic->lessons->isNotEmpty()) {
+            $data = [];
+    
+            // Get the first lesson
             $firstLesson = $topic->lessons()->first();
     
             if (!session()->has('first_lesson_shown')) {
-                $data = [];
-                $data = $firstLesson;
+                // The first lesson has not been shown, add it
+                $data[] = $firstLesson->toArray();
+                // Mark that the first lesson has been shown
                 session(['first_lesson_shown' => true]);
             }
     
-            $data = array_merge($lessons->slice(1)->map(function ($v) {
+            // Add the rest of the lessons, starting from the second
+            $data = array_merge($data, $lessons->slice(1)->map(function ($v) {
                 return [
                     'id' => $v->id,
                     'name' => $v->name
                 ];
             })->toArray());
+    
             return response()->json($data);
         } else {
             return response()->json([]);
         }
     }
     
-    
-
-
     /**
      * Store a newly created resource in storage.
      */
