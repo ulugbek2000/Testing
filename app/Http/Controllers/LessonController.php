@@ -79,10 +79,29 @@ class LessonController extends Controller
      */
     public function show(Lesson $lesson)
     {
-        // Return Json Response
-        return response()->json([
-            'lessons' => $lesson
-        ], 200);
+        // // Return Json Response
+        // return response()->json([
+        //     'lessons' => $lesson
+        // ], 200);
+         // Извлекаем имя файла из пути в поле "content"
+    $contentPath = $lesson->content;
+    $contentName = basename($contentPath);
+
+    // Создаем новый массив данных с именем файла вместо пути
+    $lessonData = [
+        'id' => $lesson->id,
+        'topic_id' => $lesson->topic_id,
+        'name' => $lesson->name,
+        'content' => $contentName, // Используем имя файла
+        'duration' => $lesson->duration,
+        'cover' => $lesson->cover,
+        'type' => $lesson->type,
+        'created_at' => $lesson->created_at,
+        'updated_at' => $lesson->updated_at,
+        'deleted_at' => $lesson->deleted_at,
+    ];
+
+    return response()->json($lessonData);
     }
     /**
      * Show the form for editing the specified resource.
