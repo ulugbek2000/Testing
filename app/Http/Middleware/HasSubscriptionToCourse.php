@@ -33,27 +33,27 @@ class HasSubscriptionToCourse
             }
         }
     
-    private function showContentAsText(Request $request, Closure $next)
-    {
-        $response = $next($request);
-
-        $data = json_decode($response->content(), true);
-
-        if (is_array($data)) {
-            $filteredData = [];
-            foreach ($data as $item) {
-            if (array_key_exists('content', $item)) {
-                // Преобразование контента в строку
-                $contentAsString = (string) $item['content'];
-                $item['content'] = $contentAsString;
-            }
-            $filteredData[] = $item;
+        private function showContentAsText(Request $request, Closure $next)
+        {
+            $response = $next($request);
         
-     
-
-            return response()->json($filteredData);
+            $data = json_decode($response->content(), true);
+        
+            if (is_array($data)) {
+                $filteredData = [];
+                foreach ($data as $item) {
+                    if (is_array($item) && array_key_exists('content', $item)) {
+                        // Преобразование контента в строку
+                        $contentAsString = (string) $item['content'];
+                        $item['content'] = $contentAsString;
+                    }
+                    $filteredData[] = $item;
+                }
+        
+                return response()->json($filteredData);
+            }
+        
+            return $response;
         }
-    }
-        return $response;
-    }
+        
 }
