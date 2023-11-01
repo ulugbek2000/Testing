@@ -30,6 +30,7 @@ class HasSubscriptionToCourse
             dd(Auth::check() && Auth::user()->isSubscribed($course), $course);
                 return $next($request);
             } else {
+                return 'dafsha';
                 return $this->showContentAsText($request, $next);
             }
         }
