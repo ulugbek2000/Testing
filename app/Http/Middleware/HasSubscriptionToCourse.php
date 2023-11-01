@@ -31,12 +31,8 @@ class HasSubscriptionToCourse
                 // Пользователь имеет подписку, позвольте доступ к полным урокам
                 return $next($request);
             } else {
-                // Пользователь аутентифицирован, но не имеет подписку, верните только имя уроков
                 return $this->showContentAsText($request, $next);
             }
-        } else {
-            // Гость не имеет доступ к полным урокам, верните только имя уроков
-            return $this->showContentAsText($request, $next);
         }
     }
 
