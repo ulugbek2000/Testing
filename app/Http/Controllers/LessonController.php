@@ -21,56 +21,29 @@ class LessonController extends Controller
     /**
      * Display a listing of the resource.
      */
-    // public function index(Topic $topic)
-    // {
-    //     $lessons = $topic->lessons;
-
-
-    //     if (Auth::check() && Auth::user()->isSubscribed($topic->course))
-    //         return response()->json($lessons);
-
-    //     if ($topic->lessons->isNotEmpty()) {
-    //         $data = array_merge([$topic->lessons()->first()], $topic->lessons->map(function ($v) {
-    //             // $firstLesson = $topic->lessons->shift();
-    //             return [
-    //                 'id' => $v->id,
-    //                 'name' => $v->name
-    //             ];
-    //         })->toArray());
-    //         return response()->json($data);
-    //     } else {
-    //         return response()->json([]);
-    //     }
-    // }
-
     public function index(Topic $topic)
     {
         $lessons = $topic->lessons;
-        $data = [];
 
-        if (Auth::check() && Auth::user()->isSubscribed($topic->course)) {
-            // Пользователь аутентифицирован и подписан на курс, вернуть полный список уроков
-            $data = $lessons;
-        } else {
-            if ($lessons->isNotEmpty()) {
-                // Уроки существуют
-                $firstLesson = $lessons->shift(); // Уберем первый урок
-                $data[] = [
-                    'id' => $firstLesson->id,
-                    'name' => $firstLesson->name
-                ];
-            }
-            // Остальные уроки, начиная с второго
-            $data = array_merge($data, $lessons->map(function ($v) {
+
+        if (Auth::check() && Auth::user()->isSubscribed($topic->course))
+            return response()->json($lessons);
+
+        if ($topic->lessons->isNotEmpty()) {
+            $data = array_merge([$topic->lessons()->first()], $topic->lessons->shift()->map(function ($v) {
+                // $firstLesson = $topic->lessons->shift();
                 return [
                     'id' => $v->id,
                     'name' => $v->name
                 ];
             })->toArray());
+            return response()->json($data);
+        } else {
+            return response()->json([]);
         }
-
-        return response()->json($data);
     }
+
+ 
 
 
     /**
