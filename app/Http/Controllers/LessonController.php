@@ -40,7 +40,7 @@ class LessonController extends Controller
                 'name'=>$v->name
             ];
         })->toArray());
-        if($data == null){
+        if($data === null){
             return [''];
         }
         
