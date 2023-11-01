@@ -79,26 +79,11 @@ class LessonController extends Controller
      */
     public function show(Lesson $lesson)
     {
-        // Выберите только нужные поля
-        $contentText = strip_tags($lesson->content);
-
-        $response = [
-            'id' => $lesson->id,
-            'topic_id' => $lesson->topic_id,
-            'name' => $lesson->name,
-            'duration' => $lesson->duration,
-            'cover' => $lesson->cover,
-            'content'=>$contentText,
-            'type' => $lesson->type,
-            'created_at' => $lesson->created_at,
-            'updated_at' => $lesson->updated_at,
-            'deleted_at' => $lesson->deleted_at,
-        ];
-    
-        // Верните JSON Response с выбранными полями
-        return response()->json($response, 200);
+        // Return Json Response
+        return response()->json([
+            'lessons' => $lesson
+        ], 200);
     }
-    
     /**
      * Show the form for editing the specified resource.
      */
