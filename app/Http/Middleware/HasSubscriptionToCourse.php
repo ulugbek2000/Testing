@@ -27,11 +27,9 @@ class HasSubscriptionToCourse
             $course = $request->lesson->topic->course;
 
         if (Auth::check() && Auth::user()->isSubscribed($course)) {
-            dd(Auth::check() && Auth::user()->isSubscribed($course), $course);
                 return $next($request);
             } else {
-                return 'dafsha';
-                return $this->showContentAsText($request, $next);
+                abort(403);
             }
         }
     
