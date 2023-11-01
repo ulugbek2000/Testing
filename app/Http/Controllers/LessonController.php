@@ -41,7 +41,6 @@ class LessonController extends Controller
             ];
         })->toArray());
         if($data == null)
-        dd($data);
         return [];
         return response()->json($data);
        
