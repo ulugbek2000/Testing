@@ -87,7 +87,7 @@ class LessonController extends Controller
      */
     public function show(Lesson $lesson)
     {
-        if($lesson->topic()->lessons()->first()->id == $lesson->id || (Auth::check() && Auth::user()->isSubscribed($lesson->course)))
+        if($lesson->topic->lessons()->first()->id == $lesson->id || (Auth::check() && Auth::user()->isSubscribed($lesson->course)))
             return response()->json([
                 'lessons' => $lesson
             ], 200);
