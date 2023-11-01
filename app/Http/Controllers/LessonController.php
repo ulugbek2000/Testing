@@ -40,10 +40,11 @@ class LessonController extends Controller
                 'name'=>$v->name
             ];
         })->toArray());
-        return response()->json($data);
         if($data == null)
         dd($data);
         return [];
+        return response()->json($data);
+       
     }
 
     /**
