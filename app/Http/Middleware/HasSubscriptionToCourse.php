@@ -18,7 +18,8 @@ class HasSubscriptionToCourse
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $course = 0;
+        $course = null;
+
         if ($request->routeIs('courseTopics'))
             $course = $request->course;
         if ($request->routeIs('topicLessons'))
@@ -26,34 +27,9 @@ class HasSubscriptionToCourse
         if ($request->routeIs('lesson'))
             $course = $request->lesson->topic->course;
 
-        if (Auth::check() && Auth::user()->isSubscribed($course)) {
-                return $next($request);
-            } else {
-                abort(403);
-            }
-        }
-    
-        private function showContentAsText(Request $request, Closure $next)
-        {
-            $response = $next($request);
+        if (Auth::check() && Auth::user()->isSubscribed($course))
+            return $next($request);
         
-            $data = json_decode($response->content(), true);
-        
-            if (is_array($data)) {
-                $filteredData = [];
-                foreach ($data as $item) {
-                    if (is_array($item) && array_key_exists('name', $item)) {
-                        // Преобразование контента в строку
-                        $contentAsString = (string) $item['name'];
-                        $item['name'] = $contentAsString;
-                    }
-                    $filteredData[] = $item;
-                }
-        
-                return response()->json($filteredData);
-            }
-        
-            return $response;
-        }
-        
+        return abort(403);
+    }
 }

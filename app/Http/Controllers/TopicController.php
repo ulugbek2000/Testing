@@ -6,6 +6,7 @@ use App\Models\Course;
 use App\Models\Topic;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class TopicController extends Controller
 {
@@ -16,7 +17,7 @@ class TopicController extends Controller
     public function index(Course $course)
     {
         $topics = $course->topics;
-        return response()->json($topics);
+            return response()->json($topics);
     }
 
 

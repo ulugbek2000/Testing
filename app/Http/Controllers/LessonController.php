@@ -31,7 +31,11 @@ class LessonController extends Controller
     {
         $lessons = $topic->lessons;
 
-        return response()->json($lessons);
+        if(Auth::check() && Auth::user()->isSubscribed($topic->course))
+            return response()->json($lessons);
+
+        $data = [0 => $topic->lessons()->first(), $topic->lessons()->pluck('name')];
+        return response()->json($data);
     }
 
     /**
