@@ -28,22 +28,22 @@ class LessonController extends Controller
 
         if (Auth::check() && Auth::user()->isSubscribed($topic->course))
             return response()->json($lessons);
-
+      
         if ($topic->lessons->isNotEmpty()) {
             $data = array_merge([$topic->lessons()->first()], $topic->lessons->shift()->map(function ($v) {
-                // $firstLesson = $topic->lessons->shift();
                 return [
                     'id' => $v->id,
                     'name' => $v->name
                 ];
             })->toArray());
+            $firstLesson = $topic->lessons->shift();
             return response()->json($data);
         } else {
             return response()->json([]);
         }
     }
 
- 
+
 
 
     /**
