@@ -39,7 +39,7 @@ class LessonController extends Controller
                 'id'=>$v->id,
                 'name'=>$v->name
             ];
-        })->toArray());
+        }));
         return response()->json($data);
     }
 

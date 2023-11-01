@@ -220,7 +220,5 @@ Route::middleware(['jwt.auth'])->group(function () {
         // Route::get('/courses/{course}/buyers', [UserWalletController::class,'getCourseBuyers']);
     });
 
-
-
     Route::post('logout', [AuthController::class, 'logout']);
 });
