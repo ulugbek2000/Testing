@@ -35,7 +35,9 @@ class LessonController extends Controller
             return response()->json($lessons);
 
         $data = array_merge( [$topic->lessons()->first()], $topic->lessons->map(function ($v) {
-            return ['name'=>$v->name];
+            return [
+                'name'=>$v->name
+            ];
         })->toArray());
         return response()->json($data);
     }
@@ -85,10 +87,12 @@ class LessonController extends Controller
      */
     public function show(Lesson $lesson)
     {
-        // Return Json Response
-        return response()->json([
-            'lessons' => $lesson
-        ], 200);
+        if($lesson->topic()->lessons()->first()->id == $lesson->id || (Auth::check() && Auth::user()->isSubscribed($lesson->course)))
+            return response()->json([
+                'lessons' => $lesson
+            ], 200);
+        
+        return abort(403);
     }
     /**
      * Show the form for editing the specified resource.
