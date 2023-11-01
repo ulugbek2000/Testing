@@ -56,7 +56,7 @@ class HasSubscriptionToCourse
             }
             $filteredData[] = $item;
         
-        dd($filteredData);
+     
 
             return response()->json($filteredData);
         }
