@@ -43,17 +43,16 @@ class HasSubscriptionToCourse
     private function showContentAsText(Request $request, Closure $next)
     {
         $response = $next($request);
+
         $data = json_decode($response->content(), true);
 
         if (is_array($data)) {
             $filteredData = [];
             foreach ($data as $item) {
-                if (isset($item['content'])) {
-                    // Преобразование контента в строку
-                    $contentAsString = (string) $item['content'];
-                    $filteredData[] = ['content' => $contentAsString];
-                }
-            
+                // Преобразование контента в строку
+                $contentAsString = (string) $item['content'];
+                $item['content'] = $contentAsString;
+                $filteredData[] = $item;
             }
 
             return response()->json($filteredData);
