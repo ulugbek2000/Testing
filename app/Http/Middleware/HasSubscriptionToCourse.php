@@ -18,42 +18,40 @@ class HasSubscriptionToCourse
      */
     public function handle(Request $request, Closure $next): Response
     {
+        if (Auth::check() && Auth::user()->isSubscribed($course)) {
+            // Пользователь имеет подписку, позвольте доступ к полным урокам
+            return $next($request);
+        } else {
+            return $this->showContentAsText($request, $next);
+        }
         if ($request->routeIs('courseTopics'))
             $course = $request->course;
         if ($request->routeIs('topicLessons'))
             $course = $request->topic->course;
         if ($request->routeIs('lesson'))
             $course = $request->lesson;
+    }
 
-        if (Auth::check() && Auth::user()->isSubscribed($course)) {
-                // Пользователь имеет подписку, позвольте доступ к полным урокам
-                return $next($request);
-            } else {
-                return $this->showContentAsText($request, $next);
-            }
-        }
-    
-        private function showContentAsText(Request $request, Closure $next)
-        {
-            $response = $next($request);
-        
-            $data = json_decode($response->content(), true);
-        
-            if (is_array($data)) {
-                $filteredData = [];
-                foreach ($data as $item) {
-                    if (is_array($item) && array_key_exists('content', $item)) {
-                        // Преобразование контента в строку
-                        $contentAsString = (string) $item['content'];
-                        $item['content'] = $contentAsString;
-                    }
-                    $filteredData[] = $item;
+    private function showContentAsText(Request $request, Closure $next)
+    {
+        $response = $next($request);
+
+        $data = json_decode($response->content(), true);
+
+        if (is_array($data)) {
+            $filteredData = [];
+            foreach ($data as $item) {
+                if (is_array($item) && array_key_exists('content', $item)) {
+                    // Преобразование контента в строку
+                    $contentAsString = (string) $item['content'];
+                    $item['content'] = $contentAsString;
                 }
-        
-                return response()->json($filteredData);
+                $filteredData[] = $item;
             }
-        
-            return $response;
+
+            return response()->json($filteredData);
         }
-        
+
+        return $response;
+    }
 }
