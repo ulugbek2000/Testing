@@ -31,22 +31,37 @@ class LessonController extends Controller
     {
         $lessons = $topic->lessons;
 
-        if(Auth::check() && Auth::user()->isSubscribed($topic->course))
-            return response()->json($lessons);
 
-        $data = array_merge( [$topic->lessons()->first()], $topic->lessons->map(function ($v) {
-            return [
-                'id'=>$v->id,
-                'name'=>$v->name
-            ];
-        })->toArray());
-        return response()->json($data);
-        if(($topic->lessons->isNotEmpty()))
+        if (Auth::check() && Auth::user()->isSubscribed($topic->course)) {
+            return response()->json($lessons);
+        } elseif ($topic->lessons->isNotEmpty()) {
+            $data = array_merge([$topic->lessons()->first()], $topic->lessons->map(function ($v) {
+                return [
+                    'id' => $v->id,
+                    'name' => $v->name
+                ];
+            })->toArray());
+            return response()->json($data);
+        } else {
             return response()->json([]);
-        
-        
-      
-       
+        }
+        // if(Auth::check() && Auth::user()->isSubscribed($topic->course))
+        //     return response()->json($lessons);
+
+        // $data = array_merge( [$topic->lessons()->first()], $topic->lessons->map(function ($v) {
+        //     return [
+        //         'id'=>$v->id,
+        //         'name'=>$v->name
+        //     ];
+        // })->toArray());
+        // return response()->json($data);
+        // if(($topic->lessons->isNotEmpty()))
+        //     return response()->json([]);
+
+
+
+
+
     }
 
     /**
@@ -94,12 +109,12 @@ class LessonController extends Controller
      */
     public function show(Lesson $lesson)
     {
-        if($lesson->topic->lessons()->first()->id == $lesson->id || (Auth::check() && Auth::user()->isSubscribed($lesson->topic->course)))
+        if ($lesson->topic->lessons()->first()->id == $lesson->id || (Auth::check() && Auth::user()->isSubscribed($lesson->topic->course)))
             return response()->json([
                 // 'id' => $lesson->id,
                 'lessons' => $lesson
             ], 200);
-        
+
         return abort(403);
     }
     /**
