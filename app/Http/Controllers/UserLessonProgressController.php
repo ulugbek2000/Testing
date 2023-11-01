@@ -20,12 +20,13 @@ class UserLessonProgressController extends Controller
     function getProgress(Course $course) {
         $user = Auth::user();
         $completedLessons = UserLessonsProgress::where('user_id', $user->id)->where('course_id', $course->id)->where('completed', true)->count();
-        $topics = $course->topics()->withCount('lessons')->get();
-        $totalLessons =0;
-        foreach($topics as $topic)
-            $totalLessons +=$topic->lesson_count;
-        dd($totalLessons);
+        $totalLessons = $course->lessons()->count();
         $progressPercentage = ($completedLessons / $totalLessons) * 100;
+        return response()->json([
+            'total_lessons' => $totalLessons,
+            'completed_lessons' => $completedLessons,
+            'progress_percentage' => $progressPercentage,
+        ]);
     }
 
     public function getCourseProgress(Request $request)

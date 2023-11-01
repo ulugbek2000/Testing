@@ -54,6 +54,10 @@ class Course extends Model
         return $this->hasMany(Topic::class);
     }
 
+    function lessons() {
+        return $this->hasManyThrough(Lesson::class, Topic::class);
+    }
+
     public function students()
     {
         return $this->hasManyThrough(User::class, UserCourse::class, 'course_id', 'id');
