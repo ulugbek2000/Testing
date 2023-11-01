@@ -36,6 +36,7 @@ class LessonController extends Controller
 
         $data = array_merge( [$topic->lessons()->first()], $topic->lessons->map(function ($v) {
             return [
+                'id'=>$v->id,
                 'name'=>$v->name
             ];
         })->toArray());
@@ -89,7 +90,7 @@ class LessonController extends Controller
     {
         if($lesson->topic->lessons()->first()->id == $lesson->id || (Auth::check() && Auth::user()->isSubscribed($lesson->topic->course)))
             return response()->json([
-                'id' => $lesson->id,
+                // 'id' => $lesson->id,
                 'lessons' => $lesson
             ], 200);
         
