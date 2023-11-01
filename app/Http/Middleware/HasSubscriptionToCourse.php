@@ -18,15 +18,42 @@ class HasSubscriptionToCourse
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if($request->routeIs('courseTopics')) 
+        if ($request->routeIs('courseTopics'))
             $course = $request->course;
-        if($request->routeIs('topicLessons')) 
+        if ($request->routeIs('topicLessons'))
             $course = $request->topic->course;
-        if($request->routeIs('lesson')) 
+        if ($request->routeIs('lesson'))
             $course = $request->lesson->topic->course;
 
-        if( Auth::check() && Auth::user()->isSubscribed($course) )
-            return $next($request);
-        else abort(403);
+        if (Auth::check()) {
+            // Пользователь аутентифицирован
+            if (Auth::user()->isSubscribed($course)) {
+                // Пользователь имеет подписку, позвольте доступ к полным урокам
+                return $next($request);
+            } else {
+                // Пользователь аутентифицирован, но не имеет подписку, верните только имя уроков
+                return $this->showOnlyNamesOfLessons($request, $next);
+            }
+        } else {
+            // Гость не имеет доступ к полным урокам, верните только имя уроков
+            return $this->showOnlyNamesOfLessons($request, $next);
+        }
+    }
+    private function showOnlyNamesOfLessons(Request $request, Closure $next)
+    {
+    
+        $response = $next($request);
+
+        $data = json_decode($response->content(), true);
+
+        if (is_array($data)) {
+            foreach ($data as &$item) {
+                $item = ['name' => $item['name']];
+            }
+
+            return response()->json($data);
+        }
+
+        return $response;
     }
 }
