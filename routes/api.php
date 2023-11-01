@@ -196,8 +196,8 @@ Route::middleware(['jwt.auth'])->group(function () {
 
         Route::get('student/course-progress', [UserLessonProgressController::class, 'getCourseProgress']);
 
-        Route::get('topic/{topic}/lessons', [LessonController::class, 'index']);
-        Route::get('lesson/{lesson}', [LessonController::class, 'show']);
+        Route::get('student/topic/{topic}/lessons', [LessonController::class, 'index']);
+        Route::get('student/lesson/{lesson}', [LessonController::class, 'show']);
 
         //Просмотр информации о подписке:
         Route::get('student/subscription/{subscription}', [SubscriptionController::class, 'show']);
