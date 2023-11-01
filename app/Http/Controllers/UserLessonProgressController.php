@@ -2,12 +2,32 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Course;
+use App\Models\Lesson;
 use App\Models\UserLessonsProgress;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class UserLessonProgressController extends Controller
 {
+    function watched(Lesson $lesson) {
+        $user = Auth::user();
+
+    $user->addProgress($lesson);
+    }
+
+
+    function getProgress(Course $course) {
+        $user = Auth::user();
+        $completedLessons = UserLessonsProgress::where('user_id', $user->id)->where('course_id', $course->id)->where('completed', true)->count();
+        $totalLessons = $course->topics()->whereHas('lessons', function($l){
+            return $l->count();
+        })->get();
+
+        dd($totalLessons);
+        $progressPercentage = ($completedLessons / $totalLessons) * 100;
+    }
+
     public function getCourseProgress(Request $request)
     {
         $user_id = Auth::user();

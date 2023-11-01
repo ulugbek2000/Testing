@@ -211,6 +211,7 @@ Route::middleware(['jwt.auth'])->group(function () {
 
         Route::get('student/account', [ProfileController::class, 'getProfile']);
 
+        Route::post('watched/lesson/{lesson}', [UserLessonProgressController::class, 'watched']);
 
         // Route::get('/courses/{course}/buyers', [UserWalletController::class,'getCourseBuyers']);
     });

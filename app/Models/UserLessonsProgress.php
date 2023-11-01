@@ -12,7 +12,9 @@ class UserLessonsProgress extends Model
         'user_id',
         'lesson_id',
         'completed',
+        'course_id'
     ];
+    
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id','id');
