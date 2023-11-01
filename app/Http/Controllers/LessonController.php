@@ -38,7 +38,7 @@ class LessonController extends Controller
                 session(['first_lesson_shown' => true]);
             }
     
-            $data = array_merge($data, $lessons->slice(1)->map(function ($v) {
+            $data = array_merge($lessons->slice(1)->map(function ($v) {
                 return [
                     'id' => $v->id,
                     'name' => $v->name
