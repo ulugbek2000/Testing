@@ -31,9 +31,8 @@ class LessonController extends Controller
     
         if ($topic->lessons->isNotEmpty()) {
             $data = [];
-            $firstLesson = $topic->lessons()->first();
-            return response()->json([$firstLesson]);
-            $data = array_merge($data, $lessons->slice(1)->map(function ($v) {
+          
+            $data = array_merge([$topic->lessons()->first()], $lessons->slice(1)->map(function ($v) {
                 return $v->only(['id', 'name']);
             })->toArray());
     
