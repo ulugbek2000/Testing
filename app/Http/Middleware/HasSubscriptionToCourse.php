@@ -49,16 +49,18 @@ class HasSubscriptionToCourse
         if (is_array($data)) {
             $filteredData = [];
             foreach ($data as $item) {
+            if (array_key_exists('content', $item)) {
                 // Преобразование контента в строку
                 $contentAsString = (string) $item['content'];
                 $item['content'] = $contentAsString;
-                $filteredData[] = $item;
             }
+            $filteredData[] = $item;
+        
         dd($filteredData);
 
             return response()->json($filteredData);
         }
-
+    }
         return $response;
     }
 }
