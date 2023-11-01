@@ -24,7 +24,7 @@ class UserLessonProgressController extends Controller
             return $l->count();
         }]);
 
-        dd($totalLessons);
+        dd($totalLessons->query());
         $progressPercentage = ($completedLessons / $totalLessons) * 100;
     }
 
