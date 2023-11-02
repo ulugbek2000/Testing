@@ -40,7 +40,7 @@ class UserWalletController extends Controller
         $purchasedCoursesData = $user->purchases->groupBy('course_id')->map(function ($purchases) use ($user) {
             $latestPurchase = $purchases->sortByDesc('created_at')->first();
             $course = Course::find($latestPurchase->course_id);
-            // dd($course, $latestPurchase);
+
             $totalLessons = 0;
             $completedLessons = 0;
 
@@ -49,6 +49,7 @@ class UserWalletController extends Controller
             $progressPercentage = $totalLessons > 0 ? ($completedLessons * 100 / $totalLessons) : 0;
 
             $userSubscriptions = $user->subscriptions->whereNotNull('deleted_at');
+            $latestSubscription = $user->subscriptions->where('course_id', $course->id)->sortByDesc('created_at')->first();
             return [
                 'course' => [
                     'id' => $course->id,
@@ -67,19 +68,20 @@ class UserWalletController extends Controller
                 'completed_lessons' => $completedLessons,
                 'total_lessons' => $totalLessons,
                 'progress_percentage' => $progressPercentage,
-                'subscription' => $userSubscriptions
+                'subscription' => $userSubscriptions,
+                'latestSubscription' => $latestSubscription
             ];
         });
 
         return response()->json(['purchases' => $purchasedCoursesData->values()], 200);
     }
 
-    public function getPurchasesByCourseId($courseId)
+    public function getPurchasesByCourseId(Course $course)
     {
         $user = Auth::user();
 
         $latestPurchase = $user->purchases()
-            ->where('course_id', $courseId)
+            ->where('course', $course)
             ->latest()
             ->first();
 
@@ -89,31 +91,14 @@ class UserWalletController extends Controller
             $subscription = Subscription::find($latestPurchase->subscription_id);
             $subscriptionName = $subscription->name;
 
-            // Получите список тем для указанного курса
-            $courseTopics = $courseInfo->topics;
-
             $totalLessons = 0;
             $completedLessons = 0;
 
-            foreach ($courseTopics as $topic) {
-                $topicLessons = $topic->lessons;
+            $completedLessons = UserLessonsProgress::where('user_id', $user->id)->where('course_id', $course->id)->where('completed', true)->count();
+            $totalLessons = $course->lessons()->count();
+            $progressPercentage = $totalLessons > 0 ? ($completedLessons * 100 / $totalLessons) : 0;
+            $userSubscriptions = $user->subscriptions->whereNotNull('deleted_at');
 
-                foreach ($topicLessons as $lesson) {
-                    // Проверьте прогресс пользователя для этого урока
-                    $lessonProgress = UserLessonsProgress::where('user_id', $user->id)
-                        ->where('lesson_id', $lesson->id)
-                        ->first();
-
-                    if ($lessonProgress && $lessonProgress->completed) {
-                        $completedLessons++;
-                    }
-
-                    $totalLessons++;
-                }
-            }
-
-            // Вычислите процент завершения курса
-            $progressPercentage = $totalLessons === 0 ? 0 : ($completedLessons / $totalLessons) * 100;
 
             $purchasesInfo = [
                 'purchases' => [
@@ -135,6 +120,7 @@ class UserWalletController extends Controller
                         'completed_lessons' => $completedLessons,
                         'total_lessons' => $totalLessons,
                         'progress_percentage' => $progressPercentage,
+                        'subscription' => $userSubscriptions
                     ],
                 ],
             ];
