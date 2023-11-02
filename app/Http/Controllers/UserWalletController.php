@@ -125,7 +125,7 @@ class UserWalletController extends Controller
                         'completed_lessons' => $completedLessons,
                         'total_lessons' => $totalLessons,
                         'progress_percentage' => $progressPercentage,
-                        'subscription' => $userSubscriptions->deleted_at
+                        'subscription' => $userSubscriptions
                     ],
                 ],
             ];
