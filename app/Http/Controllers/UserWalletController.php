@@ -68,7 +68,7 @@ class UserWalletController extends Controller
                 'completed_lessons' => $completedLessons,
                 'total_lessons' => $totalLessons,
                 'progress_percentage' => $progressPercentage,
-                'latest_subscription_deleted_at' => $latestSubscription->deleted_at,
+                'deleted_at' => $latestSubscription->deleted_at,
             ];
         });
 
