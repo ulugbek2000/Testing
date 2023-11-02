@@ -79,60 +79,40 @@ class UserWalletController extends Controller
     {
         $user = Auth::user();
 
-        $latestPurchase = $user->purchases()
-            ->where('course_id', $course->id)
-            ->latest()
-            ->first();
-
-        if ($latestPurchase) {
-            $courseInfo = $latestPurchase->course;
-
-            $subscription = Subscription::find($latestPurchase->subscription_id);
-            $subscriptionName = $subscription->name;
+        // Получите список покупок пользователя, включая информацию о курсах и их подписках
+        $purchasedCoursesData = $user->purchases->groupBy('course_id')->map(function ($purchases) use ($user) {
+            $latestPurchase = $purchases->sortByDesc('created_at')->first();
+            $course = Course::find($latestPurchase->course_id);
 
             $totalLessons = 0;
             $completedLessons = 0;
 
-            $completedLessons = UserLessonsProgress::where('user_id', $user->id)
-                ->where('course_id', $course->id)
-                ->where('completed', true)
-                ->count();
-            $totalLessons = $course
-                ->lessons()
-                ->count();
+            $completedLessons = UserLessonsProgress::where('user_id', $user->id)->where('course_id', $course->id)->where('completed', true)->count();
+            $totalLessons = $course->lessons()->count();
             $progressPercentage = $totalLessons > 0 ? ($completedLessons * 100 / $totalLessons) : 0;
-            $userSubscriptions = $user->subscriptions->whereNotNull('deleted_at');
 
-
-
-            $purchasesInfo = [
-                'purchases' => [
-                    [
-                        'course' => [
-                            'id' => $courseInfo->id,
-                            'logo' => $courseInfo->logo,
-                            'name' => $courseInfo->name,
-                            'slug' => $courseInfo->slug,
-                            'quantity_lessons' => $courseInfo->quantity_lessons,
-                            'hours_lessons' => $courseInfo->hours_lessons,
-                            'short_description' => $courseInfo->short_description,
-                            'video' => $courseInfo->video,
-                            'has_certificate' => $courseInfo->has_certificate,
-                        ],
-                        'subscription_id' => $latestPurchase->subscription_id,
-                        'subscription_price' => $latestPurchase->price,
-                        'subscription_name' => $subscriptionName,
-                        'completed_lessons' => $completedLessons,
-                        'total_lessons' => $totalLessons,
-                        'progress_percentage' => $progressPercentage,
-                        'subscription' => $userSubscriptions
-                    ],
+            return [
+                'course' => [
+                    'id' => $course->id,
+                    'logo' => $course->logo,
+                    'name' => $course->name,
+                    'slug' => $course->slug,
+                    'quantity_lessons' => $course->quantity_lessons,
+                    'hours_lessons' => $course->hours_lessons,
+                    'short_description' => $course->short_description,
+                    'video' => $course->video,
+                    'has_certificate' => $course->has_certificate,
                 ],
+                'subscription_id' => $latestPurchase->subscription->id,
+                'subscription_name' => $latestPurchase->subscription->name,
+                'subscription_price' => $latestPurchase->subscription->price,
+                'completed_lessons' => $completedLessons,
+                'total_lessons' => $totalLessons,
+                'progress_percentage' => $progressPercentage,
+                'latest_subscription_deleted_at' => $latestPurchase->subscription->deleted_at,
             ];
+        });
 
-            return response()->json($purchasesInfo, 200);
-        } else {
-            return response()->json(['message' => 'Покупка не найдена'], 404);
-        }
+        return response()->json(['purchases' => $purchasedCoursesData->values()], 200);
     }
 }
