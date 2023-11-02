@@ -82,27 +82,19 @@ class UserWalletController extends Controller
         // Получите список покупок пользователя, включая информацию о курсах и их подписках
         $purchasedCoursesData = $user->purchases->groupBy('course_id')->map(function ($purchases) use ($user) {
             $latestPurchase = $purchases->sortByDesc('created_at')->first();
-            $course = Course::find($latestPurchase->course_id);
 
             $totalLessons = 0;
             $completedLessons = 0;
 
-            $completedLessons = UserLessonsProgress::where('user_id', $user->id)->where('course_id', $course->id)->where('completed', true)->count();
-            $totalLessons = $course->lessons()->count();
+            $completedLessons = UserLessonsProgress::where('user_id', $user->id)
+                ->where('course_id', $latestPurchase->course_id)
+                ->where('completed', true)
+                ->count();
+            $totalLessons = $latestPurchase->course->lessons()->count();
             $progressPercentage = $totalLessons > 0 ? ($completedLessons * 100 / $totalLessons) : 0;
 
             return [
-                'course' => [
-                    'id' => $course->id,
-                    'logo' => $course->logo,
-                    'name' => $course->name,
-                    'slug' => $course->slug,
-                    'quantity_lessons' => $course->quantity_lessons,
-                    'hours_lessons' => $course->hours_lessons,
-                    'short_description' => $course->short_description,
-                    'video' => $course->video,
-                    'has_certificate' => $course->has_certificate,
-                ],
+                'course' => $latestPurchase->course,
                 'subscription_id' => $latestPurchase->subscription->id,
                 'subscription_name' => $latestPurchase->subscription->name,
                 'subscription_price' => $latestPurchase->subscription->price,
