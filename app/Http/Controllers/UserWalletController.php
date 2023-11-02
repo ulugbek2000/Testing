@@ -101,7 +101,7 @@ class UserWalletController extends Controller
                 ->lessons()
                 ->count();
             $progressPercentage = $totalLessons > 0 ? ($completedLessons * 100 / $totalLessons) : 0;
-            $userSubscriptions = $user->subscriptions->whereNotNull('deleted_at')->pluck('deleted_at');
+            $userSubscriptions = $user->subscriptions->whereNotNull('deleted_at');
 
 
 
@@ -125,7 +125,7 @@ class UserWalletController extends Controller
                         'completed_lessons' => $completedLessons,
                         'total_lessons' => $totalLessons,
                         'progress_percentage' => $progressPercentage,
-                        'subscription' => $userSubscriptions
+                        'subscription' => $userSubscriptions->deleted_at
                     ],
                 ],
             ];
