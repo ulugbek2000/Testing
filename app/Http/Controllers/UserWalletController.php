@@ -80,7 +80,7 @@ class UserWalletController extends Controller
         $user = Auth::user();
 
         $latestPurchase = $user->purchases()
-            ->where('course_id', $course)
+            ->where('course_id', $course->id)
             ->latest()
             ->first();
 
