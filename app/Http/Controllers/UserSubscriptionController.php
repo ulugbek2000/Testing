@@ -10,13 +10,14 @@ use Illuminate\Support\Facades\Auth;
 
 class UserSubscriptionController extends Controller
 {
-    function subscribe(Course $course, Subscription $subscription) {
+    function subscribe(Course $course, Subscription $subscription)
+    {
         $user = Auth::user();
 
         $previousSubscription = $user->subscriptions()->where('course_id', $course->id)->where('subscription_id', $subscription->id)->first();
 
-        if($previousSubscription){
-            return response()->json(['message'=> 'Уже подписан на этот пакет'], 200);
+        if ($previousSubscription) {
+            return response()->json(['message' => 'Уже подписан на этот пакет'], 200);
         }
 
         $userSubscription = $user->subscriptions()->create([
@@ -26,7 +27,6 @@ class UserSubscriptionController extends Controller
             'deleted_at' => $subscription->getDurationDateTime()
         ]);
 
-        
-
+        return response()->json(['message' => $userSubscription]);
     }
 }
