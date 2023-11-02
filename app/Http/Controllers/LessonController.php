@@ -86,12 +86,20 @@ class LessonController extends Controller
      */
     public function show(Lesson $lesson)
     {
-        if ($lesson->topic->lessons()->first() == $lesson || (Auth::check() && Auth::user()->isSubscribed($lesson->topic->course)))
-            return response()->json([
-                'lessons' => $lesson
-            ], 200);
+        // if ($lesson->topic->lessons()->first() == $lesson || (Auth::check() && Auth::user()->isSubscribed($lesson->topic->course)))
+        //     return response()->json([
+        //         'lessons' => $lesson
+        //     ], 200);
 
-        return abort(403);
+        // return abort(403);
+
+        if (Auth::check() && Auth::user()->isSubscribed($lesson->topic->course)) {
+            return response()->json(['lessons' => $lesson], 200);
+        } elseif ($lesson->topic->lessons()->first() == $lesson) {
+            return response()->json(['lessons' => $lesson], 200);
+        } else {
+            return abort(403);
+        }
     }
     /**
      * Show the form for editing the specified resource.
