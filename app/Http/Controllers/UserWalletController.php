@@ -44,23 +44,9 @@ class UserWalletController extends Controller
             $totalLessons = 0;
             $completedLessons = 0;
 
-            // Получите уроки, связанные с темами этого курса
-            $lessons = Lesson::whereIn('topic_id', $course->topics->pluck('id'))->get();
-
-            // Здесь вы можете выполнить проверку прогресса пользователя для каждого урока
-            foreach ($lessons as $lesson) {
-                $lessonProgress = UserLessonsProgress::where('user_id', $user->id)
-                    ->where('lesson_id', $lesson->id)
-                    ->first();
-
-                if ($lessonProgress && $lessonProgress->completed) {
-                    $completedLessons++;
-                }
-                $totalLessons++;
-            }
-
-            $remainingLessons = $totalLessons - $completedLessons;
-            $progressPercentage = $totalLessons === 0 ? 0 : ($completedLessons / $totalLessons) * 100;
+            $completedLessons = UserLessonsProgress::where('user_id', $user->id)->where('course_id', $course->id)->where('completed', true)->count();
+            $totalLessons = $course->lessons()->count();
+            $progressPercentage = $totalLessons > 0 ? ($completedLessons * 100 / $totalLessons) : 0;
 
             return [
                 'course' => [
@@ -78,7 +64,7 @@ class UserWalletController extends Controller
                 'subscription_name' => $latestPurchase->subscription->name,
                 'subscription_price' => $latestPurchase->subscription->price,
                 'completed_lessons' => $completedLessons,
-                'remaining_lessons' => $remainingLessons,
+                'total_lessons' => $totalLessons,
                 'progress_percentage' => $progressPercentage,
             ];
         });

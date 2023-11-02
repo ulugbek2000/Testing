@@ -113,24 +113,8 @@ class RegisterController extends Controller
             'type' => 'bearer',
         ]);
 
-        // $token = $this->guard()->login($user);
-
-        // if ($response = $this->registered($request, $user)) {
-        //     return $response;
-        // }
-
-        // $token = $user->createToken('api-token')->plainTextToken;
-        // $role = $user->roles()->first()->id;
-        // $cookie = cookie('jwt', $token);
-        // $response = [
-        //     'message' => $token,
-        //     'user_role' => $role,
-        //     'is_phone_verified' => $user->phone_verified_at != null
-        // ];
-
         $response = [
-            'message' =>  $token,
-
+            'token' =>  $token,
         ];
 
         return $request->wantsJson()

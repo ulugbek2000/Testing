@@ -191,19 +191,15 @@ class ProfileController extends Controller
         return response()->json($teachers);
     }
 
-    public function getUserById(Request $request, User $user)
+    public function getUserById(User $user)
     {
         if (!$user) {
-            // Если пользователь не найден, вернем сообщение об ошибке
             return response()->json(['message' => 'User not found'], 404);
         }
-
-        // Проверим, является ли пользователь учителем
         if ($user->hasRole(UserType::Teacher)) {
             $user->load('userSkills');
         }
 
-        // Вернем данные о пользователе
         return response()->json(['user' => $user], 200);
     }
 }

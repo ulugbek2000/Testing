@@ -56,7 +56,7 @@ class LoginController extends Controller
         $role = $user->roles()->first()->id;
         $cookie = cookie('jwt', $token);
         $response = [
-            'message' => $token,
+            'token' => $token,
             'user_role' => $role,
             'is_phone_verified' => $user->phone_verified_at != null
         ];

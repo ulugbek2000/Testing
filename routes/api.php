@@ -145,7 +145,6 @@ Route::middleware(['jwt.auth'])->group(function () {
         Route::post('users', [UsersController::class, 'store']);
         Route::put('users/{users}', [UsersController::class, 'update']);
         Route::delete('users/{users}', [UsersController::class, 'destroy']);
-        Route::get('/users/{users}/role', [UsersController::class, 'showUserRole']);
         //End Users
 
         //Start Sessions
