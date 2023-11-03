@@ -87,7 +87,7 @@ class LessonController extends Controller
 public function show(Lesson $lesson)
 {
     $status = Auth::check() && Auth::user()->isSubscribed($lesson->topic->course);
-    dd($status);
+    // dd($status);
     if ($status) {
         return response()->json([
             'id' => $lesson->id,
