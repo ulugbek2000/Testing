@@ -13,7 +13,7 @@ class UserLessonProgressController extends Controller
     function watched(Lesson $lesson) {
         $user = Auth::user();
 
-    $user->addProgress($lesson);
+    $user->addProgressCourse($lesson);
     }
 
 

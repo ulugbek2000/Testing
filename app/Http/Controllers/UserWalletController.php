@@ -99,7 +99,7 @@ class UserWalletController extends Controller
             $totalLessons = $course->lessons()->count();
             $progressPercentage = $totalLessons > 0 ? ($completedLessons * 100 / $totalLessons) : 0;
 
-            // $latestSubscription = $user->subscriptions->where('course_id', $course->id)->sortByDesc('created_at')->first();
+            $latestSubscription = $user->subscriptions->where('course_id', $course->id)->sortByDesc('created_at')->first();
             $purchasesInfo = [
                 'purchases' => [
                     [
@@ -120,6 +120,7 @@ class UserWalletController extends Controller
                         'completed_lessons' => $completedLessons,
                         'total_lessons' => $totalLessons,
                         'progress_percentage' => $progressPercentage,
+                        'deleted_at' => $latestSubscription->deleted_at,
                     ],
                 ],
             ];

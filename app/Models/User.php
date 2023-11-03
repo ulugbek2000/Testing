@@ -140,7 +140,7 @@ class User extends Authenticatable implements JWTSubject
         ->where('course_id', $course->id)->exists();
     }
 
-    function addProgress(Lesson $lesson) {
+    function addProgressCourse(Lesson $lesson) {
         UserLessonsProgress::firstOrCreate([
             'user_id' => $this->id,
             'lesson_id' => $lesson->id,
