@@ -84,25 +84,33 @@ class LessonController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Lesson $lesson)
-    {
-        // Проверка, если пользователь вошел в систему и подписан на курс
-        if (Auth::check() && Auth::user()->isSubscribed($lesson->topic->course)) {
-            return response()->json([
-                'lessons' => $lesson
-            ], 200);
-        }
-
-        // Если пользователь не вошел в систему или не подписан на курс, проверяем, является ли урок первым в теме
-        if ($lesson->topic->lessons()->first()->id == $lesson->id) {
-            return response()->json([
-                'lessons' => $lesson
-            ], 200);
-        }
-
-        // Если ни одно из условий не выполнено, возвращаем ошибку 403
-        return abort(403);
+public function show(Lesson $lesson)
+{
+    // Проверка, если пользователь вошел в систему и подписан на курс
+    if (Auth::check() && Auth::user()->isSubscribed($lesson->topic->course)) {
+        return response()->json([
+            'id' => $lesson->id,
+            'name' => $lesson->name,
+            'content' => $lesson->content,
+            'duration' => $lesson->duration,
+            'cover' => $lesson->cover,
+            'type' => $lesson->type,
+            'created_at' => $lesson->created_at,
+            'updated_at' => $lesson->updated_at,
+            'deleted_at' => $lesson->deleted_at,
+        ], 200);
     }
+    
+    // Если пользователь не вошел в систему или не подписан на курс, проверяем, является ли урок первым в теме
+    if ($lesson->topic->lessons()->first()->id == $lesson->id) {
+        return response()->json([
+            'lessons' => $lesson
+        ], 200);
+    }
+
+    // Если ни одно из условий не выполнено, возвращаем ошибку 403
+    return abort(403);
+}
     /**
      * Show the form for editing the specified resource.
      */
