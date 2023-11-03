@@ -168,7 +168,7 @@ Route::middleware(['jwt.auth'])->group(function () {
         Route::delete('role/{id}', [RoleController::class, 'destroy']);
         //End Role
     });
-    Route::group(['prefix' => '{lacale}'], function () {
+    // Route::group(['prefix' => '{lacale}'], function () {
         Route::middleware('access' . implode(',', [UserType::Student]))->group(function () {
 
             Route::get('student/user/balance', [UserWalletController::class, 'getBalance']);
@@ -219,4 +219,4 @@ Route::middleware(['jwt.auth'])->group(function () {
 
         Route::post('logout', [AuthController::class, 'logout']);
     });
-});
+// });
