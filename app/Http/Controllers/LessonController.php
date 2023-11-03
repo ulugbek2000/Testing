@@ -86,8 +86,9 @@ class LessonController extends Controller
      */
 public function show(Lesson $lesson)
 {
-    // Проверка, если пользователь вошел в систему и подписан на курс
-    if (Auth::check() && Auth::user()->isSubscribed($lesson->topic->course)) {
+    $status = Auth::check() && Auth::user()->isSubscribed($lesson->topic->course);
+    dd($status);
+    if ($status) {
         return response()->json([
             'id' => $lesson->id,
             'name' => $lesson->name,
@@ -101,14 +102,12 @@ public function show(Lesson $lesson)
         ], 200);
     }
     
-    // Если пользователь не вошел в систему или не подписан на курс, проверяем, является ли урок первым в теме
     if ($lesson->topic->lessons()->first()->id == $lesson->id) {
         return response()->json([
             'lessons' => $lesson
         ], 200);
     }
 
-    // Если ни одно из условий не выполнено, возвращаем ошибку 403
     return abort(403);
 }
     /**
