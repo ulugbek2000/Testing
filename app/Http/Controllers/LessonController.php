@@ -24,26 +24,26 @@ class LessonController extends Controller
     public function index(Topic $topic)
     {
         $lessons = $topic->lessons;
-    
+
         if (Auth::check() && Auth::user()->isSubscribed($topic->course)) {
             return response()->json($lessons);
         }
-    
+
         if ($topic->lessons->isNotEmpty()) {
             $data = [];
-          
+
             $data = array_merge([$topic->lessons()->first()], $lessons->slice(1)->map(function ($v) {
                 return $v->only(['id', 'name']);
             })->toArray());
-    
+
             return response()->json($data);
         } else {
             return response()->json([]);
         }
     }
-    
-    
-    
+
+
+
     /**
      * Store a newly created resource in storage.
      */
@@ -86,35 +86,34 @@ class LessonController extends Controller
      */
     public function show(Lesson $lesson)
     {
-        // if ($lesson->topic->lessons()->first() == $lesson || (Auth::check() && Auth::user()->isSubscribed($lesson->topic->course)))
-        //     return response()->json([
-        //         'lessons' => $lesson
-        //     ], 200);
+        if ($lesson->topic->lessons()->first() == $lesson || (Auth::check() && Auth::user()->isSubscribed($lesson->topic->course)))
+            return response()->json([
+                'lessons' => $lesson
+            ], 200);
 
-        // return abort(403);
-            $isSubscribed = Auth::check() && Auth::user()->isSubscribed($lesson->topic->course);
-        
-            // Проверьте, является ли урок первым в своей теме
-            $isFirstLesson = $lesson->topic->lessons()->first() == $lesson;
-        
-            if ($isSubscribed || $isFirstLesson) {
-                $lessonData = [
-                    'id' => $lesson->id,
-                    'name' => $lesson->name,
-                    'content' => $lesson->content,
-                    'duration' => $lesson->duration,
-                    'cover' => $lesson->cover,
-                    'type' => $lesson->type,
-                    'created_at' => $lesson->created_at,
-                    'updated_at' => $lesson->updated_at,
-                    'deleted_at' => $lesson->deleted_at,
-                ];
-        
-                return response()->json(['lesson' => $lessonData], 200);
-            } else {
-                return abort(403);
-            }    
-        
+        return abort(403);
+        // $isSubscribed = Auth::check() && Auth::user()->isSubscribed($lesson->topic->course);
+
+        // Проверьте, является ли урок первым в своей теме
+        // $isFirstLesson = $lesson->topic->lessons()->first() == $lesson;
+
+        // if ($isSubscribed || $isFirstLesson) {
+        //     $lessonData = [
+        //         'id' => $lesson->id,
+        //         'name' => $lesson->name,
+        //         'content' => $lesson->content,
+        //         'duration' => $lesson->duration,
+        //         'cover' => $lesson->cover,
+        //         'type' => $lesson->type,
+        //         'created_at' => $lesson->created_at,
+        //         'updated_at' => $lesson->updated_at,
+        //         'deleted_at' => $lesson->deleted_at,
+        //     ];
+
+        //     return response()->json(['lesson' => $lessonData], 200);
+        // } else {
+        //     return abort(403);
+        // }
     }
     /**
      * Show the form for editing the specified resource.
