@@ -75,36 +75,74 @@ class UserWalletController extends Controller
         return response()->json(['purchases' => $purchasedCoursesData->values()], 200);
     }
 
-    public function getPurchasesByCourseId(Course $course)
+    public function getPurchasesByCourseId($courseId)
     {
         $user = Auth::user();
 
-        // Получите список покупок пользователя, включая информацию о курсах и их подписках
-        $purchasedCoursesData = $user->purchases->groupBy('course_id')->map(function ($purchases) use ($user) {
-            $latestPurchase = $purchases->sortByDesc('created_at')->first();
+        $latestPurchase = $user->purchases()
+            ->where('course_id', $courseId)
+            ->latest()
+            ->first();
+
+        if ($latestPurchase) {
+            $courseInfo = $latestPurchase->course;
+
+            $subscription = Subscription::find($latestPurchase->subscription_id);
+            $subscriptionName = $subscription->name;
+
+            // Получите список тем для указанного курса
+            $courseTopics = $courseInfo->topics;
 
             $totalLessons = 0;
             $completedLessons = 0;
 
-            $completedLessons = UserLessonsProgress::where('user_id', $user->id)
-                ->where('course_id', $latestPurchase->course_id)
-                ->where('completed', true)
-                ->count();
-            $totalLessons = $latestPurchase->course->lessons()->count();
-            $progressPercentage = $totalLessons > 0 ? ($completedLessons * 100 / $totalLessons) : 0;
+            foreach ($courseTopics as $topic) {
+                $topicLessons = $topic->lessons;
 
-            return [
-                'course' => $latestPurchase->course,
-                'subscription_id' => $latestPurchase->subscription->id,
-                'subscription_name' => $latestPurchase->subscription->name,
-                'subscription_price' => $latestPurchase->subscription->price,
-                'completed_lessons' => $completedLessons,
-                'total_lessons' => $totalLessons,
-                'progress_percentage' => $progressPercentage,
-                'latest_subscription_deleted_at' => $latestPurchase->subscription->deleted_at,
+                foreach ($topicLessons as $lesson) {
+                    // Проверьте прогресс пользователя для этого урока
+                    $lessonProgress = UserLessonsProgress::where('user_id', $user->id)
+                        ->where('lesson_id', $lesson->id)
+                        ->first();
+
+                    if ($lessonProgress && $lessonProgress->completed) {
+                        $completedLessons++;
+                    }
+
+                    $totalLessons++;
+                }
+            }
+
+            // Вычислите процент завершения курса
+            $progressPercentage = $totalLessons === 0 ? 0 : ($completedLessons / $totalLessons) * 100;
+
+            $purchasesInfo = [
+                'purchases' => [
+                    [
+                        'course' => [
+                            'id' => $courseInfo->id,
+                            'logo' => $courseInfo->logo,
+                            'name' => $courseInfo->name,
+                            'slug' => $courseInfo->slug,
+                            'quantity_lessons' => $courseInfo->quantity_lessons,
+                            'hours_lessons' => $courseInfo->hours_lessons,
+                            'short_description' => $courseInfo->short_description,
+                            'video' => $courseInfo->video,
+                            'has_certificate' => $courseInfo->has_certificate,
+                        ],
+                        'subscription_id' => $latestPurchase->subscription_id,
+                        'subscription_price' => $latestPurchase->price,
+                        'subscription_name' => $subscriptionName,
+                        'completed_lessons' => $completedLessons,
+                        'total_lessons' => $totalLessons,
+                        'progress_percentage' => $progressPercentage,
+                    ],
+                ],
             ];
-        });
 
-        return response()->json(['purchases' => $purchasedCoursesData->values()], 200);
+            return response()->json($purchasesInfo, 200);
+        } else {
+            return response()->json(['message' => 'Покупка не найдена'], 404);
+        }
     }
 }
