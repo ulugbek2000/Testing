@@ -95,7 +95,7 @@ class LessonController extends Controller
             $isSubscribed = Auth::check() && Auth::user()->isSubscribed($lesson->topic->course);
         
             // Проверьте, является ли урок первым в своей теме
-            $isFirstLesson = $lesson->course->topics->lessons()->first() == $lesson;
+            $isFirstLesson = $lesson->topic->lessons()->first() == $lesson;
         
             if ($isSubscribed || $isFirstLesson) {
                 $lessonData = [
