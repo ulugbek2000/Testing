@@ -99,6 +99,7 @@ class LessonController extends Controller
                 'deleted_at' => $lesson->deleted_at,
             ], 200);
         }
+        dd(!Auth::check() && $lesson->topic->isFirstLesson($lesson));
 
         if (!Auth::check() && $lesson->topic->isFirstLesson($lesson))  {
             return response()->json([
