@@ -58,6 +58,11 @@ class Course extends Model
         return $this->hasManyThrough(Lesson::class, Topic::class);
     }
 
+    public function isFirstLesson(Lesson $lesson)
+    {
+        return $this->lessons()->orderBy('id')->first()->id === $lesson->id;
+    }
+
     public function students()
     {
         return $this->hasManyThrough(User::class, UserCourse::class, 'course_id', 'id');

@@ -23,8 +23,5 @@ class Topic extends Model
     {
         return $this->belongsTo(Course::class, 'course_id', 'id');
     }
-    public function isFirstLesson(Lesson $lesson)
-    {
-        return $this->lessons()->orderBy('id')->first()->id === $lesson->id;
-    }
+  
 }

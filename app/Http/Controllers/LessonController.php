@@ -100,7 +100,7 @@ class LessonController extends Controller
             ], 200);
         }
 
-        if ($lesson->topic->isFirstLesson($lesson)) {
+        if ($lesson->topic->course->isFirstLesson($lesson)) {
             return response()->json([
                 'lessons' => $lesson
             ], 200);
