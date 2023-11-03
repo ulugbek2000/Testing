@@ -101,7 +101,8 @@ public function show(Lesson $lesson)
             'deleted_at' => $lesson->deleted_at,
         ], 200);
     }
-    
+   $les =  $lesson->topic->lessons()->first()->id == $lesson->id;
+   dd($les);
     if ($lesson->topic->lessons()->first()->id == $lesson->id) {
         return response()->json([
             'lessons' => $lesson
