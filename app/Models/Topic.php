@@ -14,11 +14,17 @@ class Topic extends Model
         'topic_name'
     ];
 
-    function lessons() {
+    function lessons()
+    {
         return $this->hasMany(Lesson::class);
     }
 
-    function course() {
+    function course()
+    {
         return $this->belongsTo(Course::class, 'course_id', 'id');
+    }
+    public function isFirstLesson(Lesson $lesson)
+    {
+        return $this->lessons()->orderBy('id')->first()->id === $lesson->id;
     }
 }

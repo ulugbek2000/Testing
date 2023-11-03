@@ -84,33 +84,31 @@ class LessonController extends Controller
     /**
      * Display the specified resource.
      */
-public function show(Lesson $lesson)
-{
-    $status = Auth::check() && Auth::user()->isSubscribed($lesson->topic->course);
-    // dd($status);
-    if ($status) {
-        return response()->json([
-            'id' => $lesson->id,
-            'name' => $lesson->name,
-            'content' => $lesson->content,
-            'duration' => $lesson->duration,
-            'cover' => $lesson->cover,
-            'type' => $lesson->type,
-            'created_at' => $lesson->created_at,
-            'updated_at' => $lesson->updated_at,
-            'deleted_at' => $lesson->deleted_at,
-        ], 200);
-    }
-   $les =  $lesson->topic->lessons()->first()->id == $lesson->id;
-   dd($les);
-    if ($lesson->topic->lessons()->first()->id == $lesson->id) {
-        return response()->json([
-            'lessons' => $lesson
-        ], 200);
+    public function show(Lesson $lesson)
+    {
+        if (Auth::check() && Auth::user()->isSubscribed($lesson->topic->course)) {
+            return response()->json([
+                'id' => $lesson->id,
+                'name' => $lesson->name,
+                'content' => $lesson->content,
+                'duration' => $lesson->duration,
+                'cover' => $lesson->cover,
+                'type' => $lesson->type,
+                'created_at' => $lesson->created_at,
+                'updated_at' => $lesson->updated_at,
+                'deleted_at' => $lesson->deleted_at,
+            ], 200);
+        }
+
+        if ($lesson->topic->isFirstLesson($lesson)) {
+            return response()->json([
+                'lessons' => $lesson
+            ], 200);
+        }
+
+        return abort(403);
     }
 
-    return abort(403);
-}
     /**
      * Show the form for editing the specified resource.
      */
