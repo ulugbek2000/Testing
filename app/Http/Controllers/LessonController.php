@@ -100,9 +100,8 @@ class LessonController extends Controller
             ], 200);
         }
 
-        // if (!Auth::check() || Auth::check() && !Auth::user()->isSubscribed($lesson->topic->course) &&  $lesson->topic->course->isFirstLesson($lesson))
-        else  {
-        
+        if (!Auth::check() &&  $lesson->topic->course->isFirstLesson($lesson)) {
+
             return response()->json([
                 'id' => $lesson->id,
                 'name' => $lesson->name,
