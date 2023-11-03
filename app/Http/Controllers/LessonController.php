@@ -101,7 +101,7 @@ class LessonController extends Controller
         }
         // dd(!Auth::check() && $lesson->topic->isFirstLesson($lesson));
 
-        if (!Auth::check() && $lesson->topic->isFirstLesson($lesson))  {
+        if (!Auth::check() && $lesson->topic->course->isFirstLesson($lesson))  {
             return response()->json([
                 'id' => $lesson->id,
                 'name' => $lesson->name,
