@@ -93,7 +93,7 @@ class LessonController extends Controller
 
         // return abort(403);
 
-        if (Auth::check() && Auth::user()->isSubscribed($lesson->topic->course)) {
+        if ($lesson->topic->lessons()->first() == $lesson ||(Auth::check() && Auth::user()->isSubscribed($lesson->topic->course))) {
             return response()->json(['lessons' => $lesson], 200);
         } elseif ($lesson->topic->lessons()->first() == $lesson) {
             return response()->json(['lessons' => $lesson], 200);
