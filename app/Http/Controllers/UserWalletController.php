@@ -37,7 +37,7 @@ class UserWalletController extends Controller
         $user = Auth::user();
 
         // Получите список покупок пользователя, включая информацию о курсах и их подписках
-        $purchasedCoursesData = $user->purchases->groupBy('course_id')->map(function ($purchases) use ($user) {
+        $purchasedCoursesData = $user->subscriptions->groupBy('course_id')->map(function ($purchases) use ($user) {
             $latestPurchase = $purchases->sortByDesc('created_at')->first();
             $course = Course::find($latestPurchase->course_id);
 
@@ -79,7 +79,7 @@ class UserWalletController extends Controller
     {
         $user = Auth::user();
 
-        $latestPurchase = $user->purchases()
+        $latestPurchase = $user->subscritions()
             ->where('course_id', $courseId)
             ->latest()
             ->first();
