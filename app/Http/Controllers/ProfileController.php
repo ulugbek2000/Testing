@@ -187,7 +187,7 @@ class ProfileController extends Controller
     public function getAllStudentsSubscription()
     {
         $user = new User();
-        $subscription = $user->subscriptions->subscription;
+        $subscription = $user->subscriptions()->subscription();
         $students = User::whereHas('roles', function ($query) {
             $query->where('name', UserType::Student);
         })->get();
