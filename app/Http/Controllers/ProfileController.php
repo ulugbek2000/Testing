@@ -189,7 +189,7 @@ class ProfileController extends Controller
             $query->where('name', UserType::Student);
         })->with(['subscription' => function ($query) {
             $query->select('name', 'price', 'duration', 'duration_type', 'course_id');
-        }])->select('id', 'first_name', 'last_name')->get();
+        }])->select('id', 'name', 'suraname')->get();
 
         return response()->json($students);
     }
