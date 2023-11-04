@@ -90,6 +90,7 @@ Route::middleware(['jwt.auth'])->group(function () {
 
         //get all users
         Route::get('getStudents', [ProfileController::class, 'getAllStudents']);
+        Route::get('getStudents', [ProfileController::class, 'getAllStudentsSubscriptions']);
         Route::get('getTeachers', [ProfileController::class, 'getAllTeachers']);
         Route::get('user/{user}', [ProfileController::class, 'getUserById']);
 
