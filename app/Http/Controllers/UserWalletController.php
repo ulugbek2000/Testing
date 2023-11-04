@@ -79,7 +79,7 @@ class UserWalletController extends Controller
     {
         $user = Auth::user();
 
-        $latestPurchase = $user->subscritions()
+        $latestPurchase = $user->subscriptions()
             ->where('course_id', $courseId)
             ->latest()
             ->first();
