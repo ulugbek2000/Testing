@@ -25,7 +25,7 @@ class NewUserListener
     {
         // Assign newly registered user as student
         $event->user->assignRole(UserType::Student);
-        // TODO: create user wallet upon register
+        // TODO create user wallet upon register
         // $event->user->wallet()->create(['wallet' => 0]);
         // Send sms verification notification
         $verificationNumber = rand(1000, 9999);
