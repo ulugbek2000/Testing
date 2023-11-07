@@ -187,7 +187,7 @@ class ProfileController extends Controller
     public function getStudentsSubscription()
     {
         $subscriptions = UserSubscription::with('user', 'subscription')
-            ->select('user_subscriptions.id', 'user_id', 'subscription_id')
+            ->select('user_subscriptions.id', 'user_id', 'subscription_id','deleted_at')
             ->get();
 
         $filteredSubscriptions = $subscriptions->map(function ($subscription) {
