@@ -180,8 +180,48 @@ class ProfileController extends Controller
 
     public function getAllStudents()
     {
-        $students = User::role(UserType::Student)->get();
-        return response()->json($students);
+        $students = User::role(UserType::Student)->with('subscriptions.course')->get();
+
+        $studentData = $students->map(function ($student) {
+            return [
+                'id' => $student->id,
+                'name' => $student->name,
+                'surname' => $student->surname,
+                'subscriptions' => $student->subscriptions->map(function ($subscription) use ($student) { // Используйте "use" для передачи $student
+                    $course = $subscription->course;
+                    $totalLessons = $course->lessons()->count();
+                    $completedLessons = $student->lessonsProgress()
+                        ->where('course_id', $course->id)
+                        ->where('completed', true)
+                        ->count();
+                    $progressPercentage = $totalLessons > 0 ? ($completedLessons * 100 / $totalLessons) : 0;
+        
+                    return [
+                        'course' => [
+                            'id' => $course->id,
+                            'logo' => $course->logo,
+                            'name' => $course->name,
+                            'slug' => $course->slug,
+                            'quantity_lessons' => $course->quantity_lessons,
+                            'hours_lessons' => $course->hours_lessons,
+                            'short_description' => $course->short_description,
+                            'video' => $course->video,
+                            'has_certificate' => $course->has_certificate,
+                        ],
+                        'subscription_id' => $subscription->id,
+                        'subscription_name' => $subscription->name,
+                        'subscription_price' => $subscription->price,
+                        'completed_lessons' => $completedLessons,
+                        'total_lessons' => $totalLessons,
+                        'progress_percentage' => $progressPercentage,
+                        'deleted_at' => $subscription->deleted_at,
+                    ];
+                }),
+            ];
+        });
+        
+        return response()->json($studentData);
+        
     }
 
     public function getStudentsSubscription()
