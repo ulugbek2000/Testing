@@ -213,7 +213,7 @@ class ProfileController extends Controller
                     'price' => $subscription->subscription->price,
                     'duration' => $subscription->subscription->duration,
                     'duration_type' => $subscription->subscription->duration_type,
-                    'created_at' => $subscription->subscription,
+                    'created_at' => $subscription->created_at,
                     'description' => $descriptions
                 ],
                 'course' => [
