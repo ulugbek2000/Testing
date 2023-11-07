@@ -193,7 +193,7 @@ class ProfileController extends Controller
             'subscription' => function ($query) {
                 $query->select('id', 'name', 'price', 'duration', 'duration_type');
             },
-            'subscription.descriptions',
+            'subscription.description',
             'course' => function ($query) {
                 $query->select('id', 'name', 'slug', 'quantity_lessons', 'hours_lessons', 'short_description', 'video', 'has_certificate', 'logo');
             }
@@ -202,7 +202,7 @@ class ProfileController extends Controller
             ->get();
 
         $filteredSubscriptions = $subscriptions->map(function ($subscription) {
-            $descriptions = $subscription->subscription->descriptions->pluck('description');
+            $descriptions = $subscription->subscription->description->pluck('description');
 
             return [
                 'id' => $subscription->id,
@@ -213,7 +213,7 @@ class ProfileController extends Controller
                     'price' => $subscription->subscription->price,
                     'duration' => $subscription->subscription->duration,
                     'duration_type' => $subscription->subscription->duration_type,
-                    'descriptions' => $descriptions
+                    'description' => $descriptions
                 ],
                 'course' => [
                     'name' => $subscription->course->name,
