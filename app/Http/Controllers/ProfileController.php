@@ -186,8 +186,18 @@ class ProfileController extends Controller
 
     public function getStudentsSubscription()
     {
-        $subscriptions = UserSubscription::with('user', 'subscription','course')
-            ->select('user_subscriptions.id', 'user_id', 'subscription_id','deleted_at')
+        $subscriptions = UserSubscription::with([
+            'user' => function ($query) {
+                $query->select('id', 'name', 'surname');
+            },
+            'subscription' => function ($query) {
+                $query->select('id', 'name', 'price', 'duration', 'duration_type', 'description', 'deleted_at');
+            },
+            'course' => function ($query) {
+                $query->select('id', 'name', 'slug', 'quantity_lessons', 'hours_lessons', 'short_description', 'video', 'has_certificate', 'logo');
+            }
+        ])
+            ->select('id', 'user_id', 'subscription_id', 'course_id', 'deleted_at')
             ->get();
 
         $filteredSubscriptions = $subscriptions->map(function ($subscription) {
@@ -200,8 +210,8 @@ class ProfileController extends Controller
                     'price' => $subscription->subscription->price,
                     'duration' => $subscription->subscription->duration,
                     'duration_type' => $subscription->subscription->duration_type,
-                    'duration_type' => $subscription->subscription->description()->description,
-                    'deleted_at' => $subscription->deleted_at,
+                    'description' => $subscription->subscription->description,
+                    'deleted_at' => $subscription->subscription->deleted_at,
                 ],
                 'course' => [
                     'name' => $subscription->course->name,
