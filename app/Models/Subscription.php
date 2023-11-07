@@ -21,7 +21,7 @@ class Subscription extends Model
         $date = Carbon::now();
         if($this->duration_type == 'year')
             $date->addYears($this->duration);
-        if($this->duration_type == 'month')
+        if($this->duration_type == 'month') 
             $date->addMonths($this->duration);
         if($this->duration_type == 'week')
             $date->addWeeks($this->duration);

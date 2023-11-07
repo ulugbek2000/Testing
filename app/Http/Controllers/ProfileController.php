@@ -183,16 +183,12 @@ class ProfileController extends Controller
         return response()->json($students);
     }
 
-    public function getAllStudentsSubscription()
+    public function getStudentsSubscription()
     {
-        $students = User::whereHas('roles', function ($query) {
+        $teachers = User::whereHas('roles', function ($query) {
             $query->where('name', UserType::Student);
-        })->with(['subscription' => function ($query) {
-            $query->select('name', 'price', 'duration', 'duration_type', 'course_id');
-        }])->select('id', 'name', 'surname')->get();
-    
-
-        return response()->json($students);
+        })->with('subscription')->get();
+        return response()->json($teachers);
     }
 
 
