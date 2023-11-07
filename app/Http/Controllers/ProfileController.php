@@ -188,7 +188,7 @@ class ProfileController extends Controller
     {
         $subscriptions = UserSubscription::with([
             'user' => function ($query) {
-                $query->select('id', 'name', 'surname');
+                $query->select('id', 'name', 'surname','photo');
             },
             'subscription' => function ($query) {
                 $query->select('id', 'name', 'price', 'duration', 'duration_type');
@@ -208,6 +208,7 @@ class ProfileController extends Controller
                 'id' => $subscription->id,
                 'name' => $subscription->user->name,
                 'surname' => $subscription->user->surname,
+                'photo' => $subscription->user->photo,
                 'subscription' => [
                     'name' => $subscription->subscription->name,
                     'price' => $subscription->subscription->price,

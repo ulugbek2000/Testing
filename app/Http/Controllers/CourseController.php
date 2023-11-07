@@ -37,7 +37,7 @@ class CourseController extends Controller
             return response()->json(['error' => 'Параметр "name" отсутствует или пуст.'], 400);
         }
 
-        $name = strtolower($name); // Приводим значение к нижнему регистру
+        $name = strtolower($name);
 
         $courses = Course::whereRaw('LOWER(`name`) LIKE ?', ['%' . $name . '%'])
             ->whereNull('deleted_at')
