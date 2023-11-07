@@ -69,10 +69,10 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasMany(UserSubscription::class);
     }
 
-    public function subscription()
-    {
-        return $this->hasMany(Subscription::class);
-    }
+    // public function subscription()
+    // {
+    //     return $this->hasMany(Subscription::class);
+    // }
 
     public function wallet()
     {

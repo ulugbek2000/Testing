@@ -17,13 +17,14 @@ class Subscription extends Model
         'course_id',
     ];
 
-    function getDurationDateTime() {
+    function getDurationDateTime()
+    {
         $date = Carbon::now();
-        if($this->duration_type == 'year')
+        if ($this->duration_type == 'year')
             $date->addYears($this->duration);
-        if($this->duration_type == 'month') 
+        if ($this->duration_type == 'month')
             $date->addMonths($this->duration);
-        if($this->duration_type == 'week')
+        if ($this->duration_type == 'week')
             $date->addWeeks($this->duration);
 
         return $date;
@@ -33,10 +34,14 @@ class Subscription extends Model
     {
         return $this->belongsToMany(Course::class, 'course_id', 'id');
     }
-   
+
     public function description()
     {
         return $this->hasMany(Description::class);
+    }
+    public function users()
+    {
+        return $this->hasMany(UserSubscription::class);
     }
     // public function getPrice()
     // {

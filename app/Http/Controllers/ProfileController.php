@@ -7,6 +7,7 @@ use App\Http\Resources\USerResource;
 use App\Models\Role;
 use App\Models\User;
 use App\Models\UserSkills;
+use App\Models\UserSubscription;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
@@ -185,10 +186,11 @@ class ProfileController extends Controller
 
     public function getStudentsSubscription()
     {
-        $teachers = User::whereHas('roles', function ($query) {
-            $query->where('name', UserType::Student);
-        })->with('subscription')->get();
-        return response()->json($teachers);
+        $subscriptions = UserSubscription::with('user', 'subscription')
+            ->select('user_subscriptions.id', 'user_subscriptions.user_id', 'user_subscriptions.subscription_id')
+            ->get();
+
+        return response()->json($subscriptions);
     }
 
 
