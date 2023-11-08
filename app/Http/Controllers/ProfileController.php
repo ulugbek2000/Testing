@@ -191,7 +191,6 @@ class ProfileController extends Controller
                 'subscriptions' => $student->subscriptions->map(function ($subscription) use ($student) { 
                     $course = $subscription->subscription;
                     
-                    // Получаем количество уроков для данной подписки
                     $totalLessons = $subscription->course->lessons()->count();
                     
                     $completedLessons = UserLessonsProgress::where('user_id', $student->id)
@@ -214,7 +213,7 @@ class ProfileController extends Controller
                             'has_certificate' => $subscription->course->has_certificate,
                         ],
                         'subscription_id' => $subscription->id,
-                        'subscription_name' => $subscription->name,
+                        'subscription_name' => $subscription->subscription->name,
                         'subscription_price' => $subscription->price,
                         'completed_lessons' => $completedLessons,
                         'total_lessons' => $totalLessons,
