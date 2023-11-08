@@ -6,6 +6,7 @@ use App\Enums\UserType;
 use App\Http\Resources\USerResource;
 use App\Models\Role;
 use App\Models\User;
+use App\Models\UserLessonsProgress;
 use App\Models\UserSkills;
 use App\Models\UserSubscription;
 use Illuminate\Support\Facades\Validator;
@@ -180,20 +181,18 @@ class ProfileController extends Controller
 
     public function getAllStudents()
     {
-        $students = User::role(UserType::Student)->with('subscriptions.course')->get();
+        $users = User::role(UserType::Student)->with('subscriptions.courses')->get();
 
-        $studentData = $students->map(function ($student) {
+        $studentData = $users->map(function ($user) {
             return [
-                'id' => $student->id,
-                'name' => $student->name,
-                'surname' => $student->surname,
-                'subscriptions' => $student->subscriptions->map(function ($subscription) use ($student) { // Используйте "use" для передачи $student
+                'id' => $user->id,
+                'name' => $user->name,
+                'surname' => $user->surname,
+                'subscriptions' => $user->subscriptions->map(function ($subscription) use ($user) { 
                     $course = $subscription->course;
                     $totalLessons = $course->lessons()->count();
-                    $completedLessons = $student->lessonsProgress()
-                        ->where('course_id', $course->id)
-                        ->where('completed', true)
-                        ->count();
+                    $completedLessons = UserLessonsProgress::where('user_id', $user->id)->where('course_id', $course->id)->where('completed', true)->count();
+
                     $progressPercentage = $totalLessons > 0 ? ($completedLessons * 100 / $totalLessons) : 0;
         
                     return [
@@ -221,7 +220,6 @@ class ProfileController extends Controller
         });
         
         return response()->json($studentData);
-        
     }
 
     public function getStudentsSubscription()
@@ -233,6 +231,7 @@ class ProfileController extends Controller
             'subscription' => function ($query) {
                 $query->select('id', 'name', 'price', 'duration', 'duration_type');
             },
+
             'subscription.description',
             'course' => function ($query) {
                 $query->select('id', 'name', 'slug', 'quantity_lessons', 'hours_lessons', 'short_description', 'video', 'has_certificate', 'logo');
