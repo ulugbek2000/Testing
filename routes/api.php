@@ -171,54 +171,57 @@ Route::middleware(['jwt.auth'])->group(function () {
     });
 
     // Route::group(['prefix' => '{lacale}'], function () {
-        Route::middleware('access:' . implode(',', [UserType::Student]))->group(function () {
+    Route::middleware('access:' . implode(',', [UserType::Student]))->group(function () {
 
-            Route::get('student/user/balance', [UserWalletController::class, 'getBalance']);
-            Route::get('student/my-purchases', [UserWalletController::class, 'getMyPurchases']);
-            Route::get('student/my-purchasesByCourseId/{courseId}', [UserWalletController::class, 'getPurchasesByCourseId']);
+        Route::get('student/user/balance', [UserWalletController::class, 'getBalance']);
+        Route::get('student/my-purchases', [UserWalletController::class, 'getMyPurchases']);
+        Route::get('student/my-purchasesByCourseId/{courseId}', [UserWalletController::class, 'getPurchasesByCourseId']);
 
-            //Обновление своего профиля:
-            Route::put('student/profile', [ProfileController::class, 'updateProfile']);
+        //Обновление своего профиля:
+        Route::put('student/profile', [ProfileController::class, 'updateProfile']);
 
-            //Получение списка доступных курсов:
-            Route::get('student/course', [CourseController::class, 'index']);
+        //Получение списка доступных курсов:
+        Route::get('student/course', [CourseController::class, 'index']);
 
-            //Просмотр информации о курсе:
-            Route::get('student/teacherByCourse/{course}', [CourseController::class, 'getTeacherByCourse']);
-            Route::get('student/course/{course}', [CourseController::class, 'show']);
+        //Просмотр информации о курсе:
+        Route::get('student/teacherByCourse/{course}', [CourseController::class, 'getTeacherByCourse']);
+        Route::get('student/course/{course}', [CourseController::class, 'show']);
 
-            //Покупка курса:
-            Route::post('student/balance/withdraw/{course}/{subscription}', [UserTransactionController::class, 'purchaseCourse']);
+        //Просмотр актив студент
+        Route::get('student/weekly-activity-comparison', [UserLessonProgressController::class, 'getWeeklyActivityComparison']);
 
-            //Получение списка доступных подписок:
-            Route::get('student/course/{course}/subscriptions', [SubscriptionController::class, 'index']);
+        //Покупка курса:
+        Route::post('student/balance/withdraw/{course}/{subscription}', [UserTransactionController::class, 'purchaseCourse']);
 
-            Route::get('student/course-progress', [UserLessonProgressController::class, 'getCourseProgress']);
+        //Получение списка доступных подписок:
+        Route::get('student/course/{course}/subscriptions', [SubscriptionController::class, 'index']);
 
-            Route::get('student/topic/{topic}/lessons', [LessonController::class, 'index']);
-            Route::get('student/lesson/{lesson}', [LessonController::class, 'show']);
+        Route::get('student/course-progress', [UserLessonProgressController::class, 'getCourseProgress']);
 
-            //Просмотр информации о подписке:
-            Route::get('student/subscription/{subscription}', [SubscriptionController::class, 'show']);
+        Route::get('student/topic/{topic}/lessons', [LessonController::class, 'index']);
+        Route::get('student/lesson/{lesson}', [LessonController::class, 'show']);
 
-            // Получение темы доступных курс:
-            Route::get('student/course/{course}/topics', [TopicController::class, 'index']);
-            Route::get('student/topic/{topic}', [TopicController::class, 'show']);
+        //Просмотр информации о подписке:
+        Route::get('student/subscription/{subscription}', [SubscriptionController::class, 'show']);
 
-            //получение скиллы 
-            Route::get('student/course/{course}/skill', [CourseSkillsController::class, 'index']);
+        // Получение темы доступных курс:
+        Route::get('student/course/{course}/topics', [TopicController::class, 'index']);
+        Route::get('student/topic/{topic}', [TopicController::class, 'show']);
 
-            //Верификация на номер:
-            Route::post('verify-phone', [AuthController::class, 'verifyPhoneNumber']);
+        //получение скиллы 
+        Route::get('student/course/{course}/skill', [CourseSkillsController::class, 'index']);
 
-            Route::get('student/account', [ProfileController::class, 'getProfile']);
+        //Верификация на номер:
+        Route::post('verify-phone', [AuthController::class, 'verifyPhoneNumber']);
 
-            Route::post('watched/lesson/{lesson}', [UserLessonProgressController::class, 'watched']);
-            Route::get('course/{course}/progress', [UserLessonProgressController::class, 'getprogress']);
+        Route::get('student/account', [ProfileController::class, 'getProfile']);
 
-            // Route::get('/courses/{course}/buyers', [UserWalletController::class,'getCourseBuyers']);
-        });
+        Route::post('watched/lesson/{lesson}', [UserLessonProgressController::class, 'watched']);
+        Route::get('course/{course}/progress', [UserLessonProgressController::class, 'getprogress']);
 
-        Route::post('logout', [AuthController::class, 'logout']);
+        // Route::get('/courses/{course}/buyers', [UserWalletController::class,'getCourseBuyers']);
     });
+
+    Route::post('logout', [AuthController::class, 'logout']);
+});
 // });

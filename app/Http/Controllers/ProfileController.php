@@ -198,8 +198,7 @@ class ProfileController extends Controller
                 'position' => $student->position,
                 'date_of_birth' => $student->date_of_birth,
                 'subscriptions' => $student->subscriptions->map(function ($subscription) use ($student) {
-                    // $course = $subscription->subscription;
-
+                
                     $totalLessons = $subscription->course->lessons()->count();
 
                     $completedLessons = UserLessonsProgress::where('user_id', $student->id)
@@ -251,7 +250,7 @@ class ProfileController extends Controller
             'course' => function ($query) {
                 $query->select('id', 'name', 'slug', 'quantity_lessons', 'hours_lessons', 'short_description', 'video', 'has_certificate', 'logo');
             }
-        ])
+        ]) 
             ->select('id', 'user_id', 'subscription_id', 'course_id', 'created_at')
             ->get();
 
