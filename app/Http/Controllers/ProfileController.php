@@ -188,7 +188,7 @@ class ProfileController extends Controller
                 'id' => $user->id,
                 'name' => $user->name,
                 'surname' => $user->surname,
-                'subscriptions' => $user->subscriptions()->subscription->map(function ($subscription) use ($user) { 
+                'subscriptions' => $user->subscriptions->subscription()->map(function ($subscription) use ($user) { 
                     $course = $subscription->course;
                     $totalLessons = $course->lessons()->count();
                     $completedLessons = UserLessonsProgress::where('user_id', $user->id)->where('course_id', $course->id)->where('completed', true)->count();
