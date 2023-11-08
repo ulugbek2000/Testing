@@ -243,7 +243,7 @@ class ProfileController extends Controller
                 $query->select('id', 'name', 'surname', 'photo', 'phone');
             },
             'subscription' => function ($query) {
-                $query->select('id', 'name', 'price', 'duration', 'duration_type');
+                $query->select('id', 'name', 'price', 'duration', 'duration_type','created_at','deleted_at');
             },
 
             'subscription.description',
@@ -268,8 +268,8 @@ class ProfileController extends Controller
                     'price' => $subscription->subscription->price,
                     'duration' => $subscription->subscription->duration,
                     'duration_type' => $subscription->subscription->duration_type,
-                    'created_at' => $subscription->subscriptions->created_at,
-                    'deleted_at' => $subscription->subscriptions->deleted_at,
+                    'created_at' => $subscriptions->created_at,
+                    'deleted_at' => $subscriptions->deleted_at,
                     'description' => $descriptions
                 ],
                 'course' => [
