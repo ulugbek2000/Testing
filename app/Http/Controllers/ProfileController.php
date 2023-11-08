@@ -273,7 +273,7 @@ class ProfileController extends Controller
                     'description' => $descriptions
                 ],
                 'course' => [
-                    'name' => $subscription->course->name,
+                    // 'name' => $subscription->course->name,
                     'slug' => $subscription->course->slug,
                     'quantity_lessons' => $subscription->course->quantity_lessons,
                     'hours_lessons' => $subscription->course->hours_lessons,
