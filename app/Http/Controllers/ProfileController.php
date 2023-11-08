@@ -181,7 +181,7 @@ class ProfileController extends Controller
 
     public function getAllStudents()
     {
-        $users = User::role(UserType::Student)->with('subscriptions.courses')->get();
+        $users = User::role(UserType::Student)->with('subscriptions.course')->get();
 
         $studentData = $users->map(function ($user) {
             return [
