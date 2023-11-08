@@ -37,11 +37,11 @@ class UserLessonProgressController extends Controller
         $startOfWeek = $today->startOfWeek();
         $startOfLastWeek = $startOfWeek->subWeek();
 
-        $hoursSpentThisWeek = UserLessonsProgress::where('user', $user)
+        $hoursSpentThisWeek = UserLessonsProgress::where('user_id', $user->id)
             ->where('created_at', '>=', $startOfWeek)
             ->sum('hours_spent');
 
-        $hoursSpentLastWeek = UserLessonsProgress::where('user', $user)
+        $hoursSpentLastWeek = UserLessonsProgress::where('user_id', $user->id)
             ->where('created_at', '>=', $startOfLastWeek)
             ->where('created_at', '<', $startOfWeek)
             ->sum('hours_spent');
