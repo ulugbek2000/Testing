@@ -181,31 +181,37 @@ class ProfileController extends Controller
 
     public function getAllStudents()
     {
-        $users = User::role(UserType::Student)->with('subscriptions.course')->get();
-
-        $studentData = $users->map(function ($user) {
+        $students = User::role(UserType::Student)->with('subscriptions.subscription', 'subscriptions.course')->get();
+    
+        $studentData = $students->map(function ($student) {
             return [
-                'id' => $user->id,
-                'name' => $user->name,
-                'surname' => $user->surname,
-                'subscriptions' => $user->subscriptions->subscription()->map(function ($subscription) use ($user) { 
-                    $course = $subscription->course;
-                    $totalLessons = $course->lessons()->count();
-                    $completedLessons = UserLessonsProgress::where('user_id', $user->id)->where('course_id', $course->id)->where('completed', true)->count();
-
+                'id' => $student->id,
+                'name' => $student->name,
+                'surname' => $student->surname,
+                'subscriptions' => $student->subscriptions->map(function ($subscription) use ($student) { 
+                    $course = $subscription->subscription;
+                    
+                    // Получаем количество уроков для данной подписки
+                    $totalLessons = $subscription->course->lessons()->count();
+                    
+                    $completedLessons = UserLessonsProgress::where('user_id', $student->id)
+                        ->where('course_id', $subscription->course->id)
+                        ->where('completed', true)
+                        ->count();
+    
                     $progressPercentage = $totalLessons > 0 ? ($completedLessons * 100 / $totalLessons) : 0;
-        
+    
                     return [
                         'course' => [
-                            'id' => $course->id,
-                            'logo' => $course->logo,
-                            'name' => $course->name,
-                            'slug' => $course->slug,
-                            'quantity_lessons' => $course->quantity_lessons,
-                            'hours_lessons' => $course->hours_lessons,
-                            'short_description' => $course->short_description,
-                            'video' => $course->video,
-                            'has_certificate' => $course->has_certificate,
+                            'id' => $subscription->course->id,
+                            'logo' => $subscription->course->logo,
+                            'name' => $subscription->course->name,
+                            'slug' => $subscription->course->slug,
+                            'quantity_lessons' => $subscription->course->quantity_lessons,
+                            'hours_lessons' => $subscription->course->hours_lessons,
+                            'short_description' => $subscription->course->short_description,
+                            'video' => $subscription->course->video,
+                            'has_certificate' => $subscription->course->has_certificate,
                         ],
                         'subscription_id' => $subscription->id,
                         'subscription_name' => $subscription->name,
@@ -221,6 +227,7 @@ class ProfileController extends Controller
         
         return response()->json($studentData);
     }
+    
 
     public function getStudentsSubscription()
     {
