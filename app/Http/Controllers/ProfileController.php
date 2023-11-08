@@ -182,24 +182,33 @@ class ProfileController extends Controller
     public function getAllStudents()
     {
         $students = User::role(UserType::Student)->with('subscriptions.subscription', 'subscriptions.course')->get();
-    
+
         $studentData = $students->map(function ($student) {
             return [
                 'id' => $student->id,
                 'name' => $student->name,
                 'surname' => $student->surname,
-                'subscriptions' => $student->subscriptions->map(function ($subscription) use ($student) { 
-                    $course = $subscription->subscription;
-                    
+                'email' => $student->email,
+                'phone' => $student->phone,
+                'city' => $student->city,
+                'photo' => $student->photo,
+                'user_type' => $student->user_type,
+                'gender' => $student->gender,
+                'description' => $student->description,
+                'position' => $student->position,
+                'date_of_birth' => $student->date_of_birth,
+                'subscriptions' => $student->subscriptions->map(function ($subscription) use ($student) {
+                    // $course = $subscription->subscription;
+
                     $totalLessons = $subscription->course->lessons()->count();
-                    
+
                     $completedLessons = UserLessonsProgress::where('user_id', $student->id)
                         ->where('course_id', $subscription->course->id)
                         ->where('completed', true)
                         ->count();
-    
+
                     $progressPercentage = $totalLessons > 0 ? ($completedLessons * 100 / $totalLessons) : 0;
-    
+
                     return [
                         'course' => [
                             'id' => $subscription->course->id,
@@ -223,16 +232,16 @@ class ProfileController extends Controller
                 }),
             ];
         });
-        
+
         return response()->json($studentData);
     }
-    
+
 
     public function getStudentsSubscription()
     {
         $subscriptions = UserSubscription::with([
             'user' => function ($query) {
-                $query->select('id', 'name', 'surname','photo','phone');
+                $query->select('id', 'name', 'surname', 'photo', 'phone');
             },
             'subscription' => function ($query) {
                 $query->select('id', 'name', 'price', 'duration', 'duration_type');
