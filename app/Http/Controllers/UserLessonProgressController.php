@@ -11,14 +11,16 @@ use Illuminate\Support\Facades\Auth;
 
 class UserLessonProgressController extends Controller
 {
-    function watched(Lesson $lesson) {
+    function watched(Lesson $lesson)
+    {
         $user = Auth::user();
 
-    $user->addProgressCourse($lesson);
+        $user->addProgressCourse($lesson);
     }
 
 
-    function getProgress(Course $course) {
+    function getProgress(Course $course)
+    {
         $user = Auth::user();
         $completedLessons = UserLessonsProgress::where('user_id', $user->id)->where('course_id', $course->id)->where('completed', true)->count();
         $totalLessons = $course->lessons()->count();

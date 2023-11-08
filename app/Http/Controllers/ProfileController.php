@@ -226,7 +226,7 @@ class ProfileController extends Controller
                         'completed_lessons' => $completedLessons,
                         'total_lessons' => $totalLessons,
                         'progress_percentage' => $progressPercentage,
-                        'deleted_at' => $subscription->deleted_at,
+                        'deleted_at' => $subscription->subscriptions->deleted_at,
                     ];
                 }),
             ];
