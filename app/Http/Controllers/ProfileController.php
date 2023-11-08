@@ -243,7 +243,7 @@ class ProfileController extends Controller
                 $query->select('id', 'name', 'surname', 'photo', 'phone');
             },
             'subscription' => function ($query) {
-                $query->select('id', 'name', 'price', 'duration', 'duration_type','created_at','deleted_at');
+                $query->select('id', 'name', 'price', 'duration', 'duration_type');
             },
 
             'subscription.description',
@@ -251,7 +251,7 @@ class ProfileController extends Controller
                 $query->select('id', 'name', 'slug', 'quantity_lessons', 'hours_lessons', 'short_description', 'video', 'has_certificate', 'logo');
             }
         ]) 
-            ->select('id', 'user_id', 'subscription_id', 'course_id')
+            ->select('id', 'user_id', 'subscription_id', 'course_id','created_at','deleted_at')
             ->get();
 
         $filteredSubscriptions = $subscriptions->map(function ($subscription) {
