@@ -272,16 +272,16 @@ class ProfileController extends Controller
                     // 'deleted_at' => $subscription->deleted_at,
                     'description' => $descriptions
                 ],
-                'course' => [
-                    'name' => $subscription->course->name,
-                    'slug' => $subscription->course->slug,
-                    'quantity_lessons' => $subscription->course->quantity_lessons,
-                    'hours_lessons' => $subscription->course->hours_lessons,
-                    'short_description' => $subscription->course->short_description,
-                    'video' => $subscription->course->video,
-                    'has_certificate' => $subscription->course->has_certificate,
-                    'logo' => $subscription->course->logo,
-                ]
+                // 'course' => [
+                //     'name' => $subscription->course->name,
+                //     'slug' => $subscription->course->slug,
+                //     'quantity_lessons' => $subscription->course->quantity_lessons,
+                //     'hours_lessons' => $subscription->course->hours_lessons,
+                //     'short_description' => $subscription->course->short_description,
+                //     'video' => $subscription->course->video,
+                //     'has_certificate' => $subscription->course->has_certificate,
+                //     'logo' => $subscription->course->logo,
+                // ]
             ];
         });
 
