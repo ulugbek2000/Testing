@@ -16,13 +16,10 @@ class UserSubscription extends Model
         'price',
         'deleted_at'
     ];
-    protected $appends = [
-        'created_at',
-        'deleted_at'
-    ];
 
     protected static function booted()
-    {
+    {                                       
+        
         static::creating(function ($model) {
             if (!Course::find($model->course_id)) {
                 throw new \Exception('Курс не существует');
