@@ -42,7 +42,7 @@ class UserRoleController extends Controller
             return response()->json(['error' => 'Invalid role.'], 422);
         }
 
-        $user->user_type = $newRole;
+        $user->roles = $newRole;
         $user->save();
 
         return response()->json(['message' => 'User role updated successfully.']);
