@@ -13,19 +13,24 @@ class UserRoleController extends Controller
     public function getAllUsers(Request $request)
     {
         $user = Auth::user();
-    
+
         if ($user->hasRole(UserType::Admin)) {
             $per_page = $request->per_page ?? 12;
-    
+
             $users = User::paginate($per_page);
-    
-            foreach ($users as $user) {
-                $role = $user->roles()->first(); // Получение первой роли пользователя
-                $user->role = $role->name; // Предположим, что имя роли находится в поле "name"
-            }
-    
-            return UserResource::collection($users);
+            $userCollection = UserResource::collection($users);
+
+            $transformedUsers = $userCollection->map(function ($user) {
+                return [
+                    'id' => $user['id'],
+                    'name' => $user['name'],
+                    'surname' => $user['surname'],
+                    'phone' => $user['phone'],
+                    'role' => $user['role'],
+                ];
+            });
+
+            return $transformedUsers;
         }
     }
-    
 }
