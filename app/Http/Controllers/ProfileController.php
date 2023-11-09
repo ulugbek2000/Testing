@@ -199,7 +199,7 @@ class ProfileController extends Controller
                 'position' => $student->position,
                 'date_of_birth' => $student->date_of_birth,
                 'subscriptions' => $student->subscriptions->map(function ($subscription) use ($student) {
-                
+
                     $totalLessons = $subscription->course->lessons()->count();
 
                     $completedLessons = UserLessonsProgress::where('user_id', $student->id)
@@ -239,13 +239,28 @@ class ProfileController extends Controller
 
     public function getStudentsSubscription()
     {
+        // $subscriptions = UserSubscription::with([
+        //     'user:id,name,surname,photo,phone',
+        //     'subscription:id,name,price,duration,duration_type',
+        //     'subscription.description',
+        //     'course:id,name,slug,quantity_lessons,hours_lessons,short_description,video,has_certificate,logo',
+        // ])->select('id', 'user_id', 'subscription_id', 'course_id')->get();
         $subscriptions = UserSubscription::with([
-            'user:id,name,surname,photo,phone',
-            'subscription:id,name,price,duration,duration_type',
+            'user' => function ($query) {
+                $query->select('id', 'name', 'surname', 'photo', 'phone');
+            },
+            'subscription' => function ($query) {
+                $query->select('id', 'name', 'price', 'duration', 'duration_type');
+            },
             'subscription.description',
-            'course:id,name,slug,quantity_lessons,hours_lessons,short_description,video,has_certificate,logo',
+            'course' => function ($query) {
+                $query->select('id', 'name', 'slug', 'quantity_lessons', 'hours_lessons', 'short_description', 'video', 'has_certificate', 'logo');
+            }
         ])->select('id', 'user_id', 'subscription_id', 'course_id')->get();
-    
+
+        $subscriptions->each(function ($subscription) {
+            $subscription->setHidden([]); // Отключаем скрытие полей
+        });
         $filteredSubscriptions = $subscriptions->map(function ($subscription) {
             return [
                 'id' => $subscription->id,
@@ -263,23 +278,27 @@ class ProfileController extends Controller
                     'description' => $subscription->subscription->description->pluck('description'),
                 ],
                 'course' => $subscription->course
-                ? [
-                    'name' => $subscription->course->name,
-                    'slug' => $subscription->course->slug,
-                    'quantity_lessons' => $subscription->course->quantity_lessons,
-                    'hours_lessons' => $subscription->course->hours_lessons,
-                    'short_description' => $subscription->course->short_description,
-                    'video' => $subscription->course->video,
-                    'has_certificate' => $subscription->course->has_certificate,
-                    'logo' => $subscription->course->logo,
-                ]
-                : null
+                    ? [
+                        'name' => $subscription->course->name,
+                        'slug' => $subscription->course->slug,
+                        'quantity_lessons' => $subscription->course->quantity_lessons,
+                        'hours_lessons' => $subscription->course->hours_lessons,
+                        'short_description' => $subscription->course->short_description,
+                        'video' => $subscription->course->video,
+                        'has_certificate' => $subscription->course->has_certificate,
+                        'logo' => $subscription->course->logo,
+                    ]
+                    : null
             ];
-        })->toArray();
-    
+            if (isset($subscriptions)) {
+                $subscriptions->each(function ($subscription) {
+                    $subscription->setHidden(['created_at', 'deleted_at']);
+                });
+            }
+    });
         return response()->json($filteredSubscriptions);
     }
-    
+
 
     public function getAllTeachers()
     {
