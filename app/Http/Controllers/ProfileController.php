@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Enums\UserType;
 use App\Http\Resources\USerResource;
+use App\Models\Course;
 use App\Models\Role;
 use App\Models\User;
 use App\Models\UserLessonsProgress;
@@ -200,7 +201,6 @@ class ProfileController extends Controller
                 'subscriptions' => $student->subscriptions->map(function ($subscription) use ($student) {
                 
                     $totalLessons = $subscription->course->lessons()->count();
-                    dd($totalLessons);
 
                     $completedLessons = UserLessonsProgress::where('user_id', $student->id)
                         ->where('course_id', $subscription->course->id)

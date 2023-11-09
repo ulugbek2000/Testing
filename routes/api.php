@@ -196,8 +196,6 @@ Route::middleware(['jwt.auth'])->group(function () {
         //Получение списка доступных подписок:
         Route::get('student/course/{course}/subscriptions', [SubscriptionController::class, 'index']);
 
-        Route::get('student/course-progress', [UserLessonProgressController::class, 'getCourseProgress']);
-
         Route::get('student/topic/{topic}/lessons', [LessonController::class, 'index']);
         Route::get('student/lesson/{lesson}', [LessonController::class, 'show']);
 
