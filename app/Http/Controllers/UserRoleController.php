@@ -11,28 +11,31 @@ use Illuminate\Support\Facades\Auth;
 class UserRoleController extends Controller
 {
     public function getAllUsers(Request $request)
-    {
-        $user = Auth::user();
+{
+    $user = Auth::user();
 
-        if ($user->hasRole(UserType::Admin)) {
-            $per_page = $request->per_page ?? 12;
+    if ($user->hasRole(UserType::Admin)) {
+        $per_page = $request->per_page ?? 12;
 
-            $users = User::paginate($per_page);
-            $userCollection = UserResource::collection($users);
-            // $type = UserType::getValues();
-            $transformedUsers = $userCollection->map(function ($user) {
-                return [
-                    'id' => $user['id'],
-                    'name' => $user['name'],
-                    'surname' => $user['surname'],
-                    'phone' => $user['phone'],
-                    'role' => $user->roles()->first()->name,
-                ];
-            });
+        $users = User::paginate($per_page);
+        $userCollection = UserResource::collection($users);
+        
+        $transformedUsers = $userCollection->map(function ($user) {
+            $role = $user->roles->first(); // Use $user->roles instead of $user->roles()
+            
+            return [
+                'id' => $user['id'],
+                'name' => $user['name'],
+                'surname' => $user['surname'],
+                'phone' => $user['phone'],
+                'role' => $role ? $role->name : null, // Check if $role is not null before accessing the name property
+            ];
+        });
 
-            return $transformedUsers;
-        }
+        return $transformedUsers;
     }
+}
+
     public function updateUserRole(User $user, $newRole)
     {
 
