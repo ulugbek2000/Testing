@@ -164,7 +164,7 @@ class User extends Authenticatable implements JWTSubject
         parent::boot();
 
         static::created(function ($user) {
-            $studentRole = Role::where('model_type', 'student')->first();
+            $studentRole = Role::where('name', 'student')->first();
 
             if ($studentRole) {
                 $user->roles()->attach($studentRole);
