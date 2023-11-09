@@ -275,7 +275,7 @@ class ProfileController extends Controller
                 ]
                 : null
             ];
-        });
+        })->toArray();
     
         return response()->json($filteredSubscriptions);
     }
