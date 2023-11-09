@@ -198,7 +198,7 @@ class ProfileController extends Controller
                 'description' => $student->description,
                 'position' => $student->position,
                 'date_of_birth' => $student->date_of_birth,
-                'subscriptions' => $student->subscriptions->map(function ($subscription) use ($student) {
+                'subscriptions' => $student->subscription->map(function ($subscription) use ($student) {
                 
                     $totalLessons = $subscription->course->lessons()->count();
 
