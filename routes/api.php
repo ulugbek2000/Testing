@@ -13,6 +13,7 @@ use App\Http\Controllers\SmsController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\TopicController;
 use App\Http\Controllers\UserLessonProgressController;
+use App\Http\Controllers\UserRoleController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\UserTransactionController;
 use App\Http\Controllers\UserWalletController;
@@ -84,6 +85,9 @@ Route::middleware(['jwt.auth'])->group(function () {
 
         //Данный админ
         Route::get('admin/account', [ProfileController::class, 'getProfile']);
+
+        //Получение все пользователи
+        Route::get('getAllUsers', [UserRoleController::class, 'getAllUsers']);
 
         //Update mentor with help Admin
         Route::put('admin/user/{user}',  [ProfileController::class, 'updateTeacher']);
