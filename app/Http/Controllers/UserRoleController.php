@@ -22,14 +22,12 @@ class UserRoleController extends Controller
         
         $transformedUsers = $userCollection->map(function ($user) {
             $role = $user->roles->first(); 
-            $type = $user->roles->first() ? in_array($user->roles->first()->name, UserType::getValues()) : false;
             return [
                 'id' => $user['id'],
                 'name' => $user['name'],
                 'surname' => $user['surname'],
                 'phone' => $user['phone'],
-                'role' => $role ? $role->name : null, 
-                'type' => $type,
+                'role' => $role ? $role->name : null,
             ];
         });
 
