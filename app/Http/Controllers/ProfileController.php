@@ -200,7 +200,7 @@ class ProfileController extends Controller
                 'date_of_birth' => $student->date_of_birth,
                 'subscriptions' => $student->subscriptions->map(function ($subscription) use ($student) {
                 
-                    $totalLessons = $subscription->course->lessons->count();
+                    $totalLessons = $subscription->course->lessons()->count();
 
                     $completedLessons = UserLessonsProgress::where('user_id', $student->id)
                         ->where('course_id', $subscription->course->id)
@@ -239,25 +239,26 @@ class ProfileController extends Controller
 
     public function getStudentsSubscription()
     {
-        $subscriptions = UserSubscription::with([
-            'user' => function ($query) {
-                $query->select('id', 'name', 'surname', 'photo', 'phone');
-            },
-            'subscription' => function ($query) {
-                $query->select('id', 'name', 'price', 'duration', 'duration_type');
-            },
-
-            'subscription.description',
-            'course' => function ($query) {
-                $query->select('id', 'name', 'slug', 'quantity_lessons', 'hours_lessons', 'short_description', 'video', 'has_certificate', 'logo');
-            }
-        ]) 
-            ->select('id', 'user_id', 'subscription_id', 'course_id')
+        $subscriptions = UserSubscription::select('id', 'user_id', 'subscription_id', 'course_id')
+            ->with([
+                'user' => function ($query) {
+                    $query->select('id', 'name', 'surname', 'photo', 'phone');
+                },
+                'subscription' => function ($query) {
+                    $query->select('id', 'name', 'price', 'duration', 'duration_type', 'created_at', 'deleted_at', 'description');
+                },
+                'subscription.description' => function ($query) {
+                    $query->select('id', 'description');
+                },
+                'course' => function ($query) {
+                    $query->select('id', 'name', 'slug', 'quantity_lessons', 'hours_lessons', 'short_description', 'video', 'has_certificate', 'logo');
+                }
+            ])
             ->get();
-
+    
         $filteredSubscriptions = $subscriptions->map(function ($subscription) {
-            $descriptions = $subscription->subscription->description->pluck('description');
-
+            $descriptions = $subscription->subscriptionDescription->pluck('description');
+    
             return [
                 'id' => $subscription->id,
                 'name' => $subscription->user->name,
@@ -269,8 +270,8 @@ class ProfileController extends Controller
                     'price' => $subscription->subscription->price,
                     'duration' => $subscription->subscription->duration,
                     'duration_type' => $subscription->subscription->duration_type,
-                    'created_at' => $subscription->created_at,
-                    'deleted_at' => $subscription->deleted_at,
+                    'created_at' => $subscription->subscription->created_at,
+                    'deleted_at' => $subscription->subscription->deleted_at,
                     'description' => $descriptions
                 ],
                 'course' => [
@@ -285,14 +286,10 @@ class ProfileController extends Controller
                 ]
             ];
         });
-
+    
         return response()->json($filteredSubscriptions);
     }
-
-
-
-
-
+    
 
     public function getAllTeachers()
     {
