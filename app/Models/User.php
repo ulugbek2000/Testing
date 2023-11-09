@@ -136,17 +136,39 @@ class User extends Authenticatable implements JWTSubject
         return $this->phone_verified_at != null;
     }
 
-    function isSubscribed(Course $course) {
+    function isSubscribed(Course $course)
+    {
         return  $this->subscriptions()
-        ->where('course_id', $course->id)->exists();
+            ->where('course_id', $course->id)->exists();
     }
 
-    function addProgressCourse(Lesson $lesson) {
+    function addProgressCourse(Lesson $lesson)
+    {
         UserLessonsProgress::firstOrCreate([
             'user_id' => $this->id,
             'lesson_id' => $lesson->id,
             'course_id' => $lesson->topic->course->id,
             'completed' => true
         ]);
+    }
+
+
+    public function roles()
+    {
+        return $this->belongsToMany(Role::class, 'model_has_roles');
+    }
+
+    // Добавьте метод для автоматического назначения роли при создании пользователя
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::created(function ($user) {
+            $studentRole = Role::where('model_type', 'student')->first();
+
+            if ($studentRole) {
+                $user->roles()->attach($studentRole);
+            }
+        });
     }
 }
