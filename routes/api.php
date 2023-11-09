@@ -88,6 +88,7 @@ Route::middleware(['jwt.auth'])->group(function () {
 
         //Получение все пользователи
         Route::get('getAllUsers', [UserRoleController::class, 'getAllUsers']);
+        Route::put('updateRoleUser/{user}/{newRole}', [UserRoleController::class, 'updateUserRole']);
 
         //Update mentor with help Admin
         Route::put('admin/user/{user}',  [ProfileController::class, 'updateTeacher']);

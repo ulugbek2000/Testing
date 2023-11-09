@@ -32,4 +32,16 @@ class UserRoleController extends Controller
             return $transformedUsers;
         }
     }
+    public function updateUserRole(User $user, $newRole)
+    {
+
+        if (!in_array($newRole, UserType::getValues())) {
+            return response()->json(['error' => 'Invalid role.'], 422);
+        }
+
+        $user->user_type = $newRole;
+        $user->save();
+
+        return response()->json(['message' => 'User role updated successfully.']);
+    }
 }
