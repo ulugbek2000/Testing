@@ -67,7 +67,7 @@ return [
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-            'model' => App\Enums\UserType::getValues(),
+            'model' => App\Models\User::class,
         ],
 
         // 'users' => [
