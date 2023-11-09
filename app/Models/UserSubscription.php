@@ -16,6 +16,10 @@ class UserSubscription extends Model
         'price',
         'deleted_at'
     ];
+    protected $appends = [
+        'created_at',
+        'deleted_at'
+    ];
 
     protected static function booted()
     {
@@ -23,34 +27,33 @@ class UserSubscription extends Model
             if (!Course::find($model->course_id)) {
                 throw new \Exception('Курс не существует');
             }
-        
+
             if (!User::find($model->user_id)) {
                 throw new \Exception('Пользователь не существует');
             }
-        
+
             if (!Subscription::find($model->subscription_id)) {
                 throw new \Exception('Подписка не существует');
             }
-        
+
             if ($model->price < 0) {
                 throw new \Exception('Цена должна быть больше или равна 0.');
             }
         });
-        
     }
 
     function course()
     {
-        return $this->belongsTo(Course::class,'course_id' , 'id');
+        return $this->belongsTo(Course::class, 'course_id', 'id');
     }
 
     function subscription()
     {
-        return $this->belongsTo(Subscription::class,'subscription_id', 'id');
+        return $this->belongsTo(Subscription::class, 'subscription_id', 'id');
     }
 
     function user()
     {
-        return $this->belongsTo(User::class,'user_id', 'id');
+        return $this->belongsTo(User::class, 'user_id', 'id');
     }
 }
