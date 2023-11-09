@@ -244,7 +244,7 @@ class ProfileController extends Controller
             'subscription:id,name,price,duration,duration_type',
             'subscription.description',
             'course:id,name,slug,quantity_lessons,hours_lessons,short_description,video,has_certificate,logo',
-        ])->select('id', 'user_id', 'subscription_id', 'course_id','delted_at','created_at')->get();
+        ])->select('id', 'user_id', 'subscription_id', 'course_id','deleted_at','created_at')->get();
     
         $filteredSubscriptions = $subscriptions->map(function ($subscription) {
             return [
