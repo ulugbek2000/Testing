@@ -252,7 +252,7 @@ class ProfileController extends Controller
             }
         ]) 
             ->select('id', 'user_id', 'subscription_id', 'course_id','deleted_at','created_at')
-            ->get();
+            ->get('deleted_at','created_at');
 
         $filteredSubscriptions = $subscriptions->map(function ($subscription) {
             $descriptions = $subscription->subscription->description->pluck('description');
