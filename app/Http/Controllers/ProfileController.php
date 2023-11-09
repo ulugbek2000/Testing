@@ -262,7 +262,8 @@ class ProfileController extends Controller
                     'deleted_at' => $subscription->deleted_at,
                     'description' => $subscription->subscription->description->pluck('description'),
                 ],
-                'course' => [
+                'course' => $subscription->course
+                ? [
                     'name' => $subscription->course->name,
                     'slug' => $subscription->course->slug,
                     'quantity_lessons' => $subscription->course->quantity_lessons,
@@ -272,6 +273,7 @@ class ProfileController extends Controller
                     'has_certificate' => $subscription->course->has_certificate,
                     'logo' => $subscription->course->logo,
                 ]
+                : null
             ];
         })->toArray();
     
