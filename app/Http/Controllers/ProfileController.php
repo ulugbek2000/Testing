@@ -200,7 +200,7 @@ class ProfileController extends Controller
                 'date_of_birth' => $student->date_of_birth,
                 'subscriptions' => $student->subscriptions->map(function ($subscription) use ($student) {
                 
-                    $totalLessons = $student->subscriptions->course()->lessons()->count();
+                    $totalLessons = $subscription->course->lessons->count();
 
                     $completedLessons = UserLessonsProgress::where('user_id', $student->id)
                         ->where('course_id', $subscription->course->id)
