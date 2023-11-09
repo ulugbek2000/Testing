@@ -27,7 +27,7 @@ class UserRoleController extends Controller
                 'name' => $user['name'],
                 'surname' => $user['surname'],
                 'phone' => $user['phone'],
-                'role' => $role ? $role->name : null,
+                'role' => $role ? $role->id : null,
             ];
         });
 
