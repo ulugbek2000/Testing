@@ -153,22 +153,4 @@ class User extends Authenticatable implements JWTSubject
     }
 
 
-    public function roles()
-    {
-        return $this->belongsToMany(Role::class, 'model_has_roles');
-    }
-
-    // Добавьте метод для автоматического назначения роли при создании пользователя
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::created(function ($user) {
-            $studentRole = Role::where('name', 'student')->first();
-
-            if ($studentRole) {
-                $user->roles()->attach($studentRole);
-            }
-        });
-    }
 }
