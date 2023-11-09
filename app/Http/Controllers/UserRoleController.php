@@ -19,14 +19,13 @@ class UserRoleController extends Controller
 
             $users = User::paginate($per_page);
             $userCollection = UserResource::collection($users);
-
             $transformedUsers = $userCollection->map(function ($user) {
                 return [
                     'id' => $user['id'],
                     'name' => $user['name'],
                     'surname' => $user['surname'],
                     'phone' => $user['phone'],
-                    'role' => $user['role'],
+                    'role' => $user->roles()->first()->name,
                 ];
             });
 
