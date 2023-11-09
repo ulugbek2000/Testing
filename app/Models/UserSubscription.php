@@ -41,16 +41,16 @@ class UserSubscription extends Model
 
     function course()
     {
-        return $this->belongsTo(Course::class,'course_id');
+        return $this->belongsTo(Course::class,'course_id' , 'id');
     }
 
     function subscription()
     {
-        return $this->belongsTo(Subscription::class,'subscription_id');
+        return $this->belongsTo(Subscription::class,'subscription_id', 'id');
     }
 
     function user()
     {
-        return $this->belongsTo(User::class,'user_id');
+        return $this->belongsTo(User::class,'user_id', 'id');
     }
 }
