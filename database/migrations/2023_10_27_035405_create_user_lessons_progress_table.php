@@ -17,7 +17,7 @@ return new class extends Migration
             $table->unsignedBigInteger('lesson_id');
             $table->unsignedBigInteger('course_id');
             $table->boolean('completed')->default(false);
-            $table->integer('hours_spent')->default(0);
+            // $table->integer('hours_spent')->default(0);
             $table->foreign('user_id')->references('id')->on('users');
             $table->foreign('lesson_id')->references('id')->on('lessons');
             $table->foreign('course_id')->references('id')->on('courses');

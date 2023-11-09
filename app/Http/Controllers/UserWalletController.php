@@ -44,10 +44,7 @@ class UserWalletController extends Controller
             $totalLessons = 0;
             $completedLessons = 0;
 
-            $completedLessons = UserLessonsProgress::where('user_id', $user->id)
-                ->where('course_id', $course->id)
-                ->where('completed', true)
-                ->count();
+            $completedLessons = UserLessonsProgress::where('user_id', $user->id)->where('course_id', $course->id)->where('completed', true)->count();
             $totalLessons = $course->lessons()->count();
             $progressPercentage = $totalLessons > 0 ? ($completedLessons * 100 / $totalLessons) : 0;
 
