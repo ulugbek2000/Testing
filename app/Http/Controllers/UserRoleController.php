@@ -21,14 +21,15 @@ class UserRoleController extends Controller
         $userCollection = UserResource::collection($users);
         
         $transformedUsers = $userCollection->map(function ($user) {
-            $role = $user->roles->first(); // Use $user->roles instead of $user->roles()
+            $role = $user->roles->first(); 
             
             return [
                 'id' => $user['id'],
                 'name' => $user['name'],
                 'surname' => $user['surname'],
                 'phone' => $user['phone'],
-                'role' => $role ? $role->name : null, // Check if $role is not null before accessing the name property
+                'role' => $role ? $role->name : null, 
+                'type' => UserType::getValues(),
             ];
         });
 
