@@ -258,8 +258,8 @@ class ProfileController extends Controller
                     'price' => $subscription->subscription->price,
                     'duration' => $subscription->subscription->duration,
                     'duration_type' => $subscription->subscription->duration_type,
-                    'created_at' => $subscription->subscription->created_at,
-                    'deleted_at' => $subscription->subscription->deleted_at,
+                    'created_at' => $subscription->created_at,
+                    'deleted_at' => $subscription->deleted_at,
                     'description' => $subscription->subscription->description->pluck('description'),
                 ],
                 'course' => $subscription->course
@@ -275,7 +275,7 @@ class ProfileController extends Controller
                 ]
                 : null
             ];
-        })->toArray();
+        });
     
         return response()->json($filteredSubscriptions);
     }
