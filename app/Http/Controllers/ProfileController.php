@@ -54,6 +54,10 @@ class ProfileController extends Controller
             }
             // Upload and store new cover file
             $path = $request->file('photo')->store('photoMentor', 'public');
+        } elseif (!$request->has('photo') && $user->photo !== null) {
+            // Delete old photo file if no new photo is sent
+            Storage::delete($user->photo);
+            $path = null; // Set path to null when no new photo is sent
         }
         $data = array_merge(
             $request->only(['name', 'email', 'phone', 'surname', 'city', 'gender', 'date_of_birth']),
@@ -199,7 +203,7 @@ class ProfileController extends Controller
                 'position' => $student->position,
                 'date_of_birth' => $student->date_of_birth,
                 'subscriptions' => $student->subscriptions->map(function ($subscription) use ($student) {
-                
+
                     $totalLessons = $subscription->course->lessons()->count();
 
                     $completedLessons = UserLessonsProgress::where('user_id', $student->id)
@@ -244,8 +248,8 @@ class ProfileController extends Controller
             'subscription:id,name,price,duration,duration_type',
             'subscription.description',
             'course:id,name,slug,quantity_lessons,hours_lessons,short_description,video,has_certificate,logo',
-        ])->select('id', 'user_id', 'subscription_id', 'course_id','deleted_at','created_at')->get();
-    
+        ])->select('id', 'user_id', 'subscription_id', 'course_id', 'deleted_at', 'created_at')->get();
+
         $filteredSubscriptions = $subscriptions->map(function ($subscription) {
             return [
                 'id' => $subscription->id,
@@ -263,23 +267,23 @@ class ProfileController extends Controller
                     'description' => $subscription->subscription->description->pluck('description'),
                 ],
                 'course' => $subscription->course
-                ? [
-                    'name' => $subscription->course->name,
-                    'slug' => $subscription->course->slug,
-                    'quantity_lessons' => $subscription->course->quantity_lessons,
-                    'hours_lessons' => $subscription->course->hours_lessons,
-                    'short_description' => $subscription->course->short_description,
-                    'video' => $subscription->course->video,
-                    'has_certificate' => $subscription->course->has_certificate,
-                    'logo' => $subscription->course->logo,
-                ]
-                : null
+                    ? [
+                        'name' => $subscription->course->name,
+                        'slug' => $subscription->course->slug,
+                        'quantity_lessons' => $subscription->course->quantity_lessons,
+                        'hours_lessons' => $subscription->course->hours_lessons,
+                        'short_description' => $subscription->course->short_description,
+                        'video' => $subscription->course->video,
+                        'has_certificate' => $subscription->course->has_certificate,
+                        'logo' => $subscription->course->logo,
+                    ]
+                    : null
             ];
         })->toArray();
-    
+
         return response()->json($filteredSubscriptions);
     }
-    
+
 
     public function getAllTeachers()
     {
