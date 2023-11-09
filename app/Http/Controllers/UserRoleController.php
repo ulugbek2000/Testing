@@ -27,7 +27,6 @@ class UserRoleController extends Controller
                     'surname' => $user['surname'],
                     'phone' => $user['phone'],
                     'role' => $user->roles()->first()->name,
-                    'type'=>
                 ];
             });
 
