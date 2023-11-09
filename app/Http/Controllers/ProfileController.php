@@ -241,7 +241,7 @@ class ProfileController extends Controller
     {
         $subscriptions = UserSubscription::with([
             'user:id,name,surname,photo,phone',
-            'subscription:id,name,price,duration,duration_type,subscription_id',
+            'subscription:id,name,price,duration,duration_type',
             'subscription.description',
             'course:id,name,slug,quantity_lessons,hours_lessons,short_description,video,has_certificate,logo',
         ])->select('id', 'user_id', 'subscription_id', 'course_id')->get();
