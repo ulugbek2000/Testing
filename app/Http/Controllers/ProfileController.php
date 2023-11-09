@@ -247,8 +247,6 @@ class ProfileController extends Controller
         ])->select('id', 'user_id', 'subscription_id', 'course_id')->get();
     
         $filteredSubscriptions = $subscriptions->map(function ($subscription) {
-            $descriptions = $subscription->subscriptionDescription->pluck('description');
-    
             return [
                 'id' => $subscription->id,
                 'name' => $subscription->user->name,
@@ -260,9 +258,9 @@ class ProfileController extends Controller
                     'price' => $subscription->subscription->price,
                     'duration' => $subscription->subscription->duration,
                     'duration_type' => $subscription->subscription->duration_type,
-                    'created_at' => $subscription->subscription->created_at,
-                    'deleted_at' => $subscription->subscription->deleted_at,
-                    'description' => $descriptions
+                    'created_at' => $subscription->created_at,
+                    'deleted_at' => $subscription->deleted_at,
+                    'description' => $subscription->subscription->description->pluck('description'),
                 ],
                 'course' => [
                     'name' => $subscription->course->name,
@@ -275,7 +273,7 @@ class ProfileController extends Controller
                     'logo' => $subscription->course->logo,
                 ]
             ];
-        });
+        })->toArray();
     
         return response()->json($filteredSubscriptions);
     }
