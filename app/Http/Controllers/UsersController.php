@@ -144,17 +144,23 @@ class UsersController extends Controller
     public function updateUserRole($userId, $newRole)
     {
         $user = User::findOrFail($userId);
-
+    
         $adminUser = Auth::user();
-
+    
+        if (!$adminUser->hasRole(UserType::Admin)) {
+            return response()->json(['error' => 'Unauthorized.'], 403);
+        }
+    
         if (!in_array($newRole, UserType::getValues())) {
             return response()->json(['error' => 'Invalid role.'], 422);
         }
-
+    
+        // Remove existing roles before assigning the new one
         $user->roles()->detach();
-
+    
+        // Assign the new role
         $user->assignRole($newRole);
-
+    
         return response()->json(['message' => 'User role updated successfully.']);
     }
     
