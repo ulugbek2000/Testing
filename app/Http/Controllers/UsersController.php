@@ -137,5 +137,25 @@ class UsersController extends Controller
             'message' => "User succefully deleted."
         ], 200);
     }
+
+
+
+
+    public function updateUserRole($userId, $newRole)
+    {
+        $user = User::findOrFail($userId);
+
+        $adminUser = Auth::user();
+
+        if (!in_array($newRole, UserType::getValues())) {
+            return response()->json(['error' => 'Invalid role.'], 422);
+        }
+
+        $user->roles()->detach();
+
+        $user->assignRole($newRole);
+
+        return response()->json(['message' => 'User role updated successfully.']);
+    }
     
 }
