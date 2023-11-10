@@ -146,13 +146,13 @@ class UsersController extends Controller
         $user = User::findOrFail($userId);
     
         $adminUser = Auth::user();
-        dd(UserType::getValues());
+        // dd(UserType::getValues());
         if (!$adminUser->hasRole(UserType::Admin)) {
             return response()->json(['error' => 'Unauthorized.'], 403);
         }
  
         if (!in_array($newRole, UserType::getValues())) {
-            return response()->json(['error' => 'Invalid role.'], 422);
+            return response()->json(['error' => 'Invalid role. Valid roles are: ' . implode(', ', UserType::getValues())], 422);
         }
     
         // Remove existing roles before assigning the new one
