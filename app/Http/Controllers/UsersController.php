@@ -141,7 +141,7 @@ class UsersController extends Controller
 
 
 
-    public function updateUserRole(Request $request, $userId, $roleId)
+    public function updateUserRole(Request $request, $userId,  UserType $roleId)
     {
         $user = User::findOrFail($userId);
         $adminUser = Auth::user();
