@@ -150,7 +150,7 @@ class UsersController extends Controller
         if (!$adminUser->hasRole(UserType::Admin)) {
             return response()->json(['error' => 'Unauthorized.'], 403);
         }
-    
+    dd(UserType::getValues());
         if (!in_array($newRole, UserType::getValues())) {
             return response()->json(['error' => 'Invalid role.'], 422);
         }
