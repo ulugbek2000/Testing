@@ -13,7 +13,7 @@ class UserRoleController extends Controller
     public function getAllUsers(Request $request)
     {
         $user = Auth::user();
-
+        dd(UserType::getValues());
         if ($user->hasRole(UserType::Admin)) {
             $per_page = $request->per_page ?? 12;
 
