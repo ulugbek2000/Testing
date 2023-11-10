@@ -75,7 +75,6 @@ Route::get('course/{course}/topics', [TopicController::class, 'index']);
 Route::get('topic/{topic}/lessons', [LessonController::class, 'index']);
 Route::get('lesson/{lesson}', [LessonController::class, 'show']);
 
-Route::put('updateRoleUser/{userId}/{newRole}', [UserRoleController::class, 'updateUserRole']);
 
 Route::middleware(['jwt.auth'])->group(function () {
 
@@ -89,7 +88,7 @@ Route::middleware(['jwt.auth'])->group(function () {
 
         //Получение все пользователи
         Route::get('getAllUsers', [UserRoleController::class, 'getAllUsers']);
-     
+        Route::put('updateRoleUser/{userId}/{newRole}', [UserRoleController::class, 'updateUserRole']);
 
         //Update mentor with help Admin
         Route::put('admin/user/{user}',  [ProfileController::class, 'updateTeacher']);
