@@ -304,4 +304,46 @@ class ProfileController extends Controller
 
         return response()->json(['user' => $user], 200);
     }
+
+
+    function getCourseWithEnroledUsers()
+    {
+        $subscriptions = UserSubscription::with([
+            'user:id,name,surname,photo',
+            'subscription:id,name,price,duration,duration_type',
+            'course:id,name,slug,quantity_lessons,hours_lessons,logo',
+        ])->select('id', 'user_id', 'subscription_id', 'course_id', 'deleted_at', 'created_at')->get();
+
+        $filteredSubscriptions = $subscriptions->map(function ($subscription) {
+            return [
+                'id' => $subscription->id,
+                'name' => $subscription->user->name,
+                'surname' => $subscription->user->surname,
+                'photo' => $subscription->user->photo,
+                'subscription' => [
+                    'name' => $subscription->subscription->name,
+                    'price' => $subscription->subscription->price,
+                    'duration' => $subscription->subscription->duration,
+                    'duration_type' => $subscription->subscription->duration_type,
+                    'created_at' => $subscription->created_at,
+                    'deleted_at' => $subscription->deleted_at,
+                    // 'description' => $subscription->subscription->description->pluck('description'),
+                ],
+                'course' => $subscription->course
+                    ? [
+                        'name' => $subscription->course->name,
+                        'slug' => $subscription->course->slug,
+                        'quantity_lessons' => $subscription->course->quantity_lessons,
+                        'hours_lessons' => $subscription->course->hours_lessons,
+                        // 'short_description' => $subscription->course->short_description,
+                        // 'video' => $subscription->course->video,
+                        // 'has_certificate' => $subscription->course->has_certificate,
+                        'logo' => $subscription->course->logo,
+                    ]
+                    : null
+            ];
+        })->toArray();
+
+        return response()->json($filteredSubscriptions);
+    }
 }
