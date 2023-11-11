@@ -305,8 +305,7 @@ class ProfileController extends Controller
         return response()->json(['user' => $user], 200);
     }
 
-
-   public function getCourseWithEnroledUsers()
+    public function getCourseWithEnroledUsers()
     {
         $subscriptions = UserSubscription::with([
             'user:id,name,surname,photo',
@@ -327,7 +326,6 @@ class ProfileController extends Controller
                     'duration_type' => $subscription->subscription->duration_type,
                     'created_at' => $subscription->created_at,
                     'deleted_at' => $subscription->deleted_at,
-                    // 'description' => $subscription->subscription->description->pluck('description'),
                 ],
                 'course' => $subscription->course
                     ? [
@@ -335,9 +333,6 @@ class ProfileController extends Controller
                         'slug' => $subscription->course->slug,
                         'quantity_lessons' => $subscription->course->quantity_lessons,
                         'hours_lessons' => $subscription->course->hours_lessons,
-                        // 'short_description' => $subscription->course->short_description,
-                        // 'video' => $subscription->course->video,
-                        // 'has_certificate' => $subscription->course->has_certificate,
                         'logo' => $subscription->course->logo,
                     ]
                     : null
