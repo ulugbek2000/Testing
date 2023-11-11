@@ -75,7 +75,7 @@ Route::get('course/{course}/topics', [TopicController::class, 'index']);
 Route::get('topic/{topic}/lessons', [LessonController::class, 'index']);
 Route::get('lesson/{lesson}', [LessonController::class, 'show']);
 
-Route::get('getAllCourseEnrolledUsers', [ProfileController::class, 'getCourseWithEnroledUsers']);
+
 
 
 
@@ -90,7 +90,7 @@ Route::middleware(['jwt.auth'])->group(function () {
         Route::get('admin/account', [ProfileController::class, 'getProfile']);
 
         // Получение курсы с свзи пользователи 
-
+        Route::get('getAllCourseEnrolledUsers', [ProfileController::class, 'getCourseWithEnroledUsers'])->name('course');
         //Получение все пользователи
         Route::get('getAllUsers', [UserRoleController::class, 'getAllUsers']);
         Route::put('updateRoleUser/{userId}/{roleId}', [UserRoleController::class, 'updateUserRole']);
