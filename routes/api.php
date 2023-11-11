@@ -75,7 +75,7 @@ Route::get('course/{course}/topics', [TopicController::class, 'index']);
 Route::get('topic/{topic}/lessons', [LessonController::class, 'index']);
 Route::get('lesson/{lesson}', [LessonController::class, 'show']);
 
-Route::get('getAll/course/enrolled/users', [ProfileController::class, 'getCourseWithEnroledUsers']);
+Route::get('getAllCourseEnrolledUsers', [ProfileController::class, 'getCourseWithEnroledUsers']);
 
 
 
