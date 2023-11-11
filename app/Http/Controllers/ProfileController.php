@@ -306,7 +306,7 @@ class ProfileController extends Controller
     }
 
 
-    function getCourseWithEnroledUsers()
+   public function getCourseWithEnroledUsers()
     {
         $subscriptions = UserSubscription::with([
             'user:id,name,surname,photo',
