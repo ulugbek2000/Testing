@@ -53,7 +53,7 @@ class ProfileController extends Controller
                 Storage::delete($user->photo);
             }
             // Upload and store new cover file
-            $path = $request->file('photo')->store('photoMentor', 'public');
+            $path = $request->file('photo')->store('photoUser', 'public');
         } elseif (!$request->has('photo') && $user->photo !== null) {
             // Delete old photo file if no new photo is sent
             Storage::delete($user->photo);
@@ -135,7 +135,7 @@ class ProfileController extends Controller
                 Storage::delete($user->photo);
             }
             // Upload and store new cover file
-            $path = $request->file('photo')->store('photoMentor', 'public');
+            $path = $request->file('photo')->store('photoUser', 'public');
         }
         $data = array_merge(
             $request->only(['name', 'email', 'phone', 'surname', 'city', 'gender', 'date_of_birth', 'position', 'description']),
@@ -289,6 +289,7 @@ class ProfileController extends Controller
     {
         $teachers = User::whereHas('roles', function ($query) {
             $query->where('id', UserType::Teacher);
+
         })->with('userSkills')->get();
         return response()->json($teachers);
     }
