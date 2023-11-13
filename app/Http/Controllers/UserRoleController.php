@@ -35,9 +35,8 @@ class UserRoleController extends Controller
         }
     }
 
-    public function updateUserRole(Request $request, $userId, $roleId)
+    public function updateUserRole(Request $request, User $user, $roleId)
     {
-        $user = User::findOrFail($userId);
         $adminUser = Auth::user();
         if (!$adminUser->hasRole(UserType::Admin)) {
             return response()->json(['error' => 'Unauthorized.'], 403);
