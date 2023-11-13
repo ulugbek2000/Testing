@@ -25,9 +25,9 @@ class ProfileController extends Controller
 
     public function getProfile()
     {
-        // dd(Auth::check() ? [auth()->user(), 200] : [null, 401]);
-        return response()->json(Auth::check() ? [auth()->user(), 200] : [null, 401]);
+        return response()->json(Auth::check() ? auth()->user() : null, Auth::check() ? 200 : 401);
     }
+
 
 
     public function updateProfile(Request $request)
