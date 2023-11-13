@@ -44,7 +44,7 @@ class UserRoleController extends Controller
     
         // Проверяем, является ли переданный ID роли допустимым
         if (!in_array($roleId, UserType::getValues())) {
-            return response()->json(['error' => 'Invalid role ID'] ,422);
+            return response()->json(['error' => 'Invalid role id'] ,422);
         }
     
         // Remove existing roles before assigning the new one
