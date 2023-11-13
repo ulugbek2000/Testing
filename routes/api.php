@@ -183,7 +183,7 @@ Route::middleware(['jwt.auth'])->group(function () {
     });
 
     // Route::group(['prefix' => '{lacale}'], function () {
-    Route::middleware('access:' . implode(',', [UserType::Student]))->group(function () {
+    Route::middleware('access' . implode(',', [UserType::Student]))->group(function () {
 
         Route::get('student/user/balance', [UserWalletController::class, 'getBalance']);
         Route::get('student/my-purchases', [UserWalletController::class, 'getMyPurchases']);
