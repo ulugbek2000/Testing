@@ -91,7 +91,7 @@ Route::middleware(['jwt.auth'])->group(function () {
         Route::get('admin/account', [ProfileController::class, 'getProfile']);
         // Получение курсы с свзи пользователи 
 
-        Route::get('getAllCourseEnrolledUsers', [ProfileController::class, 'getCourseWithEnroledUsers']);
+        Route::get('getAllCourseEnrolledUsers/{course}', [ProfileController::class, 'getCourseWithEnroledUsers']);
 
         //Получение все пользователи
         Route::get('getAllUsers', [UserRoleController::class, 'getAllUsers']);

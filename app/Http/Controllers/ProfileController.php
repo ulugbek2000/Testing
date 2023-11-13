@@ -306,14 +306,18 @@ class ProfileController extends Controller
         return response()->json(['user' => $user], 200);
     }
 
-    public function getCourseWithEnroledUsers()
+    public function getCourseWithEnroledUsers(Course $course)
     {
+        // Получаем подписки с дополнительными данными о курсе
         $subscriptions = UserSubscription::with([
             'user:id,name,surname,photo',
             'subscription:id,name,price,duration,duration_type',
             'course:id,name,slug,quantity_lessons,hours_lessons,logo',
-        ])->select('id', 'user_id', 'subscription_id', 'course_id', 'deleted_at', 'created_at')->get();
-
+        ])->where('course_id', $course->id) // Фильтруем по указанному идентификатору курса
+          ->select('id', 'user_id', 'subscription_id', 'course_id', 'deleted_at', 'created_at')
+          ->get();
+    
+        // Маппим данные в нужный формат
         $filteredSubscriptions = $subscriptions->map(function ($subscription) {
             return [
                 'id' => $subscription->id,
@@ -335,11 +339,14 @@ class ProfileController extends Controller
                         'quantity_lessons' => $subscription->course->quantity_lessons,
                         'hours_lessons' => $subscription->course->hours_lessons,
                         'logo' => $subscription->course->logo,
+                        // Добавьте дополнительные поля о курсе здесь, если они есть
                     ]
                     : null
             ];
         })->toArray();
-
+    
+        // Отправляем JSON-ответ
         return response()->json($filteredSubscriptions);
     }
+    
 }
