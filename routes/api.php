@@ -87,11 +87,10 @@ Route::middleware(['jwt.auth'])->group(function () {
         Route::post('admin/balance/deposit', [UserTransactionController::class, 'topUpWallet']);
 
         //Данный админ
-        // Route::get('admin/account', [ProfileController::class, 'getProfile']);
         
-        Route::get('profile',Auth::check() ? [auth()->user(), 200] : [null, 401]);
+        Route::get('admin/account', [ProfileController::class, 'getProfile']);
         // Получение курсы с свзи пользователи 
-        
+
         // Route::get('getAllCourseEnrolledUsers', [ProfileController::class, 'getCourseWithEnroledUsers'])->name('course');
 
         //Получение все пользователи
