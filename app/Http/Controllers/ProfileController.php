@@ -312,10 +312,11 @@ class ProfileController extends Controller
         if (!$course) {
             return response()->json(['error' => 'Course not found'], 404);
         }
+        $result = $this->getCourseWithEnroledUsers($course);
 
-        $subscriptions = $this->getCourseWithEnroledUsers($course);
+        $sortedResult = collect($result)->sortByDesc('subscription.created_at')->values()->all();
 
-        return response()->json($subscriptions);
+        return response()->json($sortedResult);
     }
 
     private function getCourseWithEnroledUsers(Course $course)
