@@ -83,8 +83,8 @@ class Course extends Model
     {
         return $this->hasMany(UserSkills::class);
     }
-    public function courseSubscription()
+      public function userSubscriptions()
     {
-        return $this->hasMany(CourseSubscription::class);
+        return $this->hasMany(UserSubscription::class, 'course_id');
     }
 }

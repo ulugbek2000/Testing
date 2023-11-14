@@ -289,7 +289,6 @@ class ProfileController extends Controller
     {
         $teachers = User::whereHas('roles', function ($query) {
             $query->where('id', UserType::Teacher);
-
         })->with('userSkills')->get();
         return response()->json($teachers);
     }
@@ -306,17 +305,29 @@ class ProfileController extends Controller
         return response()->json(['user' => $user], 200);
     }
 
-    public function getCourseWithEnroledUsers(Course $course)
+    public function getEnrolledUsersForCourse($courseId)
+    {
+        $course = Course::find($courseId);
+
+        if (!$course) {
+            return response()->json(['error' => 'Course not found'], 404);
+        }
+
+        $subscriptions = $this->getCourseWithEnroledUsers($course);
+
+        return response()->json($subscriptions);
+    }
+
+    private function getCourseWithEnroledUsers(Course $course)
     {
         $subscriptions = UserSubscription::with([
             'user:id,name,surname,photo',
             'subscription:id,name,price,duration,duration_type',
             'course:id,name,slug,quantity_lessons,hours_lessons,logo',
-        ])->where('course_id', $course->id) 
-          ->select('id', 'user_id', 'subscription_id', 'course_id', 'deleted_at', 'created_at')
-          ->get();
-          dd($subscriptions);
-    
+        ])->where('course_id', $course->id)
+            ->select('id', 'user_id', 'subscription_id', 'course_id', 'deleted_at', 'created_at')
+            ->get();
+
         $filteredSubscriptions = $subscriptions->map(function ($subscription) {
             return [
                 'id' => $subscription->id,
@@ -341,8 +352,7 @@ class ProfileController extends Controller
                     ] : null
             ];
         })->toArray();
-    
-        return response()->json($filteredSubscriptions);
+
+        return $filteredSubscriptions;
     }
-    
 }
