@@ -10,6 +10,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SessionController;
 use App\Http\Controllers\SmsController;
+use App\Http\Controllers\StatisticsController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\TopicController;
 use App\Http\Controllers\UserLessonProgressController;
@@ -86,8 +87,11 @@ Route::middleware(['jwt.auth'])->group(function () {
         //Пополнение баланс:
         Route::post('admin/balance/deposit', [UserTransactionController::class, 'topUpWallet']);
 
+        //Поуличть Статистика пользователи 
+
+        Route::get('getStatistics', [StatisticsController::class, 'getStatisticsUser']);
         //Данный админ
-        
+
         Route::get('admin/account', [ProfileController::class, 'getProfile']);
         // Получение курсы с свзи пользователи 
 
