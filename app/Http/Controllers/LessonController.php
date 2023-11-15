@@ -103,7 +103,7 @@ class LessonController extends Controller
             ], 200);
         }
 
-        if (Auth::user()->hasRole(UserType::Student) || !Auth::check() &&  $lesson->topic->course->isFirstLesson($lesson)) {
+        if ( !Auth::check() &&  $lesson->topic->course->isFirstLesson($lesson)) {
 
             return response()->json([
                 'id' => $lesson->id,
