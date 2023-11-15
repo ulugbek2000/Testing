@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Enums\LessonType;
 use App\Enums\LessonTypes;
+use App\Enums\UserType;
 use App\Models\Lesson;
 use App\Models\Topic;
+use App\Models\User;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -86,6 +88,7 @@ class LessonController extends Controller
      */
     public function show(Lesson $lesson)
     {
+        $user = new User();
         if (Auth::check() && Auth::user()->isSubscribed($lesson->topic->course)) {
             return response()->json([
                 'id' => $lesson->id,
@@ -100,7 +103,7 @@ class LessonController extends Controller
             ], 200);
         }
 
-        if (!Auth::check() &&  $lesson->topic->course->isFirstLesson($lesson)) {
+        if ($user->hasRole(UserType::Student) || !Auth::check() &&  $lesson->topic->course->isFirstLesson($lesson)) {
 
             return response()->json([
                 'id' => $lesson->id,

@@ -305,13 +305,8 @@ class ProfileController extends Controller
         return response()->json(['user' => $user], 200);
     }
 
-    public function getEnrolledUsersForCourse($courseId)
+    public function getEnrolledUsersForCourse(Course $course)
     {
-        $course = Course::find($courseId);
-
-        if (!$course) {
-            return response()->json(['error' => 'Course not found'], 404);
-        }
         $result = $this->getCourseWithEnroledUsers($course);
 
         $sortedResult = collect($result)->sortByDesc('subscription.created_at')->values()->all();
