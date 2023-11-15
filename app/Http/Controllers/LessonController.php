@@ -103,7 +103,7 @@ class LessonController extends Controller
             ], 200);
         }
 
-        if (!Auth::check() ||Auth::check() &&  $lesson->topic->course->isFirstLesson($lesson)) {
+        if (!Auth::check() || Auth::check() &&  $lesson->topic->course->isFirstLesson($lesson)) {
 
             return response()->json([
                 'id' => $lesson->id,
@@ -117,7 +117,7 @@ class LessonController extends Controller
                 'deleted_at' => $lesson->deleted_at,
             ], 200);
         }
- 
+
         return abort(403);
     }
 
