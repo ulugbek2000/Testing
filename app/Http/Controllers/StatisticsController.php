@@ -16,7 +16,8 @@ class StatisticsController extends Controller
         // $users = User::with('courses')->get();
 
         $courseCount = Course::all()->count();
-        $subscriptionCount = UserSubscription::all()->count();
+        $subscriptionCount = UserSubscription::latest('created_at')->distinct('user_id')->count('user_id');
+
 
         $studentsCount = User::whereHas('roles', function ($query) {
             $query->where('name', UserType::Student);
