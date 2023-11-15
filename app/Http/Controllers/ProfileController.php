@@ -318,8 +318,8 @@ class ProfileController extends Controller
             'user:id,name,surname,photo',
             'subscription:id,name,price,duration,duration_type',
             'course:id,name,slug,quantity_lessons,hours_lessons,logo',
-        ])->where('course_id', $course->id)
-            ->select('id', 'user_id', 'subscription_id', 'course_id', 'deleted_at', 'created_at')
+        ])->selectRaw('MAX(id) as id, user_id, MAX(subscription_id) as subscription_id, MAX(course_id) as course_id, MAX(deleted_at) as deleted_at, MAX(created_at) as created_at')
+            ->where('course_id', $course->id)
             ->orderBy('created_at', 'desc')
             ->groupBy('user_id')
             ->get()
