@@ -6,6 +6,7 @@ use App\Enums\UserType;
 use App\Models\Course;
 use App\Models\Subscription;
 use App\Models\User;
+use App\Models\UserSubscription;
 use Illuminate\Http\Request;
 
 class StatisticsController extends Controller
@@ -15,7 +16,7 @@ class StatisticsController extends Controller
         // $users = User::with('courses')->get();
 
         $courseCount = Course::all()->count();
-        $subscriptionCount = Subscription::all()->count();
+        $subscriptionCount = UserSubscription::all()->count();
 
         $studentsCount = User::whereHas('roles', function ($query) {
             $query->where('name', UserType::Student);

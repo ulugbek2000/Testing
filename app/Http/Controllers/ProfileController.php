@@ -304,13 +304,6 @@ class ProfileController extends Controller
 
         return response()->json(['user' => $user], 200);
     }
-    
-    // public function getEnrolledUsersForCourse(Course $course)
-    // {
-    //     $result = $this->getLatestEnroledUserForCourse($course);
-    //     $sortedResult = collect($result)->sortByDesc('subscription.created_at')->values()->all();
-    //     return response()->json($sortedResult);
-    // }
 
     public function getEnrolledUsersForCourse(Course $course)
     {
