@@ -305,16 +305,21 @@ class ProfileController extends Controller
         return response()->json(['user' => $user], 200);
     }
 
+
+
+
+
+
+
+
     public function getEnrolledUsersForCourse(Course $course)
     {
-        $result = $this->getCourseWithEnroledUsers($course);
-
+        $result = $this->getLatestEnroledUserForCourse($course);
         $sortedResult = collect($result)->sortByDesc('subscription.created_at')->values()->all();
-
         return response()->json($sortedResult);
     }
 
-    private function getCourseWithEnroledUsers(Course $course)
+    private function getLatestEnroledUserForCourse(Course $course)
     {
         $subscriptions = UserSubscription::with([
             'user:id,name,surname,photo',
@@ -324,31 +329,37 @@ class ProfileController extends Controller
             ->select('id', 'user_id', 'subscription_id', 'course_id', 'deleted_at', 'created_at')
             ->get();
 
-        $filteredSubscriptions = $subscriptions->map(function ($subscription) {
-            return [
-                'id' => $subscription->id,
-                'name' => $subscription->user->name,
-                'surname' => $subscription->user->surname,
-                'photo' => $subscription->user->photo,
-                'subscription' => [
-                    'name' => $subscription->subscription->name,
-                    'price' => $subscription->subscription->price,
-                    'duration' => $subscription->subscription->duration,
-                    'duration_type' => $subscription->subscription->duration_type,
-                    'created_at' => $subscription->created_at,
-                    'deleted_at' => $subscription->deleted_at,
-                ],
-                'course' => $subscription->course
-                    ? [
-                        'name' => $subscription->course->name,
-                        'slug' => $subscription->course->slug,
-                        'quantity_lessons' => $subscription->course->quantity_lessons,
-                        'hours_lessons' => $subscription->course->hours_lessons,
-                        'logo' => $subscription->course->logo,
-                    ] : null
-            ];
-        })->toArray();
+        $latestSubscriptions = [];
 
-        return $filteredSubscriptions;
+        foreach ($subscriptions as $subscription) {
+            $userId = $subscription->user_id;
+
+            if (!array_key_exists($userId, $latestSubscriptions) || $subscription->created_at > $latestSubscriptions[$userId]['subscription']['created_at']) {
+                $latestSubscriptions[$userId] = [
+                    'id' => $subscription->id,
+                    'name' => $subscription->user->name,
+                    'surname' => $subscription->user->surname,
+                    'photo' => $subscription->user->photo,
+                    'subscription' => [
+                        'name' => $subscription->subscription->name,
+                        'price' => $subscription->subscription->price,
+                        'duration' => $subscription->subscription->duration,
+                        'duration_type' => $subscription->subscription->duration_type,
+                        'created_at' => $subscription->created_at,
+                        'deleted_at' => $subscription->deleted_at,
+                    ],
+                    'course' => $subscription->course
+                        ? [
+                            'name' => $subscription->course->name,
+                            'slug' => $subscription->course->slug,
+                            'quantity_lessons' => $subscription->course->quantity_lessons,
+                            'hours_lessons' => $subscription->course->hours_lessons,
+                            'logo' => $subscription->course->logo,
+                        ] : null
+                ];
+            }
+        }
+
+        return array_values($latestSubscriptions);
     }
 }
