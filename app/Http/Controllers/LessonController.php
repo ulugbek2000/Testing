@@ -88,7 +88,7 @@ class LessonController extends Controller
      */
     public function show(Lesson $lesson)
     {
-        dd(Auth::check());
+        // dd();
         if (Auth::check() && Auth::user()->isSubscribed($lesson->topic->course)) {
             return response()->json([
                 'id' => $lesson->id,
@@ -103,7 +103,7 @@ class LessonController extends Controller
             ], 200);
         }
 
-        if (!Auth::check() &&  $lesson->topic->course->isFirstLesson($lesson)) {
+        if (!Auth::check() ||Auth::check() &&  $lesson->topic->course->isFirstLesson($lesson)) {
 
             return response()->json([
                 'id' => $lesson->id,
