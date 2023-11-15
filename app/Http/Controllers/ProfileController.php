@@ -305,61 +305,48 @@ class ProfileController extends Controller
         return response()->json(['user' => $user], 200);
     }
 
-
-
-
-
-
-
+    // public function getEnrolledUsersForCourse(Course $course)
+    // {
+    //     $result = $this->getLatestEnroledUserForCourse($course);
+    //     $sortedResult = collect($result)->sortByDesc('subscription.created_at')->values()->all();
+    //     return response()->json($sortedResult);
+    // }
 
     public function getEnrolledUsersForCourse(Course $course)
     {
-        $result = $this->getLatestEnroledUserForCourse($course);
-        $sortedResult = collect($result)->sortByDesc('subscription.created_at')->values()->all();
-        return response()->json($sortedResult);
-    }
-
-    private function getLatestEnroledUserForCourse(Course $course)
-    {
-        $subscriptions = UserSubscription::with([
-            'user:id,name,surname,photo',
-            'subscription:id,name,price,duration,duration_type',
-            'course:id,name,slug,quantity_lessons,hours_lessons,logo',
-        ])->where('course_id', $course->id)
-            ->select('id', 'user_id', 'subscription_id', 'course_id', 'deleted_at', 'created_at')
+        $enrolledUsers = UserSubscription::where('course_id', $course->id)
+            ->with([
+                'user:id,name,surname,photo',
+                'subscription:id,name,price,duration,duration_type,created_at,deleted_at',
+                'course:id,name,slug,quantity_lessons,hours_lessons,logo',
+            ])
+            ->latest('created_at') // Сортировка по времени создания подписки в обратном порядке
             ->get();
 
-        $latestSubscriptions = [];
+        $result = $enrolledUsers->map(function ($subscription) {
+            return [
+                'id' => $subscription->id,
+                'name' => $subscription->user->name,
+                'surname' => $subscription->user->surname,
+                'photo' => $subscription->user->photo,
+                'subscription' => [
+                    'name' => $subscription->subscription->name,
+                    'price' => $subscription->subscription->price,
+                    'duration' => $subscription->subscription->duration,
+                    'duration_type' => $subscription->subscription->duration_type,
+                    'created_at' => $subscription->subscription->created_at,
+                    'deleted_at' => $subscription->subscription->deleted_at,
+                ],
+                'course' => [
+                    'name' => $subscription->course->name,
+                    'slug' => $subscription->course->slug,
+                    'quantity_lessons' => $subscription->course->quantity_lessons,
+                    'hours_lessons' => $subscription->course->hours_lessons,
+                    'logo' => $subscription->course->logo,
+                ],
+            ];
+        });
 
-        foreach ($subscriptions as $subscription) {
-            $userId = $subscription->user_id;
-
-            if (!array_key_exists($userId, $latestSubscriptions) || $subscription->created_at > $latestSubscriptions[$userId]['subscription']['created_at']) {
-                $latestSubscriptions[$userId] = [
-                    'id' => $subscription->id,
-                    'name' => $subscription->user->name,
-                    'surname' => $subscription->user->surname,
-                    'photo' => $subscription->user->photo,
-                    'subscription' => [
-                        'name' => $subscription->subscription->name,
-                        'price' => $subscription->subscription->price,
-                        'duration' => $subscription->subscription->duration,
-                        'duration_type' => $subscription->subscription->duration_type,
-                        'created_at' => $subscription->created_at,
-                        'deleted_at' => $subscription->deleted_at,
-                    ],
-                    'course' => $subscription->course
-                        ? [
-                            'name' => $subscription->course->name,
-                            'slug' => $subscription->course->slug,
-                            'quantity_lessons' => $subscription->course->quantity_lessons,
-                            'hours_lessons' => $subscription->course->hours_lessons,
-                            'logo' => $subscription->course->logo,
-                        ] : null
-                ];
-            }
-        }
-
-        return array_values($latestSubscriptions);
+        return response()->json($result);
     }
 }
