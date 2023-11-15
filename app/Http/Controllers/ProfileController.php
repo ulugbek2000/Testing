@@ -317,7 +317,7 @@ class ProfileController extends Controller
         $enrolledUsers = UserSubscription::where('course_id', $course->id)
             ->with([
                 'user:id,name,surname,photo',
-                'subscription:id,name,price,duration,duration_type,created_at,deleted_at',
+                'subscription:id,name,price,duration,duration_type,created_at',
                 'course:id,name,slug,quantity_lessons,hours_lessons,logo',
             ])
             ->latest('created_at') // Сортировка по времени создания подписки в обратном порядке
