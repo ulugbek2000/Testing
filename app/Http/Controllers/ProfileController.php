@@ -289,7 +289,7 @@ class ProfileController extends Controller
     {
         $teachers = User::whereHas('roles', function ($query) {
             $query->where('id', UserType::Teacher);
-        })->with('userSkills')->get();
+        })->with('userSkills','courses')->get();
         return response()->json($teachers);
     }
 
