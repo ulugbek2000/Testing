@@ -25,7 +25,7 @@ class CategoryCourseController extends Controller
 
         return response()->json([
             'category' => $category,
-            'courses' => $courses,
+            // 'courses' => $courses,
         ]);
     }
 }
