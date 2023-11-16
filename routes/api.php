@@ -3,6 +3,7 @@
 use App\Enums\UserType;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BalanceController;
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\CourseSkillsController;
 use App\Http\Controllers\LessonController;
@@ -184,6 +185,15 @@ Route::middleware(['jwt.auth'])->group(function () {
         Route::put('role/{id}', [RoleController::class, 'update']);
         Route::delete('role/{id}', [RoleController::class, 'destroy']);
         //End Role
+
+
+        //Start Category
+        Route::get('admin/categories', [CategoryController::class, 'index']);
+        Route::get('admin/category/{category}', [CategoryController::class, 'show']);
+        Route::post('category', [CategoryController::class, 'store']);
+        Route::put('category/{category}', [CategoryController::class, 'update']);
+        Route::delete('category/{category}', [CategoryController::class, 'destroy']);
+        //End Category
     });
 
     // Route::group(['prefix' => '{lacale}'], function () {

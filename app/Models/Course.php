@@ -54,7 +54,8 @@ class Course extends Model
         return $this->hasMany(Topic::class);
     }
 
-    function lessons() {
+    function lessons()
+    {
         return $this->hasManyThrough(Lesson::class, Topic::class);
     }
 
@@ -83,7 +84,7 @@ class Course extends Model
     {
         return $this->hasMany(UserSkills::class);
     }
-      public function userSubscriptions()
+    public function userSubscriptions()
     {
         return $this->hasMany(UserSubscription::class, 'course_id');
     }

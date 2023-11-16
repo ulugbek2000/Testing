@@ -17,7 +17,7 @@ class TopicController extends Controller
     public function index(Course $course)
     {
         $topics = $course->topics;
-            return response()->json($topics);
+        return response()->json($topics);
     }
 
 
