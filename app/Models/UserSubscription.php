@@ -17,27 +17,27 @@ class UserSubscription extends Model
         'deleted_at'
     ];
 
-    protected static function booted()
-    {                                       
+    // protected static function booted()
+    // {                                       
         
-        static::creating(function ($model) {
-            if (!Course::find($model->course_id)) {
-                throw new \Exception('Курс не существует');
-            }
+    //     static::creating(function ($model) {
+    //         if (!Course::find($model->course_id)) {
+    //             throw new \Exception('Курс не существует');
+    //         }
 
-            if (!User::find($model->user_id)) {
-                throw new \Exception('Пользователь не существует');
-            }
+    //         if (!User::find($model->user_id)) {
+    //             throw new \Exception('Пользователь не существует');
+    //         }
 
-            if (!Subscription::find($model->subscription_id)) {
-                throw new \Exception('Подписка не существует');
-            }
+    //         if (!Subscription::find($model->subscription_id)) {
+    //             throw new \Exception('Подписка не существует');
+    //         }
 
-            if ($model->price < 0) {
-                throw new \Exception('Цена должна быть больше или равна 0.');
-            }
-        });
-    }
+    //         if ($model->price < 0) {
+    //             throw new \Exception('Цена должна быть больше или равна 0.');
+    //         }
+    //     });
+    // }
 
     function course()
     {

@@ -15,7 +15,8 @@ class UserTransaction extends Model
         'method',
         'status'
     ];
-    function wallet(){
-        return $this->belongsTo(UserWallet::class);
+    function wallet()
+    {
+        return $this->belongsTo(UserWallet::class, 'wallet_id', 'id');
     }
 }

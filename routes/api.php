@@ -206,7 +206,7 @@ Route::middleware(['jwt.auth'])->group(function () {
         //Обновление своего профиля:
         Route::put('student/profile', [ProfileController::class, 'updateProfile']);
 
-        //Получение списка доступных курсов:
+        //Получение списка доступныг
         Route::get('student/course', [CourseController::class, 'index']);
 
         //Просмотр информации о курсе:

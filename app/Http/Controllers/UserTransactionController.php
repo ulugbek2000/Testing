@@ -78,8 +78,6 @@ class UserTransactionController extends Controller
         return response()->json(['success' => 'Wallet updated successfully'], 200);
 
         // $wallet->increment('balance', $request->input('amount'));
-
-        // return response()->json(['message' => 'Account successfully replenished']);
     }
 
     public function purchaseCourse(Course $course, Subscription $subscription)
@@ -115,7 +113,7 @@ class UserTransactionController extends Controller
         $userWallet->save();
 
         // Создаем запись о подписке
-        $userSubscription = $user->subscriptions()->create([
+        $user->subscriptions()->create([
             'course_id' => $course->id,
             'subscription_id' => $subscription->id,
             'price' => $subscription->price,
@@ -134,12 +132,6 @@ class UserTransactionController extends Controller
      */
     public function show(UserTransaction $transaction)
     {
-        if (!$transaction) {
-            return response()->json([
-                'message' => 'Transaction not found.'
-            ], 404);
-        }
-        // Return Json Response
         return response()->json([
             'transaction' => $transaction
         ], 200);

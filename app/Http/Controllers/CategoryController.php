@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\Course;
 use App\Models\CourseCategory;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class CategoryController extends Controller
 {
@@ -30,14 +32,21 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
+        $user = Auth::user();
+        $course = new Course();
+        $category = new Category();
         $request->validate([
             'title' => 'required|string',
         ]);
-
+     
         $data = [
             'title' => $request->title,
         ];
         Category::create($data);
+        $user->courseCategory()->create([
+            'course_id' => $course->id,
+            'category_id' => $category->id,
+        ]);
         return response()->json([
             'message' => "Category succefully created."
         ], 200);
