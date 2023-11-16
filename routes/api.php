@@ -4,6 +4,7 @@ use App\Enums\UserType;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BalanceController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\CategoryCourseController;
 use App\Http\Controllers\CourseCategoryCaontroller;
 use App\Http\Controllers\CourseCategoryController;
 use App\Http\Controllers\CourseController;
@@ -198,8 +199,8 @@ Route::middleware(['jwt.auth'])->group(function () {
         //End Category
 
         
-        Route::get('admin/showCoursesByCategory/{category}', [CourseCategoryController::class, 'show']);
-        Route::post('attachCoursesToCategory/{category}', [CourseCategoryController::class, 'attachCoursesToCategory']);
+        Route::get('admin/showCoursesByCategory/{category}', [CategoryCourseController::class, 'show']);
+        Route::post('attachCoursesToCategory/{category}', [CategoryCourseController::class, 'attachCoursesToCategory']);
     });
 
     // Route::group(['prefix' => '{lacale}'], function () {
