@@ -199,7 +199,7 @@ Route::middleware(['jwt.auth'])->group(function () {
         //End Category
 
         
-        Route::get('admin/showCoursesByCategory/{category}', [CategoryCourseController::class, 'showCoursesByCategory']);
+        Route::get('admin/showCoursesByCategory', [CategoryCourseController::class, 'showCoursesByCategory']);
         Route::post('attachCoursesToCategory/{category}', [CategoryCourseController::class, 'attachCoursesToCategory']);
     });
 

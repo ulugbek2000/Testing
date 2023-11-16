@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\Course;
 use Illuminate\Http\Request;
 
 class CategoryCourseController extends Controller
@@ -10,22 +11,23 @@ class CategoryCourseController extends Controller
     public function attachCoursesToCategory(Request $request, Category $category)
     {
         $request->validate([
-            'course_ids' => 'required',
+            'course_id' => 'required',
         ]);
 
-        $category->courses()->sync($request->course_ids);
+        $category->courses()->sync($request->course_id);
 
         return response()->json([
             'message' => 'Courses successfully attached to the category.'
         ], 200);
     }
-    public function showCoursesByCategory(Category $category)
+    public function showCoursesByCategory(Request $request)
     {
-        $courses = $category->courses;
-
-        return response()->json([
-            'category' => $category,
-            // 'courses' => $courses,
+        $request->validate([
+            'category_id' => 'required|exists:categories,id',
         ]);
+    
+        $courses = Course::where('category_id', $request->category_id)->get();
+    
+        return response()->json($courses);
     }
 }

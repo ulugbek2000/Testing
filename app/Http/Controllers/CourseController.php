@@ -9,6 +9,7 @@ use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Str;
 use app\Http\Requests\CourseStoreRequest;
 use App\Http\Resources\CourseResource;
+use App\Models\Category;
 use App\Models\CourseSkills;
 use App\Models\CourseSubscription;
 use App\Models\User;
@@ -64,10 +65,11 @@ class CourseController extends Controller
             'hours_lessons' => 'required',
             'short_description' => 'required',
             'video' => 'required|mimes:mp4,mov,avi,mpeg,mkv',
+            'category_name' => 'required|string',
         ]);
         $logo = $request->file('logo')->store('images', 'public');
         $video = $request->file('video')->store('videos', 'public');
-
+        $category = Category::firstOrCreate(['name' => $request->category_name]);
         // Сохранение видео в папку storage/app/public/videos
 
         try {
@@ -80,6 +82,7 @@ class CourseController extends Controller
                 'short_description' => $request->short_description,
                 'video' => Storage::url($video),
                 'has_certificate' => $request->has_certificate,
+                'category_id' => $category->id,
             ]);
             return response()->json([
                 'message' => "Course succefully created."

@@ -88,8 +88,8 @@ class Course extends Model
     {
         return $this->hasMany(UserSubscription::class, 'course_id');
     }
-    public function categories()
+    public function category()
     {
-        return $this->belongsToMany(Category::class);
+        return $this->belongsTo(Category::class);
     }
 }
