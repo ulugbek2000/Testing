@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use Illuminate\Http\Request;
 
-class CourseCategoryCaontroller extends Controller
+class CourseCategoryController extends Controller
 {
     public function attachCoursesToCategory(Request $request, Category $category)
     {

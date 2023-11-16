@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BalanceController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CourseCategoryCaontroller;
+use App\Http\Controllers\CourseCategoryController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\CourseSkillsController;
 use App\Http\Controllers\LessonController;
@@ -197,8 +198,8 @@ Route::middleware(['jwt.auth'])->group(function () {
         //End Category
 
         
-        Route::get('admin/showCoursesByCategory/{category}', [CourseCategoryCaontroller::class, 'show']);
-        Route::post('attachCoursesToCategory/{category}', [CourseCategoryCaontroller::class, 'attachCoursesToCategory']);
+        Route::get('admin/showCoursesByCategory/{category}', [CourseCategoryController::class, 'show']);
+        Route::post('attachCoursesToCategory/{category}', [CourseCategoryController::class, 'attachCoursesToCategory']);
     });
 
     // Route::group(['prefix' => '{lacale}'], function () {
