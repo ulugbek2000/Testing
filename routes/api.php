@@ -198,7 +198,7 @@ Route::middleware(['jwt.auth'])->group(function () {
 
         
         Route::get('admin/showCoursesByCategory/{category}', [CourseCategoryCaontroller::class, 'show']);
-        Route::post('category/attachCoursesToCategory', [CourseCategoryCaontroller::class, 'attachCoursesToCategory']);
+        Route::post('attachCoursesToCategory/{category}', [CourseCategoryCaontroller::class, 'attachCoursesToCategory']);
     });
 
     // Route::group(['prefix' => '{lacale}'], function () {
