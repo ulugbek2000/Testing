@@ -10,7 +10,7 @@ class CourseCategoryCaontroller extends Controller
     public function attachCoursesToCategory(Request $request, Category $category)
     {
         $request->validate([
-            'course_ids' => 'required|array',
+            'course_ids' => 'required',
         ]);
 
         $category->courses()->sync($request->course_ids);
