@@ -33,24 +33,23 @@ class CategoryController extends Controller
     public function store(Request $request)
     {
         $user = Auth::user();
-        $course = new Course();
-        $category = new Category();
         $request->validate([
             'title' => 'required|string',
         ]);
-     
-        $data = [
+    
+        // Создайте новую категорию
+        $category = Category::create([
             'title' => $request->title,
-        ];
-        Category::create($data);
-        $user->courseCategory()->create([
-            'course_id' => $course->id,
-            'category_id' => $category->id,
         ]);
+    
+        // Присоедините категорию к пользователю через связь
+        $user->courseCategories()->attach($category->id);
+    
         return response()->json([
-            'message' => "Category succefully created."
+            'message' => 'Category successfully created.'
         ], 200);
     }
+    
 
     /**
      * Display the specified resource.
