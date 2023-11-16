@@ -12,5 +12,8 @@ class Category extends Model
     [
         'title',
     ];
-   
+    public function courses()
+    {
+        return $this->belongsToMany(Course::class);
+    }
 }
