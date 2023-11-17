@@ -70,7 +70,6 @@ class CourseController extends Controller
         $logo = $request->file('logo')->store('images', 'public');
         $video = $request->file('video')->store('videos', 'public');
         $category = Category::firstOrCreate(['title' => $request->category_name]);
-        // Сохранение видео в папку storage/app/public/videos
 
         try {
             Course::create([
@@ -114,6 +113,7 @@ class CourseController extends Controller
             'short_description' => 'required|string',
             'logo' => 'nullable|file',
             'video' => 'nullable|mimes:mp4,mov,avi,mpeg,mkv,max:102400',
+            'category_name' => 'string',
         ]);
         if ($request->hasFile('logo')) {
             // Delete old logo file if needed
@@ -132,9 +132,12 @@ class CourseController extends Controller
         } else {
             $videopath = $course->video;
         }
+        $category = Category::firstOrCreate(['title' => $request->category_name]);
+
         $data = array_merge($request->only(['name', 'slug', 'short_description', 'quantity_lessons', 'hours_lessons', 'has_certificate']), [
             'logo' => $logopath,
             'video' => $videopath,
+            'category_id' => $category->id,
         ]);
 
         $course->update($data);
