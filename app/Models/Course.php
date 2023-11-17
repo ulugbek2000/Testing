@@ -22,6 +22,7 @@ class Course extends Model
         'short_description',
         'video',
         'has_certificate',
+        'category_id',
     ];
 
 

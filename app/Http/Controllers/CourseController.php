@@ -69,7 +69,7 @@ class CourseController extends Controller
         ]);
         $logo = $request->file('logo')->store('images', 'public');
         $video = $request->file('video')->store('videos', 'public');
-        $category = Category::firstOrCreate(['name' => $request->category_name]);
+        $category = Category::firstOrCreate(['title' => $request->category_name]);
         // Сохранение видео в папку storage/app/public/videos
 
         try {
