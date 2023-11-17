@@ -80,7 +80,10 @@ Route::get('course/{course}/topics', [TopicController::class, 'index']);
 Route::get('topic/{topic}/lessons', [LessonController::class, 'index']);
 Route::get('lesson/{lesson}', [LessonController::class, 'show']);
 
+//category
+Route::get('categories', [CategoryController::class, 'index']);
 
+Route::get('category/{category}', [CategoryController::class, 'show']);
 
 
 
@@ -192,8 +195,8 @@ Route::middleware(['jwt.auth'])->group(function () {
 
 
         //Start Category
-        Route::get('admin/categories', [CategoryController::class, 'index']);
-        Route::get('admin/category/{category}', [CategoryController::class, 'show']);
+        // Route::get('admin/categories', [CategoryController::class, 'index']);
+        // Route::get('admin/category/{category}', [CategoryController::class, 'show']);
         Route::post('category', [CategoryController::class, 'store']);
         Route::put('category/{category}', [CategoryController::class, 'update']);
         Route::delete('category/{category}', [CategoryController::class, 'destroy']);
