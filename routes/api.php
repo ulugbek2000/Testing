@@ -125,6 +125,7 @@ Route::middleware(['jwt.auth'])->group(function () {
         Route::get('course/{course}/teacher', [CourseController::class, 'getTeacherInCourse']);
         Route::post('courses/{course}/add-teachers', [CourseController::class, 'addTeachersToCourse']);
         Route::get('courses/{course}/buyers', [CourseController::class, 'getCourseBuyers']);
+        Route::get('courses/{category}', [CourseController::class, 'getCoursesByCategory']);
 
         //End Courses
 
@@ -198,9 +199,6 @@ Route::middleware(['jwt.auth'])->group(function () {
         Route::delete('category/{category}', [CategoryController::class, 'destroy']);
         //End Category
 
-        
-        Route::get('admin/showCoursesByCategory', [CategoryCourseController::class, 'showCoursesByCategory']);
-        Route::post('attachCoursesToCategory/{category}', [CategoryCourseController::class, 'attachCoursesToCategory']);
     });
 
     // Route::group(['prefix' => '{lacale}'], function () {

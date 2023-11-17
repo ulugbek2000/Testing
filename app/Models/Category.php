@@ -16,4 +16,8 @@ class Category extends Model
     {
         return $this->hasMany(Course::class);
     }
+    public function course()
+    {
+        return $this->belongsToMany(Course::class);
+    }
 }

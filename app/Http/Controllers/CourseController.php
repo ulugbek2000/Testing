@@ -217,4 +217,13 @@ class CourseController extends Controller
         return response()->json(['buyers' => $buyers], 200);
     }
 
+
+    public function getCoursesByCategory(Category $category)
+    {
+        // $category = Category::findOrFail($categoryId);
+
+        $courses = $category->course;
+
+        return response()->json(['courses' => $courses]);
+    }
 }
