@@ -54,7 +54,7 @@ class CourseController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request, Category $category)
     {
 
         $request->validate([
@@ -65,11 +65,10 @@ class CourseController extends Controller
             'hours_lessons' => 'required',
             'short_description' => 'required',
             'video' => 'required|mimes:mp4,mov,avi,mpeg,mkv',
-            'category_name' => 'required|string',
+            'category_id' => 'required|exists:categories,id',
         ]);
         $logo = $request->file('logo')->store('images', 'public');
         $video = $request->file('video')->store('videos', 'public');
-        $category = Category::firstOrCreate(['title' => $request->category_name]);
 
         try {
             Course::create([
@@ -81,7 +80,8 @@ class CourseController extends Controller
                 'short_description' => $request->short_description,
                 'video' => Storage::url($video),
                 'has_certificate' => $request->has_certificate,
-                'category_id' => $category->id,
+                'category_id' => $request->category_id,
+
             ]);
             return response()->json([
                 'message' => "Course succefully created."
@@ -89,7 +89,7 @@ class CourseController extends Controller
         } catch (\Exception $e) {
             //Return response Json
             return response()->json([
-                'message' => $e,
+                'message' => $e->getMessage(),
             ], 500);
         }
     }
