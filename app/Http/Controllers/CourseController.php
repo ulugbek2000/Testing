@@ -226,6 +226,6 @@ class CourseController extends Controller
             return response()->json(['message' => 'Category not found.'], 404);
         }
 
-        return response()->json(['courses' => $categoryWithCourses->courses, 'category' => $categoryWithCourses]);
+        return response()->json(['category' => $categoryWithCourses]);
     }
 }
