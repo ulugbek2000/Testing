@@ -129,7 +129,7 @@ Route::middleware(['jwt.auth'])->group(function () {
         Route::get('course/{course}/teacher', [CourseController::class, 'getTeacherInCourse']);
         Route::post('courses/{course}/add-teachers', [CourseController::class, 'addTeachersToCourse']);
         Route::get('courses/{course}/buyers', [CourseController::class, 'getCourseBuyers']);
-        Route::get('courses/{category}', [CourseController::class, 'getCoursesByCategory']);
+        // Route::get('courses/{category}', [CourseController::class, 'getCoursesByCategory']);
 
         //End Courses
 
