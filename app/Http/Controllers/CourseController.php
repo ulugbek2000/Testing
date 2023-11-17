@@ -113,7 +113,7 @@ class CourseController extends Controller
             'short_description' => 'required|string',
             'logo' => 'nullable|file',
             'video' => 'nullable|mimes:mp4,mov,avi,mpeg,mkv,max:102400',
-            'category_name' => 'string',
+            'category_id' => 'exists:categories,id',
         ]);
         if ($request->hasFile('logo')) {
             // Delete old logo file if needed
@@ -132,12 +132,10 @@ class CourseController extends Controller
         } else {
             $videopath = $course->video;
         }
-        $category = Category::firstOrCreate(['title' => $request->category_name]);
 
-        $data = array_merge($request->only(['name', 'slug', 'short_description', 'quantity_lessons', 'hours_lessons', 'has_certificate']), [
+        $data = array_merge($request->only(['name', 'slug', 'short_description', 'quantity_lessons', 'hours_lessons', 'has_certificate','category_id']), [
             'logo' => $logopath,
             'video' => $videopath,
-            'category_id' => $category->id,
         ]);
 
         $course->update($data);
