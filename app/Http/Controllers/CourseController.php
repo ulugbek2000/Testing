@@ -220,10 +220,10 @@ class CourseController extends Controller
 
     public function getCoursesByCategory(Category $category)
     {
-        // $category = Category::findOrFail($categoryId);
 
-        $courses = $category->courses;
+        $category = Category::with('courses');
 
-        return response()->json(['courses' => $courses]);
+
+        return response()->json(['courses' => $category]);
     }
 }
