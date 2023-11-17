@@ -222,7 +222,7 @@ class CourseController extends Controller
     {
         // $category = Category::findOrFail($categoryId);
 
-        $courses = $category->courses;
+        $courses = $category->courses();
 
         return response()->json(['courses' => $courses]);
     }
