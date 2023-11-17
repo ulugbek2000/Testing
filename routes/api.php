@@ -66,6 +66,7 @@ Route::get('teacherByCourse/{course}', [CourseController::class, 'getTeacherByCo
 Route::get('course/{course}', [CourseController::class, 'show']);
 
 Route::get('courses/search', [CourseController::class, 'search']);
+Route::get('courses/{category}', [CourseController::class, 'getCoursesByCategory']);
 
 Route::get('course/{course}/subscriptions', [SubscriptionController::class, 'index']);
 
