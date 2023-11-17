@@ -224,6 +224,6 @@ class CourseController extends Controller
         $category = Category::with('courses');
 
 
-        return response()->json(['courses' => $category]);
+        return response()->json(['courses' => $category->courses, 'category' => $category]);
     }
 }
