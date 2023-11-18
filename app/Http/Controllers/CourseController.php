@@ -220,8 +220,7 @@ class CourseController extends Controller
 
     public function getCoursesByCategory(Category $category)
     {
-        // Загружаем курсы связанные с категорией
-        $categoryWithCourses = Course::where($category->id);
+        $categoryWithCourses = $category->corses;
 
         if (!$categoryWithCourses) {
             return response()->json(['message' => 'Category not found.'], 404);
