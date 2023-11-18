@@ -45,10 +45,10 @@ class CourseController extends Controller
             ->get();
 
         if ($courses->isEmpty()) {
-            return response()->json(['message' => 'Нет результатов для вашего запроса.'], 200);
+            return response()->json([]);
         }
 
-        return response()->json(['courses' => $courses], 200);
+        return response()->json(['data' => $courses], 200);
     }
 
     /**
