@@ -220,7 +220,7 @@ class CourseController extends Controller
 
     public function getCoursesByCategory(Category $category)
     {
-        $categoryWithCourses = $category->corses;
+        $categoryWithCourses = $category->courses;
 
         if (!$categoryWithCourses) {
             return response()->json(['message' => 'Category not found.'], 404);
