@@ -53,7 +53,7 @@ class AuthController extends Controller
                 'token' => $token,
             ]);
         } else {
-            return response()->json(['message' => 'Unauthorized'], 401);
+            return response()->json(['message' => 'Неверные пароль или телефон'], 401);
         }
 
 
@@ -106,22 +106,22 @@ class AuthController extends Controller
         $user = Auth::user();
         $role = $user->roles()->first()->id;
         $verificationCode = $request->input('verification');
-    
+
         // Проверяем верификацию и устанавливаем phone_verified_at, если успешно
         if ($user->verifyCode($verificationCode)) {
             $user->phone_verified_at = now(); // Устанавливаем phone_verified_at
             $user->save(); // Сохраняем изменения в базе данных
         }
-    
+
         // Обновляем значение is_phone_verified в $customClaims
         $customClaims = [
             'user_type' => $role,
             'is_phone_verified' => $user->phone_verified_at != null,
         ];
-    
+
         // Создаем новый JWT токен с обновленными пользовательскими данными
         $token = JWTAuth::claims($customClaims)->fromUser($user);
-    
+
         return $user->phone_verified_at != null
             ? response()->json(['message' => 'Verification Completed', 'token' => $token], 200)
             : response()->json(['message' => 'Verification Failed'], 406);
