@@ -52,20 +52,20 @@ class StatisticsController extends Controller
     public function getResults($year)
     {
         $months = [];
-    
+
         for ($month = 1; $month <= 12; $month++) {
-            $students = User::whereHas('roles', function ($query) {
-                $query->where('name', UserType::Student);
+            $students = User::whereHas('roles', function ($query) use ($month) {
+                $query->where('name', UserType::Student)
+                    ->whereMonth('created_at', $month);
             })->count();
-    
             $payments = UserTransaction::whereYear('created_at', $year)
                 ->whereMonth('created_at', $month)
                 ->count();
-    
+
             $subscriptions = Subscription::whereYear('created_at', $year)
                 ->whereMonth('created_at', $month)
                 ->count();
-    
+
             $months[] = [
                 'name' => date('F', mktime(0, 0, 0, $month, 1, $year)),
                 'students' => $students,
@@ -73,8 +73,7 @@ class StatisticsController extends Controller
                 'subscriptions' => $subscriptions,
             ];
         }
-    
+
         return response()->json(['months' => $months]);
     }
-    
 }
