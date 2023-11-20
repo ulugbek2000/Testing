@@ -60,12 +60,6 @@ Auth::routes([
     'logout' => false
 ]);
 
-Route::get('/months/{year}', [StatisticsController::class,'getResults']);
-
-
-
-
-
 Route::get('course', [CourseController::class, 'index']);
 Route::get('teacherByCourse/{course}', [CourseController::class, 'getTeacherByCourse']);
 Route::get('course/{course}', [CourseController::class, 'show']);
@@ -103,6 +97,7 @@ Route::middleware(['jwt.auth'])->group(function () {
         //Поуличть Статистика пользователи 
 
         Route::get('getStatistics', [StatisticsController::class, 'getStatisticsUser']);
+        Route::get('/months/{year}', [StatisticsController::class,'getResults']);
         //Данный админ
 
         Route::get('admin/account', [ProfileController::class, 'getProfile']);

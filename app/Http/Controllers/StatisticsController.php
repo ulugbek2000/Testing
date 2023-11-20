@@ -64,15 +64,17 @@ class StatisticsController extends Controller
             ->whereMonth('created_at', $month)
             ->sum('total_earnings');
 
-            $subscriptions = Subscription::whereYear('created_at', $year)
-                ->whereMonth('created_at', $month)
-                ->count();
+            $subscriptionCount = UserTransaction::whereYear('created_at', $year)
+            ->whereMonth('created_at', $month)
+            ->whereNotNull('subscription_id') // учитываем только транзакции с подписками
+            ->where('amount', '>', 0) // учитываем только успешные транзакции (положительные значения)
+            ->count();
 
             $months[] = [
                 'name' => date('F', mktime(0, 0, 0, $month, 1, $year)),
                 'students' => $students,
                 'total_earnings' => $totalEarnings,
-                'subscriptions' => $subscriptions,
+                'subscriptions' => $subscriptionCount,
             ];
         }
 
