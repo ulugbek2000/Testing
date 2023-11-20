@@ -59,10 +59,9 @@ class StatisticsController extends Controller
                     ->whereMonth('created_at', $month);
             })->count();
 
-            $totalEarnings = UserTransaction::selectRaw('SUM(CASE WHEN amount >= 0 THEN amount ELSE 0 END) AS total_earnings')
-            ->whereYear('created_at', $year)
+            $totalEarnings = UserTransaction::whereYear('created_at', $year)
             ->whereMonth('created_at', $month)
-            ->first()->total_earnings;   ;
+            ->sum('course_earnings');
 
             $subscriptions = Subscription::whereYear('created_at', $year)
                 ->whereMonth('created_at', $month)
