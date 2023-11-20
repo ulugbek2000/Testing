@@ -60,7 +60,7 @@ Auth::routes([
     'logout' => false
 ]);
 
-Route::get('/months/{year}', 'ApiController@getMonths');
+Route::get('/months/{year}', [StatisticsController::class,'getMonths']);
 
 
 
