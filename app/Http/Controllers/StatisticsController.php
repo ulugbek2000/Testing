@@ -61,7 +61,7 @@ class StatisticsController extends Controller
 
             $totalEarnings = UserTransaction::whereYear('created_at', $year)
             ->whereMonth('created_at', $month)
-            ->sum('course_earnings');
+            ->sum('total_earnings');
 
             $subscriptions = Subscription::whereYear('created_at', $year)
                 ->whereMonth('created_at', $month)
