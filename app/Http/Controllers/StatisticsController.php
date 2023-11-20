@@ -60,7 +60,7 @@ class StatisticsController extends Controller
             })->count();
             $payments = UserTransaction::whereYear('created_at', $year)
                 ->whereMonth('created_at', $month)
-                ->count();
+                ->sum('amount');;
 
             $subscriptions = Subscription::whereYear('created_at', $year)
                 ->whereMonth('created_at', $month)
