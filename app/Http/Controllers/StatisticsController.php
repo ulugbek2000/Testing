@@ -66,10 +66,9 @@ class StatisticsController extends Controller
 
             $subscriptionCount = UserTransaction::whereYear('created_at', $year)
             ->whereMonth('created_at', $month)
-            ->whereNotNull('user_id') // учитываем только транзакции с подписками
+            ->where('description', 'LIKE', '%description%') 
             ->where('amount', '>', 0) // учитываем только успешные транзакции (положительные значения)
             ->count();
-
             $months[] = [
                 'name' => date('F', mktime(0, 0, 0, $month, 1, $year)),
                 'students' => $students,
