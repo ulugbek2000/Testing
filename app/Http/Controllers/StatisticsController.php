@@ -54,8 +54,9 @@ class StatisticsController extends Controller
         $months = [];
 
         for ($month = 1; $month <= 12; $month++) {
-            $students = User::whereHas('roles', function ($query) use ($month) {
+            $students = User::whereHas('roles', function ($query) use ($month,$year) {
                 $query->where('name', UserType::Student)
+                    ->whereYear('created_at', $year)
                     ->whereMonth('created_at', $month);
             })->count();
 

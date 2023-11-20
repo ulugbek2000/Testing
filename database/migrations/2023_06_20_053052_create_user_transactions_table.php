@@ -19,7 +19,7 @@ return new class extends Migration
                     $table->id();
                     $table->foreignId('wallet_id')->references('id')->on('user_wallets')->onDelete('cascade');
                     $table->decimal('amount', 10, 2);
-                    $table->decimal('total_earnings', 10, 2);
+                    $table->decimal('total_earnings', 10, 2)->default(null);
                     $table->string('description')->nullable();
                     $table->enum('method', TransactionMethod::getValues())->default(TransactionMethod::Cash);
                     $table->enum('status', TransactionStatus::getValues())->default(TransactionStatus::Pending);
