@@ -69,6 +69,7 @@ class StatisticsController extends Controller
             ->where('amount', '>', 0) // учитываем только успешные транзакции (положительные значения)
             ->where('total_earnings', '>', 0)
             ->count();
+            dd($subscriptionCount);
             $months[] = [
                 'name' => date('F', mktime(0, 0, 0, $month, 1, $year)),
                 'students' => $students,
