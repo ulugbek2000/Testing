@@ -58,9 +58,11 @@ class StatisticsController extends Controller
                 $query->where('name', UserType::Student)
                     ->whereMonth('created_at', $month);
             })->count();
-            $payments = UserTransaction::whereYear('created_at', $year)
-                ->whereMonth('created_at', $month)
-                ->sum('amount');    ;
+
+            $totalEarnings = UserTransaction::selectRaw('SUM(CASE WHEN amount >= 0 THEN amount ELSE 0 END) AS total_earnings')
+            ->whereYear('created_at', $year)
+            ->whereMonth('created_at', $month)
+            ->first()->total_earnings;   ;
 
             $subscriptions = Subscription::whereYear('created_at', $year)
                 ->whereMonth('created_at', $month)
@@ -69,7 +71,7 @@ class StatisticsController extends Controller
             $months[] = [
                 'name' => date('F', mktime(0, 0, 0, $month, 1, $year)),
                 'students' => $students,
-                'payments' => $payments,
+                'total_earnings' => $totalEarnings,
                 'subscriptions' => $subscriptions,
             ];
         }
