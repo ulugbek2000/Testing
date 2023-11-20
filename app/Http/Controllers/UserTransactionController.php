@@ -106,6 +106,7 @@ class UserTransactionController extends Controller
             'description' => 'Покупка курс',
             'method' => TransactionMethod::Cash,
             'status' => TransactionStatus::Pending,
+            'total_earnings' => $subscription->price,
         ]);
 
         // Уменьшаем сумму на балансе пользователя

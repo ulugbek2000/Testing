@@ -13,7 +13,8 @@ class UserTransaction extends Model
         'amount',
         'description',
         'method',
-        'status'
+        'status',
+        'total_earnings',
     ];
     function wallet()
     {
