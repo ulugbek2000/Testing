@@ -37,35 +37,44 @@ class StatisticsController extends Controller
         ]);
     }
 
-    public function getResults($month)
-    {
-        $students = User::whereHas('roles', function ($query) {
-            $query->where('name', UserType::Student);
-        })->count();
-        $payments = UserTransaction::whereMonth('payment_date', $month)->get();
-        $subscriptions = Subscription::whereMonth('subscription_date', $month)->get();
+    // public function getResults($month)
+    // {
+    //     $students = User::whereHas('roles', function ($query) {
+    //         $query->where('name', UserType::Student);
+    //     })->count();
+    //     $payments = UserTransaction::whereMonth('payment_date', $month)->get();
+    //     $subscriptions = Subscription::whereMonth('subscription_date', $month)->get();
 
-        return response()->json([
-            'students' => $students,
-            'payments' => $payments,
-            'subscriptions' => $subscriptions,
-        ]);
-    }
+    //     return response()->json([]);
+    // }
 
-    
-    public function getMonths($year)
+
+    public function getResults($year)
     {
         $months = [];
-
-        // Генерируйте массив месяцев для выбранного года
+    
         for ($month = 1; $month <= 12; $month++) {
+            $students = User::whereHas('roles', function ($query) {
+                $query->where('name', UserType::Student);
+            })->count();
+    
+            $payments = UserTransaction::whereYear('payment_date', $year)
+                ->whereMonth('payment_date', $month)
+                ->count();
+    
+            $subscriptions = Subscription::whereYear('subscription_date', $year)
+                ->whereMonth('subscription_date', $month)
+                ->count();
+    
             $months[] = [
-                'year' => $year,
-                'month' => $month,
                 'name' => date('F', mktime(0, 0, 0, $month, 1, $year)),
+                'students' => $students,
+                'payments' => $payments,
+                'subscriptions' => $subscriptions,
             ];
         }
-
+    
         return response()->json(['months' => $months]);
     }
+    
 }
