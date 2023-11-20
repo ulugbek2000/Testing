@@ -60,6 +60,11 @@ Auth::routes([
     'logout' => false
 ]);
 
+Route::get('/months/{year}', 'ApiController@getMonths');
+
+
+
+
 
 Route::get('course', [CourseController::class, 'index']);
 Route::get('teacherByCourse/{course}', [CourseController::class, 'getTeacherByCourse']);

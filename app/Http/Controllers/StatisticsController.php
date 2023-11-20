@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Enums\UserType;
+use App\Events\Transaction;
 use App\Models\Course;
 use App\Models\Subscription;
 use App\Models\User;
 use App\Models\UserSubscription;
+use App\Models\UserTransaction;
 use Illuminate\Http\Request;
 
 class StatisticsController extends Controller
@@ -33,5 +35,37 @@ class StatisticsController extends Controller
             'course_count' => $courseCount,
             'subscription_count' => $subscriptionCount,
         ]);
+    }
+
+    public function getResults($month)
+    {
+        $students = User::whereHas('roles', function ($query) {
+            $query->where('name', UserType::Student);
+        })->count();
+        $payments = UserTransaction::whereMonth('payment_date', $month)->get();
+        $subscriptions = Subscription::whereMonth('subscription_date', $month)->get();
+
+        return response()->json([
+            'students' => $students,
+            'payments' => $payments,
+            'subscriptions' => $subscriptions,
+        ]);
+    }
+
+    
+    public function getMonths($year)
+    {
+        $months = [];
+
+        // Генерируйте массив месяцев для выбранного года
+        for ($month = 1; $month <= 12; $month++) {
+            $months[] = [
+                'year' => $year,
+                'month' => $month,
+                'name' => date('F', mktime(0, 0, 0, $month, 1, $year)),
+            ];
+        }
+
+        return response()->json(['months' => $months]);
     }
 }
