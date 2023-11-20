@@ -9,6 +9,7 @@ use App\Models\Subscription;
 use App\Models\User;
 use App\Models\UserSubscription;
 use App\Models\UserTransaction;
+use App\Models\UserWallet;
 use Illuminate\Http\Request;
 
 class StatisticsController extends Controller
@@ -58,9 +59,9 @@ class StatisticsController extends Controller
                 $query->where('name', UserType::Student)
                     ->whereMonth('created_at', $month);
             })->count();
-            $payments = UserTransaction::whereYear('created_at', $year)
+            $payments = UserWallet::whereYear('created_at', $year)
                 ->whereMonth('created_at', $month)
-                ->sum('amount');;
+                ->sum('wallet');;
 
             $subscriptions = Subscription::whereYear('created_at', $year)
                 ->whereMonth('created_at', $month)
