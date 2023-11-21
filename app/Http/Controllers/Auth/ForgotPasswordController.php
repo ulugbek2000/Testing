@@ -27,16 +27,18 @@ class ForgotPasswordController extends Controller
 
     use SendsPasswordResetEmails;
 
+    protected $redirectTo = '/'; // Укажите свой URL перенаправления
+
     public function sendResetLink(Request $request)
     {
-     
-        $request->validate( [
+        $validator = Validator::make($request->all(), [
             'phone' => 'required|string',
         ]);
 
-
-        if (empty($request->input('phone'))) {
-            return response(['phone' => __('The phone field is required.')], 422);
+        if ($validator->fails()) {
+            throw ValidationException::withMessages([
+                'phone' => [trans('validation.required', ['attribute' => 'phone'])],
+            ]);
         }
 
         $status = Password::sendResetLink(
@@ -49,6 +51,5 @@ class ForgotPasswordController extends Controller
         return $status === Password::RESET_LINK_SENT
             ? response(['status' => __($status)])
             : response(['phone' => __($status)], 422);
-    
     }
 }
