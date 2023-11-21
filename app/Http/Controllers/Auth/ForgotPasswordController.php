@@ -30,15 +30,9 @@ class ForgotPasswordController extends Controller
     public function sendResetLink(Request $request)
     {
      
-        $validator = Validator::make($request->all(), [
+        $request->validate( [
             'phone' => 'required|string',
         ]);
-
-        if ($validator->fails()) {
-            throw ValidationException::withMessages([
-                'phone' => [trans('validation.required', ['attribute' => 'phone'])],
-            ]);
-        }
 
         $status = Password::sendResetLink(
             $request->only('phone'),
