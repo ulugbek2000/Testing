@@ -11,7 +11,6 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // if (!Schema::hasTable('users'))
             Schema::create('users', function (Blueprint $table) {
                 $table->id();
                 $table->string('name')->nullable();
@@ -22,8 +21,6 @@ return new class extends Migration
                 $table->string('city')->nullable();
                 $table->text('description')->nullable();
                 $table->string('position')->nullable();
-                $table->string('user_type')->nullable();
-                // $table->foreignId('role_id')->references('id')->on('roles')->onDelete('cascade');
                 $table->timestamp('email_verified_at')->nullable();
                 $table->timestamp('phone_verified_at')->nullable();
                 $table->date('date_of_birth')->nullable();
