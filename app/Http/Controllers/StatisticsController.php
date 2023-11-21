@@ -58,24 +58,21 @@ class StatisticsController extends Controller
                 $query->where('name', UserType::Student)
                     ->whereYear('created_at', $year)
                     ->whereMonth('created_at', $month);
-            })->count();
+            })->count();            
 
             $totalEarnings = UserTransaction::whereYear('created_at', $year)
             ->whereMonth('created_at', $month)
             ->sum('total_earnings');
 
-            $subscriptions = UserTransaction::whereYear('created_at', $year)
+          $subscriptions = UserTransaction::whereYear('created_at', $year)
             ->whereMonth('created_at', $month)
-            ->where('amount', '>', 0)
-            ->where('total_earnings', '>', 0)
-            ->get();
-            $subscriptionCount = $subscriptions->count();
-            dd($subscriptionCount);
+            ->count();
+
             $months[] = [
                 'name' => date('F', mktime(0, 0, 0, $month, 1, $year)),
                 'students' => $students,
                 'total_earnings' => $totalEarnings,
-                'subscriptions' => $subscriptionCount,
+                'subscriptions' => $subscriptions,
             ];
         }
 
