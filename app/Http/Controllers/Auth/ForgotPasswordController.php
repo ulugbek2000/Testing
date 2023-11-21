@@ -32,17 +32,17 @@ class ForgotPasswordController extends Controller
     public function sendResetLink(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'phone' => 'required|string',
+            'email' => 'required|string',
         ]);
 
         if ($validator->fails()) {
             throw ValidationException::withMessages([
-                'phone' => [trans('validation.required', ['attribute' => 'phone'])],
+                'email' => [trans('validation.required', ['attribute' => 'email'])],
             ]);
         }
 
         $status = Password::sendResetLink(
-            $request->only('phone'),
+            $request->only('email'),
             function ($message) {
                 $message->subject($this->getEmailSubject());
             }
@@ -50,6 +50,6 @@ class ForgotPasswordController extends Controller
 
         return $status === Password::RESET_LINK_SENT
             ? response(['status' => __($status)])
-            : response(['phone' => __($status)], 422);
+            : response(['email' => __($status)], 422);
     }
 }
