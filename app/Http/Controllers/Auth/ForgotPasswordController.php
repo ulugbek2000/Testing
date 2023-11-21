@@ -34,6 +34,11 @@ class ForgotPasswordController extends Controller
             'phone' => 'required|string',
         ]);
 
+
+        if (empty($request->input('phone'))) {
+            return response(['phone' => __('The phone field is required.')], 422);
+        }
+
         $status = Password::sendResetLink(
             $request->only('phone'),
             function ($message) {
