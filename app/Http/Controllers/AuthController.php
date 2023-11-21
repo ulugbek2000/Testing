@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Validator;
@@ -102,5 +103,23 @@ class AuthController extends Controller
         return $user->phone_verified_at != null
             ? response()->json(['message' => 'Verification Completed', 'token' => $token], 200)
             : response()->json(['message' => 'Verification Failed'], 406);
+    }
+
+    public function forgotPassword(Request $request)
+    {
+        $request->validate([
+            'phone' => 'required|exists:users,phone',
+        ]);
+        $status = Password::sendResetLink(
+            $request->only('phone')
+        );
+        if ($status == Password::RESET_LINK_SENT) {
+            return[
+                'status' => __($status)
+            ];
+        }
+        throw ValidationException::withMessages([
+            'phone' => [trans($status)]
+        ]);
     }
 }

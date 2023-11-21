@@ -1,6 +1,8 @@
 <?php
 
 use App\Enums\UserType;
+use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BalanceController;
 use App\Http\Controllers\CategoryController;
@@ -56,9 +58,13 @@ Route::middleware(['admin.api'])->group(function () {
 //Auth Routes
 Auth::routes([
     'register' => true,
+
     'login' => false,
     'logout' => false
 ]);
+
+Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLink']);
+Route::post('/reset-password', [ResetPasswordController::class, 'reset']);
 
 Route::get('course', [CourseController::class, 'index']);
 Route::get('teacherByCourse/{course}', [CourseController::class, 'getTeacherByCourse']);
