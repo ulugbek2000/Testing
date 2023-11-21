@@ -7,6 +7,9 @@ use Illuminate\Support\Facades\Password;
 use App\Http\Controllers\Controller;
 use App\Notifications\ResetPasswordNotification;
 use Illuminate\Foundation\Auth\SendsPasswordResetEmails;
+use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 
 class ForgotPasswordController extends Controller
 {
@@ -26,15 +29,27 @@ class ForgotPasswordController extends Controller
 
     public function sendResetLink(Request $request)
     {
-        $this->validate($request, ['phone' => 'required|exists:users,phone']);
+     
+        $validator = Validator::make($request->all(), [
+            'phone' => 'required|string',
+        ]);
 
-        $response = Password::sendResetLink(
+        if ($validator->fails()) {
+            throw ValidationException::withMessages([
+                'phone' => [trans('validation.required', ['attribute' => 'phone'])],
+            ]);
+        }
+
+        $status = Password::sendResetLink(
             $request->only('phone'),
-            new ResetPasswordNotification(url('/password/reset'))
+            function (MailMessage $message) {
+                $message->subject($this->getEmailSubject());
+            }
         );
 
-        return $response == Password::RESET_LINK_SENT
-            ? ['status' => trans($response)]
-            : response(['phone' => trans($response)], 422);
+        return $status === Password::RESET_LINK_SENT
+            ? response(['status' => __($status)])
+            : response(['phone' => __($status)], 422);
+    
     }
 }
