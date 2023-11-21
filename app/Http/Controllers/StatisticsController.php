@@ -54,19 +54,21 @@ class StatisticsController extends Controller
         $months = [];
 
         for ($month = 1; $month <= 12; $month++) {
-            $students = User::whereHas('roles', function ($query) use ($month,$year) {
+            $students = User::whereHas('roles', function ($query) use ($month, $year) {
                 $query->where('name', UserType::Student)
                     ->whereYear('created_at', $year)
                     ->whereMonth('created_at', $month);
-            })->count();            
+            })->count();
 
             $totalEarnings = UserTransaction::whereYear('created_at', $year)
-            ->whereMonth('created_at', $month)
-            ->sum('total_earnings');
+                ->whereMonth('created_at', $month)
+                ->sum('total_earnings');
 
-          $subscriptions = UserTransaction::whereYear('created_at', $year)
-            ->whereMonth('created_at', $month)
-            ->count();
+            $subscriptions = UserTransaction::whereYear('created_at', $year)
+                ->whereMonth('created_at', $month)
+                ->where('amount', '>', 0) // учитываем только успешные транзакции (положительные значения)
+                ->whereNotNull('total_earnings') // учитываем только транзакции, у которых total_earnings не равно null
+                ->count();
 
             $months[] = [
                 'name' => date('F', mktime(0, 0, 0, $month, 1, $year)),
