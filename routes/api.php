@@ -63,8 +63,7 @@ Auth::routes([
     'logout' => false
 ]);
 
-Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLink']);
-Route::post('/reset-password', [ResetPasswordController::class, 'reset']);
+
 
 Route::get('course', [CourseController::class, 'index']);
 Route::get('teacherByCourse/{course}', [CourseController::class, 'getTeacherByCourse']);
@@ -100,10 +99,11 @@ Route::middleware(['jwt.auth'])->group(function () {
         //Пополнение баланс:
         Route::post('admin/balance/deposit', [UserTransactionController::class, 'topUpWallet']);
 
-        //Поуличть Статистика пользователи 
+        Route::post('admin/forgot-password', [ForgotPasswordController::class, 'sendResetLink']);
+        Route::post('admin/reset-password', [ResetPasswordController::class, 'reset']);
 
         Route::get('getStatistics', [StatisticsController::class, 'getStatisticsUser']);
-        Route::get('/months/{year}', [StatisticsController::class,'getResults']);
+        Route::get('/months/{year}', [StatisticsController::class, 'getResults']);
         //Данный админ
 
         Route::get('admin/account', [ProfileController::class, 'getProfile']);
@@ -259,6 +259,9 @@ Route::middleware(['jwt.auth'])->group(function () {
         Route::get('course/{course}/progress', [UserLessonProgressController::class, 'getprogress']);
 
         // Route::get('/courses/{course}/buyers', [UserWalletController::class,'getCourseBuyers']);
+
+        Route::post('student/forgot-password', [ForgotPasswordController::class, 'sendResetLink']);
+        Route::post('student/reset-password', [ResetPasswordController::class, 'reset']);
     });
 
     Route::post('logout', [AuthController::class, 'logout']);
