@@ -20,10 +20,10 @@ class PasswordResetTokenController extends Controller
             return response()->json(['error' => 'User not found'], 404);
         }
 
-        $credentials = ['phone' => $user->phone,rand(1000, 9999)];
+        $credentials = ['phone' => $user->phone];
         try {
             
-            Password::sendResetLink($credentials);
+            Password::rand($credentials,1000,9999);
     
             return response()->json(['message' => 'Password reset link sent'], 200);
         } catch (\Exception $e) {
