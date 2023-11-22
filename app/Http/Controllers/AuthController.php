@@ -141,7 +141,7 @@ class AuthController extends Controller
         if (!$user) {
             return response()->json(['error' => 'User not found'], 404);
         }
-        $credentials = ['phone' => $user->phone];
+        $credentials = ['phone' => $user->phone, 'email' => $user->email];
 
         Password::sendResetLink($credentials);
 
