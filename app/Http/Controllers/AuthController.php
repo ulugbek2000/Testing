@@ -134,9 +134,9 @@ class AuthController extends Controller
 
     public function sendResetLink(Request $request)
     {
-        $request->validate(['phone' => 'required|phone']);
+        $request->validate(['phone' => 'required|string']);
 
-        $user = User::where('phone', $request->phone_number)->first();
+        $user = User::where('phone', $request->phone)->first();
 
         if (!$user) {
             return response()->json(['error' => 'User not found'], 404);
