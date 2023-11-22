@@ -23,7 +23,7 @@ class PasswordResetTokenController extends Controller
         $credentials = ['phone' => $user->phone];
         try {
             
-            Password::rand($credentials,1000,9999);
+            Password::rand(1000,9999);
     
             return response()->json(['message' => 'Password reset link sent'], 200);
         } catch (\Exception $e) {
