@@ -142,9 +142,14 @@ class AuthController extends Controller
             return response()->json(['error' => 'User not found'], 404);
         }
         $credentials = ['phone' => $user->phone, 'email' => $user->email];
-
-        Password::sendResetLink($credentials);
-
-        return response()->json(['message' => 'Password reset link sent'], 200);
+        try {
+            // Pass the $credentials array to the sendResetLink method
+            Password::sendResetLink($credentials);
+    
+            return response()->json(['message' => 'Password reset link sent'], 200);
+        } catch (\Exception $e) {
+            // Handle any exceptions, such as QueryException
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
 }
