@@ -12,6 +12,7 @@ use App\Http\Controllers\CourseCategoryController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\CourseSkillsController;
 use App\Http\Controllers\LessonController;
+use App\Http\Controllers\PasswordResetTokenController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SessionController;
@@ -63,7 +64,7 @@ Auth::routes([
     'logout' => false
 ]);
 
-Route::post('password/forgot', [AuthController::class, 'sendResetLink']);
+Route::post('password/forgot', [PasswordResetTokenController::class, 'sendResetLink']);
 
 Route::get('course', [CourseController::class, 'index']);
 Route::get('teacherByCourse/{course}', [CourseController::class, 'getTeacherByCourse']);

@@ -29,30 +29,4 @@ class ResetPasswordController extends Controller
      */
     protected $redirectTo = RouteServiceProvider::HOME;
 
-
-    public function sendResetResponse(Request $request, $response)
-    {
-        return response(['status' => trans($response)]);
-    }
-
-    public function sendResetFailedResponse(Request $request, $response)
-    {
-        return response(['phone' => trans($response)], 422);
-    }
-
-    protected function sendResetLinkResponse($response)
-    {
-        return response(['status' => trans($response)]);
-    }
-
-    protected function sendResetLinkFailedResponse(Request $request, $response)
-    {
-        return response(['phone' => trans($response)], 422);
-    }
-
-    protected function resetPassword($user, $password)
-    {
-        $user->password = bcrypt($password);
-        $user->save();
-    }
 }

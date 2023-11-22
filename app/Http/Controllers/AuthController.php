@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\UserType;
+use App\Models\PasswordResetToken;
 use App\Models\User;
 use App\Models\UserSkills;
 use App\Notifications\VerificationNotification;
@@ -106,50 +107,5 @@ class AuthController extends Controller
             : response()->json(['message' => 'Verification Failed'], 406);
     }
 
-    // public function forgotPassword(Request $request)
-    // {
-
-    //     $validator = Validator::make($request->all(), [
-    //         'phone' => 'required|string',
-    //     ]);
-
-    //     if ($validator->fails()) {
-    //         throw ValidationException::withMessages([
-    //             'phone' => [trans('validation.required', ['attribute' => 'phone'])],
-    //         ]);
-    //     }
-
-
-    //     $user = User::where('phone', $request->phone)->first();
-    //     if ($user) {
-    //         $code =
-    //             $user->notify(new VerificationNotification($code));
-    //     }
-
-    //     return response(['status' => 'SMS sent successfully']);
-        
-    // }
-
-
-
-    public function sendResetLink(Request $request)
-    {
-        $request->validate(['phone' => 'required|string']);
-
-        $user = User::where('phone', $request->phone)->first();
-
-        if (!$user) {
-            return response()->json(['error' => 'User not found'], 404);
-        }
-        $credentials = ['phone' => $user->phone, 'email' => $user->email];
-        try {
-            // Pass the $credentials array to the sendResetLink method
-            Password::sendResetLink($credentials);
-    
-            return response()->json(['message' => 'Password reset link sent'], 200);
-        } catch (\Exception $e) {
-            // Handle any exceptions, such as QueryException
-            return response()->json(['error' => $e->getMessage()], 500);
-        }
-    }
+ 
 }
