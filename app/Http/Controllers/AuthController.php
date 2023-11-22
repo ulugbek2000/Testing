@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Enums\UserType;
-use App\Models\PasswordResetToken;
 use App\Models\User;
 use App\Models\UserSkills;
 use App\Notifications\VerificationNotification;
@@ -107,5 +106,5 @@ class AuthController extends Controller
             : response()->json(['message' => 'Verification Failed'], 406);
     }
 
- 
+    
 }
