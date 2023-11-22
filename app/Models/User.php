@@ -15,6 +15,8 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Spatie\Permission\Traits\HasRoles;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use App\Notifications\VerificationNotification;
+use Illuminate\Auth\Passwords\CanResetPassword;
+
 // use Tymon\JWTAuth\Contracts\JWTSubject;
 
 // use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -23,7 +25,7 @@ class User extends Authenticatable implements JWTSubject
 {
     use  HasApiTokens, HasFactory;
 
-    use Notifiable, HasRoles;
+    use Notifiable, HasRoles, CanResetPassword;
 
     protected $table = 'users';
 

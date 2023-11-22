@@ -63,7 +63,7 @@ Auth::routes([
     'logout' => false
 ]);
 
-
+Route::post('password/forgot', [AuthController::class, 'sendResetLink']);
 
 Route::get('course', [CourseController::class, 'index']);
 Route::get('teacherByCourse/{course}', [CourseController::class, 'getTeacherByCourse']);

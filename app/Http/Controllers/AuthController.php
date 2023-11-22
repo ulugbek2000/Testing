@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Enums\UserType;
 use App\Models\User;
 use App\Models\UserSkills;
+use App\Notifications\VerificationNotification;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
@@ -105,21 +106,44 @@ class AuthController extends Controller
             : response()->json(['message' => 'Verification Failed'], 406);
     }
 
-    public function forgotPassword(Request $request)
+    // public function forgotPassword(Request $request)
+    // {
+
+    //     $validator = Validator::make($request->all(), [
+    //         'phone' => 'required|string',
+    //     ]);
+
+    //     if ($validator->fails()) {
+    //         throw ValidationException::withMessages([
+    //             'phone' => [trans('validation.required', ['attribute' => 'phone'])],
+    //         ]);
+    //     }
+
+
+    //     $user = User::where('phone', $request->phone)->first();
+    //     if ($user) {
+    //         $code =
+    //             $user->notify(new VerificationNotification($code));
+    //     }
+
+    //     return response(['status' => 'SMS sent successfully']);
+        
+    // }
+
+
+
+    public function sendResetLink(Request $request)
     {
-        $request->validate([
-            'phone' => 'required|exists:users,phone',
-        ]);
-        $status = Password::sendResetLink(
-            $request->only('phone')
-        );
-        if ($status == Password::RESET_LINK_SENT) {
-            return[
-                'status' => __($status)
-            ];
+        $request->validate(['phone_number' => 'required|phone_number']);
+
+        $user = User::where('phone_number', $request->phone_number)->first();
+
+        if (!$user) {
+            return response()->json(['error' => 'User not found'], 404);
         }
-        throw ValidationException::withMessages([
-            'phone' => [trans($status)]
-        ]);
+
+        Password::sendResetLink($user);
+
+        return response()->json(['message' => 'Password reset link sent'], 200);
     }
 }

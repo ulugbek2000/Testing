@@ -107,7 +107,7 @@ class RegisterController extends Controller
         $user = $this->create($request->all());
         event(new Registered($user));
         $token = Auth::login($user);
-        $role = $user->roles()->first()->id;
+        $user->roles()->first()->id;
         return response()->json([
             'token' => $token,
             'type' => 'bearer',

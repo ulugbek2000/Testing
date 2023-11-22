@@ -5,7 +5,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use App\Notifications\ResetPasswordNotification;
+use App\Notifications\VerificationNotification;
 use Illuminate\Foundation\Auth\SendsPasswordResetEmails;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Support\Facades\Validator;
@@ -27,27 +29,5 @@ class ForgotPasswordController extends Controller
 
     use SendsPasswordResetEmails;
 
-    protected $redirectTo = '/'; // Укажите свой URL перенаправления
-
-    public function sendResetLink(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|string',
-        ]);
-
-        if ($validator->fails()) {
-            throw ValidationException::withMessages([
-                'email' => [trans('validation.required', ['attribute' => 'email'])],
-            ]);
-        }
-
-        $status = Password::sendResetLink(
-            $request->only('email'),
-            
-        );
-
-        return $status === Password::RESET_LINK_SENT
-            ? response(['status' => __($status)])
-            : response(['email' => __($status)], 422);
-    }
+  
 }
