@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Password;
 
 class PasswordResetTokenController extends Controller
 {
-    use App\Notifications\VerificationCodeNotification;
+
 
     public function sendResetLink(Request $request)
     {
