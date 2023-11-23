@@ -34,7 +34,7 @@ class PasswordResetTokenController extends Controller
     public function resetPassword(Request $request)
     {
         $request->validate([
-            'verification_code' => 'required|numeric',
+            'verification' => 'required|numeric',
             'password' => ['required', 'string', 'min:8', 'regex:/^(?=.*[0-9])(?=.*[a-zA-Z]).*$/', 'confirmed'],
         ]);
     
