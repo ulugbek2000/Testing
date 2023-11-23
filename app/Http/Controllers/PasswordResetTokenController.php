@@ -46,28 +46,20 @@ class PasswordResetTokenController extends Controller
     {
         $request->validate([
             'verification_code' => 'required|numeric',
-            'password' => ['required','string','min:8','regex:/^(?=.*[0-9])(?=.*[a-zA-Z]).*$/','confirmed'],
+            'password' => ['required', 'string', 'min:8', 'regex:/^(?=.*[0-9])(?=.*[a-zA-Z]).*$/', 'confirmed'],
         ]);
 
         $user = Auth::user();
 
         // Поиск пользователя по коду подтверждения
-        $storedToken = PasswordResetToken::where('verification_code', $request->verification_code)->first();
+        $verificationCode = $request->input('verification');
 
-        if (!$storedToken) {
-            return response()->json(['error' => 'Код подтверждения не найден'], 404);
+        // Проверяем верификацию и устанавливаем phone_verified_at, если успешно
+        if ($user->verifyCode($verificationCode)) {
+            $user->update(['password' => bcrypt($request->password)]);
+            return response()->json(['message' => 'Пароль успешно изменен'], 200);
         }
 
-
-
-        // Проверяем код подтверждения
-        if (!Hash::check($request->verification_code, $storedToken->token)) {
-            return response()->json(['error' => 'Неверный код подтверждения'], 422);
-        }
-
-        // Обновляем пароль пользователя
-        $user->update(['password' => bcrypt($request->password)]);
-
-        return response()->json(['message' => 'Пароль успешно изменен'], 200);
+        return response()->json(['error' => 'Неверный код подтверждения'], 422);
     }
 }
