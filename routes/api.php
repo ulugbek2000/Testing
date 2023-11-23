@@ -65,8 +65,7 @@ Auth::routes([
 ]);
 
 
-Route::post('password/forgot', [PasswordResetTokenController::class, 'sendCodeReset']);
-Route::post('password/reset', [PasswordResetTokenController::class, 'resetPassword']);
+
 
 Route::get('course', [CourseController::class, 'index']);
 Route::get('teacherByCourse/{course}', [CourseController::class, 'getTeacherByCourse']);
@@ -266,6 +265,9 @@ Route::middleware(['jwt.auth'])->group(function () {
         // Route::post('password/forgot', [PasswordResetTokenController::class, 'sendCodeReset']);
         // Route::post('password/reset', [PasswordResetTokenController::class, 'resetPassword']);
     });
+
+    Route::post('password/forgot', [PasswordResetTokenController::class, 'sendCodeReset']);
+    Route::post('password/reset', [PasswordResetTokenController::class, 'resetPassword']);
 
     Route::post('logout', [AuthController::class, 'logout']);
 });
