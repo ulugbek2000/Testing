@@ -64,7 +64,8 @@ Auth::routes([
     'logout' => false
 ]);
 
-Route::post('password/forgot', [PasswordResetTokenController::class, 'sendResetLink']);
+Route::post('password/forgot', [PasswordResetTokenController::class, 'sendCodeReset']);
+Route::post('password/reset', [PasswordResetTokenController::class, 'resetPassword']);
 
 Route::get('course', [CourseController::class, 'index']);
 Route::get('teacherByCourse/{course}', [CourseController::class, 'getTeacherByCourse']);
