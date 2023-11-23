@@ -18,16 +18,19 @@ class PasswordResetTokenController extends Controller
     {
         $request->validate(['phone' => 'required|string']);
 
-        $user = User::where('phone', $request->phone)->first();
-
-        if (!$user) {
-            return response()->json(['error' => 'User not found'], 404);
-        }
+        $user = Auth::user();
 
         $verificationCode = rand(1000, 9999);
 
-        try {
+        if ($user && $user->phone == $request->phone) {
             $user->notify(new VerificationNotification($verificationCode));
+        } else {
+            // Пользователь не найден
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Пользователь не найден',
+            ], 404);
+        }
 
             PasswordResetToken::create([
                 'email' => $user->email,
@@ -36,9 +39,7 @@ class PasswordResetTokenController extends Controller
             ]);
 
             return response()->json(['message' => 'Verification code sent'], 200);
-        } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 500);
-        }
+        
     }
 
 
@@ -56,10 +57,10 @@ class PasswordResetTokenController extends Controller
         if (!$user->verifyCode($verificationCode)) {
             return response()->json(['error' => 'Неверный код подтверждения'], 422);
         }
-    
+
         // Устанавливаем новый пароль
         $user->update(['password' => bcrypt($request->password)]);
-    
+
         return response()->json(['message' => 'Пароль успешно изменен'], 200);
     }
 }

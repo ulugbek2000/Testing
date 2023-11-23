@@ -259,8 +259,8 @@ Route::middleware(['jwt.auth'])->group(function () {
 
         // Route::get('/courses/{course}/buyers', [UserWalletController::class,'getCourseBuyers']);
 
-        Route::post('student/password/forgot', [PasswordResetTokenController::class, 'sendCodeReset']);
-        Route::post('student/password/reset', [PasswordResetTokenController::class, 'resetPassword']);
+        Route::post('password/forgot', [PasswordResetTokenController::class, 'sendCodeReset']);
+        Route::post('password/reset', [PasswordResetTokenController::class, 'resetPassword']);
     });
 
     Route::post('logout', [AuthController::class, 'logout']);
