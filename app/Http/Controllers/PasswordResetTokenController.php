@@ -21,14 +21,11 @@ class PasswordResetTokenController extends Controller
 
         $user = User::where('phone', $request->phone)->first();
 
-
-
+        if (!$user) {
+            return response()->json('Номер телефона не авторизован', 404);
+        }
 
         $verificationCode = rand(1000, 9999);
-
-        if ($user->phone != $request->phone) {
-            return response()->json('Номер телефон не авторизован');
-        }
 
         $user->notify(new VerificationNotification($verificationCode));
 
