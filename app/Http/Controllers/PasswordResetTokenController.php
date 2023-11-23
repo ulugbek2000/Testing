@@ -20,22 +20,29 @@ class PasswordResetTokenController extends Controller
         $request->validate(['phone' => 'required|string']);
     
         $token = $request->bearerToken();
-        dd($token);
     
         if (!$token) {
             return response()->json(['error' => 'Необходим токен'], 401);
         }
     
-        $user = JWTAuth::authenticate($token);
+        try {
+            $user = JWTAuth::authenticate($token);
     
-        $verificationCode = rand(1000, 9999);
+            $verificationCode = rand(1000, 9999);
     
-        if ($user->phone == $request->phone) {
-            $user->notify(new VerificationNotification($verificationCode));
-    
-            return response()->json(['message' => 'Verification code sent'], 200);
+            if ($user->phone == $request->phone) {
+                $user->notify(new VerificationNotification($verificationCode));
+                return response()->json(['message' => 'Verification code sent'], 200);
+            }
+        } catch (\Tymon\JWTAuth\Exceptions\TokenExpiredException $e) {
+            return response()->json(['error' => 'Токен просрочен'], 401);
+        } catch (\Tymon\JWTAuth\Exceptions\TokenInvalidException $e) {
+            return response()->json(['error' => 'Неверный токен'], 401);
+        } catch (\Tymon\JWTAuth\Exceptions\JWTException $e) {
+            return response()->json(['error' => 'Ошибка аутентификации'], 401);
         }
     }
+    
 
 
     public function resetPassword(Request $request)
