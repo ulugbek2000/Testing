@@ -110,7 +110,7 @@ class AuthController extends Controller
     {
         $request->validate([
             'old_password' => 'required|string',
-            'new_password' => ['required', 'string', 'min:8', 'regex:/^(?=.*[0-9])(?=.*[a-zA-Z]).*$/','confirmed'],
+            'password' => ['required', 'string', 'min:8', 'regex:/^(?=.*[0-9])(?=.*[a-zA-Z]).*$/','confirmed'],
          
         ]);
 
@@ -122,7 +122,7 @@ class AuthController extends Controller
         }
 
         // Обновляем пароль пользователя
-        $user->update(['password' => bcrypt($request->new_password)]);
+        $user->update(['password' => bcrypt($request->password)]);
 
         return response()->json(['message' => 'Пароль успешно изменен'], 200);
     }
