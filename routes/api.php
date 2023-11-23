@@ -65,6 +65,8 @@ Auth::routes([
 Route::post('password/forgot', [PasswordResetTokenController::class, 'sendCodeReset']);
 Route::post('password/reset', [PasswordResetTokenController::class, 'resetPassword']);
 
+Route::post('change-password', [AuthController::class, 'changePassword']);
+
 Route::get('course', [CourseController::class, 'index']);
 Route::get('teacherByCourse/{course}', [CourseController::class, 'getTeacherByCourse']);
 Route::get('course/{course}', [CourseController::class, 'show']);

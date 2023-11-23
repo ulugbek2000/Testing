@@ -39,12 +39,9 @@ class PasswordResetTokenController extends Controller
         ]);
     
         $user = Auth::user();
-        dd($user);
     
-        // Поиск пользователя по коду подтверждения
         $verificationCode = $request->input('verification');
     
-        // Проверяем верификацию и устанавливаем phone_verified_at, если успешно
         if ($user->verifyCode($verificationCode)) {
             $user->update(['password' => bcrypt($request->password)]);
             return response()->json(['message' => 'Пароль успешно изменен'], 200);

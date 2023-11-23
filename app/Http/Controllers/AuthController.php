@@ -106,5 +106,24 @@ class AuthController extends Controller
             : response()->json(['message' => 'Verification Failed'], 406);
     }
 
-    
+    public function changePassword(Request $request)
+    {
+        $request->validate([
+            'old_password' => 'required|string',
+            'new_password' => ['required', 'string', 'min:8', 'regex:/^(?=.*[0-9])(?=.*[a-zA-Z]).*$/','confirmed'],
+         
+        ]);
+
+        $user = Auth::user();
+
+        // Проверяем соответствие старого пароля
+        if (!Hash::check($request->old_password, $user->password)) {
+            return response()->json(['error' => 'Старый пароль неверен'], 422);
+        }
+
+        // Обновляем пароль пользователя
+        $user->update(['password' => bcrypt($request->new_password)]);
+
+        return response()->json(['message' => 'Пароль успешно изменен'], 200);
+    }
 }
