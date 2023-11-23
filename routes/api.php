@@ -53,9 +53,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::middleware(['admin.api'])->group(function () {
 });
 
-// Route::middleware('auth.custom')->group(function () {
-
-
 //Auth Routes
 Auth::routes([
     'register' => true,
@@ -65,7 +62,8 @@ Auth::routes([
 ]);
 
 
-
+Route::post('password/forgot', [PasswordResetTokenController::class, 'sendCodeReset']);
+Route::post('password/reset', [PasswordResetTokenController::class, 'resetPassword']);
 
 Route::get('course', [CourseController::class, 'index']);
 Route::get('teacherByCourse/{course}', [CourseController::class, 'getTeacherByCourse']);
@@ -265,9 +263,6 @@ Route::middleware(['jwt.auth'])->group(function () {
         // Route::post('password/forgot', [PasswordResetTokenController::class, 'sendCodeReset']);
         // Route::post('password/reset', [PasswordResetTokenController::class, 'resetPassword']);
     });
-
-    Route::post('password/forgot', [PasswordResetTokenController::class, 'sendCodeReset']);
-    Route::post('password/reset', [PasswordResetTokenController::class, 'resetPassword']);
 
     Route::post('logout', [AuthController::class, 'logout']);
 });

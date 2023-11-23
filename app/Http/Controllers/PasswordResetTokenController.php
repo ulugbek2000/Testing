@@ -17,23 +17,20 @@ class PasswordResetTokenController extends Controller
     public function sendCodeReset(Request $request)
     {
         $request->validate(['phone' => 'required|string']);
-
-        $user = Auth::user();
-
-        $verificationCode = rand(1000, 9999);
-
-        if ($user->phone == $request->phone) {
-            $user->notify(new VerificationNotification($verificationCode));
+    
+        if (Auth::check()) {
+            $user = Auth::user();
+    
+            $verificationCode = rand(1000, 9999);
+    
+            if ($user->phone == $request->phone) {
+                $user->notify(new VerificationNotification($verificationCode));
+    
+                return response()->json(['message' => 'Verification code sent'], 200);
+            }
+        } else {
+            return response()->json(['error' => 'Необходима авторизация'], 401);
         }
-
-            PasswordResetToken::create([
-                'email' => $user->email,
-                'phone' => $user->phone,
-                'token' => Hash::make($verificationCode),
-            ]);
-
-            return response()->json(['message' => 'Verification code sent'], 200);
-        
     }
 
 
