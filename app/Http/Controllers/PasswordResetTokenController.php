@@ -19,13 +19,8 @@ class PasswordResetTokenController extends Controller
     {
         $request->validate(['phone' => 'required|string']);
     
-        $token = $request->bearerToken();
+        $user = User::where('phone', $request->phone)->first();
     
-        if (!$token) {
-            return response()->json(['error' => 'Необходим токен'], 401);
-        }
-    
-        $user = JWTAuth::authenticate($token);
     
         $verificationCode = rand(1000, 9999);
     
