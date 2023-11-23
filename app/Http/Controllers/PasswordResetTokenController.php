@@ -31,31 +31,25 @@ class PasswordResetTokenController extends Controller
         }
     }
 
-
     public function resetPassword(Request $request)
     {
         $request->validate([
-            'verification' => 'required|numeric',
+            'verification_code' => 'required|numeric',
             'password' => ['required', 'string', 'min:8', 'regex:/^(?=.*[0-9])(?=.*[a-zA-Z]).*$/', 'confirmed'],
         ]);
     
-        $token = $request->bearerToken();
-    
-        if (!$token) {
-            return response()->json(['error' => 'Необходим токен'], 401);
-        }
-    
-        $user = JWTAuth::authenticate($token);
+        $user = Auth::user();
         dd($user);
     
+        // Поиск пользователя по коду подтверждения
         $verificationCode = $request->input('verification');
     
-        if (!$user->verifyCode($verificationCode)) {
-            return response()->json(['error' => 'Неверный код подтверждения'], 422);
+        // Проверяем верификацию и устанавливаем phone_verified_at, если успешно
+        if ($user->verifyCode($verificationCode)) {
+            $user->update(['password' => bcrypt($request->password)]);
+            return response()->json(['message' => 'Пароль успешно изменен'], 200);
         }
     
-        $user->update(['password' => bcrypt($request->password)]);
-    
-        return response()->json(['message' => 'Пароль успешно изменен'], 200);
+        return response()->json(['error' => 'Неверный код подтверждения'], 422);
     }
 }
