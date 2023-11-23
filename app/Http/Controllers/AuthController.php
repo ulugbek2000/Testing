@@ -116,7 +116,6 @@ class AuthController extends Controller
 
         $user = Auth::user();
 
-        // Проверяем соответствие старого пароля
         if (!Hash::check($request->old_password, $user->password)) {
             return response()->json(['error' => 'Старый пароль неверен'], 422);
         }
