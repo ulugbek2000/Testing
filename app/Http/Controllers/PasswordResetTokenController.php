@@ -26,13 +26,14 @@ class PasswordResetTokenController extends Controller
             $user->notify(new VerificationNotification($verificationCode));
         }
 
-        PasswordResetToken::create([
-            'email' => $user->email,
-            'phone' => $user->phone,
-            'token' => Hash::make($verificationCode),
-        ]);
+            PasswordResetToken::create([
+                'email' => $user->email,
+                'phone' => $user->phone,
+                'token' => Hash::make($verificationCode),
+            ]);
 
-        return response()->json(['message' => 'Verification code sent'], 200);
+            return response()->json(['message' => 'Verification code sent'], 200);
+        
     }
 
 
@@ -47,9 +48,11 @@ class PasswordResetTokenController extends Controller
 
         $verificationCode = $request->input('verification_code');
 
-        if (!$user->verifyCode(bcrypt($verificationCode))) { // Fix: Hash the verification code during comparison
+        if (!$user->verifyCode($verificationCode)) {
             return response()->json(['error' => 'Неверный код подтверждения'], 422);
         }
+
+        
         $user->update(['password' => bcrypt($request->password)]);
 
         return response()->json(['message' => 'Пароль успешно изменен'], 200);
