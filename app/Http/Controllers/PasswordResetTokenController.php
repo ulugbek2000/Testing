@@ -20,6 +20,7 @@ class PasswordResetTokenController extends Controller
         $request->validate(['phone' => 'required|string']);
     
         $token = $request->bearerToken();
+        dd($token);
     
         if (!$token) {
             return response()->json(['error' => 'Необходим токен'], 401);
