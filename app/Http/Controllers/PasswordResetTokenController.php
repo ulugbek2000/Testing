@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class PasswordResetTokenController extends Controller
 {
@@ -18,18 +19,20 @@ class PasswordResetTokenController extends Controller
     {
         $request->validate(['phone' => 'required|string']);
     
-        if (Auth::check()) {
-            $user = Auth::user();
+        $token = $request->bearerToken();
     
-            $verificationCode = rand(1000, 9999);
+        if (!$token) {
+            return response()->json(['error' => 'Необходим токен'], 401);
+        }
     
-            if ($user->phone == $request->phone) {
-                $user->notify(new VerificationNotification($verificationCode));
+        $user = JWTAuth::authenticate($token);
     
-                return response()->json(['message' => 'Verification code sent'], 200);
-            }
-        } else {
-            return response()->json(['error' => 'Необходима авторизация'], 401);
+        $verificationCode = rand(1000, 9999);
+    
+        if ($user->phone == $request->phone) {
+            $user->notify(new VerificationNotification($verificationCode));
+    
+            return response()->json(['message' => 'Verification code sent'], 200);
         }
     }
 
