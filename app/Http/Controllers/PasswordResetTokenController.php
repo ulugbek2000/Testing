@@ -20,9 +20,9 @@ class PasswordResetTokenController extends Controller
         $request->validate(['phone' => 'required|string']);
     
         $user = User::where('phone', $request->phone)->first();
-    if ($user->phone != $request->phone) {
-        return response()->json('Номер телефон не авторизован');
-    }
+    
+       
+   
     
         $verificationCode = rand(1000, 9999);
     
@@ -31,6 +31,7 @@ class PasswordResetTokenController extends Controller
     
             return response()->json(['message' => 'Verification code sent'], 200);
         }
+        return response()->json('Номер телефон не авторизован');
     }
 
     public function resetPassword(Request $request)
