@@ -25,24 +25,16 @@ class PasswordResetTokenController extends Controller
             return response()->json(['error' => 'Необходим токен'], 401);
         }
     
-        try {
-            $user = JWTAuth::authenticate($token);
+        $user = JWTAuth::authenticate($token);
     
-            $verificationCode = rand(1000, 9999);
+        $verificationCode = rand(1000, 9999);
     
-            if ($user->phone == $request->phone) {
-                $user->notify(new VerificationNotification($verificationCode));
-                return response()->json(['message' => 'Verification code sent'], 200);
-            }
-        } catch (\Tymon\JWTAuth\Exceptions\TokenExpiredException $e) {
-            return response()->json(['error' => 'Токен просрочен'], 401);
-        } catch (\Tymon\JWTAuth\Exceptions\TokenInvalidException $e) {
-            return response()->json(['error' => 'Неверный токен'], 401);
-        } catch (\Tymon\JWTAuth\Exceptions\JWTException $e) {
-            return response()->json(['error' => 'Ошибка аутентификации'], 401);
+        if ($user->phone == $request->phone) {
+            $user->notify(new VerificationNotification($verificationCode));
+    
+            return response()->json(['message' => 'Verification code sent'], 200);
         }
     }
-    
 
 
     public function resetPassword(Request $request)
@@ -51,18 +43,24 @@ class PasswordResetTokenController extends Controller
             'verification' => 'required|numeric',
             'password' => ['required', 'string', 'min:8', 'regex:/^(?=.*[0-9])(?=.*[a-zA-Z]).*$/', 'confirmed'],
         ]);
-
-        $user = Auth::user();
-
+    
+        $token = $request->bearerToken();
+    
+        if (!$token) {
+            return response()->json(['error' => 'Необходим токен'], 401);
+        }
+    
+        $user = JWTAuth::authenticate($token);
+        dd($user);
+    
         $verificationCode = $request->input('verification');
-
+    
         if (!$user->verifyCode($verificationCode)) {
             return response()->json(['error' => 'Неверный код подтверждения'], 422);
         }
-
-        
+    
         $user->update(['password' => bcrypt($request->password)]);
-
+    
         return response()->json(['message' => 'Пароль успешно изменен'], 200);
     }
 }
