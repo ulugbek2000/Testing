@@ -64,9 +64,6 @@ Auth::routes([
     'logout' => false
 ]);
 
-Route::post('password/forgot', [PasswordResetTokenController::class, 'sendCodeReset']);
-Route::post('password/reset', [PasswordResetTokenController::class, 'resetPassword']);
-
 Route::get('course', [CourseController::class, 'index']);
 Route::get('teacherByCourse/{course}', [CourseController::class, 'getTeacherByCourse']);
 Route::get('course/{course}', [CourseController::class, 'show']);
@@ -100,9 +97,9 @@ Route::middleware(['jwt.auth'])->group(function () {
 
         //Пополнение баланс:
         Route::post('admin/balance/deposit', [UserTransactionController::class, 'topUpWallet']);
-
-        Route::post('admin/forgot-password', [ForgotPasswordController::class, 'sendResetLink']);
-        Route::post('admin/reset-password', [ResetPasswordController::class, 'reset']);
+        
+        Route::post('password/forgot', [PasswordResetTokenController::class, 'sendCodeReset']);
+        Route::post('password/reset', [PasswordResetTokenController::class, 'resetPassword']);
 
         Route::get('getStatistics', [StatisticsController::class, 'getStatisticsUser']);
         Route::get('/months/{year}', [StatisticsController::class, 'getResults']);
