@@ -22,14 +22,8 @@ class PasswordResetTokenController extends Controller
 
         $verificationCode = rand(1000, 9999);
 
-        if ($user && $user->phone == $request->phone) {
+        if ($user->phone == $request->phone) {
             $user->notify(new VerificationNotification($verificationCode));
-        } else {
-            // Пользователь не найден
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Пользователь не найден',
-            ], 404);
         }
 
             PasswordResetToken::create([
