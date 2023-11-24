@@ -41,7 +41,7 @@ class PasswordResetTokenController extends Controller
             'verification' => 'required|numeric',
             'password' => ['required', 'string', 'min:8', 'regex:/^(?=.*[0-9])(?=.*[a-zA-Z]).*$/', 'confirmed'],
         ]);
-        $notification = \App\Models\Notification::whereJsonContains('data->verification_code', $request->verification)
+        $notification = Notification::whereJsonContains('data->verification_code', $request->verification)
     ->where('notifiable_type', 'App\Models\User')
     ->first();
         $notificationQuery = DB::table('notifications')
