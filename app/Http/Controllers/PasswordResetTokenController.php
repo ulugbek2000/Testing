@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Notifications\VerificationNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Tymon\JWTAuth\Facades\JWTAuth;
@@ -41,7 +42,9 @@ class PasswordResetTokenController extends Controller
         ]);
     
         // Retrieve the notification using the verification code
-        $notification = Notification::where('data->verification_code', $request->verification)->first();
+        $notification = DB::table('notifications')
+        ->where('data->verification_code', $request->verification)
+        ->first();
     
         if ($notification && $notification->notifiable_type === 'App\Models\User') {
             $user = User::find($notification->notifiable_id);
