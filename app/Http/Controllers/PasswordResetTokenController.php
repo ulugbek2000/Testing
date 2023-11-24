@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Illuminate\Support\Facades\Notification;
+
 class PasswordResetTokenController extends Controller
 {
 
@@ -33,26 +34,25 @@ class PasswordResetTokenController extends Controller
     }
 
 
-    
+
     public function resetPassword(Request $request)
     {
         $request->validate([
             'verification' => 'required|numeric',
             'password' => ['required', 'string', 'min:8', 'regex:/^(?=.*[0-9])(?=.*[a-zA-Z]).*$/', 'confirmed'],
         ]);
-
         $notification = DB::table('notifications')
-        ->where('data', $request->verification)
-        ->first();
-        dd($user = User::find($notification->notifiable_id));
+            ->where('data->verification_code', $request->verification)
+            ->where('notifiable_type', 'App\Models\User')
+            ->first();
+        dd($notification);
         if ($notification && $notification->notifiable_type === 'App\Models\User') {
             $user = User::find($notification->notifiable_id);
-    
-                $user->update(['password' => bcrypt($request->password)]);
-                return response()->json(['message' => 'Пароль успешно изменен'], 200);
+
+            $user->update(['password' => bcrypt($request->password)]);
+            return response()->json(['message' => 'Пароль успешно изменен'], 200);
         }
-    
+
         return response()->json(['error' => 'Неверный код подтверждения'], 422);
     }
-    
 }
