@@ -46,6 +46,7 @@ class PasswordResetTokenController extends Controller
                 ->whereJsonContains('data->verification', $request->verification)
                 ->whereNull('read_at');
         })->first();
+        dd($user);
     
         if (!$user || !$user->verifyCode($request->verification)) {
             return response()->json(['error' => 'Неверный код подтверждения'], 422);
