@@ -129,7 +129,6 @@ class AuthController extends Controller
         return [
             'password.confirmed' => 'Пароль и подтверждение пароля не совпадают.',
             'password.regex' => 'Пароль должен содержать как минимум одну букву и одну цифру.',
-            'password.regex' => ' ',
         ];
     }
     
