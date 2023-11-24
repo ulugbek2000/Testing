@@ -41,9 +41,8 @@ class PasswordResetTokenController extends Controller
             'password' => ['required', 'string', 'min:8', 'regex:/^(?=.*[0-9])(?=.*[a-zA-Z]).*$/', 'confirmed'],
         ]);
     
-        // Retrieve the notification using the verification code
         $notification = DB::table('notifications')
-        ->where('data->verification_code', $request->verification)
+        ->where('data', $request->verification)
         ->first();
     
         if ($notification && $notification->notifiable_type === 'App\Models\User') {
