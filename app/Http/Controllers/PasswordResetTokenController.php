@@ -42,7 +42,7 @@ class PasswordResetTokenController extends Controller
     
         // Find the user by the verification code
         $user = User::whereHas('unreadNotifications', function ($query) use ($request) {
-            $query->where('type', 'App\Notifications\YourVerificationNotification')
+            $query->where('type', 'App\Notifications\VerificationNotification')
                 ->whereJsonContains('data->verification', $request->verification)
                 ->whereNull('read_at');
         })->first();
