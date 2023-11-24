@@ -33,25 +33,28 @@ class PasswordResetTokenController extends Controller
         return response()->json(['message' => 'Код подтверждения отправлен'], 200);
     }
 
-
-
     public function resetPassword(Request $request)
     {
         $request->validate([
             'verification' => 'required|numeric',
             'password' => ['required', 'string', 'min:8', 'regex:/^(?=.*[0-9])(?=.*[a-zA-Z]).*$/', 'confirmed'],
         ]);
-
-        // Find the user and verify the code
-        $user = new User(); // Replace $userId with the actual user ID
-
+    
+        // Find the user by the verification code
+        $user = User::whereHas('unreadNotifications', function ($query) use ($request) {
+            $query->where('type', 'App\Notifications\YourVerificationNotification')
+                ->whereJsonContains('data->verification', $request->verification)
+                ->whereNull('read_at');
+        })->first();
+    
         if (!$user || !$user->verifyCode($request->verification)) {
             return response()->json(['error' => 'Неверный код подтверждения'], 422);
         }
-
+    
         // Update the user's password
         $user->update(['password' => bcrypt($request->password)]);
-
+    
         return response()->json(['message' => 'Пароль успешно изменен'], 200);
     }
+    
 }
