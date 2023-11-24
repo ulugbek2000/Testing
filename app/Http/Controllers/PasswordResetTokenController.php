@@ -41,22 +41,15 @@ class PasswordResetTokenController extends Controller
             'verification' => 'required|numeric',
             'password' => ['required', 'string', 'min:8', 'regex:/^(?=.*[0-9])(?=.*[a-zA-Z]).*$/', 'confirmed'],
         ]);
-        $notification = Notification::whereJsonContains('data->verification_code', $request->verification)
-    ->where('notifiable_type', 'App\Models\User')
-    ->first();
-        $notificationQuery = DB::table('notifications')
-        ->where(DB::raw("json_unquote(json_extract(data, '$.\"verification_code\"'))"), $request->verification)
-        ->where('notifiable_type', 'App\Models\User')
-        ->toSql();
-    
-    dd($notificationQuery);
-        if ($notification && $notification->notifiable_type === 'App\Models\User') {
-            $user = User::find($notification->notifiable_id);
+        $user = new User();
+        $user = $this->verifyCode($request->verification);
 
-            $user->update(['password' => bcrypt($request->password)]);
-            return response()->json(['message' => 'Пароль успешно изменен'], 200);
+        if (!$user) {
+            return response()->json(['error' => 'Неверный код подтверждения'], 422);
         }
 
-        return response()->json(['error' => 'Неверный код подтверждения'], 422);
+        $user->update(['password' => bcrypt($request->password)]);
+
+        return response()->json(['message' => 'Пароль успешно изменен'], 200);
     }
 }
