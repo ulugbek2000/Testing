@@ -41,15 +41,20 @@ class PasswordResetTokenController extends Controller
             'verification' => 'required|numeric',
             'password' => ['required', 'string', 'min:8', 'regex:/^(?=.*[0-9])(?=.*[a-zA-Z]).*$/', 'confirmed'],
         ]);
-        $user = new User();
-        $user = $this->verifyCode($request->verification);
-
+    
+        // Find the user by the verification code
+        $user = User::whereHas('unreadNotifications', function ($query) use ($request) {
+            $query->where('type', 'App\Notifications\VerificationNotification')
+                ->whereJsonContains('data->verification', $request->verification);
+        })->first();
+    
         if (!$user) {
             return response()->json(['error' => 'Неверный код подтверждения'], 422);
         }
-
+    
+        // Update the user's password
         $user->update(['password' => bcrypt($request->password)]);
-
+    
         return response()->json(['message' => 'Пароль успешно изменен'], 200);
     }
 }
