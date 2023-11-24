@@ -109,10 +109,18 @@ class AuthController extends Controller
     public function changePassword(Request $request)
     {
         $request->validate([
-            'old_password' => 'required|string',
-            'password' => ['required', 'string', 'min:8', 'regex:/^(?=.*[0-9])(?=.*[a-zA-Z]).*$/','confirmed'],
-         
+            'password' => [
+                'required',
+                'string',
+                'min:8',
+                'regex:/^(?=.*[0-9])(?=.*[a-zA-Z]).*$/',
+                'confirmed'
+            ],
+        ], [
+            'password.confirmed' => 'Пароль и подтверждение пароля не совпадают.',
+            'password.regex' => 'Пароль должен содержать как минимум одну букву и одну цифру.',
         ]);
+         
 
         $user = Auth::user();
 
