@@ -124,12 +124,12 @@ class AuthController extends Controller
         return response()->json(['message' => 'Пароль успешно изменен'], 200);
     }
     
-    private function validationMessages()
-    {
-        return [
-            'password.confirmed' => 'Пароль и подтверждение пароля не совпадают.',
-            'password.regex' => 'Пароль должен содержать как минимум одну букву и одну цифру.',
-        ];
-    }
+    // private function validationMessages()
+    // {
+    //     return [
+    //         'password.confirmed' => 'Пароль и подтверждение пароля не совпадают.',
+    //         'password.regex' => 'Пароль должен содержать как минимум одну букву и одну цифру.',
+    //     ];
+    // }
     
 }
