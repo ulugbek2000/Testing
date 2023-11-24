@@ -16,7 +16,8 @@ use Symfony\Contracts\Service\Attribute\Required;
 use Nette\Utils\Random;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
-
+use FFMpeg\FFMpeg;
+use FFMpeg\Coordinate\TimeCode;
 class LessonController extends Controller
 {
 
@@ -69,11 +70,16 @@ class LessonController extends Controller
             $filePath = $request->file('content')->store('content', 'public');
             $lesson->content = $filePath;
         }
+
+        $ffmpeg = FFMpeg::create();
+        $video = $ffmpeg->open(storage_path("app/public/{$filePath}"));
+        $duration = $video->getDurationInSeconds();
+
         $data = [
             'topic_id' => $request->topic_id,
             'name' => $request->name,
             'cover' => Storage::url($cover),
-            'duration' => $request->duration,
+            'duration' => $duration,
             'content' => in_array($request->type, [LessonTypes::Video, LessonTypes::Audio]) ? $filePath : $request->content,
             'type' => $request->type,
         ];

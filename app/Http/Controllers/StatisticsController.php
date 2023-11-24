@@ -37,18 +37,6 @@ class StatisticsController extends Controller
         ]);
     }
 
-    // public function getResults($month)
-    // {
-    //     $students = User::whereHas('roles', function ($query) {
-    //         $query->where('name', UserType::Student);
-    //     })->count();
-    //     $payments = UserTransaction::whereMonth('payment_date', $month)->get();
-    //     $subscriptions = Subscription::whereMonth('subscription_date', $month)->get();
-
-    //     return response()->json([]);
-    // }
-
-
     public function getResults($year)
     {
         $months = [];
