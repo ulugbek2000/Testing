@@ -110,6 +110,7 @@ class AuthController extends Controller
     {
         $request->validate([
             'password' => [
+                'bail',
                 'required',
                 'string',
                 'min:8',
