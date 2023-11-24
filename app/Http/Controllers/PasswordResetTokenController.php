@@ -44,9 +44,9 @@ class PasswordResetTokenController extends Controller
         $notification = Notification::where('data', $request->verification)->first();
     
         // Проверить, что уведомление существует и содержит notifiable типа User
-        if ($notification && $notification->notifiable_type === User::class) {
+        if ($notification && $notification->data === User::class) {
             // Получить пользователя из уведомления
-            $user = $notification->notifiable;
+            $user = $notification->type;
     
             // Обновить пароль пользователя
             $user->update(['password' => bcrypt($request->password)]);
