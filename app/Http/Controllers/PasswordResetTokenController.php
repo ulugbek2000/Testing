@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Notification;
 use App\Models\PasswordResetToken;
 use App\Models\User;
 use App\Notifications\VerificationNotification;
@@ -38,16 +39,24 @@ class PasswordResetTokenController extends Controller
             'verification' => 'required|numeric',
             'password' => ['required', 'string', 'min:8', 'regex:/^(?=.*[0-9])(?=.*[a-zA-Z]).*$/', 'confirmed'],
         ]);
-$user = new User();
-        // $user = Auth::user();
-
-        $verificationCode = $request->input('verification');
-
-        if ($user->verifyCode($verificationCode)) {
+    
+        // Найти уведомление по коду подтверждения
+        $notification = Notification::where('data', $request->verification)->first();
+    
+        // Проверить, что уведомление существует и содержит notifiable типа User
+        if ($notification && $notification->notifiable_type === User::class) {
+            // Получить пользователя из уведомления
+            $user = $notification->notifiable;
+    
+            // Обновить пароль пользователя
             $user->update(['password' => bcrypt($request->password)]);
+    
+            // Опционально: удалить или обновить уведомление после успешного сброса пароля
+    
             return response()->json(['message' => 'Пароль успешно изменен'], 200);
         }
-
+    
         return response()->json(['error' => 'Неверный код подтверждения'], 422);
     }
+    
 }
