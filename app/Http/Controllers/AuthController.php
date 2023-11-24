@@ -109,29 +109,27 @@ class AuthController extends Controller
     public function changePassword(Request $request)
     {
         $request->validate([
-            'password' => [
-                'bail',
-                'required',
-                'string',
-                'min:8',
-                'regex:/^(?=.*[0-9])(?=.*[a-zA-Z]).*$/',
-                'confirmed'
-            ],
-        ], [
-            'password.confirmed' => 'Пароль и подтверждение пароля не совпадают.',
-            'password.regex' => 'Пароль должен содержать как минимум одну букву и одну цифру.',
-        ]);
-         
-
+            'password' => ['required', 'string', 'min:8', 'regex:/^(?=.*[0-9])(?=.*[a-zA-Z]).*$', 'confirmed'],
+        ], $this->validationMessages());
+    
         $user = Auth::user();
-
+    
         if (!Hash::check($request->old_password, $user->password)) {
             return response()->json(['error' => 'Старый пароль неверен'], 422);
         }
-
+    
         // Обновляем пароль пользователя
         $user->update(['password' => bcrypt($request->password)]);
-
+    
         return response()->json(['message' => 'Пароль успешно изменен'], 200);
     }
+    
+    private function validationMessages()
+    {
+        return [
+            'password.confirmed' => 'Пароль и подтверждение пароля не совпадают.',
+            'password.regex' => 'Пароль должен содержать как минимум одну букву и одну цифру.',
+        ];
+    }
+    
 }
