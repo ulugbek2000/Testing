@@ -102,8 +102,8 @@ class AuthController extends Controller
         $token = JWTAuth::claims($customClaims)->fromUser($user);
 
         return $user->phone_verified_at != null
-            ? response()->json(['message' => 'Verification Completed', 'token' => $token], 200)
-            : response()->json(['message' => 'Verification Failed'], 406);
+            ? response()->json(['message' => 'Проверка завершена', 'token' => $token], 200)
+            : response()->json(['message' => 'Проверка не удалась'], 406);
     }
 
     public function changePassword(Request $request)

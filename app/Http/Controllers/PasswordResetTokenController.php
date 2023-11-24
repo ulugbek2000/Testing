@@ -38,8 +38,8 @@ class PasswordResetTokenController extends Controller
             'verification' => 'required|numeric',
             'password' => ['required', 'string', 'min:8', 'regex:/^(?=.*[0-9])(?=.*[a-zA-Z]).*$/', 'confirmed'],
         ]);
-
-        $user = Auth::user();
+$user = new User();
+        // $user = Auth::user();
 
         $verificationCode = $request->input('verification');
 
