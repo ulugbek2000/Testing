@@ -61,14 +61,22 @@ class RegisterController extends Controller
             'surname' => 'required|string',
             'email' => 'required_without:phone|email|unique:users',
             'phone' => 'required_without:email|string|unique:users',
-            'password' => ['required','string','min:8','regex:/^(?=.*[0-9])(?=.*[a-zA-Z]).*$/','confirmed'],
             'city' => 'nullable|string',
             'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,mov',
             'gender' => 'nullable|string|in:male,female,other',
             'date_of_birth' => 'nullable|date',
+            'password' => [
+                'required',
+                'string',
+                'min:8',
+                'regex:/^(?=.*[0-9])(?=.*[a-zA-Z]).*$/',
+                'confirmed'
+            ],
+        ], [
+            'password.confirmed' => 'Пароль и подтверждение пароля не совпадают.',
+            'password.regex' => 'Пароль должен содержать как минимум одну букву и одну цифру.',
         ]);
     }
-
     /**
      * Create a new user instance after a valid registration.
      *
