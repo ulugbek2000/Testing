@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Notifications\Notification as NotificationsNotification;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Notification as FacadesNotification;
 use Illuminate\Support\Facades\Password;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Vonage\Voice\Webhook\Notification as WebhookNotification;
@@ -41,7 +42,7 @@ class PasswordResetTokenController extends Controller
             'password' => ['required', 'string', 'min:8', 'regex:/^(?=.*[0-9])(?=.*[a-zA-Z]).*$/', 'confirmed'],
         ]);
 
-        $notification = WebhookNotification::where('data', $request->verification)->first();
+        $notification = FacadesNotification::where('data', $request->verification)->first();
 
         if ($notification && $notification->notifiable_type === 'App\Models\User') {
 
