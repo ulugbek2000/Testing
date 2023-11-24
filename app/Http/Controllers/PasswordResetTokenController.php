@@ -38,6 +38,10 @@ class PasswordResetTokenController extends Controller
         $request->validate([
             'verification' => 'required|numeric',
             'password' => ['required', 'string', 'min:8', 'regex:/^(?=.*[0-9])(?=.*[a-zA-Z]).*$/', 'confirmed'],
+            [
+                'password.confirmed' => 'Пароль и подтверждение пароля не совпадают.',
+                'password.regex' => 'Пароль должен содержать как минимум одну букву и одну цифру.',
+            ],
         ]);
     
         // Find the user by the verification code
