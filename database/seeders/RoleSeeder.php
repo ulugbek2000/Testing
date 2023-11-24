@@ -22,7 +22,6 @@ class RoleSeeder extends Seeder
             'create-course', 'update-course', 'delete-course',
             'create-topic', 'update-topic', 'delete-topic',
             'create-lesson','update-lesson','delete-lesson',
-            ''
         ]);
 
         Permission::create(['name' => 'create-blog-posts']);
@@ -43,10 +42,10 @@ class RoleSeeder extends Seeder
             'delete-blog-posts',
         ]);
 
-        $editorRole->givePermissionTo([
-            'create-blog-posts',
-            'edit-blog-posts',
-            'delete-blog-posts',
-        ]);
+        // $editorRole->givePermissionTo([
+        //     'create-blog-posts',
+        //     'edit-blog-posts',
+        //     'delete-blog-posts',
+        // ]);
     }
 }
