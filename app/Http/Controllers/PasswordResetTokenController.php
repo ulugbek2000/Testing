@@ -41,11 +41,12 @@ class PasswordResetTokenController extends Controller
             'verification' => 'required|numeric',
             'password' => ['required', 'string', 'min:8', 'regex:/^(?=.*[0-9])(?=.*[a-zA-Z]).*$/', 'confirmed'],
         ]);
-        $notification = DB::table('notifications')
-            ->where('data->verification_code', $request->verification)
-            ->where('notifiable_type', 'App\Models\User')
-            ->first();
-        dd($notification);
+        $notificationQuery = DB::table('notifications')
+        ->where('data->verification_code', $request->verification)
+        ->where('notifiable_type', 'App\Models\User')
+        ->toSql();
+    
+    dd($notificationQuery);
         if ($notification && $notification->notifiable_type === 'App\Models\User') {
             $user = User::find($notification->notifiable_id);
 
