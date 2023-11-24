@@ -14,7 +14,6 @@ use OsonSMS\SMSGateway\SMSGateway;
 class VerificationNotification extends Notification
 {
     use Queueable;
-    use Notifiable;
 
     private $message, $no;
 
