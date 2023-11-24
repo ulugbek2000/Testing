@@ -7,12 +7,14 @@ use App\SmsMessage;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Notifiable;
 use Illuminate\Notifications\Notification;
 use OsonSMS\SMSGateway\SMSGateway;
 
 class VerificationNotification extends Notification
 {
     use Queueable;
+    use Notifiable;
 
     private $message, $no;
 
