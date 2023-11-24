@@ -15,6 +15,7 @@ class Notification extends Model
         'data',
         'notifiable_type',
         'notifiable_id',
+        'read_at',
 
     ];
 }
