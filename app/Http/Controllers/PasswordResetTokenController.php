@@ -41,8 +41,9 @@ class PasswordResetTokenController extends Controller
     
         $notification = Notification::where('data', $request->verification)->first();
     
-        if ($notification && $notification->notifiable_type === User::class) {
-            $user = $notification->notifiable;
+        if ($notification && $notification->notifiable_type === 'App\Models\User') {
+           
+            $user = User::find($notification->notifiable_id);
     
             $user->update(['password' => bcrypt($request->password)]);
     
