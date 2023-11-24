@@ -7,6 +7,7 @@ use App\Models\PasswordResetToken;
 use App\Models\User;
 use App\Notifications\VerificationNotification;
 use Illuminate\Http\Request;
+use Illuminate\Notifications\Notification as NotificationsNotification;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
@@ -39,7 +40,7 @@ class PasswordResetTokenController extends Controller
             'password' => ['required', 'string', 'min:8', 'regex:/^(?=.*[0-9])(?=.*[a-zA-Z]).*$/', 'confirmed'],
         ]);
 
-        $notification = Notification::where('data', $request->verification)->first();
+        $notification = NotificationsNotification::where('data', $request->verification)->first();
 
         if ($notification && $notification->notifiable_type === 'App\Models\User') {
 
