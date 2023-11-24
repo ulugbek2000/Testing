@@ -45,9 +45,14 @@ class PasswordResetTokenController extends Controller
            
             $user = User::find($notification->notifiable_id);
     
-            $user->update(['password' => bcrypt($request->password)]);
-    
-            return response()->json(['message' => 'Пароль успешно изменен'], 200);
+            if ($user) {
+                $user->update(['password' => bcrypt($request->password)]);
+                return response()->json(['message' => 'Пароль успешно изменен'], 200);
+            } else {
+                info('Пользователь не найден');
+            }
+        } else {
+            info('Уведомление не найдено или notifiable не типа User');
         }
     
         return response()->json(['error' => 'Неверный код подтверждения'], 422);
