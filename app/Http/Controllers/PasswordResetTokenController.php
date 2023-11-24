@@ -33,30 +33,30 @@ class PasswordResetTokenController extends Controller
         return response()->json(['message' => 'Verification code sent'], 200);
     }
 
-    public function resetPassword(Request $request)
-    {
-        $request->validate([
-            'verification' => 'required|numeric',
-            'password' => ['required', 'string', 'min:8', 'regex:/^(?=.*[0-9])(?=.*[a-zA-Z]).*$/', 'confirmed'],
-        ]);
-    
-        // Найти уведомление по коду подтверждения
-        $notification = Notification::where('data', $request->verification)->first();
-    
-        // Проверить, что уведомление существует и содержит notifiable типа User
-        if ($notification && $notification->data === User::class) {
-            // Получить пользователя из уведомления
-            $user = $notification->type;
-    
-            // Обновить пароль пользователя
-            $user->update(['password' => bcrypt($request->password)]);
-    
-            // Опционально: удалить или обновить уведомление после успешного сброса пароля
-    
-            return response()->json(['message' => 'Пароль успешно изменен'], 200);
-        }
-    
-        return response()->json(['error' => 'Неверный код подтверждения'], 422);
+   public function resetPassword(Request $request)
+{
+    $request->validate([
+        'verification' => 'required|numeric',
+        'password' => ['required', 'string', 'min:8', 'regex:/^(?=.*[0-9])(?=.*[a-zA-Z]).*$/', 'confirmed'],
+    ]);
+
+    // Найти уведомление по коду подтверждения
+    $notification = Notification::where('data', $request->verification)->first();
+
+    // Проверить, что уведомление существует и содержит notifiable типа User
+    if ($notification && $notification->notifiable_type === User::class) {
+        // Получить пользователя из уведомления
+        $user = $notification->notifiable_id;
+
+        // Обновить пароль пользователя
+        $user->update(['password' => bcrypt($request->password)]);
+
+        // Опционально: удалить или обновить уведомление после успешного сброса пароля
+
+        return response()->json(['message' => 'Пароль успешно изменен'], 200);
     }
-    
+
+    return response()->json(['error' => 'Неверный код подтверждения'], 422);
+}
+
 }
