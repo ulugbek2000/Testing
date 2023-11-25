@@ -38,25 +38,25 @@ class PasswordResetTokenController extends Controller
         $request->validate([
             'verification' => 'required|numeric',
             'password' => ['required', 'string', 'min:8', 'regex:/^(?=.*[0-9])(?=.*[a-zA-Z]).*$/', 'confirmed'],
-            
-        ],$this->validationMessages());
-    
+
+        ], $this->validationMessages());
+
         $user = User::whereHas('unreadNotifications', function ($query) use ($request) {
             $query->where('type', 'App\Notifications\VerificationNotification')
                 ->whereJsonContains('data->verification', (int)$request->verification)
                 ->whereNull('read_at');
         })->first();
-        
-    
+
+
         if (!$user || !$user->verifyCode($request->verification)) {
             return response()->json(['error' => 'Неверный код подтверждения'], 422);
         }
-    
-        // Update the user's password
+                    
         $user->update(['password' => bcrypt($request->password)]);
-    
+
         return response()->json(['message' => 'Пароль успешно изменен'], 200);
     }
+
     private function validationMessages()
     {
         return [
@@ -64,5 +64,4 @@ class PasswordResetTokenController extends Controller
             'password.regex' => 'Пароль должен содержать как минимум одну букву и одну цифру.',
         ];
     }
-    
 }
