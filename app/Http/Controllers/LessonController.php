@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Auth;
 use FFMpeg\FFProbe;
 use FFMpeg\FFMpeg;
 use FFMpeg\Coordinate\TimeCode;
+
 class LessonController extends Controller
 {
 
@@ -59,6 +60,7 @@ class LessonController extends Controller
             'cover' => 'image|file',
             'duration' => 'string|nullable',
         ]);
+
         $type = $request->input('type');
         $content = $request->input('content');
         $cover = $request->file('cover')->store('cover', 'public');
@@ -70,22 +72,29 @@ class LessonController extends Controller
         } elseif ($type === 'video' || $type === 'audio') {
             $filePath = $request->file('content')->store('content', 'public');
             $lesson->content = $filePath;
-        }
 
-        $ffmpeg = FFMpeg::create();
-        $video = $ffmpeg->open(storage_path("content/public/{$filePath}"));
-        $duration = $video->getDurationInSeconds();
+            // Определение длительности видео
+            $ffmpeg = FFMpeg::create();
+            $video = $ffmpeg->open(storage_path("app/public/{$filePath}"));
+            $duration = $video->getDurationInSeconds();
+
+            // Преобразование длительности в минуты
+            $durationInMinutes = round($duration / 60);
+
+            // Сохранение длительности в модель урока
+            $lesson->duration = $durationInMinutes;
+        }
 
         $data = [
             'topic_id' => $request->topic_id,
             'name' => $request->name,
             'cover' => Storage::url($cover),
-            'duration' => $duration,
             'content' => in_array($request->type, [LessonTypes::Video, LessonTypes::Audio]) ? $filePath : $request->content,
             'type' => $request->type,
         ];
-
         Lesson::create($data);
+        $lesson->save();
+
 
         return response()->json(['message' => 'Lesson created successfully.']);
     }
