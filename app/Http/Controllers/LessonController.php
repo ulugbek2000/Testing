@@ -60,30 +60,31 @@ class LessonController extends Controller
             'name' => 'string',
             'cover' => 'image|file',
         ]);
-    
+
         $type = $request->input('type');
         $content = $request->input('content');
         $cover = $request->file('cover')->store('cover', 'public');
-    
+
         $lesson->type = $type;
-    
+
         if ($type === 'text') {
             $lesson->content = $content;
         } elseif ($type === 'video' || $type === 'audio') {
             $media = $lesson->addMedia($request->file('content'))->toMediaCollection('content');
-
+            $media->setAttribute('model_type', Lesson::class);
+            $media->setAttribute('model_id', $lesson->id);
             $media->save();
-    
+
             // Определение длительности видео
             $durationInSeconds = $media->getCustomProperty('duration');
-    
+
             // Преобразование длительности в минуты
             $durationInMinutes = round($durationInSeconds / 60);
-    
+
             // Сохранение длительности в модель урока
             $lesson->duration = $durationInMinutes;
         }
-    
+
         $data = [
             'topic_id' => $request->topic_id,
             'name' => $request->name,
@@ -91,14 +92,14 @@ class LessonController extends Controller
             'content' => in_array($request->type, [LessonTypes::Video, LessonTypes::Audio]) ? $media->getUrl() : $request->content,
             'type' => $request->type,
         ];
-    
+
         Lesson::create($data);
         $lesson->save();
-    
+
         return response()->json(['message' => 'Lesson created successfully.']);
     }
-    
-    
+
+
 
     /**
      * Display the specified resource.
