@@ -27,6 +27,7 @@ class Media extends BaseMedia
                   $media
                     ->setCustomProperty('duration', $duration)
                     ->save();
+                    
             }
 
         });
