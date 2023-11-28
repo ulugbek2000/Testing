@@ -26,4 +26,8 @@ class Lesson extends Model implements HasMedia
     {
         return $this->belongsTo(Topic::class, 'topic_id', 'id');
     }
+
+    function getContent() {
+        return $this->getMedia("content");
+    }
 }
