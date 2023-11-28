@@ -73,7 +73,7 @@ class LessonController extends Controller
             $media = $lesson->addMedia($request->file('content'))->toMediaCollection('content');
             $media->setAttribute('model_type', Lesson::class);
             $media->setAttribute('model_id', $lesson->id);
-            $media->save();
+            // $media->save();
 
             // Определение длительности видео
             $durationInSeconds = $media->getCustomProperty('duration');
