@@ -23,6 +23,7 @@
         "ramsey/uuid": "^4.7",
         "rap2hpoutre/laravel-log-viewer": "^2.3",
         "riotj/osonsms-gateway": "^1.0",
+        "spatie/laravel-medialibrary": "^10.15",
         "spatie/laravel-permission": "^5.10",
         "spatie/laravel-sluggable": "*",
         "spatie/laravel-translatable": "^6.5",

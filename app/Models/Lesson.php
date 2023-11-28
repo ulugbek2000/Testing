@@ -5,12 +5,14 @@ namespace App\Models;
 use App\Enums\LessonTypes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-// use App\Enums\;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
 
-class Lesson extends Model
+class Lesson extends Model implements HasMedia
 {
     use HasFactory;
+    use InteractsWithMedia;
     protected $fillable = [
         'topic_id',
         'name',

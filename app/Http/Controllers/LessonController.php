@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Auth;
 use FFMpeg\FFProbe;
 use FFMpeg\FFMpeg;
 use FFMpeg\Coordinate\TimeCode;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class LessonController extends Controller
 {
@@ -58,46 +59,44 @@ class LessonController extends Controller
             'topic_id' => 'integer',
             'name' => 'string',
             'cover' => 'image|file',
-            'duration' => 'string|nullable',
         ]);
-
+    
         $type = $request->input('type');
         $content = $request->input('content');
         $cover = $request->file('cover')->store('cover', 'public');
-
+    
         $lesson->type = $type;
-
+    
         if ($type === 'text') {
             $lesson->content = $content;
         } elseif ($type === 'video' || $type === 'audio') {
-            $filePath = $request->file('content')->store('content', 'public');
-            $lesson->content = $filePath;
-
+            $media = $lesson->addMedia($request->file('content'))->toMediaCollection();
+    
             // Определение длительности видео
-            $ffmpeg = FFMpeg::create();
-            $video = $ffmpeg->open(storage_path("app/public/{$filePath}"));
-            $duration = $video->getDurationInSeconds();
-
+            $durationInSeconds = $media->getCustomProperty('duration');
+    
             // Преобразование длительности в минуты
-            $durationInMinutes = round($duration / 60);
-
+            $durationInMinutes = round($durationInSeconds / 60);
+    
             // Сохранение длительности в модель урока
             $lesson->duration = $durationInMinutes;
         }
-
+    
         $data = [
             'topic_id' => $request->topic_id,
             'name' => $request->name,
             'cover' => Storage::url($cover),
-            'content' => in_array($request->type, [LessonTypes::Video, LessonTypes::Audio]) ? $filePath : $request->content,
+            'content' => in_array($request->type, [LessonTypes::Video, LessonTypes::Audio]) ? $media->getUrl() : $request->content,
             'type' => $request->type,
         ];
+    
         Lesson::create($data);
         $lesson->save();
-
-
+    
         return response()->json(['message' => 'Lesson created successfully.']);
     }
+    
+    
 
     /**
      * Display the specified resource.
