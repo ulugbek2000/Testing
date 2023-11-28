@@ -80,6 +80,7 @@ class LessonController extends Controller
         if ($type === 'text') {
             $lesson->content = $content;
         } elseif ($type === 'video' || $type === 'audio') {
+            $lesson->clearMediaCollection('content');
             $media = $lesson->addMedia($request->file('content'))->toMediaCollection('content');
     
             // Определение длительности видео
