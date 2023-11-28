@@ -68,12 +68,16 @@ class LessonController extends Controller
         $lesson->type = $type;
 
         $data = [
-            'topic_id' => $request->topic_id,
+            // 'topic_id' => $request->topic_id,
             'name' => $request->name,
             'cover' => Storage::url($cover),
             'type' => $request->type,
         ];
-
+        if ($request->has('topic_id')) {
+            $data['topic_id'] = $request->topic_id;
+        }
+        
+        Lesson::create($data);
         Lesson::create($data);
         $lesson->save();
 
