@@ -53,14 +53,14 @@ class LessonController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request, Lesson $lesson)
+    public function store(Request $request)
     {
         $request->validate([
             'topic_id' => 'integer',
             'name' => 'string',
             'cover' => 'image|file',
         ]);
-    
+    $lesson = new Lesson();
         $type = $request->input('type');
         $content = $request->input('content');
         $cover = $request->file('cover')->store('cover', 'public');
