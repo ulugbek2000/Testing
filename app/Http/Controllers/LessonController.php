@@ -71,7 +71,6 @@ class LessonController extends Controller
             'topic_id' => $request->topic_id,
             'name' => $request->name,
             'cover' => Storage::url($cover),
-            'content' => in_array($request->type, [LessonTypes::Video, LessonTypes::Audio]) ? $media->getUrl() : $request->content,
             'type' => $request->type,
         ];
     
@@ -92,6 +91,10 @@ class LessonController extends Controller
             // Сохранение длительности в модель урока
             $lesson->duration = $durationInMinutes;
         }
+
+        $lesson->update(
+            ['content' => in_array($request->type, [LessonTypes::Video, LessonTypes::Audio]) ? $media->getUrl() : $request->content,]
+        );
     
         $lesson->save();
     
