@@ -60,46 +60,38 @@ class LessonController extends Controller
             'name' => 'string',
             'cover' => 'image|file',
         ]);
-    $lesson = new Lesson();
-        $type = $request->input('type');
-        $content = $request->input('content');
+        $lesson = new Lesson();
+        $lesson->type = $request->input('type');
+        $lesson->name = $request->input('name');
+        
+        // Установка значения для topic_id
+        $lesson->topic_id = $request->input('topic_id');
+    
         $cover = $request->file('cover')->store('cover', 'public');
     
-        $lesson->type = $type;
+        $lesson->cover = Storage::url($cover);
+      
+    if ($lesson->type === 'text') {
+        $lesson->content = $request->input('content');
+    } elseif ($lesson->type === 'video' || $lesson->type === 'audio') {
+        $lesson->clearMediaCollection('content');
+        $media = $lesson->addMedia($request->file('content'))->toMediaCollection('content');
 
-        $data = [
-            'topic_id' => $request->topic_id,
-            'name' => $request->name,
-            'cover' => Storage::url($cover),
-            'type' => $request->type,
-        ];
-    
-        Lesson::create($data);
-        $lesson->save();
-    
-        if ($type === 'text') {
-            $lesson->content = $content;
-        } elseif ($type === 'video' || $type === 'audio') {
-            $lesson->clearMediaCollection('content');
-            $media = $lesson->addMedia($request->file('content'))->toMediaCollection('content');
-    
-            // Определение длительности видео
-            $durationInSeconds = $media->getCustomProperty('duration');
-    
-            // Преобразование длительности в минуты
-            $durationInMinutes = round($durationInSeconds / 60);
-    
-            // Сохранение длительности в модель урока
-            $lesson->duration = $durationInMinutes;
-        }
+        // Определение длительности видео
+        $durationInSeconds = $media->getCustomProperty('duration');
 
-        $lesson->update(
-            ['content' => in_array($request->type, [LessonTypes::Video, LessonTypes::Audio]) ? $media->getUrl() : $request->content,]
-        );
-    
-        $lesson->save();
-    
-        return response()->json(['message' => 'Lesson created successfully.']);
+        // Преобразование длительности в минуты
+        $durationInMinutes = round($durationInSeconds / 60);
+
+        // Сохранение длительности в модель урока
+        $lesson->duration = $durationInMinutes;
+        $lesson->content = in_array($lesson->type, [LessonTypes::Video, LessonTypes::Audio]) ? $media->getUrl() : $request->input('content');
+    }
+
+    $lesson->save();
+
+    return response()->json(['message' => 'Lesson created successfully.']);
+
     }
     
     
