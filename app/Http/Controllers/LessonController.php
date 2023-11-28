@@ -53,14 +53,14 @@ class LessonController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request, Lesson $lesson)
     {
         $request->validate([
             'topic_id' => 'integer',
             'name' => 'string',
             'cover' => 'image|file',
         ]);
-        $lesson = new Lesson();
+
         $type = $request->input('type');
         $content = $request->input('content');
         $cover = $request->file('cover')->store('cover', 'public');
@@ -68,24 +68,24 @@ class LessonController extends Controller
         $lesson->type = $type;
 
         $data = [
-            // 'topic_id' => $request->topic_id,
+            'topic_id' => $request->topic_id,
             'name' => $request->name,
             'cover' => Storage::url($cover),
+            // 'content' => in_array($request->type, [LessonTypes::Video, LessonTypes::Audio]) ? $media->getUrl() : $request->content,
             'type' => $request->type,
         ];
-        if ($request->has('topic_id')) {
-            $data['topic_id'] = $request->topic_id;
-        }
-        
+
         Lesson::create($data);
-        Lesson::create($data);
+
         $lesson->save();
 
         if ($type === 'text') {
             $lesson->content = $content;
         } elseif ($type === 'video' || $type === 'audio') {
-            $lesson->clearMediaCollection('content');
             $media = $lesson->addMedia($request->file('content'))->toMediaCollection('content');
+            $media->setAttribute('model_type', Lesson::class);
+            $media->setAttribute('model_id', $lesson->id);
+            $media->save();
 
             // Определение длительности видео
             $durationInSeconds = $media->getCustomProperty('duration');
@@ -97,10 +97,9 @@ class LessonController extends Controller
             $lesson->duration = $durationInMinutes;
         }
 
-        $lesson->update(
-            ['content' => in_array($request->type, [LessonTypes::Video, LessonTypes::Audio]) ? $media->getUrl() : $request->content,]
-        );
-
+        $lesson->update([
+            'content' => in_array($request->type, [LessonTypes::Video, LessonTypes::Audio]) ? $media->getUrl() : $request->content,
+        ]);
         $lesson->save();
 
         return response()->json(['message' => 'Lesson created successfully.']);
