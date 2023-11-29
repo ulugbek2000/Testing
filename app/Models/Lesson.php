@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
-
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class Lesson extends Model implements HasMedia
 {
@@ -30,5 +30,12 @@ class Lesson extends Model implements HasMedia
 
     function getContentMedia() {
         return $this->getFirstMedia("content");
+    }
+    public function registerMediaConversions(Media $media = null): void
+    {
+        $this->addMediaConversion('thumb')
+            ->width(100)
+            ->height(100);
+        
     }
 }
