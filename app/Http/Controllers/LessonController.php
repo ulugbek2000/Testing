@@ -61,21 +61,21 @@ class LessonController extends Controller
             'type' => 'required|in:text,video,audio',
             'content' => $request->input('type') === 'text' ? 'required|string' : 'required|file',
         ]);
-    
+
         $lesson = new Lesson();
         $lesson->type = $request->input('type');
         $lesson->content = $request->input('content');
-        
+
         $cover = $request->file('cover')->store('cover', 'public');
         $data = [
             'topic_id' => $request->topic_id,
             'name' => $request->name,
             'cover' => Storage::url($cover),
             'duration' => $lesson->duration ?? null,
-            'content' => $lesson->content,
+            // 'content' => $lesson->content,
             'type' => $lesson->type,
         ];
-    
+
         Lesson::create($data);
 
         if ($request->input('type') !== 'text') {
@@ -86,7 +86,10 @@ class LessonController extends Controller
             $lesson->content = $media->getPath();
             $lesson->duration = round($media->getCustomProperty('duration') / 60);
         }
-    
+        $lesson->update([
+            'content' => in_array($request->type, [LessonTypes::Video, LessonTypes::Audio]) ? $media->getUrl() : $request->content,
+        ]);
+        $lesson->save();
         return response()->json(['message' => 'Lesson created successfully.']);
     }
 
