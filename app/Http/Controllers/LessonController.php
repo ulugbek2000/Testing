@@ -88,6 +88,7 @@ class LessonController extends Controller
         }
         $lesson->update([
             'content' => in_array($request->type, [LessonTypes::Video, LessonTypes::Audio]) ? $media->getUrl() : $request->content,
+            'topic_id' => $request->topic_id,
         ]);
         $lesson->save();
         return response()->json(['message' => 'Lesson created successfully.']);
