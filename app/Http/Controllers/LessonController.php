@@ -48,50 +48,43 @@ class LessonController extends Controller
         }
     }
 
-
-
     /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
-        $lesson = new Lesson();
         $request->validate([
             'topic_id' => 'integer',
             'name' => 'string',
             'cover' => 'image|file',
-            'duration' => 'string|nullable',
+            'duration' => 'nullable',
+            'type' => 'required|in:text,video,audio', 
+            'content' => $request->input('type') === 'text' ? 'required|string' : 'required|file',
         ]);
-        $type = $request->input('type');
-        $content = $request->input('content');
-        $cover = $request->file('cover')->store('cover', 'public');
-
-        $lesson->type = $type;
-
-        if ($type === 'text') {
-            $lesson->content = $content;
-        } elseif ($type === 'video' || $type === 'audio') {
-            $filePath = $request->file('content')->store('content', 'public');
+    
+        $lesson = new Lesson();
+        $lesson->type = $request->input('type');
+        $lesson->content = $request->input('content');
+    
+        if ($request->input('type') !== 'text') {
             $media = $lesson->addMedia($request->file('content'))->toMediaCollection('content');
-            $media->save();
-            $lesson->content = $filePath;
-            $durationInSeconds = $media->getCustomProperty('duration');
-
-            $durationInMinutes = round($durationInSeconds / 60);
-
-            $lesson->duration = $durationInMinutes;
+            $lesson->content = $media->getPath();
+            $lesson->duration = round($media->getCustomProperty('duration') / 60);
         }
+    
+        $cover = $request->file('cover')->store('cover', 'public');
+    
         $data = [
             'topic_id' => $request->topic_id,
             'name' => $request->name,
             'cover' => Storage::url($cover),
-            'duration' => $request->duration,
-            'content' => in_array($request->type, [LessonTypes::Video, LessonTypes::Audio]) ? $filePath : $request->content,
-            'type' => $request->type,
+            'duration' => $lesson->duration ?? null, // Если нет duration, то null
+            'content' => $lesson->content,
+            'type' => $lesson->type,
         ];
-
+    
         Lesson::create($data);
-
+    
         return response()->json(['message' => 'Lesson created successfully.']);
     }
 
