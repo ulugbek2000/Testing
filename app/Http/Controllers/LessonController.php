@@ -55,47 +55,93 @@ class LessonController extends Controller
      */
     public function store(Request $request)
     {
+        $lesson = new Lesson();
         $request->validate([
-            'topic_id' => 'nullable|integer',
+            'topic_id' => 'integer',
             'name' => 'string',
             'cover' => 'image|file',
+            'duration' => 'string|nullable',
         ]);
-    $lesson = new Lesson();
         $type = $request->input('type');
         $content = $request->input('content');
         $cover = $request->file('cover')->store('cover', 'public');
-    
+
         $lesson->type = $type;
-    
-        Lesson::create([
-            'topic_id' => $request->topic_id,
-            'name' => $request->name,
-            'cover' => Storage::url($cover),
-            'type' => $request->type,
-        ]);
-  
-        $lesson->save();
 
         if ($type === 'text') {
             $lesson->content = $content;
         } elseif ($type === 'video' || $type === 'audio') {
-            $media = $lesson->addMedia($request->file('content'))->toMediaCollection('content');
-            $media->save();
-
-            $durationInSeconds = $media->getCustomProperty('duration');
-
-            $durationInMinutes = round($durationInSeconds / 60);
-
-            $lesson->duration = $durationInMinutes;
+            $filePath = $request->file('content')->store('content', 'public');
+            $lesson->content = $filePath;
         }
+        $data = [
+            'topic_id' => $request->topic_id,
+            'name' => $request->name,
+            'cover' => Storage::url($cover),
+            'duration' => $request->duration,
+            'content' => in_array($request->type, [LessonTypes::Video, LessonTypes::Audio]) ? $filePath : $request->content,
+            'type' => $request->type,
+        ];
 
-        $lesson->update([
-            'content' => in_array($request->type, [LessonTypes::Video, LessonTypes::Audio]) ? $media->getUrl() : $request->content,
-        ]);
-        $lesson->save();
+        Lesson::create($data);
 
         return response()->json(['message' => 'Lesson created successfully.']);
     }
+
+
+
+
+
+
+
+
+
+
+
+
+    // public function store(Request $request)
+    // {
+    //     $request->validate([
+    //         'topic_id' => 'nullable|integer',
+    //         'name' => 'string',
+    //         'cover' => 'image|file',
+    //     ]);
+    // $lesson = new Lesson();
+    //     $type = $request->input('type');
+    //     $content = $request->input('content');
+    //     $cover = $request->file('cover')->store('cover', 'public');
+    
+    //     $lesson->type = $type;
+    
+    //     Lesson::create([
+    //         'topic_id' => $request->topic_id,
+    //         'name' => $request->name,
+    //         'cover' => Storage::url($cover),
+    //         'type' => $request->type,
+    //     ]);
+  
+    //     $lesson->save();
+
+    //     if ($type === 'text') {
+    //         $lesson->content = $content;
+    //     } elseif ($type === 'video' || $type === 'audio') {
+    //         $media = $lesson->addMedia($request->file('content'))->toMediaCollection('content');
+    //         $media->save();
+
+    //         $durationInSeconds = $media->getCustomProperty('duration');
+
+    //         $durationInMinutes = round($durationInSeconds / 60);
+
+    //         $lesson->duration = $durationInMinutes;
+    //     }
+
+    //     $lesson->update([
+    //         'content' => in_array($request->type, [LessonTypes::Video, LessonTypes::Audio]) ? $media->getUrl() : $request->content,
+    //     ]);
+    //     $lesson->save();
+
+    //     return response()->json(['message' => 'Lesson created successfully.']);
+    // }
 
 
 
