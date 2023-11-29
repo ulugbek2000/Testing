@@ -69,6 +69,7 @@ class LessonController extends Controller
         if ($request->input('type') !== 'text') {
             $media = $lesson->addMedia($request->file('content'))->toMediaCollection('content');
             $lesson->content = $media->getPath();
+            $media->save();
             $lesson->duration = round($media->getCustomProperty('duration') / 60);
         }
     
@@ -78,7 +79,7 @@ class LessonController extends Controller
             'topic_id' => $request->topic_id,
             'name' => $request->name,
             'cover' => Storage::url($cover),
-            'duration' => $lesson->duration ?? null, // Если нет duration, то null
+            'duration' => $lesson->duration ?? null, 
             'content' => $lesson->content,
             'type' => $lesson->type,
         ];
