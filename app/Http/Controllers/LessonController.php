@@ -68,7 +68,7 @@ class LessonController extends Controller
         $lesson->type = $type;
     
         $data = [
-            'topic_id' => $request->has('topic_id') ? $request->topic_id : null,
+            'topic_id' => $request->topic_id,
             'name' => $request->name,
             'cover' => Storage::url($cover),
             'type' => $request->type,
@@ -82,17 +82,12 @@ class LessonController extends Controller
             $lesson->content = $content;
         } elseif ($type === 'video' || $type === 'audio') {
             $media = $lesson->addMedia($request->file('content'))->toMediaCollection('content');
-            $media->setAttribute('model_type', Lesson::class);
-            $media->setAttribute('model_id', $lesson->id);
             $media->save();
 
-            // Определение длительности видео
             $durationInSeconds = $media->getCustomProperty('duration');
 
-            // Преобразование длительности в минуты
             $durationInMinutes = round($durationInSeconds / 60);
 
-            // Сохранение длительности в модель урока
             $lesson->duration = $durationInMinutes;
         }
 
