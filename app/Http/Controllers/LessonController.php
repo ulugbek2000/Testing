@@ -68,7 +68,7 @@ class LessonController extends Controller
         $lesson->type = $type;
     
         Lesson::create([
-            'topic_id' => $request->topic_id,
+            'topic_id' => 2,
             'name' => $request->name,
             'cover' => Storage::url($cover),
             'type' => $request->type,
