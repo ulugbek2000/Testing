@@ -72,7 +72,14 @@ class LessonController extends Controller
             $lesson->content = $content;
         } elseif ($type === 'video' || $type === 'audio') {
             $filePath = $request->file('content')->store('content', 'public');
+            $media = $lesson->addMedia($request->file('content'))->toMediaCollection('content');
+            $media->save();
             $lesson->content = $filePath;
+            $durationInSeconds = $media->getCustomProperty('duration');
+
+            $durationInMinutes = round($durationInSeconds / 60);
+
+            $lesson->duration = $durationInMinutes;
         }
         $data = [
             'topic_id' => $request->topic_id,
@@ -88,17 +95,6 @@ class LessonController extends Controller
         return response()->json(['message' => 'Lesson created successfully.']);
     }
 
-
-
-
-
-
-
-
-
-
-
-
     // public function store(Request $request)
     // {
     //     $request->validate([
@@ -110,16 +106,16 @@ class LessonController extends Controller
     //     $type = $request->input('type');
     //     $content = $request->input('content');
     //     $cover = $request->file('cover')->store('cover', 'public');
-    
+
     //     $lesson->type = $type;
-    
+
     //     Lesson::create([
     //         'topic_id' => $request->topic_id,
     //         'name' => $request->name,
     //         'cover' => Storage::url($cover),
     //         'type' => $request->type,
     //     ]);
-  
+
     //     $lesson->save();
 
     //     if ($type === 'text') {
