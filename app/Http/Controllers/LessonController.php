@@ -69,7 +69,6 @@ class LessonController extends Controller
         if ($request->input('type') !== 'text') {
             $media = $lesson->addMedia($request->file('content'))->toMediaCollection('content');
             $media->model_type = Lesson::class;
-            $media->model_id = $lesson->id;
             $media->save();
             $lesson->content = $media->getPath();
             $lesson->duration = round($media->getCustomProperty('duration') / 60);
@@ -87,6 +86,8 @@ class LessonController extends Controller
         ];
     
         Lesson::create($data);
+        $media->model_id = $lesson->id;
+        $media->save();
     
         return response()->json(['message' => 'Lesson created successfully.']);
     }
