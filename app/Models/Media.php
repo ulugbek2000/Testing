@@ -29,7 +29,7 @@ class Media extends BaseMedia
                 $fileInfo = $getID3->analyze($media->getPath());
             
                 // Получаем длительность файла
-                $duration = $fileInfo['duration'];
+                $duration = $fileInfo['playtime_seconds'] ?? null;
             
                 // Сохраняем длительность в пользовательских свойствах медиа
                 $media->setCustomProperty('duration', $duration)->save();
