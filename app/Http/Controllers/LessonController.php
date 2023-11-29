@@ -56,7 +56,7 @@ class LessonController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'topic_id' => 'integer',
+            'topic_id' => 'nullable|integer',
             'name' => 'string',
             'cover' => 'image|file',
         ]);
@@ -68,7 +68,7 @@ class LessonController extends Controller
         $lesson->type = $type;
     
         Lesson::create([
-            'topic_id' => 2,
+            'topic_id' => $request->topic_id,
             'name' => $request->name,
             'cover' => Storage::url($cover),
             'type' => $request->type,
