@@ -65,17 +65,8 @@ class LessonController extends Controller
         $lesson = new Lesson();
         $lesson->type = $request->input('type');
         $lesson->content = $request->input('content');
-    
-        if ($request->input('type') !== 'text') {
-            $media = $lesson->addMedia($request->file('content'))->toMediaCollection('content');
-            $media->model_type = Lesson::class;
-            $media->save();
-            $lesson->content = $media->getPath();
-            $lesson->duration = round($media->getCustomProperty('duration') / 60);
-        }
-    
+        
         $cover = $request->file('cover')->store('cover', 'public');
-    
         $data = [
             'topic_id' => $request->topic_id,
             'name' => $request->name,
@@ -86,8 +77,15 @@ class LessonController extends Controller
         ];
     
         Lesson::create($data);
-        $media->model_id = $lesson->id;
-        $media->save();
+
+        if ($request->input('type') !== 'text') {
+            $media = $lesson->addMedia($request->file('content'))->toMediaCollection('content');
+            $media->model_type = Lesson::class;
+            $media->model_id = $lesson->id;
+            $media->save();
+            $lesson->content = $media->getPath();
+            $lesson->duration = round($media->getCustomProperty('duration') / 60);
+        }
     
         return response()->json(['message' => 'Lesson created successfully.']);
     }
