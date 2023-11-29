@@ -22,19 +22,18 @@ class Media extends BaseMedia
 
             if ($media->type === 'video' || $media->type === 'audio') {
                 // Предполагается, что у вас есть объект $media, представляющий ваш медиа-файл.
-            
+
                 $getID3 = new getID3();
-            
+
                 // Получаем информацию о файле
                 $fileInfo = $getID3->analyze($media->getPath());
-            
+
                 // Получаем длительность файла
                 $duration = $fileInfo['playtime_seconds'] ?? null;
-            
+
                 // Сохраняем длительность в пользовательских свойствах медиа
                 $media->setCustomProperty('duration', $duration)->save();
-
-
+           
 
                 // if ($media->type === 'video' or $media->type === 'audio') {
 
