@@ -67,15 +67,13 @@ class LessonController extends Controller
     
         $lesson->type = $type;
     
-        $data = [
+        Lesson::create([
             'topic_id' => $request->topic_id,
             'name' => $request->name,
             'cover' => Storage::url($cover),
             'type' => $request->type,
-        ];
-    
-        Lesson::create($data);
-    
+        ]);
+  
         $lesson->save();
 
         if ($type === 'text') {
