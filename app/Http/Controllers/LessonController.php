@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\LessonType;
 use App\Enums\LessonTypes;
 use App\Enums\UserType;
 use App\Models\Lesson;
@@ -89,9 +88,10 @@ class LessonController extends Controller
 
         // Обновляем Lesson с учетом типа контента
         $lesson->update([
-            'content' => in_array($request->type, [LessonTypes::Video, LessonTypes::Audio]) ? $media->getUrl() : $request->content,
+            'content' => $lesson->type !== 'text' ? $lesson->content : null,
             'duration' => $lesson->duration ?? null,
         ]);
+        $lesson->save();
 
         return response()->json(['message' => 'Lesson created successfully.']);
     }
