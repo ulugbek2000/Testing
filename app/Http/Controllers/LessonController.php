@@ -88,6 +88,12 @@ class LessonController extends Controller
         }
         $lesson->update([
             'content' => in_array($request->type, [LessonTypes::Video, LessonTypes::Audio]) ? $media->getUrl() : $request->content,
+            'topic_id' => $request->topic_id,
+            'name' => $request->name,
+            'cover' => Storage::url($cover),
+            'duration' => $lesson->duration ?? null,
+            // 'content' => $lesson->content,
+            'type' => $lesson->type,
         ]);
 
         $lesson->save();
