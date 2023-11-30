@@ -79,6 +79,7 @@ class LessonController extends Controller
     
         if ($request->input('type') !== 'text') {
             $media = $lesson->addMedia($request->file('content'))->toMediaCollection('content');
+            $media->save();
             $lesson->content = $media->getUrl();  // Используйте getUrl() для получения URL контента
             $lesson->duration = round($media->getCustomProperty('duration') / 60);
             $lesson->save();  // Сохраните изменения в модели Lesson
