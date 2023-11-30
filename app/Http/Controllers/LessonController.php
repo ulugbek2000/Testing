@@ -50,7 +50,7 @@ class LessonController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-
+     
      public function store(Request $request)
      {
          $request->validate([
@@ -65,25 +65,21 @@ class LessonController extends Controller
          $lesson = new Lesson();
          $lesson->type = $request->input('type');
      
-         // Обрабатываем content в зависимости от типа урока
+         // Process content based on the lesson type
          if ($request->input('type') === 'text') {
              $lesson->content = $request->input('content');
          } else {
              if ($request->hasFile('content')) {
-                 // Добавляем медиафайл
+                 // Add media file
                  $media = $lesson->addMedia($request->file('content'))->toMediaCollection('content');
                  $media->model_type = Lesson::class;
                  $media->model_id = $lesson->id;
                  $media->save();
      
-                 // Update the media using the array
+                 // Update the lesson with media URL and duration
                  $lesson->update([
-                     'content' => in_array($request->type, [LessonTypes::Video, LessonTypes::Audio]) ? $media->getUrl() : $request->content,
-                 ]);
-     
-                 // Update the lesson duration
-                 $lesson->update([
-                     'duration' => round($media->getCustomProperty('duration') / 60),
+                     'content' => in_array($request->type, [LessonTypes::Video, LessonTypes::Audio]) ? $media->getUrl() : null,
+                     'duration' => in_array($request->type, [LessonTypes::Video, LessonTypes::Audio]) ? round($media->getCustomProperty('duration') / 60) : null,
                  ]);
              }
          }
@@ -93,13 +89,14 @@ class LessonController extends Controller
              'topic_id' => $request->topic_id,
              'name' => $request->name,
              'cover' => Storage::url($request->file('cover')->store('cover', 'public')),
-             'duration' => $lesson->duration ?? null,
+             'duration' => $lesson->duration,
              'type' => $lesson->type,
          ];
          Lesson::create($data);
      
          return response()->json(['message' => 'Lesson created successfully.']);
      }
+     
 
     // public function store(Request $request)
     // {
