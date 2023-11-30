@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Auth;
 use FFMpeg\FFProbe;
 use FFMpeg\FFMpeg;
 use FFMpeg\Coordinate\TimeCode;
+use getID3;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class LessonController extends Controller
@@ -77,20 +78,25 @@ class LessonController extends Controller
          if ($request->input('type') === 'text') {
              $lesson->content = $request->input('content');
          } else {
-             if ($request->hasFile('content')) {
-                 // Add media file
-                 $media = $lesson->addMedia($request->file('content'))->toMediaCollection('content');
-                 $media->model_type = Lesson::class;
-                 $media->model_id = $lesson->id;
-                 $media->save();
-     
-                 // Update the lesson with media URL and duration
-                 $lesson->update([
-                     'content' => in_array($request->type, [LessonTypes::Video, LessonTypes::Audio]) ? $media->getUrl() : null,
-                     'duration' => in_array($request->type, [LessonTypes::Video, LessonTypes::Audio]) ? round($media->getCustomProperty('duration') / 60) : null,
-                 ]);
-                 $lesson->save();
-             }
+            if ($request->hasFile('content')) {
+                // Add media file
+                $media = $lesson->addMedia($request->file('content'))->toMediaCollection('content');
+                $media->model_type = Lesson::class;
+                $media->model_id = $lesson->id;
+                $media->save();
+            
+                // Use getID3 to get media duration
+                $getID3 = new getID3();
+                $fileInfo = $getID3->analyze($media->getPath());
+                $duration = $fileInfo['playtime_seconds'] ?? null;
+            
+                // Update the lesson with media URL and duration
+                $lesson->update([
+                    'content' => in_array($request->type, [LessonTypes::Video, LessonTypes::Audio]) ? $media->getUrl() : null,
+                    'duration' => in_array($request->type, [LessonTypes::Video, LessonTypes::Audio]) ? round($duration / 60) : null,
+                ]);
+                $lesson->save();
+            }
          }
      
          return response()->json(['message' => 'Lesson created successfully.']);
