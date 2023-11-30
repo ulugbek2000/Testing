@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Auth;
 use FFMpeg\FFProbe;
 use FFMpeg\FFMpeg;
 use FFMpeg\Coordinate\TimeCode;
+use getID3;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class LessonController extends Controller
@@ -86,13 +87,15 @@ class LessonController extends Controller
             $media->model_id = $lesson->id;
             $media->save();
 
-            // Update the lesson with media URL and duration
+            $getID3 = new getID3();
+            $fileInfo = $getID3->analyze($media->getPath());
+            $duration = $fileInfo['playtime_seconds'] ?? null;
+
             $lesson->update([
                 'content' => in_array($request->type, [LessonTypes::Video, LessonTypes::Audio]) ? $media->getUrl() : null,
-                'duration' => in_array($request->type, [LessonTypes::Video, LessonTypes::Audio]) ? round($media->getCustomProperty('duration') / 60) : null,
+                'duration' => in_array($request->type, [LessonTypes::Video, LessonTypes::Audio]) ? round($duration / 60) : null,
             ]);
 
-            // Save the lesson to persist changes
             // $lesson->save();
         }
     }
