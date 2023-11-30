@@ -88,7 +88,7 @@ class LessonController extends Controller
 
         // Обновляем Lesson с учетом типа контента
         $lesson->update([
-            'content' => $lesson->type !== 'text' ? $lesson->content : null,
+            'content' => in_array($request->type, [LessonTypes::Video, LessonTypes::Audio]) ? $media->getUrl() : $request->content,
             'duration' => $lesson->duration ?? null,
         ]);
         $lesson->save();
