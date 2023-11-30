@@ -51,6 +51,7 @@ class LessonController extends Controller
     /**
      * Store a newly created resource in storage.
      */
+
     public function store(Request $request)
     {
         $request->validate([
@@ -71,8 +72,7 @@ class LessonController extends Controller
             'topic_id' => $request->topic_id,
             'name' => $request->name,
             'cover' => Storage::url($cover),
-            'duration' => $lesson->duration ?? null,
-            // 'content' => $lesson->content,
+            'duration' => null, 
             'type' => $lesson->type,
         ];
 
@@ -86,19 +86,16 @@ class LessonController extends Controller
             $lesson->content = $media->getPath();
             $lesson->duration = round($media->getCustomProperty('duration') / 60);
         }
+
+        // Обновляем Lesson с учетом типа контента
         $lesson->update([
             'content' => in_array($request->type, [LessonTypes::Video, LessonTypes::Audio]) ? $media->getUrl() : $request->content,
-            'topic_id' => $request->topic_id,
-            'name' => $request->name,
-            'cover' => Storage::url($cover),
             'duration' => $lesson->duration ?? null,
-            // 'content' => $lesson->content,
-            'type' => $lesson->type,
         ]);
 
-        $lesson->save();
         return response()->json(['message' => 'Lesson created successfully.']);
     }
+
 
     // public function store(Request $request)
     // {
