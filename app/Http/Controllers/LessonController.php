@@ -51,59 +51,59 @@ class LessonController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-     
-     public function store(Request $request)
-{
-    $request->validate([
-        'topic_id' => 'integer',
-        'name' => 'string',
-        'cover' => 'image|file',
-        'duration' => 'nullable',
-        'type' => 'required|in:text,video,audio',
-        'content' => $request->input('type') === 'text' ? 'required|string' : 'required|file',
-    ]);
 
-    $lesson = new Lesson();
-    $lesson->type = $request->input('type');
+    public function store(Request $request)
+    {
+        $request->validate([
+            'topic_id' => 'integer',
+            'name' => 'string',
+            'cover' => 'image|file',
+            'duration' => 'nullable',
+            'type' => 'required|in:text,video,audio',
+            'content' => $request->input('type') === 'text' ? 'required|string' : 'required|file',
+        ]);
 
-    $data = [
-        'topic_id' => $request->topic_id,
-        'name' => $request->name,
-        'cover' => Storage::url($request->file('cover')->store('cover', 'public')),
-        'duration' => $lesson->duration,
-        'type' => $lesson->type,
-    ];
+        $lesson = new Lesson();
+        $lesson->type = $request->input('type');
 
-    Lesson::create($data);
+        $data = [
+            'topic_id' => $request->topic_id,
+            'name' => $request->name,
+            'cover' => Storage::url($request->file('cover')->store('cover', 'public')),
+            'duration' => $lesson->duration,
+            'type' => $lesson->type,
+        ];
 
-    // Process content based on the lesson type
-    if ($request->input('type') === 'text') {
-        $lesson->content = $request->input('content');
-    } else {
-        if ($request->hasFile('content')) {
-            // Add media file
-            $media = $lesson->addMedia($request->file('content'))->toMediaCollection('content');
-            $media->model_type = Lesson::class;
-            $media->model_id = $lesson->id;
-            $media->save();
+        Lesson::create($data);
 
-            $getID3 = new getID3();
-            $fileInfo = $getID3->analyze($media->getPath());
-            $duration = $fileInfo['playtime_seconds'] ?? null;
+        // Process content based on the lesson type
+        if ($request->input('type') === 'text') {
+            $lesson->content = $request->input('content');
+        } else {
+            if ($request->hasFile('content')) {
+                // Add media file
+                $media = $lesson->addMedia($request->file('content'))->toMediaCollection('content');
+                $media->model_type = Lesson::class;
+                $media->model_id = $lesson->id;
+                $media->save();
 
-            $lesson->update([
-                'content' => in_array($request->type, [LessonTypes::Video, LessonTypes::Audio]) ? $media->getUrl() : null,
-                'duration' => in_array($request->type, [LessonTypes::Video, LessonTypes::Audio]) ? round($duration / 60) : null,
-            ]);
+                $getID3 = new getID3();
+                $fileInfo = $getID3->analyze($media->getPath());
+                $duration = $fileInfo['playtime_seconds'] ?? null;
+                dd($media->getPath(), $duration);
+                $lesson->update([
+                    'content' => in_array($request->type, [LessonTypes::Video, LessonTypes::Audio]) ? $media->getUrl() : null,
+                    'duration' => in_array($request->type, [LessonTypes::Video, LessonTypes::Audio]) ? round($duration / 60) : null,
+                ]);
 
-            // $lesson->save();
+                $lesson->save();
+            }
         }
+
+        return response()->json(['message' => 'Lesson created successfully.']);
     }
 
-    return response()->json(['message' => 'Lesson created successfully.']);
-}
 
-     
 
     // public function store(Request $request)
     // {
