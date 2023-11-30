@@ -18,7 +18,6 @@ use Illuminate\Support\Facades\Auth;
 use FFMpeg\FFProbe;
 use FFMpeg\FFMpeg;
 use FFMpeg\Coordinate\TimeCode;
-use getID3;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class LessonController extends Controller
@@ -52,8 +51,7 @@ class LessonController extends Controller
      * Store a newly created resource in storage.
      */
      
-     
-public function store(Request $request)
+     public function store(Request $request)
 {
     $request->validate([
         'topic_id' => 'integer',
@@ -88,24 +86,20 @@ public function store(Request $request)
             $media->model_id = $lesson->id;
             $media->save();
 
-            // Use getID3 to get media duration
-            $getID3 = new getID3();
-            $fileInfo = $getID3->analyze($media->getPath());
-
-            // Ensure that the duration key exists in the array
-            $duration = $fileInfo['playtime_seconds'] ?? null;
-
             // Update the lesson with media URL and duration
             $lesson->update([
                 'content' => in_array($request->type, [LessonTypes::Video, LessonTypes::Audio]) ? $media->getUrl() : null,
-                'duration' => in_array($request->type, [LessonTypes::Video, LessonTypes::Audio]) ? round($duration / 60) : null,
+                'duration' => in_array($request->type, [LessonTypes::Video, LessonTypes::Audio]) ? round($media->getCustomProperty('duration') / 60) : null,
             ]);
+
+            // Save the lesson to persist changes
             $lesson->save();
         }
     }
 
     return response()->json(['message' => 'Lesson created successfully.']);
 }
+
      
 
     // public function store(Request $request)
