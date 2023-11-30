@@ -19,7 +19,7 @@ class Media extends BaseMedia
         parent::boot();
 
         static::created(static function (Media $media) {
-            if ($media->type === 'video' or $media->type === 'audio') {
+            if ($media->type === 'video' || $media->type === 'audio') {
 
                 $ffmpeg = FFProbe::create();
 
