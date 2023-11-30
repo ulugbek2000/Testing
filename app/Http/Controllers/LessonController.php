@@ -77,12 +77,12 @@ class LessonController extends Controller
                  $media->save();
      
                  // Update the media using the array
-                 $lesson->updateMedia([
+                 $lesson->update([
                      'content' => in_array($request->type, [LessonTypes::Video, LessonTypes::Audio]) ? $media->getUrl() : $request->content,
                  ]);
      
                  // Update the lesson duration
-                 $lesson->updateMedia([
+                 $lesson->update([
                      'duration' => round($media->getCustomProperty('duration') / 60),
                  ]);
              }
