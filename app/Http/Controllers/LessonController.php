@@ -65,6 +65,14 @@ class LessonController extends Controller
          $lesson = new Lesson();
          $lesson->type = $request->input('type');
      
+         $data = [
+            'topic_id' => $request->topic_id,
+            'name' => $request->name,
+            'cover' => Storage::url($request->file('cover')->store('cover', 'public')),
+            'duration' => $lesson->duration,
+            'type' => $lesson->type,
+        ];
+        Lesson::create($data);
          // Process content based on the lesson type
          if ($request->input('type') === 'text') {
              $lesson->content = $request->input('content');
@@ -81,18 +89,9 @@ class LessonController extends Controller
                      'content' => in_array($request->type, [LessonTypes::Video, LessonTypes::Audio]) ? $media->getUrl() : null,
                      'duration' => in_array($request->type, [LessonTypes::Video, LessonTypes::Audio]) ? round($media->getCustomProperty('duration') / 60) : null,
                  ]);
+                 $lesson->save();
              }
          }
-     
-         // Create the lesson
-         $data = [
-             'topic_id' => $request->topic_id,
-             'name' => $request->name,
-             'cover' => Storage::url($request->file('cover')->store('cover', 'public')),
-             'duration' => $lesson->duration,
-             'type' => $lesson->type,
-         ];
-         Lesson::create($data);
      
          return response()->json(['message' => 'Lesson created successfully.']);
      }
