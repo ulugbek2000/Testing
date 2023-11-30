@@ -31,11 +31,12 @@ class Lesson extends Model implements HasMedia
     function getContentMedia() {
         return $this->getFirstMedia("content");
     }
-    public function registerMediaConversions(Media $media = null): void
-    {
-        $this->addMediaConversion('thumb')
-            ->width(100)
-            ->height(100);
+    
+    // public function registerMediaConversions(Media $media = null): void
+    // {
+    //     $this->addMediaConversion('thumb')
+    //         ->width(100)
+    //         ->height(100);
         
-    }
+    // }
 }
