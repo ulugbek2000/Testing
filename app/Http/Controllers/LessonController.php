@@ -93,7 +93,7 @@ class LessonController extends Controller
             ]);
 
             // Save the lesson to persist changes
-            $lesson->save();
+            // $lesson->save();
         }
     }
 
