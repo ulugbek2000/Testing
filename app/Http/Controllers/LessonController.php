@@ -51,51 +51,41 @@ class LessonController extends Controller
      * Store a newly created resource in storage.
      */
 
-     public function store(Request $request)
-     {
-         $request->validate([
-             'topic_id' => 'integer',
-             'name' => 'string',
-             'cover' => 'image|file',
-             'duration' => 'nullable',
-             'type' => 'required|in:text,video,audio',
-             'content' => $request->input('type') === 'text' ? 'required|string' : 'required|file',
-         ]);
-     
-         $lesson = new Lesson();
-         $lesson->type = $request->input('type');
-         $lesson->content = $request->input('content');
-     
-         $cover = $request->file('cover')->store('cover', 'public');
-         $data = [
-             'topic_id' => $request->topic_id,
-             'name' => $request->name,
-             'cover' => Storage::url($cover),
-             'duration' => null,
-             'type' => $lesson->type,
-         ];
-     
-         Lesson::create($data);
-     
-         if ($request->input('type') !== 'text') {
-             $media = $lesson->addMedia($request->file('content'))->toMediaCollection('content');
-             $media->model_type = Lesson::class;
-             $media->model_id = $lesson->id;
-             $media->save();
-             $lesson->content = $media->getUrl();
-             $lesson->duration = round($media->getCustomProperty('duration') / 60);
-         }
-     
-         // Обновляем Lesson с учетом типа контента
-         $lesson->update([
-             'content' => $lesson->type !== 'text' ? $lesson->content : null,
-             'duration' => $lesson->duration ?? null,
-         ]);
-     
-         return response()->json(['message' => 'Lesson created successfully.']);
-     }
+    public function store(Request $request)
+    {
+        $request->validate([
+            'topic_id' => 'integer',
+            'name' => 'string',
+            'cover' => 'image|file',
+            'duration' => 'nullable',
+            'type' => 'required|in:text,video,audio',
+            'content' => $request->input('type') === 'text' ? 'required|string' : 'required|file',
+        ]);
 
+        $lesson = new Lesson();
+        $lesson->type = $request->input('type');
+        $lesson->content = $request->input('content');
 
+        $cover = $request->file('cover')->store('cover', 'public');
+        $data = [
+            'topic_id' => $request->topic_id,
+            'name' => $request->name,
+            'cover' => Storage::url($cover),
+            'duration' => null,
+            'type' => $lesson->type,
+        ];
+
+        Lesson::create($data);
+
+        if ($request->input('type') !== 'text') {
+            $media = $lesson->addMedia($request->file('content'))->toMediaCollection('content');
+            $lesson->content = $media->getUrl();
+            $lesson->duration = round($media->getCustomProperty('duration') / 60);
+            $lesson->save();
+        }
+
+        return response()->json(['message' => 'Lesson created successfully.']);
+    }
 
     // public function store(Request $request)
     // {
