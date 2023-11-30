@@ -81,7 +81,7 @@ class LessonController extends Controller
                  $urlSegments = explode('/', $url);
                  $newMediaItem = [
                      'url' => $url,
-                     'disk' => Storage::diskName($url),
+                     'disk' => Storage::url($url),
                      'model_type' => Lesson::class,
                      'model_id' => $lesson->id,
                  ];
