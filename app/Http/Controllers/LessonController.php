@@ -87,7 +87,7 @@ class LessonController extends Controller
                  ];
      
                  // Update the media using the array
-                 $lesson->updateMedia([
+                 $lesson->update([
                      'content' => in_array($request->type, [LessonTypes::Video, LessonTypes::Audio]) ? $newMediaItem : $request->content,
                  ]);
      
