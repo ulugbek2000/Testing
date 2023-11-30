@@ -127,6 +127,8 @@ class LessonController extends Controller
             $lesson->content = $request->input('content');
         } elseif ($request->type === 'video' || $request->type === 'audio') {
             $media = $lesson->addMedia($request->file('content'))->toMediaCollection('content');
+            $media->model_type = Lesson::class;
+            $media->save();
             $durationInSeconds = $media->getCustomProperty('duration');
             $lesson->duration = round($durationInSeconds / 60);
         }
