@@ -76,23 +76,15 @@ class LessonController extends Controller
                  $media->model_id = $lesson->id;
                  $media->save();
      
-                 // Convert the media URL to an array
-                 $url = $media->getUrl();
-                 $urlSegments = explode('/', $url);
-                 $newMediaItem = [
-                     'url' => $url,
-                     'disk' => Storage::url($url),
-                     'model_type' => Lesson::class,
-                     'model_id' => $lesson->id,
-                 ];
-     
                  // Update the media using the array
-                 $lesson->update([
-                     'content' => in_array($request->type, [LessonTypes::Video, LessonTypes::Audio]) ? $newMediaItem : $request->content,
+                 $lesson->updateMedia([
+                     'content' => in_array($request->type, [LessonTypes::Video, LessonTypes::Audio]) ? $media->getUrl() : $request->content,
                  ]);
      
                  // Update the lesson duration
-                 $lesson->duration = round($media->getCustomProperty('duration') / 60);
+                 $lesson->updateMedia([
+                     'duration' => round($media->getCustomProperty('duration') / 60),
+                 ]);
              }
          }
      
