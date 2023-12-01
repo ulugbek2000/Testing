@@ -87,9 +87,9 @@ class UserWalletController extends Controller
         if ($latestPurchase) {
             $courseInfo = $latestPurchase->course;
     
-            if ($latestPurchase->deleted_at < now()) {
-                return response()->json(['message' => 'Подписка истекла'], 403);
-            }
+            // if ($latestPurchase->deleted_at < now()) {
+            //     return response()->json(['message' => 'Подписка истекла'], 403);
+            // }
     
             $subscription = Subscription::find($latestPurchase->subscription_id);
             $subscriptionName = $subscription->name;
