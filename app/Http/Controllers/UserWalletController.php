@@ -49,7 +49,10 @@ class UserWalletController extends Controller
             $progressPercentage = $totalLessons > 0 ? ($completedLessons * 100 / $totalLessons) : 0;
 
             $latestSubscription = $user->subscriptions->where('course_id', $course->id)->sortByDesc('created_at')->first();
-
+            
+            if ($latestPurchase->deleted_at < now()) {
+                return response()->json(['message' => 'Подписка истекла'], 403);
+            }
             return [
                 'course' => [
                     'id' => $course->id,
