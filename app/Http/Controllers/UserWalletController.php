@@ -87,7 +87,7 @@ class UserWalletController extends Controller
         if ($latestPurchase) {
             $courseInfo = $latestPurchase->course;
     
-            if ($latestPurchase->isExpired()) {
+            if ($latestPurchase->deleted_at < now()) {
                 return response()->json(['message' => 'Подписка истекла'], 403);
             }
     
