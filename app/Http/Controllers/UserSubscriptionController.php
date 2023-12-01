@@ -17,7 +17,11 @@ class UserSubscriptionController extends Controller
         $previousSubscription = $user->subscriptions()->where('course_id', $course->id)->where('subscription_id', $subscription->id)->first();
 
         if ($previousSubscription) {
-            return response()->json(['message' => 'Уже подписан на этот пакет'], 200);
+            if ($previousSubscription->deleted_at && $previousSubscription->deleted_at < now()) {
+                $previousSubscription->delete();
+            } else {
+                return response()->json(['message' => 'Уже подписан на этот пакет'], 200);
+            }
         }
 
         $userSubscription = $user->subscriptions()->create([

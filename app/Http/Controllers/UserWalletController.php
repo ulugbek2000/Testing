@@ -42,7 +42,7 @@ class UserWalletController extends Controller
             $course = Course::find($latestPurchase->course_id);
 
             if ($latestPurchase->deleted_at && $latestPurchase->deleted_at < now()) {
-                return ; // Если подписка истекла, вернем null
+                return null; // Если подписка истекла, вернем null
             }
             $totalLessons = 0;
             $completedLessons = 0;
