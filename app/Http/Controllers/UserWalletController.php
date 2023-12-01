@@ -78,27 +78,31 @@ class UserWalletController extends Controller
     public function getPurchasesByCourseId($courseId)
     {
         $user = Auth::user();
-
+    
         $latestPurchase = $user->subscriptions()
             ->where('course_id', $courseId)
             ->latest()
             ->first();
-
+    
         if ($latestPurchase) {
             $courseInfo = $latestPurchase->course;
-
+    
+            if ($latestPurchase->isExpired()) {
+                return response()->json(['message' => 'Подписка истекла'], 403);
+            }
+    
             $subscription = Subscription::find($latestPurchase->subscription_id);
             $subscriptionName = $subscription->name;
-
+    
             $course = Course::find($latestPurchase->course_id);
-
+    
             $totalLessons = 0;
             $completedLessons = 0;
-
+    
             $completedLessons = UserLessonsProgress::where('user_id', $user->id)->where('course_id', $course->id)->where('completed', true)->count();
             $totalLessons = $course->lessons()->count();
             $progressPercentage = $totalLessons > 0 ? ($completedLessons * 100 / $totalLessons) : 0;
-
+    
             $latestSubscription = $user->subscriptions->where('course_id', $course->id)->sortByDesc('created_at')->first();
             $purchasesInfo = [
                 'purchases' => [
@@ -124,10 +128,11 @@ class UserWalletController extends Controller
                     ],
                 ],
             ];
-
+    
             return response()->json($purchasesInfo, 200);
         } else {
             return response()->json(['message' => 'Покупка не найдена'], 404);
         }
     }
+    
 }
