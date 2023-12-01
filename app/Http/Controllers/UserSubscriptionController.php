@@ -15,6 +15,7 @@ class UserSubscriptionController extends Controller
         $user = Auth::user();
 
         $previousSubscription = $user->subscriptions()->where('course_id', $course->id)->where('subscription_id', $subscription->id)->first();
+        dd($previousSubscription);
 
         if ($previousSubscription) {
             if ($previousSubscription->deleted_at && $previousSubscription->deleted_at < now()) {
