@@ -171,7 +171,7 @@ return [
         Spatie\Permission\PermissionServiceProvider::class,
         Rap2hpoutre\LaravelLogViewer\LaravelLogViewerServiceProvider::class,
         Intervention\Image\ImageServiceProvider::class,
-        // Pbmedia\LaravelFFMpeg\FFMpegServiceProvider::class,
+        Pbmedia\LaravelFFMpeg\FFMpegServiceProvider::class,
         
     ])->toArray(),
 
@@ -189,7 +189,7 @@ return [
     'aliases' => Facade::defaultAliases()->merge([
         // 'Example' => App\Facades\Example::class,
         'Image' => Intervention\Image\Facades\Image::class,
-        // 'FFMpeg' => Pbmedia\LaravelFFMpeg\FFMpegFacade::class,
+        'FFMpeg' => Pbmedia\LaravelFFMpeg\FFMpegFacade::class,
     ])->toArray(),
 
 ];
