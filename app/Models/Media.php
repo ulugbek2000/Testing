@@ -7,6 +7,7 @@ use FFMpeg\FFProbe;
 use getID3;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use ProtoneMedia\LaravelFFMpeg\FFMpeg\FFProbe as FFMpegFFProbe;
 use ProtoneMedia\LaravelFFMpeg\Support\FFMpeg as SupportFFMpeg;
 use Spatie\MediaLibrary\MediaCollections\Models\Media as BaseMedia;
 
