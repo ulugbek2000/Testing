@@ -7,6 +7,7 @@ use FFMpeg\FFProbe;
 use getID3;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use ProtoneMedia\LaravelFFMpeg\Support\FFMpeg as SupportFFMpeg;
 use Spatie\MediaLibrary\MediaCollections\Models\Media as BaseMedia;
 
 
@@ -21,7 +22,7 @@ class Media extends BaseMedia
         static::created(static function (Media $media) {
             if ($media->type === 'video' || $media->type === 'audio') {
 
-                $ffmpeg = FFProbe::create();
+                $ffmpeg = SupportFFMpeg::create();
 
                 $duration = $ffmpeg->format($media->getPath())->get('duration');
 
