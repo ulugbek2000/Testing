@@ -23,7 +23,10 @@ class Media extends BaseMedia
         static::created(static function (Media $media) {
             if ($media->type === 'video' || $media->type === 'audio') {
 
-                $ffmpeg = FFMpegFFProbe::create();
+                $ffmpeg = FFMpeg::create([
+                    'ffmpeg.binaries' => '/usr/bin/ffmpeg',
+                    'ffprobe.binaries' => '/usr/bin/ffprobe',
+                ]);
 
                 $duration = $ffmpeg->format($media->getPath())->get('duration');
 
