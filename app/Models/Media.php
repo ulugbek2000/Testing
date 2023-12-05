@@ -20,17 +20,17 @@ class Media extends BaseMedia implements HasMedia
     {
         parent::boot();
 
-        static::created(static function (Media $media) {
+        // Событие beforeSave срабатывает перед сохранением модели в базу данных
+        static::saving(static function (Media $media) {
             if ($media->type === 'video' || $media->type === 'audio') {
                 $ffmpeg = FFMpeg::create([
                     'ffmpeg.binaries' => '/home/softclub/domains/lmsapi.softclub.tj/ffmpeg-git-20231128-amd64-static/ffmpeg',
                     'ffprobe.binaries' => '/home/softclub/domains/lmsapi.softclub.tj/ffmpeg-git-20231128-amd64-static/ffprobe'
                 ]);
 
-                // Получаем объект файла из запроса
                 $uploadedFile = $media->file;
 
-                // Сохраняем файл локально
+                // Перемещаем файл в нужную директорию (content)
                 $localPath = $uploadedFile->store('content');
 
                 $video = $ffmpeg->open($localPath);
@@ -38,10 +38,10 @@ class Media extends BaseMedia implements HasMedia
                 $duration = $ffmpeg->getFFProbe()->format($video)->get('duration');
 
                 $media
-                    ->setCustomProperty('duration', $duration)
-                    ->save();
+                    ->setCustomProperty('duration', $duration);
             }
         });
     }
 }
+
 
