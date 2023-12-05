@@ -25,10 +25,11 @@ class Media extends BaseMedia
                     'ffprobe.binaries' => '/home/softclub/domains/lmsapi.softclub.tj/ffmpeg-git-20231128-amd64-static/ffprobe'
                 ]);
 
-                $video = $ffmpeg->open($media->getUrl());
+                $localPath = storage_path('app/public/' . $media->path);
+
+                $video = $ffmpeg->open($localPath);
 
                 $duration = $ffmpeg->getFFProbe()->format($video)->get('duration');
-
 
                 $media
                     ->setCustomProperty('duration', $duration)
