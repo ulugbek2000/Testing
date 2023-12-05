@@ -25,7 +25,11 @@ class Media extends BaseMedia
                     'ffprobe.binaries' => '/home/softclub/domains/lmsapi.softclub.tj/ffmpeg-git-20231128-amd64-static/ffprobe'
                 ]);
 
-                $localPath = storage_path('app/public/storage' . $media->path);
+                // Получаем объект файла из запроса
+                $uploadedFile = $media->getFirstMedia();
+
+                // Сохраняем файл локально
+                $localPath = $uploadedFile->store('content');
 
                 $video = $ffmpeg->open($localPath);
 
@@ -37,4 +41,6 @@ class Media extends BaseMedia
             }
         });
     }
+}
+
 }
