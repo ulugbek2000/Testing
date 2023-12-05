@@ -76,7 +76,7 @@ class LessonController extends Controller
             $media = $lesson->addMedia($request->file('content'))->toMediaCollection('content');
             $media->model_type = Lesson::class;
             $media->save();
-            $media->setCustomProperty('duration');
+            $media->setCustomProperty('duration', 60);
 
             $lesson->duration = round($media->getCustomProperty('duration') / 60);        }
         

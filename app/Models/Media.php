@@ -15,6 +15,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media as BaseMedia;
 class Media extends BaseMedia implements HasMedia
 {
     use HasFactory, InteractsWithMedia;
+
     protected static function boot()
     {
         parent::boot();
@@ -25,23 +26,21 @@ class Media extends BaseMedia implements HasMedia
                     'ffmpeg.binaries' => '/home/softclub/domains/lmsapi.softclub.tj/ffmpeg-git-20231128-amd64-static/ffmpeg',
                     'ffprobe.binaries' => '/home/softclub/domains/lmsapi.softclub.tj/ffmpeg-git-20231128-amd64-static/ffprobe'
                 ]);
-        
+
                 $uploadedFile = $media->file;
-        
+
                 if ($uploadedFile) {
 
                     $media->addMedia($uploadedFile)->toMediaCollection('content');
-        
+
                     // После добавления файла в коллекцию, вы можете получить путь к нему
                     $localPath = $media->getPath();
-        
+
                     $video = $ffmpeg->open($localPath);
-        
+
                     $duration = $ffmpeg->getFFProbe()->format($video)->get('duration');
-                    // dd($duration);
-        
-                    // Проверяем, что длительность больше 0, прежде чем устанавливать ее в качестве пользовательского свойства
-                    if ($duration > 0) {
+
+                    if ($duration !== null) {
                         $media->setCustomProperty('duration', $duration);
                     }
                 }
