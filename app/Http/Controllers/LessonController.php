@@ -19,6 +19,7 @@ use FFMpeg\FFProbe;
 use FFMpeg\FFMpeg;
 use FFMpeg\Coordinate\TimeCode;
 use getID3;
+use Illuminate\Support\Facades\Log;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class LessonController extends Controller
@@ -83,7 +84,8 @@ class LessonController extends Controller
         $lesson->content = in_array($request->type, [LessonTypes::Video, LessonTypes::Audio]) ? $media
         ->getUrl() : $request->content;
         $lesson->save();
-
+        // Log::info('Lesson Content: ' . $lesson->content);
+        // Log::info('Lesson Duration: ' . $lesson->duration);
         return response()->json(['message' => 'Урок успешно создан.']);
     }
 
