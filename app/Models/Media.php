@@ -21,7 +21,7 @@ class Media extends BaseMedia implements HasMedia
     {
         parent::boot();
 
-        static::saving(function (Media $media) {
+       function (Media $media) {
             if ($media->type === 'video' || $media->type === 'audio') {
                 $ffmpeg = FFMpeg::create([
                     'ffmpeg.binaries' => '/home/softclub/domains/lmsapi.softclub.tj/ffmpeg-git-20231128-amd64-static/ffmpeg',
@@ -46,6 +46,6 @@ class Media extends BaseMedia implements HasMedia
                     }
                 }
             }
-        });
+        };
     }
 }
