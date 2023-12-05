@@ -78,7 +78,8 @@ class LessonController extends Controller
             $media->save();
         }
 
-        $lesson->content = in_array($request->type, [LessonTypes::Video, LessonTypes::Audio]) ? $media->getUrl() : $request->content;
+        $lesson->content = in_array($request->type, [LessonTypes::Video, LessonTypes::Audio]) ? $media
+        ->getUrl() : $request->content;
         $lesson->save();
 
         return response()->json(['message' => 'Урок успешно создан.']);
