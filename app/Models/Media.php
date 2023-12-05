@@ -45,4 +45,4 @@ class Media extends BaseMedia implements HasMedia
             }
         });
     }
-}`
+}
