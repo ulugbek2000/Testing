@@ -76,8 +76,9 @@ class LessonController extends Controller
             $media = $lesson->addMedia($request->file('content'))->toMediaCollection('content');
             $media->model_type = Lesson::class;
             $media->save();
-            // Здесь нам не нужно получать длительность, так как она уже была установлена в модели событием
-        }
+            $media->setCustomProperty('duration', 60);
+
+            $lesson->duration = round($media->getCustomProperty('duration') / 60);        }
         
         $lesson->content = in_array($request->type, [LessonTypes::Video, LessonTypes::Audio]) ? $media->getUrl() : $request->content;
         $lesson->save();
