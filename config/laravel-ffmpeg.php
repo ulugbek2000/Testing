@@ -2,11 +2,11 @@
 
 return [
     'ffmpeg' => [
-        'binaries' => env('FFMPEG_BINARIES', '/usr/bin/ffmpeg'),
+        'binaries' => env('FFMPEG_BINARIES', 'home/softclub/domains/lmsapi.softclub.tj/ffmpeg-git-20231128-amd64-static/ffmpeg'),
         'threads'  => 12,
     ],
     'ffprobe' => [
-        'binaries' => env('FFPROBE_BINARIES', '/usr/bin/ffprobe')
+        'binaries' => env('FFPROBE_BINARIES', 'home/softclub/domains/lmsapi.softclub.tj/ffmpeg-git-20231128-amd64-static/ffprobe')
     ],
 
     'timeout' => 3600,
