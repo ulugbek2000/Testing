@@ -43,4 +43,3 @@ class Media extends BaseMedia
     }
 }
 
-}
