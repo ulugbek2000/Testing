@@ -29,7 +29,7 @@ class Media extends BaseMedia implements HasMedia
                 $uploadedFile = $media->file;
         
                 if ($uploadedFile) {
-                    // Добавляем файл к коллекции 'content'
+
                     $media->addMedia($uploadedFile)->toMediaCollection('content');
         
                     // После добавления файла в коллекцию, вы можете получить путь к нему
@@ -38,6 +38,7 @@ class Media extends BaseMedia implements HasMedia
                     $video = $ffmpeg->open($localPath);
         
                     $duration = $ffmpeg->getFFProbe()->format($video)->get('duration');
+                    dd($duration);
         
                     // Проверяем, что длительность больше 0, прежде чем устанавливать ее в качестве пользовательского свойства
                     if ($duration > 0) {
