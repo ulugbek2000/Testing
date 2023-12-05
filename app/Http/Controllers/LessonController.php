@@ -77,8 +77,13 @@ class LessonController extends Controller
             $media = $lesson->addMedia($request->file('content'))->toMediaCollection('content');
             $media->model_type = Lesson::class;
             $media->save();
-            $lesson->content = $media->getUrl(); 
-            $lesson->duration = $media->getCustomProperty('duration');
+            $durationInSeconds = $media->getCustomProperty('duration');
+
+            // Преобразование длительности в минуты
+            $durationInMinutes = round($durationInSeconds / 60);
+    
+            // Сохранение длительности в модель урока
+            $lesson->duration = $durationInMinutes;
         }
 
         $lesson->content = in_array($request->type, [LessonTypes::Video, LessonTypes::Audio]) ? $media
