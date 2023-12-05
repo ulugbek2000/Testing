@@ -25,22 +25,24 @@ class Media extends BaseMedia implements HasMedia
                     'ffmpeg.binaries' => '/home/softclub/domains/lmsapi.softclub.tj/ffmpeg-git-20231128-amd64-static/ffmpeg',
                     'ffprobe.binaries' => '/home/softclub/domains/lmsapi.softclub.tj/ffmpeg-git-20231128-amd64-static/ffprobe'
                 ]);
-
+        
                 $uploadedFile = $media->file;
-
+        
                 if ($uploadedFile) {
                     // Добавляем файл к коллекции 'content'
                     $media->addMedia($uploadedFile)->toMediaCollection('content');
-
+        
                     // После добавления файла в коллекцию, вы можете получить путь к нему
-                    $localPath = $media->getUrl();
-
+                    $localPath = $media->getPath();
+        
                     $video = $ffmpeg->open($localPath);
-
+        
                     $duration = $ffmpeg->getFFProbe()->format($video)->get('duration');
-
-                    $media
-                        ->setCustomProperty('duration', $duration);
+        
+                    // Проверяем, что длительность больше 0, прежде чем устанавливать ее в качестве пользовательского свойства
+                    if ($duration > 0) {
+                        $media->setCustomProperty('duration', $duration);
+                    }
                 }
             }
         });
