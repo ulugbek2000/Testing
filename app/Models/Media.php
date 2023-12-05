@@ -20,7 +20,6 @@ class Media extends BaseMedia implements HasMedia
     {
         parent::boot();
 
-        // Событие beforeSave срабатывает перед сохранением модели в базу данных
         static::saving(static function (Media $media) {
             if ($media->type === 'video' || $media->type === 'audio') {
                 $ffmpeg = FFMpeg::create([
@@ -30,9 +29,12 @@ class Media extends BaseMedia implements HasMedia
 
                 $uploadedFile = $media->file;
 
-                // Перемещаем файл в нужную директорию (content)
-                $localPath = $uploadedFile->store('content');
+                // Добавляем файл к коллекции 'content'
+                $media->addMedia($uploadedFile)->toMediaCollection('content');
 
+                // После добавления файла в коллекцию, вы можете получить путь к нему
+                $localPath = $media->getPath();
+                
                 $video = $ffmpeg->open($localPath);
 
                 $duration = $ffmpeg->getFFProbe()->format($video)->get('duration');
