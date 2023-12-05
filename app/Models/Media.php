@@ -33,7 +33,7 @@ class Media extends BaseMedia implements HasMedia
                     $media->addMedia($uploadedFile)->toMediaCollection('content');
 
                     // После добавления файла в коллекцию, вы можете получить путь к нему
-                    $localPath = $media->getPath();
+                    $localPath = $media->getUrl();
 
                     $video = $ffmpeg->open($localPath);
 
