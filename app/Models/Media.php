@@ -26,7 +26,7 @@ class Media extends BaseMedia
                 ]);
 
                 // Получаем объект файла из запроса
-                $uploadedFile = $media->content;
+                $uploadedFile = $media->file;
 
                 // Сохраняем файл локально
                 $localPath = $uploadedFile->store('content');
