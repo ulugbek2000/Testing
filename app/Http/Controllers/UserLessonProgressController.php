@@ -37,11 +37,7 @@ class UserLessonProgressController extends Controller
     public function showActivity()
     {
         $user = Auth::user();
-        $watchedLessons = $user->courses->flatMap(function ($course) {
-            return $course->topics->flatMap(function ($topic) {
-                return $topic->lessons;
-            });
-        });
+        $userProgress = UserLessonsProgress::where('user_id', $user->id)->get();
 
         $currentWeekStart = Carbon::now()->startOfWeek();
         $results = [];
@@ -49,11 +45,16 @@ class UserLessonProgressController extends Controller
         for ($i = Carbon::MONDAY; $i <= Carbon::SUNDAY; $i++) {
             $dayStart = $currentWeekStart->copy()->day($i);
 
-            $watchedInDay = $watchedLessons->filter(function ($lesson) use ($dayStart) {
-                return Carbon::parse($lesson->created_at)->isSameDay($dayStart);
+            // Фильтруем по дате прогресса
+            $watchedInDay = $userProgress->filter(function ($progress) use ($dayStart) {
+                return Carbon::parse($progress->created_at)->isSameDay($dayStart);
             });
 
-            $totalMinutesWatched = $watchedInDay->sum('duration');
+            // Получаем lesson_id для просмотренных уроков в этот день
+            $lessonIds = $watchedInDay->pluck('lesson_id')->toArray();
+
+            // Получаем общую продолжительность просмотренных уроков в этот день
+            $totalMinutesWatched = Lesson::whereIn('id', $lessonIds)->sum('duration');
 
             $results[$dayStart->format('l')] = $totalMinutesWatched;
         }
