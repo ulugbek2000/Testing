@@ -12,7 +12,6 @@ use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media as BaseMedia;
 
-
 class Media extends BaseMedia implements HasMedia
 {
     use HasFactory, InteractsWithMedia;
@@ -27,35 +26,24 @@ class Media extends BaseMedia implements HasMedia
 
                 if ($uploadedFile) {
                     $media->addMedia($uploadedFile)->toMediaCollection('content');
-
+                    
                     $localPath = $media->getPath();
 
-                    // Вызываем shell_exec для получения информации о длительности
-                    $dur = shell_exec("ffmpeg -i " . $localPath . " 2>&1");
+                    // Используем getID3 для получения информации о медиафайле
+                    $getID3 = new getID3();
+                    $fileInfo = $getID3->analyze($localPath);
 
-                    if (preg_match("/: Invalid /", $dur)) {
+                    if (isset($fileInfo['playtime_seconds'])) {
+                        $durationInSeconds = $fileInfo['playtime_seconds'];
+                        $media->setCustomProperty('duration', $durationInSeconds)->save();
+                    } else {
                         // Обработка случая, когда длительность недоступна
                         logger()->warning('Не удалось определить длительность медиафайла: ' . $localPath);
                         $durationInSeconds = 0; // или другое значение по умолчанию
-                    } else {
-                        // Используем preg_match для извлечения длительности
-                        preg_match("/Duration: (.{2}):(..{2}):(..{2})/", $dur, $duration);
-
-                        if (!isset($duration[1])) {
-                            $durationInSeconds = 0; // или другое значение по умолчанию
-                        } else {
-                            // Преобразуем в секунды
-                            $hours = $duration[1];
-                            $minutes = $duration[2];
-                            $seconds = $duration[3];
-                            $durationInSeconds = $hours * 3600 + $minutes * 60 + $seconds;
-                        }
                     }
-
-                    // Устанавливаем длительность в пользовательские свойства
-                    $media->setCustomProperty('duration', $durationInSeconds)->save();
                 }
             }
         });
     }
 }
+
