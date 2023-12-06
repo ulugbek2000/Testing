@@ -37,7 +37,11 @@ class UserLessonProgressController extends Controller
     public function showActivity()
     {
         $user = Auth::user();
-        $watchedLessons = $user->courses()->topics->lessons;
+        $watchedLessons = $user->courses->flatMap(function ($course) {
+            return $course->topics->flatMap(function ($topic) {
+                return $topic->lessons;
+            });
+        });
 
         // Определить текущую неделю и начало текущего дня
         $currentWeekStart = Carbon::now()->startOfWeek();
