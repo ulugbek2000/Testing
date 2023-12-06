@@ -42,7 +42,7 @@ class UserLessonProgressController extends Controller
         $currentWeekStart = Carbon::now()->startOfWeek();
         $results = [];
 
-        for ($i = 0; $i <= Carbon::SUNDAY; $i++) {
+        for ($i = Carbon::MONDAY; $i <= Carbon::SUNDAY; $i++) {
             $dayStart = $currentWeekStart->copy()->day($i);
 
             // Фильтруем по дате прогресса
@@ -57,9 +57,9 @@ class UserLessonProgressController extends Controller
             $totalMinutesWatched = Lesson::whereIn('id', $lessonIds)->sum('duration');
 
             $results[$dayStart->format('l')] = $totalMinutesWatched;
-            return response()->json($results);
+           
         }
 
-       
+        return response()->json($results);
     }
 }
