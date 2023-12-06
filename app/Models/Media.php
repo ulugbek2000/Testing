@@ -36,7 +36,7 @@ class Media extends BaseMedia implements HasMedia
 
                     $video = $ffmpeg->open($localPath);
 
-                    $duration = $ffmpeg->getFFProbe()->format($video)->get('duration');
+                    $duration = $ffmpeg->getFFMpegDriver()->format($video)->get('duration');
 
 
                     if ($duration !== null) {
