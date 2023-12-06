@@ -34,8 +34,9 @@ class UserLessonProgressController extends Controller
 
 
 
-    public function showActivity(User $user)
+    public function showActivity()
     {
+        $user = Auth::user();
         $watchedLessons = $user->courses->flatMap(function ($course) {
             return $course->topics->flatMap(function ($topic) {
                 return $topic->lessons;
