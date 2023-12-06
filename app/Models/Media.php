@@ -36,8 +36,11 @@ class Media extends BaseMedia implements HasMedia
 
                     $video = $ffmpeg->open($localPath);
 
-                    $duration = $ffmpeg->getFFMpegDriver()->format($video)->get('duration');
-
+                    $duration = $ffmpeg
+                    ->streams($this->video)
+                    ->videos()                   
+                    ->first()                  
+                    ->get('duration');
 
                     if ($duration !== null) {
                         $media->setCustomProperty('duration', $duration);
