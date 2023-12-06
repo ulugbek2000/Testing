@@ -37,31 +37,32 @@ class UserLessonProgressController extends Controller
     {
         $user = Auth::user();
         $userProgress = UserLessonsProgress::where('user_id', $user->id)->get();
-
+    
         $currentWeekStart = Carbon::now()->startOfWeek();
-
+    
         $results = [];
-
+    
         for ($i = Carbon::MONDAY; $i <= Carbon::SUNDAY; $i++) {
             $dayStart = $currentWeekStart->copy()->day($i);
-
+    
             $watchedInDay = $userProgress->filter(function ($progress) use ($dayStart) {
                 return Carbon::parse($progress->created_at)->isSameDay($dayStart);
             });
-
+    
             $lessonIds = $watchedInDay->pluck('lesson_id')->toArray();
-
+    
             $totalMinutesWatched = Lesson::whereIn('id', $lessonIds)->sum('duration');
-
+    
             $results[$dayStart->format('l')] = $totalMinutesWatched;
         }
-
+    
+        // Заполняем нулями дни, для которых нет записей
         foreach (Carbon::getDays() as $day) {
             if (!isset($results[$day])) {
                 $results[$day] = 0;
             }
         }
-
+    
         return response()->json($results);
-    }
+}
 }
