@@ -34,36 +34,27 @@ class UserLessonProgressController extends Controller
 
 
 
-    public function showActivity()
+    public function showActivity(User $user)
     {
-        $user = Auth::user();
         $watchedLessons = $user->courses->flatMap(function ($course) {
             return $course->topics->flatMap(function ($topic) {
                 return $topic->lessons;
             });
         });
 
-        // Определить текущую неделю и начало текущего дня
         $currentWeekStart = Carbon::now()->startOfWeek();
-        $currentDay = Carbon::now()->startOfDay();
-
-        // Инициализировать массив результатов
         $results = [];
 
-        // Цикл по дням недели от понедельника до воскресенья
         for ($i = 0; $i <= Carbon::SUNDAY; $i++) {
             $dayStart = $currentWeekStart->copy()->addDays($i);
 
-            // Проверить, просматривались ли уроки в этот день
             $watchedInDay = $watchedLessons->filter(function ($lesson) use ($dayStart) {
                 return Carbon::parse($lesson->created_at)->isSameDay($dayStart);
             });
 
-            // Рассчитать общую продолжительность видео для этого дня
             $totalMinutesWatched = $watchedInDay->sum('duration');
 
-            // Сформировать результат
-            $results[$dayStart->format('l')] = $dayStart->isSameDay($currentDay) ? $totalMinutesWatched : 0;
+            $results[$dayStart->format('l')] = $totalMinutesWatched;
         }
 
         return response()->json($results);
