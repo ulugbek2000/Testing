@@ -56,6 +56,12 @@ class UserLessonProgressController extends Controller
             $results[$dayStart->format('l')] = $totalMinutesWatched;
         }
 
+        foreach (Carbon::getDays() as $day) {
+            if (!isset($results[$day])) {
+                $results[$day] = 0;
+            }
+        }
+
         return response()->json($results);
     }
 }
