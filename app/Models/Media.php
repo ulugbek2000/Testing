@@ -23,26 +23,39 @@ class Media extends BaseMedia implements HasMedia
 
         static::saving(function (Media $media) {
             if ($media->type === 'video' || $media->type === 'audio') {
-                $ffmpeg = FFProbe::create([
-                    'ffmpeg.binaries' => '/home/softclub/domains/lmsapi.softclub.tj/ffmpeg-git-20231128-amd64-static/ffmpeg',
-                    'ffprobe.binaries' => '/home/softclub/domains/lmsapi.softclub.tj/ffmpeg-git-20231128-amd64-static/ffprobe'
-                ]);
-
                 $uploadedFile = $media->file;
 
                 if ($uploadedFile) {
                     $media->addMedia($uploadedFile)->toMediaCollection('content');
+
                     $localPath = $media->getPath();
 
-                    $video = $ffmpeg->open($localPath);
+                    // Вызываем shell_exec для получения информации о длительности
+                    $dur = shell_exec("ffmpeg -i " . $localPath . " 2>&1");
 
-                    $duration = $ffmpeg->format($video)->get('duration');
-                    $media->setCustomProperty('duration', $duration)->save();
-                    if ($duration !== null) {
-                        $media->setCustomProperty('duration', $duration);
+                    if (preg_match("/: Invalid /", $dur)) {
+                        // Обработка случая, когда длительность недоступна
+                        logger()->warning('Не удалось определить длительность медиафайла: ' . $localPath);
+                        $durationInSeconds = 0; // или другое значение по умолчанию
+                    } else {
+                        // Используем preg_match для извлечения длительности
+                        preg_match("/Duration: (.{2}):(..{2}):(..{2})/", $dur, $duration);
+
+                        if (!isset($duration[1])) {
+                            $durationInSeconds = 0; // или другое значение по умолчанию
+                        } else {
+                            // Преобразуем в секунды
+                            $hours = $duration[1];
+                            $minutes = $duration[2];
+                            $seconds = $duration[3];
+                            $durationInSeconds = $hours * 3600 + $minutes * 60 + $seconds;
+                        }
                     }
+
+                    // Устанавливаем длительность в пользовательские свойства
+                    $media->setCustomProperty('duration', $durationInSeconds)->save();
                 }
             }
         });
     }
-} 
+}
