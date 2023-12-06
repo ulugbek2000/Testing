@@ -57,8 +57,9 @@ class UserLessonProgressController extends Controller
             $totalMinutesWatched = Lesson::whereIn('id', $lessonIds)->sum('duration');
 
             $results[$dayStart->format('l')] = $totalMinutesWatched;
+            return response()->json($results);
         }
 
-        return response()->json($results);
+       
     }
 }
