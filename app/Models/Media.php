@@ -37,7 +37,7 @@ class Media extends BaseMedia implements HasMedia
                     $video = $ffmpeg->open($localPath);
 
                     $duration = $ffmpeg
-                    ->streams($this->video)
+                    ->streams($video)
                     ->videos()                   
                     ->first()                  
                     ->get('duration');
