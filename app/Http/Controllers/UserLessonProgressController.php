@@ -33,7 +33,6 @@ class UserLessonProgressController extends Controller
     }
 
 
-
     public function showActivity()
     {
         $user = Auth::user();
@@ -57,8 +56,14 @@ class UserLessonProgressController extends Controller
             $totalMinutesWatched = Lesson::whereIn('id', $lessonIds)->sum('duration');
 
             $results[$dayStart->format('l')] = $totalMinutesWatched;
-           
         }
+
+        // Добавим дополнительный вывод для отладки
+        dd([
+            'current_week_start' => $currentWeekStart,
+            'user_progress' => $userProgress,
+            'results' => $results,
+        ]);
 
         return response()->json($results);
     }
