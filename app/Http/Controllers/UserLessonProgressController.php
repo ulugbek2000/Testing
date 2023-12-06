@@ -44,6 +44,9 @@ class UserLessonProgressController extends Controller
         for ($i = Carbon::MONDAY; $i <= Carbon::SUNDAY; $i++) {
             $dayStart = $currentWeekStart->copy()->day($i);
 
+            // Выводим информацию об итерации для отладки
+            echo "Processing day: {$dayStart->format('l')} ({$dayStart->format('Y-m-d')})\n";
+
             // Фильтруем по дате прогресса
             $watchedInDay = $userProgress->filter(function ($progress) use ($dayStart) {
                 return Carbon::parse($progress->created_at)->isSameDay($dayStart);
@@ -53,16 +56,18 @@ class UserLessonProgressController extends Controller
             $lessonIds = $watchedInDay->pluck('lesson_id')->toArray();
 
             // Выводим lessonIds для отладки
-            dd(['lessonIds' => $lessonIds]);
+            echo "Lesson IDs for the day: " . implode(', ', $lessonIds) . "\n";
 
             // Получаем общую продолжительность просмотренных уроков в этот день
             $totalMinutesWatched = Lesson::whereIn('id', $lessonIds)->sum('duration');
 
             // Выводим totalMinutesWatched для отладки
-            dd(['totalMinutesWatched' => $totalMinutesWatched]);
+            echo "Total minutes watched for the day: $totalMinutesWatched\n";
 
             // Добавляем общую продолжительность в результаты
             $results[$dayStart->format('l')] = $totalMinutesWatched;
+
+            echo "Processed day: {$dayStart->format('l')} ({$dayStart->format('Y-m-d')})\n\n";
         }
 
         // Добавим дополнительный вывод для отладки
