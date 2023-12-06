@@ -51,10 +51,17 @@ class UserLessonProgressController extends Controller
 
             // Получаем lesson_id для просмотренных уроков в этот день
             $lessonIds = $watchedInDay->pluck('lesson_id')->toArray();
+
+            // Выводим lessonIds для отладки
             dd(['lessonIds' => $lessonIds]);
+
             // Получаем общую продолжительность просмотренных уроков в этот день
             $totalMinutesWatched = Lesson::whereIn('id', $lessonIds)->sum('duration');
+
+            // Выводим totalMinutesWatched для отладки
             dd(['totalMinutesWatched' => $totalMinutesWatched]);
+
+            // Добавляем общую продолжительность в результаты
             $results[$dayStart->format('l')] = $totalMinutesWatched;
         }
 
@@ -63,8 +70,6 @@ class UserLessonProgressController extends Controller
             'current_week_start' => $currentWeekStart,
             'user_progress' => $userProgress,
             'results' => $results,
-            'totalMinutesWatched' => $totalMinutesWatched,
-            'lessonIds' => $lessonIds,
         ]);
 
         return response()->json($results);
