@@ -171,7 +171,7 @@ return [
         Spatie\Permission\PermissionServiceProvider::class,
         Rap2hpoutre\LaravelLogViewer\LaravelLogViewerServiceProvider::class,
         Intervention\Image\ImageServiceProvider::class,
-        // Pbmedia\LaravelFFMpeg\FFMpegServiceProvider::class,
+        Pbmedia\LaravelFFMpeg\FFMpegServiceProvider::class,
         
     ])->toArray(),
 

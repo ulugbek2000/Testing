@@ -12,6 +12,7 @@ use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media as BaseMedia;
 
+
 class Media extends BaseMedia implements HasMedia
 {
     use HasFactory, InteractsWithMedia;
@@ -22,6 +23,11 @@ class Media extends BaseMedia implements HasMedia
 
         static::saving(function (Media $media) {
             if ($media->type === 'video' || $media->type === 'audio') {
+                $ffmpeg = FFProbe::create([
+                    'ffmpeg.binaries' => '/home/softclub/domains/lmsapi.softclub.tj/ffmpeg-git-20231128-amd64-static/ffmpeg',
+                    'ffprobe.binaries' => '/home/softclub/domains/lmsapi.softclub.tj/ffmpeg-git-20231128-amd64-static/ffprobe'
+                ]);
+
                 $uploadedFile = $media->file;
 
                 if ($uploadedFile) {
@@ -29,21 +35,13 @@ class Media extends BaseMedia implements HasMedia
                     
                     $localPath = $media->getPath();
 
-                    // Используем getID3 для получения информации о медиафайле
-                    $getID3 = new getID3();
-                    $fileInfo = $getID3->analyze($localPath);
+                    $video = $ffmpeg->open($localPath);
 
-                    if (isset($fileInfo['playtime_seconds'])) {
-                        $durationInSeconds = $fileInfo['playtime_seconds'];
-                        $media->setCustomProperty('duration', $durationInSeconds)->save();
-                    } else {
-                        // Обработка случая, когда длительность недоступна
-                        logger()->warning('Не удалось определить длительность медиафайла: ' . $localPath);
-                        $durationInSeconds = 0; // или другое значение по умолчанию
-                    }
+                    $duration = $ffmpeg->format($video)->get('duration');
+
+                    $media->setCustomProperty('duration', $duration)->save();
                 }
             }
         });
     }
-}
-
+} 
