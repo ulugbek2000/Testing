@@ -63,6 +63,8 @@ class UserLessonProgressController extends Controller
             'current_week_start' => $currentWeekStart,
             'user_progress' => $userProgress,
             'results' => $results,
+            'totalMinutesWatched' => $totalMinutesWatched,
+            'lessonIds' => $lessonIds,
         ]);
 
         return response()->json($results);
