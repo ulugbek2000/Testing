@@ -39,52 +39,22 @@ class UserLessonProgressController extends Controller
         $userProgress = UserLessonsProgress::where('user_id', $user->id)->get();
 
         $currentWeekStart = Carbon::now()->startOfWeek();
-       //...
 
-$results = [];
+        $results = [];
 
-for ($i = Carbon::MONDAY; $i <= Carbon::SUNDAY; $i++) {
-    $dayStart = $currentWeekStart->copy()->day($i);
+        for ($i = Carbon::MONDAY; $i <= Carbon::SUNDAY; $i++) {
+            $dayStart = $currentWeekStart->copy()->day($i);
 
-    // Выводим информацию об итерации для отладки
-    echo "Processing day: {$dayStart->format('l')} ({$dayStart->format('Y-m-d')})\n";
+            $watchedInDay = $userProgress->filter(function ($progress) use ($dayStart) {
+                return Carbon::parse($progress->created_at)->isSameDay($dayStart);
+            });
 
-    // Фильтруем по дате прогресса
-    $watchedInDay = $userProgress->filter(function ($progress) use ($dayStart) {
-        return Carbon::parse($progress->created_at)->isSameDay($dayStart);
-    });
+            $lessonIds = $watchedInDay->pluck('lesson_id')->toArray();
 
-    // Выводим информацию о прогрессе за день для отладки
-    echo "Progress for the day: ";
-    print_r($watchedInDay->toArray());
+            $totalMinutesWatched = Lesson::whereIn('id', $lessonIds)->sum('duration');
 
-    // Получаем lesson_id для просмотренных уроков в этот день
-    $lessonIds = $watchedInDay->pluck('lesson_id')->toArray();
-
-    // Выводим lessonIds для отладки
-    echo "Lesson IDs for the day: " . implode(', ', $lessonIds) . "\n";
-
-    // Получаем общую продолжительность просмотренных уроков в этот день
-    $totalMinutesWatched = Lesson::whereIn('id', $lessonIds)->sum('duration');
-
-    // Выводим totalMinutesWatched для отладки
-    echo "Total minutes watched for the day: $totalMinutesWatched\n";
-
-    // Добавляем общую продолжительность в результаты
-    $results[$dayStart->format('l')] = $totalMinutesWatched;
-
-    echo "Processed day: {$dayStart->format('l')} ({$dayStart->format('Y-m-d')})\n\n";
-}
-
-// Добавим дополнительный вывод для отладки
-dd([
-    'current_week_start' => $currentWeekStart,
-    'user_progress' => $userProgress,
-    'results' => $results,
-]);
-
-//...
-
+            $results[$dayStart->format('l')] = $totalMinutesWatched;
+        }
 
         return response()->json($results);
     }
