@@ -231,7 +231,7 @@ Route::middleware(['jwt.auth'])->group(function () {
         Route::get('student/course/{course}', [CourseController::class, 'show']);
 
         //Просмотр актив студент
-        Route::get('student/weekly-activity-comparison', [UserLessonProgressController::class, 'getWeeklyActivityComparison']);
+        Route::get('student/showActivity', [UserLessonProgressController::class, 'showActivity']);
 
         //Покупка курса:
         Route::post('student/balance/withdraw/{course}/{subscription}', [UserTransactionController::class, 'purchaseCourse']);
