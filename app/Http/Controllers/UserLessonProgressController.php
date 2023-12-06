@@ -42,7 +42,7 @@ class UserLessonProgressController extends Controller
         $currentWeekStart = Carbon::now()->startOfWeek();
         $results = [];
 
-        for ($i = Carbon::MONDAY; $i <= Carbon::SUNDAY; $i++) {
+        for ($i = 0; $i <= Carbon::SUNDAY; $i++) {
             $dayStart = $currentWeekStart->copy()->day($i);
 
             // Фильтруем по дате прогресса
