@@ -53,16 +53,32 @@ class UserLessonProgressController extends Controller
     
             $totalMinutesWatched = Lesson::whereIn('id', $lessonIds)->sum('duration');
     
-            $results[$dayStart->format('l')] = $totalMinutesWatched;
+            $results[] = [
+                'day' => $dayStart->format('l'),
+                'total_minutes_watched' => $totalMinutesWatched,
+                'date_range' => $dayStart->format('d.m.Y') . ' - ' . $dayStart->copy()->endOfDay()->format('d.m.Y'),
+            ];
         }
     
         // Заполняем нулями дни, для которых нет записей
         foreach (Carbon::getDays() as $day) {
-            if (!isset($results[$day])) {
-                $results[$day] = 0;
+            $found = false;
+            foreach ($results as $result) {
+                if ($result['day'] === $day) {
+                    $found = true;
+                    break;
+                }
+            }
+    
+            if (!$found) {
+                $results[] = [
+                    'day' => $day,
+                    'total_minutes_watched' => 0,
+                    'date_range' => '',
+                ];
             }
         }
     
         return response()->json($results);
-}
+    }
 }
