@@ -38,11 +38,11 @@ class UserLessonProgressController extends Controller
     {
         $user = Auth::user();
         $userProgress = UserLessonsProgress::where('user_id', $user->id)->get();
-        
+
         $currentWeekStart = Carbon::now()->startOfWeek();
-        
+
         $results = [];
-        
+
         foreach (Carbon::getDays() as $day) {
             $results[] = [
                 'day' => $day,
@@ -50,20 +50,22 @@ class UserLessonProgressController extends Controller
                 'date_range' => '',
             ];
         }
-        
+
         for ($i = Carbon::MONDAY; $i <= Carbon::SUNDAY; $i++) {
             $dayStart = $currentWeekStart->copy()->day($i);
-        
+
             $watchedInDay = $userProgress->filter(function ($progress) use ($dayStart) {
-                return Carbon::parse($progress->created_at)->isSameDay($dayStart) && $progress->completed == 1;
+                return
+                    Carbon::parse($progress->created_at)->greaterThanOrEqualTo($dayStart) &&
+                    Carbon::parse($progress->created_at)->lessThan($dayStart->copy()->endOfDay());
             });
-        
+
             $lessonIds = $watchedInDay->pluck('lesson_id')->toArray();
-        
+
             $totalMinutesWatched = Lesson::whereIn('id', $lessonIds)->sum('duration');
-        
+
             $found = false;
-        
+
             foreach ($results as &$result) {
                 if ($result['day'] == $dayStart->format('l')) {
                     $result['total_minutes_watched'] = $totalMinutesWatched;
@@ -72,7 +74,7 @@ class UserLessonProgressController extends Controller
                     break;
                 }
             }
-        
+
             if (!$found) {
                 $results[] = [
                     'day' => $dayStart->format('l'),
@@ -80,15 +82,13 @@ class UserLessonProgressController extends Controller
                 ];
             }
         }
-        
+
         $weekStartDate = $currentWeekStart->format('d.m.Y');
         $weekEndDate = $currentWeekStart->copy()->endOfWeek()->format('d.m.Y');
         $results[] = [
             'date_range' => $weekStartDate . ' - ' . $weekEndDate,
         ];
-        
+
         return response()->json($results);
-        
     }
-    
 }
