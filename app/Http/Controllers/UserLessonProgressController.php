@@ -38,11 +38,11 @@ class UserLessonProgressController extends Controller
     {
         $user = Auth::user();
         $userProgress = UserLessonsProgress::where('user_id', $user->id)->get();
-
         $currentWeekStart = Carbon::now()->startOfWeek();
-
+    
         $results = [];
-
+    
+        // Инициализация данных для дней недели
         foreach (Carbon::getDays() as $day) {
             $results[] = [
                 'day' => $day,
@@ -50,22 +50,21 @@ class UserLessonProgressController extends Controller
                 'date_range' => '',
             ];
         }
-
+    
+        // Обработка данных по дням недели
         for ($i = Carbon::MONDAY; $i <= Carbon::SUNDAY; $i++) {
             $dayStart = $currentWeekStart->copy()->day($i);
-
+    
             $watchedInDay = $userProgress->filter(function ($progress) use ($dayStart) {
-                return
-                    Carbon::parse($progress->created_at)->greaterThanOrEqualTo($dayStart) &&
-                    Carbon::parse($progress->created_at)->lessThan($dayStart->copy()->endOfDay());
+                return Carbon::parse($progress->created_at)->between($dayStart, $dayStart->copy()->endOfDay());
             });
-
+    
             $lessonIds = $watchedInDay->pluck('lesson_id')->toArray();
-
+    
             $totalMinutesWatched = Lesson::whereIn('id', $lessonIds)->sum('duration');
-
+    
+            // Поиск и обновление или добавление данных в результаты
             $found = false;
-
             foreach ($results as &$result) {
                 if ($result['day'] == $dayStart->format('l')) {
                     $result['total_minutes_watched'] = $totalMinutesWatched;
@@ -74,7 +73,7 @@ class UserLessonProgressController extends Controller
                     break;
                 }
             }
-
+    
             if (!$found) {
                 $results[] = [
                     'day' => $dayStart->format('l'),
@@ -82,13 +81,15 @@ class UserLessonProgressController extends Controller
                 ];
             }
         }
-
+    
+        // Добавление данных о текущей неделе
         $weekStartDate = $currentWeekStart->format('d.m.Y');
         $weekEndDate = $currentWeekStart->copy()->endOfWeek()->format('d.m.Y');
         $results[] = [
             'date_range' => $weekStartDate . ' - ' . $weekEndDate,
         ];
-
+    
         return response()->json($results);
     }
+    
 }
