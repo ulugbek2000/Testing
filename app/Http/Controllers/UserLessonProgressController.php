@@ -64,7 +64,7 @@ class UserLessonProgressController extends Controller
             $dayStart = $currentWeekStart->copy()->day($i);
     
             $watchedInDay = $userProgress->filter(function ($progress) use ($dayStart) {
-                return Carbon::parse($progress->created_at)->isSameDay($dayStart);
+                return Carbon::parse($progress->created_at)->isSameDay(Carbon::today());
             });
     
             $lessonIds = $watchedInDay->pluck('lesson_id')->toArray();
