@@ -36,36 +36,46 @@ class UserLessonProgressController extends Controller
     public function showActivity()
     {
         $user = Auth::user();
-    $userProgress = UserLessonsProgress::where('user_id', $user->id)->get();
+        $userProgress = UserLessonsProgress::where('user_id', $user->id)->get();
 
-    $currentWeekStart = Carbon::now()->startOfWeek();
+        $currentWeekStart = Carbon::now()->startOfWeek();
 
-    $results = [];
+        $results = [];
 
-    // Диапазон дат для всей недели
-    $weekStartDate = $currentWeekStart->format('d.m.Y');
-    $weekEndDate = $currentWeekStart->copy()->endOfWeek()->format('d.m.Y');
+        // Диапазон дат для всей недели
+        $weekStartDate = $currentWeekStart->format('d.m.Y');
+        $weekEndDate = $currentWeekStart->copy()->endOfWeek()->format('d.m.Y');
 
-    for ($i = Carbon::MONDAY; $i <= Carbon::SUNDAY; $i++) {
-        $dayStart = $currentWeekStart->copy()->day($i);
+        // Инициализация результатов для каждого дня недели
+        foreach (Carbon::getDays() as $day) {
+            $results[] = [
+                'day' => $day,
+                'total_minutes_watched' => 0,
+                'date_range' => '',
+            ];
+        }
 
-        $watchedInDay = $userProgress->filter(function ($progress) use ($dayStart) {
-            return Carbon::parse($progress->created_at)->isSameDay($dayStart);
-        });
+        for ($i = Carbon::MONDAY; $i <= Carbon::SUNDAY; $i++) {
+            $dayStart = $currentWeekStart->copy()->day($i);
 
-        $lessonIds = $watchedInDay->pluck('lesson_id')->toArray();
+            $watchedInDay = $userProgress->filter(function ($progress) use ($dayStart) {
+                return Carbon::parse($progress->created_at)->isSameDay($dayStart);
+            });
 
-        $totalMinutesWatched = Lesson::whereIn('id', $lessonIds)->sum('duration');
+            $lessonIds = $watchedInDay->pluck('lesson_id')->toArray();
 
+            $totalMinutesWatched = Lesson::whereIn('id', $lessonIds)->sum('duration');
+
+            // Обновляем результаты для каждого дня недели
+            $results[$dayStart->dayOfWeek]['total_minutes_watched'] = $totalMinutesWatched;
+            $results[$dayStart->dayOfWeek]['date_range'] = $dayStart->format('d.m.Y') . ' - ' . $dayStart->copy()->endOfDay()->format('d.m.Y');
+        }
+
+        // Добавляем информацию о диапазоне дат для всей недели
         $results[] = [
-            'day' => $dayStart->format('l'),
-            'total_minutes_watched' => $totalMinutesWatched,
             'date_range' => $weekStartDate . ' - ' . $weekEndDate,
         ];
-    }
 
-   
-
-    return response()->json($results);
+        return response()->json($results);
     }
 }
