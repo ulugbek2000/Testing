@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Course;
 use App\Models\Lesson;
+use App\Models\User;
 use App\Models\UserLessonsProgress;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -33,20 +34,22 @@ class UserLessonProgressController extends Controller
     }
 
 
-    public function showActivity()
+    public function showActivity(Request $request)
     {
-        $user = Auth::user();
+        $phone = $request->input('phone'); // Предположим, что вы передаете email в запросе
+
+        $user = User::where('phone', $phone)->first();
         $userProgress = UserLessonsProgress::where('user_id', $user->id)->get();
 
         $currentWeekStart = Carbon::now()->startOfWeek();
 
         $results = [];
 
-        // Диапазон дат для всей недели
+      
         $weekStartDate = $currentWeekStart->format('d.m.Y');
         $weekEndDate = $currentWeekStart->copy()->endOfWeek()->format('d.m.Y');
 
-        // Инициализация результатов для каждого дня недели
+    
         foreach (Carbon::getDays() as $day) {
             $results[] = [
                 'day' => $day,
@@ -70,7 +73,6 @@ class UserLessonProgressController extends Controller
             $results[$dayStart->dayOfWeek]['date_range'] = $dayStart->format('d.m.Y') . ' - ' . $dayStart->copy()->endOfDay()->format('d.m.Y');
         }
 
-        // Добавляем информацию о диапазоне дат для всей недели
         $results[] = [
             'date_range' => $weekStartDate . ' - ' . $weekEndDate,
         ];
