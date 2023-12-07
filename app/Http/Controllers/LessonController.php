@@ -74,21 +74,19 @@ class LessonController extends Controller
         if ($request->type === 'text') {
             $lesson->content = $request->input('content');
         } elseif ($request->type === 'video' || $request->type === 'audio') {
-            $media = $lesson->addMedia($request->file('content'))->toMediaCollection('content');
-            $media->model_type = Lesson::class;
-            $media->save();
+            $lesson->addMediaFromRequest($request->file('content'))->toMediaCollection('content');
+            // $media->model_type = Lesson::class;
+            // $media->save();
             
-            // Теперь длительность доступна после сохранения
-            $durationInSeconds = $media->getCustomProperty('duration');
+            // $durationInSeconds = $media->getCustomProperty('duration');
             
-            $durationInMinutes = round($durationInSeconds / 60);
+            // $durationInMinutes = round($durationInSeconds / 60);
             
-            $lesson->duration = $durationInMinutes;
+            // $lesson->duration = $durationInMinutes;
             
         }
 
-        $lesson->content = in_array($request->type, [LessonTypes::Video, LessonTypes::Audio]) ? $media
-        ->getUrl() : $request->content;
+        $lesson->content = in_array($request->type, [LessonTypes::Video, LessonTypes::Audio]);
         $lesson->save();
         return response()->json(['message' => 'Урок успешно создан.']);
     }

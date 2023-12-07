@@ -31,7 +31,7 @@ class Media extends BaseMedia implements HasMedia
                 $uploadedFile = $media->file;
 
                 if ($uploadedFile) {
-                    $media->addMedia($uploadedFile)->toMediaCollection('content');
+                    // $media->addMedia($uploadedFile)->toMediaCollection('content');
                     
                     $localPath = $media->getPath();
 

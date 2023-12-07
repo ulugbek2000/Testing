@@ -19,7 +19,6 @@ class Lesson extends Model implements HasMedia
         'name',
         'cover',
         'content',
-        'duration',
         'type'
     ];
 
@@ -30,6 +29,10 @@ class Lesson extends Model implements HasMedia
 
     function getContentMedia() {
         return $this->getFirstMedia("content");
+    }
+
+    function getDurationAttribute() {
+        return $this->getContentMedia()->getCustomProperty('duration') ?? 0;
     }
     
     // public function registerMediaConversions(Media $media = null): void

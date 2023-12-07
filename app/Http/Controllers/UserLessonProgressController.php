@@ -42,7 +42,6 @@ class UserLessonProgressController extends Controller
     
         $results = [];
     
-        // Инициализация данных для дней недели
         foreach (Carbon::getDays() as $day) {
             $results[] = [
                 'day' => $day,
@@ -51,7 +50,6 @@ class UserLessonProgressController extends Controller
             ];
         }
     
-        // Обработка данных по дням недели
         for ($i = Carbon::MONDAY; $i <= Carbon::SUNDAY; $i++) {
             $dayStart = $currentWeekStart->copy()->day($i);
     
@@ -63,12 +61,11 @@ class UserLessonProgressController extends Controller
     
             $totalMinutesWatched = Lesson::whereIn('id', $lessonIds)->sum('duration');
     
-            // Поиск и обновление или добавление данных в результаты
             $found = false;
             foreach ($results as &$result) {
                 if ($result['day'] == $dayStart->format('l')) {
                     $result['total_minutes_watched'] = $totalMinutesWatched;
-                    $result['date_range'] = $dayStart->format('Y.m.d') . ' - ' . $dayStart->copy()->endOfDay()->format('d.m.Y');
+                    $result['date_range'] = $dayStart->format('Y.m.d') . ' - ' . $dayStart->copy()->endOfDay()->format('Y.m.d');
                     $found = true;
                     break;
                 }
@@ -82,7 +79,6 @@ class UserLessonProgressController extends Controller
             }
         }
     
-        // Добавление данных о текущей неделе
         $weekStartDate = $currentWeekStart->format('Y.m.d');
         $weekEndDate = $currentWeekStart->copy()->endOfWeek()->format('Y.m.d');
         $results[] = [
