@@ -67,7 +67,6 @@ class UserLessonProgressController extends Controller
             foreach ($results as &$result) {
                 if ($result['day'] == $dayStart->format('l')) {
                     $result['total_minutes_watched'] = $totalMinutesWatched;
-                    $result['date_range'] = $dayStart->format('d.m.Y') . ' - ' . $dayStart->copy()->endOfDay()->format('d.m.Y');
                     $found = true;
                     break;
                 }
