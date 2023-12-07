@@ -68,7 +68,7 @@ class UserLessonProgressController extends Controller
             foreach ($results as &$result) {
                 if ($result['day'] == $dayStart->format('l')) {
                     $result['total_minutes_watched'] = $totalMinutesWatched;
-                    $result['date_range'] = $dayStart->format('d.m.Y') . ' - ' . $dayStart->copy()->endOfDay()->format('d.m.Y');
+                    $result['date_range'] = $dayStart->format('Y.m.d') . ' - ' . $dayStart->copy()->endOfDay()->format('d.m.Y');
                     $found = true;
                     break;
                 }
@@ -83,8 +83,8 @@ class UserLessonProgressController extends Controller
         }
     
         // Добавление данных о текущей неделе
-        $weekStartDate = $currentWeekStart->format('d.m.Y');
-        $weekEndDate = $currentWeekStart->copy()->endOfWeek()->format('d.m.Y');
+        $weekStartDate = $currentWeekStart->format('Y.m.d');
+        $weekEndDate = $currentWeekStart->copy()->endOfWeek()->format('Y.m.d');
         $results[] = [
             'date_range' => $weekStartDate . ' - ' . $weekEndDate,
         ];
