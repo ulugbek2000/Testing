@@ -36,49 +36,38 @@ class UserLessonProgressController extends Controller
     public function showActivity()
     {
         $user = Auth::user();
-        $userProgress = UserLessonsProgress::where('user_id', $user->id)->get();
-    
-        $currentWeekStart = Carbon::now()->startOfWeek();
-    
-        $results = [];
-    
-        for ($i = Carbon::MONDAY; $i <= Carbon::SUNDAY; $i++) {
-            $dayStart = $currentWeekStart->copy()->day($i);
-    
-            $watchedInDay = $userProgress->filter(function ($progress) use ($dayStart) {
-                return Carbon::parse($progress->created_at)->isSameDay($dayStart);
-            });
-    
-            $lessonIds = $watchedInDay->pluck('lesson_id')->toArray();
-    
-            $totalMinutesWatched = Lesson::whereIn('id', $lessonIds)->sum('duration');
-    
-            $results[] = [
-                'day' => $dayStart->format('l'),
-                'total_minutes_watched' => $totalMinutesWatched,
-                'date_range' => $dayStart->format('d.m.Y') . ' - ' . $dayStart->copy()->endOfDay()->format('d.m.Y'),
-            ];
-        }
-    
-        // Заполняем нулями дни, для которых нет записей
-        foreach (Carbon::getDays() as $day) {
-            $found = false;
-            foreach ($results as $result) {
-                if ($result['day'] === $day) {
-                    $found = true;
-                    break;
-                }
-            }
-    
-            if (!$found) {
-                $results[] = [
-                    'day' => $day,
-                    'total_minutes_watched' => 0,
-                    'date_range' => $dayStart->format('d.m.Y') . ' - ' . $dayStart->copy()->endOfDay()->format('d.m.Y'),
-                ];
-            }
-        }
-    
-        return response()->json($results);
+    $userProgress = UserLessonsProgress::where('user_id', $user->id)->get();
+
+    $currentWeekStart = Carbon::now()->startOfWeek();
+
+    $results = [];
+
+    // Диапазон дат для всей недели
+    $weekStartDate = $currentWeekStart->format('d.m.Y');
+    $weekEndDate = $currentWeekStart->copy()->endOfWeek()->format('d.m.Y');
+
+    for ($i = Carbon::MONDAY; $i <= Carbon::SUNDAY; $i++) {
+        $dayStart = $currentWeekStart->copy()->day($i);
+
+        $watchedInDay = $userProgress->filter(function ($progress) use ($dayStart) {
+            return Carbon::parse($progress->created_at)->isSameDay($dayStart);
+        });
+
+        $lessonIds = $watchedInDay->pluck('lesson_id')->toArray();
+
+        $totalMinutesWatched = Lesson::whereIn('id', $lessonIds)->sum('duration');
+
+        $results[] = [
+            'day' => $dayStart->format('l'),
+            'total_minutes_watched' => $totalMinutesWatched,
+        ];
+    }
+
+    // Добавляем информацию о диапазоне дат для всей недели
+    $results[] = [
+        'date_range' => $weekStartDate . ' - ' . $weekEndDate,
+    ];
+
+    return response()->json($results);
     }
 }
