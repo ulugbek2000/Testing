@@ -60,13 +60,11 @@ class UserLessonProgressController extends Controller
         $results[] = [
             'day' => $dayStart->format('l'),
             'total_minutes_watched' => $totalMinutesWatched,
+            'date_range' => $weekStartDate . ' - ' . $weekEndDate,
         ];
     }
 
-    // Добавляем информацию о диапазоне дат для всей недели
-    $results[] = [
-        'date_range' => $weekStartDate . ' - ' . $weekEndDate,
-    ];
+   
 
     return response()->json($results);
     }
