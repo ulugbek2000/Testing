@@ -74,7 +74,6 @@ class UserLessonProgressController extends Controller
                 $results[] = [
                     'day' => $day,
                     'total_minutes_watched' => 0,
-                    'date_range' => '',
                 ];
             }
         }
