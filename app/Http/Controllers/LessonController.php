@@ -74,13 +74,26 @@ class LessonController extends Controller
          if ($request->type === 'text') {
              $lesson->content = $request->input('content');
          } elseif ($request->type === 'video' || $request->type === 'audio') {
-             $lesson->addMediaFromRequest(file('content'))->toMediaCollection('content');
+             $lesson->addMediaFromRequest('content')->toMediaCollection('content');
+     
+             $media = $lesson->getMedia('content')->first();
+     
+             if ($media) {
+                 $localPath = $media->getPath();
+                 $durationInSeconds = FFProbe::create([
+                    'ffmpeg.binaries' => '/home/softclub/domains/lmsapi.softclub.tj/ffmpeg-git-20231128-amd64-static/ffmpeg',
+                    'ffmpeg.binaries' => '/home/softclub/domains/lmsapi.softclub.tj/ffmpeg-git-20231128-amd64-static/ffзкщиу',
+                 ])->format($localPath)->get('duration');
+                 $durationInMinutes = round($durationInSeconds / 60);
+     
+                 $media->setCustomProperty('duration', $durationInSeconds)->save();
+             }
          }
      
          $lesson->save();
          return response()->json(['message' => 'Урок успешно создан.']);
      }
-     
+
 
     /**
      * Display the specified resource.
