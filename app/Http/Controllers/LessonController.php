@@ -71,7 +71,8 @@ class LessonController extends Controller
          ]);
      
          if ($request->hasFile('cover')) {
-             $lesson->cover = Storage::url($request->file('cover')->store('cover', 'public'));
+             $coverPath = $request->file('cover')->store('cover', 'public');
+             $lesson->cover = Storage::url($coverPath);
          }
      
          if ($request->type === 'text') {
