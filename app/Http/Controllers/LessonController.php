@@ -165,20 +165,24 @@ class LessonController extends Controller
                 Storage::delete($lesson->content);
                 // Upload and store new content file
                 $contentPath = $request->file('content')->store('content', 'public');
-    
-                // Calculate and update duration
-                $ffmpeg = FFProbe::create([
-                    'ffmpeg.binaries' => '/home/softclub/domains/lmsapi.softclub.tj/ffmpeg-git-20231128-amd64-static/ffmpeg',
-                    'ffprobe.binaries' => '/home/softclub/domains/lmsapi.softclub.tj/ffmpeg-git-20231128-amd64-static/ffprobe'
-                ]);
-    
-                $localPath = storage_path("app/public/{$contentPath}");
-                $durationInSeconds = $ffmpeg->format($localPath)->get('duration');
-    
-                $lesson->setCustomProperty('duration', $durationInSeconds)->save();
+        
+                // Get media associated with the lesson
+                $media = $lesson->getMedia('content')->first();
+        
+                if ($media) {
+                    // Calculate and update duration
+                    $ffmpeg = FFProbe::create([
+                        'ffmpeg.binaries' => '/home/softclub/domains/lmsapi.softclub.tj/ffmpeg-git-20231128-amd64-static/ffmpeg',
+                        'ffprobe.binaries' => '/home/softclub/domains/lmsapi.softclub.tj/ffmpeg-git-20231128-amd64-static/ffprobe'
+                    ]);
+        
+                    $localPath = storage_path("app/public/{$contentPath}");
+                    $durationInSeconds = $ffmpeg->format($localPath)->get('duration');
+        
+                    // Set custom property on the media, not on the lesson
+                    $media->setCustomProperty('duration', $durationInSeconds)->save();
+                }
             }
-        } else {
-            $contentPath = $request->content;
         }
     
         $data = array_merge($request->only(['name', 'type', 'topic_id', 'duration']), [
