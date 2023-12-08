@@ -21,21 +21,19 @@ class Media extends BaseMedia implements HasMedia
     {
         parent::boot();
 
-       function (Media $media) {
+        static::saving(function (Media $media) {
             if ($media->type === 'video' || $media->type === 'audio') {
-                //   $media = $lesson->getMedia('content')->first();
-     
-             if ($media) {
-                 $localPath = $media->getPath();
-                 $durationInSeconds = FFProbe::create([
+                $localPath = $media->getPath();
+
+                $ffprobe = FFProbe::create([
                     'ffmpeg.binaries' => '/home/softclub/domains/lmsapi.softclub.tj/ffmpeg-git-20231128-amd64-static/ffmpeg',
                     'ffprobe.binaries' => '/home/softclub/domains/lmsapi.softclub.tj/ffmpeg-git-20231128-amd64-static/ffprobe',
-                 ])->format($localPath)->get('duration');
-     
-                 $media->setCustomProperty('duration', $durationInSeconds)->save();
-                //  $lesson->content = $media->getUrl();
-             }
+                ]);
+
+                $durationInSeconds = $ffprobe->format($localPath)->get('duration');
+
+                $media->setCustomProperty('duration', $durationInSeconds);
             }
-        };
+        });
     }
-} 
+}
