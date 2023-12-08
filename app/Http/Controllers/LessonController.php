@@ -147,36 +147,46 @@ class LessonController extends Controller
             'duration' => 'string|nullable',
             'content' => 'nullable',
         ]);
-
-        $coverpath = $lesson->cover;
-        $content = $lesson->content;
-
+    
+        $coverPath = $lesson->cover;
+        $contentPath = $lesson->content;
+    
         if ($request->hasFile('cover')) {
             // Delete old cover file if needed
             Storage::delete($lesson->cover);
             // Upload and store new cover file
-            $coverpath = $request->file('cover')->store('cover', 'public');
+            $coverPath = $request->file('cover')->store('cover', 'public');
         }
-        if ($request->type == LessonTypes::Video ||  $request->type == LessonTypes::Audio) {
+    
+        if ($request->type == LessonTypes::Video || $request->type == LessonTypes::Audio) {
             if ($request->hasFile('content')) {
                 // Delete old content file if needed
                 Storage::delete($lesson->content);
                 // Upload and store new content file
-                $content = $request->file('content')->store('content');
+                $contentPath = $request->file('content')->store('content', 'public');
+    
+                // Calculate and update duration
+                $ffmpeg = FFProbe::create([
+                    'ffmpeg.binaries' => '/home/softclub/domains/lmsapi.softclub.tj/ffmpeg-git-20231128-amd64-static/ffmpeg',
+                    'ffprobe.binaries' => '/home/softclub/domains/lmsapi.softclub.tj/ffmpeg-git-20231128-amd64-static/ffprobe'
+                ]);
+    
+                $localPath = storage_path("app/public/{$contentPath}");
+                $durationInSeconds = $ffmpeg->format($localPath)->get('duration');
+    
+                $lesson->setCustomProperty('duration', $durationInSeconds)->save();
             }
         } else {
-            $content = $request->content;
+            $contentPath = $request->content;
         }
-
+    
         $data = array_merge($request->only(['name', 'type', 'topic_id', 'duration']), [
-            'cover' => $coverpath,
-            'content' => $content
+            'cover' => $coverPath,
+            'content' => $contentPath
         ]);
-
+    
         $lesson->update($data);
-
-        // return response()->json($data);
-
+    
         return response()->json(['message' => 'Lesson updated successfully']);
     }
     /**
