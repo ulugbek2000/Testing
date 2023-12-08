@@ -53,50 +53,34 @@ class LessonController extends Controller
      * Store a newly created resource in storage.
      */
 
-    public function store(Request $request)
-    {
-        $request->validate([
-            'topic_id' => 'nullable|integer',
-            'name' => 'string',
-            'cover' => 'image|file',
-            'type' => 'required|in:text,video,audio',
-            'content' => $request->input('type') === 'text' ? 'required|string' : 'required|file',
-        ]);
-
-        $lesson = Lesson::create([
-            'topic_id' => $request->topic_id,
-            'name' => $request->name,
-            'cover' => $request->hasFile('cover') ? Storage::url($request->file('cover')->store('cover', 'public')) : null,
-            'type' => $request->type,
-        ]);
-
-        if ($request->type === 'text') {
-            $lesson->content = $request->input('content');
-        } elseif ($request->type === 'video' || $request->type === 'audio') {
-            $media = $lesson->addMediaFromRequest('content')->toMediaCollection('content');
-            $durationInSeconds = $this->getVideoDurationInSeconds($media);
-
-            $media->setCustomProperty('duration', $durationInSeconds)->save();
-        }
-
-        $lesson->save();
-
-        return response()->json(['message' => 'Урок успешно создан.']);
-    }
-
-    protected function getVideoDurationInSeconds($media)
-    {
-        $ffmpeg = FFProbe::create([
-            'ffmpeg.binaries' => '/home/softclub/domains/lmsapi.softclub.tj/ffmpeg-git-20231128-amd64-static/ffmpeg',
-            'ffprobe.binaries' => '/home/softclub/domains/lmsapi.softclub.tj/ffmpeg-git-20231128-amd64-static/ffprobe'
-        ]);
-
-        $localPath = $media->getPath();
-        $video = $ffmpeg->open($localPath);
-        $duration = $ffmpeg->format($video)->get('duration');
-
-        return $duration;
-    }
+     public function store(Request $request)
+     {
+         $request->validate([
+             'topic_id' => 'nullable|integer',
+             'name' => 'string',
+             'cover' => 'image|file',
+             'duration' => 'nullable',
+             'type' => 'required|in:text,video,audio',
+             'content' => $request->input('type') === 'text' ? 'required|string' : 'required|file',
+         ]);
+     
+         $lesson = Lesson::create([
+             'topic_id' => $request->topic_id,
+             'name' => $request->name,
+             'cover' => Storage::url($request->file('cover')->store('cover', 'public')),
+             'type' => $request->type,
+         ]);
+     
+         if ($request->type === 'text') {
+             $lesson->content = $request->input('content');
+         } elseif ($request->type === 'video' || $request->type === 'audio') {
+             $lesson->addMediaFromRequest('content')->toMediaCollection('content');
+         }
+     
+         $lesson->save();
+         return response()->json(['message' => 'Урок успешно создан.']);
+     }
+     
 
     /**
      * Display the specified resource.
