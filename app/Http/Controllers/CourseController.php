@@ -80,20 +80,21 @@ class CourseController extends Controller
                 'quantity_lessons' => $request->quantity_lessons,
                 'hours_lessons' => $request->hours_lessons,
                 'short_description' => $request->short_description,
-                'video' => Storage::url($video),
                 'has_certificate' => $request->has_certificate,
                 'category_id' => $request->category_id,
             ]);
     
-            // Get video duration and save it to the course
-            $localPath = storage_path("app/public/{$video}");
+            // Add video to media collection
+            $media = $course->addMediaFromDisk($video, 'public')->toMediaCollection('videos');
+    
+            // Get video duration and save it to media custom properties
+            $localPath = $media->getPath();
             $durationInSeconds = FFProbe::create([
                 'ffmpeg.binaries' => '/home/softclub/domains/lmsapi.softclub.tj/ffmpeg-git-20231128-amd64-static/ffmpeg',
                 'ffprobe.binaries' => '/home/softclub/domains/lmsapi.softclub.tj/ffmpeg-git-20231128-amd64-static/ffprobe'
             ])->format($localPath)->get('duration');
     
-            $course->video_duration = round($durationInSeconds / 60); // Duration in minutes
-            $course->save();
+            $media->setCustomProperty('duration', round($durationInSeconds / 60))->save();
     
             return response()->json([
                 'message' => "Course successfully created.",
@@ -106,6 +107,7 @@ class CourseController extends Controller
             ], 500);
         }
     }
+    
     
     /**
      * Display the specified resource.
