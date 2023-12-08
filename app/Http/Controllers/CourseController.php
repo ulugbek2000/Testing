@@ -85,7 +85,7 @@ class CourseController extends Controller
             ]);
     
             // Add video to media collection
-            $media = $course->addMediaFromDisk($video, 'public')->toMediaCollection('videos');
+            $media = $course->addMedia($video)->toMediaCollection('videos', 'public');
     
             // Get video duration and save it to media custom properties
             $localPath = $media->getPath();
@@ -107,6 +107,7 @@ class CourseController extends Controller
             ], 500);
         }
     }
+    
     
     
     /**
