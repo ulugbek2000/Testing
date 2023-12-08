@@ -64,53 +64,47 @@ class CourseController extends Controller
             'quantity_lessons' => 'required',
             'hours_lessons' => 'required',
             'short_description' => 'required',
-            'video' => 'required|mimes:mp4,mov,avi,mpeg,mkv',
+            'video' => 'required|file',
             'category_id' => 'required|exists:categories,id',
             'has_certificate' => 'required|boolean',
         ]);
     
         $logo = $request->file('logo')->store('images', 'public');
-        $video = $request->file('video')->store('videos', 'public');
-    
-        try {
-            $course = Course::create([
-                'logo' => Storage::url($logo),
-                'name' => $request->name,
-                'slug' => $request->slug,
-                'quantity_lessons' => $request->quantity_lessons,
-                'hours_lessons' => $request->hours_lessons,
-                'short_description' => $request->short_description,
-                'has_certificate' => $request->has_certificate,
-                'category_id' => $request->category_id,
-            ]);
-    
-            // Add video to media collection
-            $media = $course->addMediaFromRequest($video)->toMediaCollection('videos', 'public');
-    
-            // Get video duration and save it to media custom properties
-            $localPath = $media->getPath();
-            $durationInSeconds = FFProbe::create([
-                'ffmpeg.binaries' => '/home/softclub/domains/lmsapi.softclub.tj/ffmpeg-git-20231128-amd64-static/ffmpeg',
-                'ffprobe.binaries' => '/home/softclub/domains/lmsapi.softclub.tj/ffmpeg-git-20231128-amd64-static/ffprobe'
-            ])->format($localPath)->get('duration');
-    
-            $media->setCustomProperty('duration', round($durationInSeconds / 60))->save();
-    
-            return response()->json([
-                'message' => "Course successfully created.",
-                'course' => $course, // Optionally return the created course
-            ], 200);
-        } catch (\Exception $e) {
-            // Return response Json
-            return response()->json([
-                'message' => $e->getMessage(),
-            ], 500);
+    $video = $request->file('video')->store('videos', 'public');
+
+    try {
+        $course = Course::create([
+            'logo' => Storage::url($logo),
+            'name' => $request->name,
+            'slug' => $request->slug,
+            'quantity_lessons' => $request->quantity_lessons,
+            'hours_lessons' => $request->hours_lessons,
+            'short_description' => $request->short_description,
+            'has_certificate' => $request->has_certificate,
+            'category_id' => $request->category_id,
+        ]);
+
+        // Check if the 'video' file exists in the request
+        if ($request->hasFile('video')) {
+            // Add media from request
+            $course->addMediaFromRequest('video')->toMediaCollection('videos');
         }
+
+        return response()->json([
+            'message' => "Course successfully created.",
+            'course' => $course, // Optionally return the created course
+        ], 200);
+    } catch (\Exception $e) {
+        // Return response Json
+        return response()->json([
+            'message' => $e->getMessage(),
+        ], 500);
     }
+}
     
 
 
-    
+
     
     
     /**
