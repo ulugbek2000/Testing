@@ -39,19 +39,18 @@ class LessonController extends Controller
         if ($topic->lessons->isNotEmpty()) {
             $data = [];
     
-            $firstLesson = $topic->lessons()->first();
+            foreach ($lessons as $lesson) {
+                $media = $lesson->getFirstMedia('content');
+                $duration = $media ? $media->getCustomProperty('duration') : null;
     
-            $data = array_merge(
-                [$firstLesson->only(['id', 'name'])],
-                $lessons->slice(1)->map(function ($v) {
-                    return $v->only(['id', 'name']);
-                })->toArray()
-            );
+                $data[] = [
+                    'id' => $lesson->id,
+                    'name' => $lesson->name,
+                    'duration' => $duration,
+                ];
+            }
     
-            $media = $firstLesson->getFirstMedia('content');
-            $duration = $media ? $media->getCustomProperty('duration') : null;
-    
-            return response()->json(['data' => $data, 'duration' => $duration]);
+            return response()->json(['data' => $data]);
         } else {
             return response()->json([]);
         }
