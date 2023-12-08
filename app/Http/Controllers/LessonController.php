@@ -74,8 +74,7 @@ class LessonController extends Controller
         if ($request->type === 'text') {
             $lesson->content = $request->input('content');
         } elseif ($request->type === 'video' || $request->type === 'audio') {
-            $media = $lesson->addMedia($request->file('content'))
-            ->toMediaCollection('content');    
+            $media = $lesson->addMedia($request->file('content'));    
             $durationInSeconds = $media->getCustomProperty('duration');
             $durationInMinutes = round($durationInSeconds / 60);
     
