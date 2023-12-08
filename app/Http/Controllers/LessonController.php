@@ -42,14 +42,14 @@ class LessonController extends Controller
             $firstLesson = $topic->lessons()->first();
     
             $data = array_merge(
-                [$firstLesson],
+                [$firstLesson->only(['id', 'name'])],
                 $lessons->slice(1)->map(function ($v) {
                     return $v->only(['id', 'name']);
                 })->toArray()
             );
     
             $media = $firstLesson->getFirstMedia('content');
-            $duration = optional($media)->getCustomProperty('duration');
+            $duration = $media ? $media->getCustomProperty('duration') : null;
     
             return response()->json(['data' => $data, 'duration' => $duration]);
         } else {
