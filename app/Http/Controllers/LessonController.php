@@ -59,7 +59,6 @@ class LessonController extends Controller
             'topic_id' => 'nullable|integer',
             'name' => 'string',
             'cover' => 'image|file',
-            'duration' => 'nullable',
             'type' => 'required|in:text,video,audio',
             'content' => $request->input('type') === 'text' ? 'required|string' : 'required|file',
         ]);
@@ -67,31 +66,37 @@ class LessonController extends Controller
         $lesson = Lesson::create([
             'topic_id' => $request->topic_id,
             'name' => $request->name,
-            'cover' => Storage::url($request->file('cover')->store('cover', 'public')),
+            'cover' => $request->hasFile('cover') ? Storage::url($request->file('cover')->store('cover', 'public')) : null,
             'type' => $request->type,
         ]);
 
         if ($request->type === 'text') {
             $lesson->content = $request->input('content');
         } elseif ($request->type === 'video' || $request->type === 'audio') {
-            $media = $lesson->addMedia($request->file('content'));    
-            $durationInSeconds = $media->getCustomProperty('duration');
-            $durationInMinutes = round($durationInSeconds / 60);
-    
-            $lesson->addMediaConversion('thumb')
-                ->extractVideoFrameAtSecond(floor($durationInSeconds / 2))
-                ->toMediaCollection();
-    
-            $lesson->content = $media->getUrl();
+            $media = $lesson->addMediaFromRequest('content')->toMediaCollection('content');
+            $durationInSeconds = $this->getVideoDurationInSeconds($media);
+
+            $media->setCustomProperty('duration', $durationInSeconds)->save();
         }
-    
+
         $lesson->save();
-    
+
         return response()->json(['message' => 'Урок успешно создан.']);
     }
 
+    protected function getVideoDurationInSeconds($media)
+    {
+        $ffmpeg = FFProbe::create([
+            'ffmpeg.binaries' => '/home/softclub/domains/lmsapi.softclub.tj/ffmpeg-git-20231128-amd64-static/ffmpeg',
+            'ffprobe.binaries' => '/home/softclub/domains/lmsapi.softclub.tj/ffmpeg-git-20231128-amd64-static/ffprobe'
+        ]);
 
+        $localPath = $media->getPath();
+        $video = $ffmpeg->open($localPath);
+        $duration = $ffmpeg->format($video)->get('duration');
 
+        return $duration;
+    }
 
     /**
      * Display the specified resource.
