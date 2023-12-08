@@ -74,7 +74,7 @@ class LessonController extends Controller
          if ($request->type === 'text') {
              $lesson->content = $request->input('content');
          } elseif ($request->type === 'video' || $request->type === 'audio') {
-             $lesson->addMediaFromRequest('content')->toMediaCollection('content');
+             $lesson->addMediaFromRequest(file('content'))->toMediaCollection('content');
          }
      
          $lesson->save();
