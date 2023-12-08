@@ -84,9 +84,9 @@ class LessonController extends Controller
                     'ffmpeg.binaries' => '/home/softclub/domains/lmsapi.softclub.tj/ffmpeg-git-20231128-amd64-static/ffmpeg',
                     'ffprobe.binaries' => '/home/softclub/domains/lmsapi.softclub.tj/ffmpeg-git-20231128-amd64-static/ffprobe',
                  ])->format($localPath)->get('duration');
-                //  $durationInMinutes = round($durationInSeconds / 60);
+                 $durationInMinutes = round($durationInSeconds / 60);
      
-                 $media->setCustomProperty('duration', $durationInSeconds)->save();
+                 $media->setCustomProperty('duration', $durationInMinutes)->save();
              }
          }
      
