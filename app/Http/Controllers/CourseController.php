@@ -15,6 +15,7 @@ use App\Models\CourseSubscription;
 use App\Models\User;
 use App\Models\UserCourse;
 use Carbon\Carbon;
+use FFMpeg\FFProbe;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
@@ -56,7 +57,6 @@ class CourseController extends Controller
      */
     public function store(Request $request, Category $category)
     {
-
         $request->validate([
             'logo' => 'required|file',
             'name' => 'required|string',
@@ -66,12 +66,14 @@ class CourseController extends Controller
             'short_description' => 'required',
             'video' => 'required|mimes:mp4,mov,avi,mpeg,mkv',
             'category_id' => 'required|exists:categories,id',
+            'has_certificate' => 'required|boolean',
         ]);
+    
         $logo = $request->file('logo')->store('images', 'public');
         $video = $request->file('video')->store('videos', 'public');
-
+    
         try {
-            Course::create([
+            $course = Course::create([
                 'logo' => Storage::url($logo),
                 'name' => $request->name,
                 'slug' => $request->slug,
@@ -81,18 +83,30 @@ class CourseController extends Controller
                 'video' => Storage::url($video),
                 'has_certificate' => $request->has_certificate,
                 'category_id' => $request->category_id,
-
             ]);
+    
+            // Get video duration and save it to the course
+            $localPath = storage_path("app/public/{$video}");
+            $durationInSeconds = FFProbe::create([
+                'ffmpeg.binaries' => '/home/softclub/domains/lmsapi.softclub.tj/ffmpeg-git-20231128-amd64-static/ffmpeg',
+                'ffprobe.binaries' => '/home/softclub/domains/lmsapi.softclub.tj/ffmpeg-git-20231128-amd64-static/ffprobe'
+            ])->format($localPath)->get('duration');
+    
+            $course->video_duration = round($durationInSeconds / 60); // Duration in minutes
+            $course->save();
+    
             return response()->json([
-                'message' => "Course succefully created."
+                'message' => "Course successfully created.",
+                'course' => $course, // Optionally return the created course
             ], 200);
         } catch (\Exception $e) {
-            //Return response Json
+            // Return response Json
             return response()->json([
                 'message' => $e->getMessage(),
             ], 500);
         }
     }
+    
     /**
      * Display the specified resource.
      */

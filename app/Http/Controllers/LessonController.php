@@ -31,19 +31,27 @@ class LessonController extends Controller
     public function index(Topic $topic)
     {
         $lessons = $topic->lessons;
-
+    
         if (Auth::check() && Auth::user()->isSubscribed($topic->course)) {
             return response()->json($lessons);
         }
-
+    
         if ($topic->lessons->isNotEmpty()) {
             $data = [];
-
-            $data = array_merge([$topic->lessons()->first()], $lessons->slice(1)->map(function ($v) {
-                return $v->only(['id', 'name']);
-            })->toArray());
-
-            return response()->json($data);
+    
+            $firstLesson = $topic->lessons()->first();
+    
+            $data = array_merge(
+                [$firstLesson],
+                $lessons->slice(1)->map(function ($v) {
+                    return $v->only(['id', 'name']);
+                })->toArray()
+            );
+    
+            $media = $firstLesson->getFirstMedia('content');
+            $duration = optional($media)->getCustomProperty('duration');
+    
+            return response()->json(['data' => $data, 'duration' => $duration]);
         } else {
             return response()->json([]);
         }
