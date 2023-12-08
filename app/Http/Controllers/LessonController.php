@@ -67,32 +67,23 @@ class LessonController extends Controller
          $lesson = Lesson::create([
              'topic_id' => $request->topic_id,
              'name' => $request->name,
-             'cover' => Storage::url($request->file('cover')->store('cover', 'public')),
              'type' => $request->type,
          ]);
+     
+         if ($request->hasFile('cover')) {
+             $lesson->cover = Storage::url($request->file('cover')->store('cover', 'public'));
+         }
      
          if ($request->type === 'text') {
              $lesson->content = $request->input('content');
          } elseif ($request->type === 'video' || $request->type === 'audio') {
              $lesson->addMediaFromRequest('content')->toMediaCollection('content');
-     
-            //  $media = $lesson->getMedia('content')->first();
-     
-            //  if ($media) {
-            //      $localPath = $media->getPath();
-            //      $durationInSeconds = FFProbe::create([
-            //         'ffmpeg.binaries' => '/home/softclub/domains/lmsapi.softclub.tj/ffmpeg-git-20231128-amd64-static/ffmpeg',
-            //         'ffprobe.binaries' => '/home/softclub/domains/lmsapi.softclub.tj/ffmpeg-git-20231128-amd64-static/ffprobe',
-            //      ])->format($localPath)->get('duration');
-     
-            //      $media->setCustomProperty('duration', $durationInSeconds)->save();
-            //     //  $lesson->content = $media->getUrl();
-            //  }
          }
      
          $lesson->save();
          return response()->json(['message' => 'Урок успешно создан.']);
      }
+     
 
 
     /**
