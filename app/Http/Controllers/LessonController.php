@@ -86,7 +86,8 @@ class LessonController extends Controller
                  ])->format($localPath)->get('duration');
                  $durationInMinutes = round($durationInSeconds / 60);
      
-                 $media->setCustomProperty('duration', $durationInMinutes)->save();
+                 $media->setCustomProperty('duration', $durationInSeconds)->save();
+                 $lesson->content = $media->getUrl();
              }
          }
      
