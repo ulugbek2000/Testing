@@ -87,12 +87,22 @@ class CourseController extends Controller
         // Check if the 'video' file exists in the request
         if ($request->hasFile('video')) {
             // Add media from request
-            $course->addMediaFromRequest('video')->toMediaCollection('videos');
+           $media =  $course->addMediaFromRequest('video')->toMediaCollection('videos');
+
+            $ffmpeg = FFProbe::create([
+                'ffmpeg.binaries' => '/home/softclub/domains/lmsapi.softclub.tj/ffmpeg-git-20231128-amd64-static/ffmpeg',
+                'ffprobe.binaries' => '/home/softclub/domains/lmsapi.softclub.tj/ffmpeg-git-20231128-amd64-static/ffprobe'
+            ]);
+    
+            $localPath = $media->getPath();
+            $durationInSeconds = $ffmpeg->format($localPath)->get('duration');
+    
+            $media->setCustomProperty('duration', $durationInSeconds)->save();
+            $course->video = $media->getUrl();
         }
 
         return response()->json([
             'message' => "Course successfully created.",
-            'course' => $course, // Optionally return the created course
         ], 200);
     } catch (\Exception $e) {
         // Return response Json
