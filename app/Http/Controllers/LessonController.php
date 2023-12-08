@@ -82,7 +82,7 @@ class LessonController extends Controller
                  $localPath = $media->getPath();
                  $durationInSeconds = FFProbe::create([
                     'ffmpeg.binaries' => '/home/softclub/domains/lmsapi.softclub.tj/ffmpeg-git-20231128-amd64-static/ffmpeg',
-                    'ffmpeg.binaries' => '/home/softclub/domains/lmsapi.softclub.tj/ffmpeg-git-20231128-amd64-static/ffprobe',
+                    'ffprobe.binaries' => '/home/softclub/domains/lmsapi.softclub.tj/ffmpeg-git-20231128-amd64-static/ffprobe',
                  ])->format($localPath)->get('duration');
                  $durationInMinutes = round($durationInSeconds / 60);
      
