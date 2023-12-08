@@ -21,25 +21,25 @@ class Media extends BaseMedia implements HasMedia
     {
         parent::boot();
 
-        static::saving(function (Media $media) {
-            if ($media->type === 'video' || $media->type === 'audio') {
-                $uploadedFile = $media->file;
+        static::saved(function (Media $media) {
+        //     if ($media->type === 'video' || $media->type === 'audio') {
+        //         $uploadedFile = $media->file;
 
-                if ($uploadedFile) {
-                    $ffmpeg = FFProbe::create([
-                        'ffmpeg.binaries' => '/home/softclub/domains/lmsapi.softclub.tj/ffmpeg-git-20231128-amd64-static/ffmpeg',
-                        'ffprobe.binaries' => '/home/softclub/domains/lmsapi.softclub.tj/ffmpeg-git-20231128-amd64-static/ffprobe'
-                    ]);
+        //         if ($uploadedFile) {
+        //             $ffmpeg = FFProbe::create([
+        //                 'ffmpeg.binaries' => '/home/softclub/domains/lmsapi.softclub.tj/ffmpeg-git-20231128-amd64-static/ffmpeg',
+        //                 'ffprobe.binaries' => '/home/softclub/domains/lmsapi.softclub.tj/ffmpeg-git-20231128-amd64-static/ffprobe'
+        //             ]);
 
-                    $localPath = $media->getPath();
+        //             $localPath = $media->getPath();
 
-                    $video = $ffmpeg->open($localPath);
+        //             $video = $ffmpeg->open($localPath);
 
-                    $duration = $ffmpeg->format($video)->get('duration');
+        //             $duration = $ffmpeg->format($video)->get('duration');
 
-                    $media->setCustomProperty('duration', $duration)->save();
-                }
-            }
+        //             $media->setCustomProperty('duration', $duration)->save();
+        //         }
+        //     }
         });
     }
 }
