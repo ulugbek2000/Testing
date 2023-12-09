@@ -27,20 +27,23 @@ class Lesson extends Model implements HasMedia
         return $this->belongsTo(Topic::class, 'topic_id', 'id');
     }
 
-    function getContentMedia() {
+    function getContentMedia()
+    {
         return $this->getFirstMedia("content");
     }
 
-    function getDurationAttribute() {
-        $media = $this->getContentMedia();
-        return $media? $media->getContentMedia()->getCustomProperty('duration') ?? 0:0;
+    function getDurationAttribute()
+    {
+        $media = $this->getMedia('content')->first();
+
+        return $media ? $media->getCustomProperty('duration') ?? 0 : 0;
     }
-    
+
     // public function registerMediaConversions(Media $media = null): void
     // {
     //     $this->addMediaConversion('thumb')
     //         ->width(100)
     //         ->height(100);
-        
+
     // }
 }
