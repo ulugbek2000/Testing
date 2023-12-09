@@ -32,7 +32,8 @@ class Lesson extends Model implements HasMedia
     }
 
     function getDurationAttribute() {
-        return $this->getContentMedia()->getCustomProperty('duration') ?? 0;
+        $media = $this->getContentMedia();
+        return $media? $media->getContentMedia()->getCustomProperty('duration') ?? 0:0;
     }
     
     // public function registerMediaConversions(Media $media = null): void
