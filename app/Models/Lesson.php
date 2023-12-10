@@ -39,6 +39,12 @@ class Lesson extends Model implements HasMedia
         return $media ? $media->getCustomProperty('duration') ?? 0 : 0;
     }
 
+
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('content');
+    }
+
     // public function registerMediaConversions(Media $media = null): void
     // {
     //     $this->addMediaConversion('thumb')
