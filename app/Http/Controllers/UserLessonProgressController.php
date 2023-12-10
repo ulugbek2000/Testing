@@ -43,7 +43,7 @@ class UserLessonProgressController extends Controller
         $results = [];
     
         // Определите массив дней недели перед циклом
-        $daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+        $daysOfWeek = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье'];
     
         foreach ($daysOfWeek as $day) {
             $results[] = [
@@ -58,7 +58,7 @@ class UserLessonProgressController extends Controller
             $dayEnd = $dayStart->copy()->endOfDay();
     
             $watchedInDay = $userProgress->filter(function ($progress) use ($dayStart, $dayEnd) {
-                // Проверьте, что $progress->created_at не является замыканием
+                // Проверьте, что $progress->created_at является строкой
                 if (is_string($progress->created_at)) {
                     return Carbon::parse($progress->created_at)->between($dayStart, $dayEnd);
                 }
@@ -75,17 +75,17 @@ class UserLessonProgressController extends Controller
                 return optional($media)->getCustomProperty('duration') ?? 0;
             });
     
-            $found = false;
+            // Обновляем результаты ежедневными данными
             foreach ($results as &$result) {
                 if ($result['day'] == $dayStart->format('l')) {
                     $result['total_minutes_watched'] = $totalMinutesWatched;
                     $result['date_range'] = $dayStart->format('Y.m.d') . ' - ' . $dayEnd->format('Y.m.d');
-                    $found = true;
                     break;
                 }
             }
     
-            if (!$found) {
+            // Если не найдено совпадений в цикле, добавляем новую запись в $results
+            if (!isset($result['day'])) {
                 $results[] = [
                     'day' => $dayStart->format('l'),
                     'total_minutes_watched' => $totalMinutesWatched,
@@ -94,6 +94,7 @@ class UserLessonProgressController extends Controller
             }
         }
     
+        // Рассчитываем и добавляем данные недели
         $weekStartDate = $currentWeekStart->format('Y.m.d');
         $weekEndDate = $currentWeekStart->copy()->endOfWeek()->format('Y.m.d');
         $results[] = [
@@ -101,5 +102,6 @@ class UserLessonProgressController extends Controller
         ];
     
         return response()->json($results);
-    }    
+    }
+    
 }
