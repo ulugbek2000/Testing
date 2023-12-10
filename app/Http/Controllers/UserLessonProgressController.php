@@ -39,28 +39,35 @@ class UserLessonProgressController extends Controller
         $user = Auth::user();
         $userProgress = UserLessonsProgress::where('user_id', $user->id)->get();
         $currentWeekStart = Carbon::now()->startOfWeek();
-    
+
         $results = [];
-    
-        foreach (Carbon::getDays() as $day) {
+        $daysOfWeek = Carbon::getDays();
+
+        foreach ($daysOfWeek as $day) {
             $results[] = [
                 'day' => $day,
                 'total_minutes_watched' => 0,
                 'date_range' => '',
             ];
         }
-    
-        for ($i = Carbon::MONDAY; $i <= Carbon::SUNDAY; $i++) {
-            $dayStart = $currentWeekStart->copy()->day($i);
-    
+
+        foreach ($daysOfWeek as $day) {
+            $dayStart = $currentWeekStart->copy()->day($day);
+
             $watchedInDay = $userProgress->filter(function ($progress) use ($dayStart) {
                 return Carbon::parse($progress->created_at)->between($dayStart, $dayStart->copy()->endOfDay());
             });
-    
+
             $lessonIds = $watchedInDay->pluck('lesson_id')->toArray();
-    
-            $totalMinutesWatched = Lesson::whereIn('id', $lessonIds)->sum('duration');
-    
+
+            $totalMinutesWatched = Lesson::whereIn('id', $lessonIds)->get()->sum(function ($lesson) {
+                // Получаем медиа урока
+                $media = $lesson->getFirstMedia('content');
+
+                // Получаем длительность из пользовательского свойства медиа
+                return optional($media)->getCustomProperty('duration') ?? 0;
+            });
+
             $found = false;
             foreach ($results as &$result) {
                 if ($result['day'] == $dayStart->format('l')) {
@@ -70,7 +77,7 @@ class UserLessonProgressController extends Controller
                     break;
                 }
             }
-    
+
             if (!$found) {
                 $results[] = [
                     'day' => $dayStart->format('l'),
@@ -78,14 +85,13 @@ class UserLessonProgressController extends Controller
                 ];
             }
         }
-    
+
         $weekStartDate = $currentWeekStart->format('Y.m.d');
         $weekEndDate = $currentWeekStart->copy()->endOfWeek()->format('Y.m.d');
         $results[] = [
             'date_range' => $weekStartDate . ' - ' . $weekEndDate,
         ];
-    
+
         return response()->json($results);
     }
-    
 }
