@@ -35,64 +35,71 @@ class UserLessonProgressController extends Controller
 
 
     public function showActivity()
-{
-    $user = Auth::user();
-    $userProgress = UserLessonsProgress::where('user_id', $user->id)->get();
-    $currentWeekStart = Carbon::now()->startOfWeek();
-
-    $results = [];
-
-    foreach (Carbon::getDays() as $day) {
-        $results[] = [
-            'day' => $day,
-            'total_minutes_watched' => 0,
-            'date_range' => '',
-        ];
-    }
-    $daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-    foreach ($daysOfWeek as $day) {
-        $dayStart = $currentWeekStart->copy()->day($day);
-        $dayEnd = $dayStart->copy()->endOfDay();
-
-        $watchedInDay = $userProgress->filter(function ($progress) use ($dayStart, $dayEnd) {
-            return Carbon::parse($progress->created_at)->between($dayStart, $dayEnd);
-        });
-
-        $lessonIds = $watchedInDay->pluck('lesson_id')->toArray();
-
-        $totalMinutesWatched = Lesson::whereIn('id', $lessonIds)->sum(function ($lesson) {
-            // Получаем первый медиафайл из коллекции 'content'
-            $media = $lesson->getFirstMedia('content');
-
-            // Получаем длительность из пользовательского свойства медиа
-            return optional($media)->getCustomProperty('duration') ?? 0;
-        });
-
-        $found = false;
-        foreach ($results as &$result) {
-            if ($result['day'] == $dayStart->format('l')) {
-                $result['total_minutes_watched'] = $totalMinutesWatched;
-                $result['date_range'] = $dayStart->format('Y.m.d') . ' - ' . $dayEnd->format('Y.m.d');
-                $found = true;
-                break;
-            }
-        }
-
-        if (!$found) {
+    {
+        $user = Auth::user();
+        $userProgress = UserLessonsProgress::where('user_id', $user->id)->get();
+        $currentWeekStart = Carbon::now()->startOfWeek();
+    
+        $results = [];
+    
+        // Определите массив дней недели перед циклом
+        $daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+    
+        foreach ($daysOfWeek as $day) {
             $results[] = [
-                'day' => $dayStart->format('l'),
-                'total_minutes_watched' => $totalMinutesWatched,
-                'date_range' => $dayStart->format('Y.m.d') . ' - ' . $dayEnd->format('Y.m.d'),
+                'day' => $day,
+                'total_minutes_watched' => 0,
+                'date_range' => '',
             ];
         }
-    }
-
-    $weekStartDate = $currentWeekStart->format('Y.m.d');
-    $weekEndDate = $currentWeekStart->copy()->endOfWeek()->format('Y.m.d');
-    $results[] = [
-        'date_range' => $weekStartDate . ' - ' . $weekEndDate,
-    ];
-
-    return response()->json($results);
-}
+    
+        foreach ($daysOfWeek as $day) {
+            $dayStart = $currentWeekStart->copy()->day($day);
+            $dayEnd = $dayStart->copy()->endOfDay();
+    
+            $watchedInDay = $userProgress->filter(function ($progress) use ($dayStart, $dayEnd) {
+                // Проверьте, что $progress->created_at не является замыканием
+                if (is_string($progress->created_at)) {
+                    return Carbon::parse($progress->created_at)->between($dayStart, $dayEnd);
+                }
+                return false;
+            });
+    
+            $lessonIds = $watchedInDay->pluck('lesson_id')->toArray();
+    
+            $totalMinutesWatched = Lesson::whereIn('id', $lessonIds)->sum(function ($lesson) {
+                // Получаем первый медиафайл из коллекции 'content'
+                $media = $lesson->getFirstMedia('content');
+    
+                // Получаем длительность из пользовательского свойства медиа
+                return optional($media)->getCustomProperty('duration') ?? 0;
+            });
+    
+            $found = false;
+            foreach ($results as &$result) {
+                if ($result['day'] == $dayStart->format('l')) {
+                    $result['total_minutes_watched'] = $totalMinutesWatched;
+                    $result['date_range'] = $dayStart->format('Y.m.d') . ' - ' . $dayEnd->format('Y.m.d');
+                    $found = true;
+                    break;
+                }
+            }
+    
+            if (!$found) {
+                $results[] = [
+                    'day' => $dayStart->format('l'),
+                    'total_minutes_watched' => $totalMinutesWatched,
+                    'date_range' => $dayStart->format('Y.m.d') . ' - ' . $dayEnd->format('Y.m.d'),
+                ];
+            }
+        }
+    
+        $weekStartDate = $currentWeekStart->format('Y.m.d');
+        $weekEndDate = $currentWeekStart->copy()->endOfWeek()->format('Y.m.d');
+        $results[] = [
+            'date_range' => $weekStartDate . ' - ' . $weekEndDate,
+        ];
+    
+        return response()->json($results);
+    }    
 }
