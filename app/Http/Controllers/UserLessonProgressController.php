@@ -68,7 +68,7 @@ class UserLessonProgressController extends Controller
                 $media = $lesson->getFirstMedia('content');
     
                 // Получаем длительность из пользовательского свойства медиа
-                return optional($media)->getCustomProperty('duration') ?? 0;
+                return optional($media)->getCustomProperty('custom_properties') ?? 0;
             });
     
             // Обновляем результаты ежедневными данными
