@@ -42,7 +42,6 @@ class UserLessonProgressController extends Controller
     
         $results = [];
     
-        // Определите массив дней недели перед циклом
         $daysOfWeek = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье'];
     
         foreach ($daysOfWeek as $day) {
@@ -63,19 +62,21 @@ class UserLessonProgressController extends Controller
     
             $lessonIds = $watchedInDay->pluck('lesson_id')->toArray();
     
-            $totalMinutesWatched = Lesson::whereIn('id', $lessonIds)->sum('custom_properties');
+            $totalMinutesWatched = Lesson::whereIn('id', $lessonIds)->sum('duration');
     
             // Обновляем результаты ежедневными данными
+            $found = false;
             foreach ($results as &$result) {
                 if ($result['day'] == $dayStart->format('l')) {
                     $result['total_minutes_watched'] = $totalMinutesWatched;
                     $result['date_range'] = $dayStart->format('Y.m.d') . ' - ' . $dayEnd->format('Y.m.d');
+                    $found = true;
                     break;
                 }
             }
     
             // Если не найдено совпадений в цикле, добавляем новую запись в $results
-            if (!isset($result['day'])) {
+            if (!$found) {
                 $results[] = [
                     'day' => $dayStart->format('l'),
                     'total_minutes_watched' => $totalMinutesWatched,
@@ -93,6 +94,7 @@ class UserLessonProgressController extends Controller
     
         return response()->json($results);
     }
+    
     
     
 }
