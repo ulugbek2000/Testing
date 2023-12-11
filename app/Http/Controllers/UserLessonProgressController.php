@@ -63,13 +63,7 @@ class UserLessonProgressController extends Controller
     
             $lessonIds = $watchedInDay->pluck('lesson_id')->toArray();
     
-            $totalMinutesWatched = Lesson::whereIn('id', $lessonIds)->sum(function ($lesson) {
-                // Получаем первый медиафайл из коллекции 'content'
-                $media = $lesson->getFirstMedia('content');
-    
-                // Получаем длительность из пользовательского свойства медиа
-                return optional($media)->getCustomProperty('custom_properties') ?? 0;
-            });
+            $totalMinutesWatched = Lesson::whereIn('id', $lessonIds)->sum('duration');
     
             // Обновляем результаты ежедневными данными
             foreach ($results as &$result) {
