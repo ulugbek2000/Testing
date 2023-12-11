@@ -63,7 +63,7 @@ class UserLessonProgressController extends Controller
     
             $lessonIds = $watchedInDay->pluck('lesson_id')->toArray();
     
-            $totalMinutesWatched = Lesson::whereIn('id', $lessonIds)->sum('duration');
+            $totalMinutesWatched = Lesson::whereIn('id', $lessonIds)->sum('custom_properties');
     
             // Обновляем результаты ежедневными данными
             foreach ($results as &$result) {
