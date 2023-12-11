@@ -33,18 +33,17 @@ class UserLessonProgressController extends Controller
         ]);
     }
 
-
     public function showActivity()
     {
         $user = Auth::user();
         $userProgress = UserLessonsProgress::where('user_id', $user->id)->get();
         $currentWeekStart = Carbon::now()->startOfWeek();
-    
+
         $results = [];
-    
-        // Определите массив дней недели перед циклом
+
         $daysOfWeek = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье'];
-    
+
+        // Инициализируем результаты для каждого дня недели
         foreach ($daysOfWeek as $day) {
             $results[] = [
                 'day' => $day,
@@ -52,19 +51,23 @@ class UserLessonProgressController extends Controller
                 'date_range' => '',
             ];
         }
-    
+
+        // Итерируем по дням недели
         foreach ($daysOfWeek as $day) {
             $dayStart = $currentWeekStart->copy()->day($day);
             $dayEnd = $dayStart->copy()->endOfDay();
-    
+
+            // Фильтруем прогресс для текущего дня
             $watchedInDay = $userProgress->filter(function ($progress) use ($dayStart, $dayEnd) {
-                return $progress->completed == 1 && Carbon::parse($progress->created_at)->between($dayStart, $dayEnd);
+                return $progress->watched == 1 && Carbon::parse($progress->created_at)->between($dayStart, $dayEnd);
             });
-    
+
+            // Получаем ID уроков
             $lessonIds = $watchedInDay->pluck('lesson_id')->toArray();
-    
+
+            // Считаем общую продолжительность просмотренных уроков
             $totalMinutesWatched = Lesson::whereIn('id', $lessonIds)->sum('duration');
-    
+
             // Обновляем результаты ежедневными данными
             foreach ($results as &$result) {
                 if ($result['day'] == $dayStart->format('l')) {
@@ -73,26 +76,15 @@ class UserLessonProgressController extends Controller
                     break;
                 }
             }
-    
-            // Если не найдено совпадений в цикле, добавляем новую запись в $results
-            if (!isset($result['day'])) {
-                $results[] = [
-                    'day' => $dayStart->format('l'),
-                    'total_minutes_watched' => $totalMinutesWatched,
-                    'date_range' => $dayStart->format('Y.m.d') . ' - ' . $dayEnd->format('Y.m.d'),
-                ];
-            }
         }
-    
+
         // Рассчитываем и добавляем данные недели
         $weekStartDate = $currentWeekStart->format('Y.m.d');
         $weekEndDate = $currentWeekStart->copy()->endOfWeek()->format('Y.m.d');
         $results[] = [
             'date_range' => $weekStartDate . ' - ' . $weekEndDate,
         ];
-    
+
         return response()->json($results);
     }
-    
-    
 }
