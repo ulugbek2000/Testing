@@ -71,9 +71,9 @@ class UserLessonProgressController extends Controller
         $results[] = [
             'date_range' => $currentWeekStart->format('Y.m.d') . ' - ' . $currentWeekEnd->format('Y.m.d'),
             'total_minutes_watched' => $watchedLessons->sum(function ($lesson) {
-                return $lesson->media->custom_properties;
+                return optional($lesson->media)->custom_properties ?? 0;
             }),
-        ];
+        ];        
     
         return response()->json($results);
     }
