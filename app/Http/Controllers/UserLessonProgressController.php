@@ -61,7 +61,6 @@ class UserLessonProgressController extends Controller
             $results[] = [
                 'day' => $day,
                 'total_minutes_watched' => $totalMinutesWatched,
-                'date_range' => $dayStart->format('Y.m.d') . ' - ' . $dayEnd->format('Y.m.d'),
             ];
         }
     
