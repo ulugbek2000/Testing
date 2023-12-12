@@ -42,8 +42,7 @@ class UserLessonProgressController extends Controller
     $currentWeekEnd = Carbon::now()->endOfWeek();
 
     $totalMinutesWatched = UserLessonsProgress::where('user_lessons_progress.user_id', $user->id)
-    ->whereDate('user_lessons_progress.created_at', '>=', $currentWeekStart)
-    ->whereDate('user_lessons_progress.created_at', '<=', $currentWeekEnd)
+    ->whereBetween('user_lessons_progress.created_at', [$currentWeekStart, $currentWeekEnd])
     ->leftJoin('media', function ($join) {
         $join->on('user_lessons_progress.lesson_id', '=', 'media.model_id');
     })
