@@ -37,7 +37,7 @@ class UserLessonProgressController extends Controller
     {
         $user = Auth::user();
         $userProgress = UserLessonsProgress::where('user_id', $user->id)->get();
-        dd($userProgress);
+        // dd($userProgress);
         $currentWeekStart = Carbon::now()->startOfWeek();
 
         $results = [];
