@@ -44,12 +44,7 @@ class UserLessonProgressController extends Controller
         $daysOfWeek = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье'];
 
         // Инициализируем результаты для каждого дня недели
-        foreach ($daysOfWeek as $day) {
-            $results[] = [
-                'day' => $day,
-                'total_minutes_watched' => 0,
-            ];
-        }
+      
 
         // Итерируем по дням недели
         foreach ($daysOfWeek as $day) {
@@ -61,12 +56,19 @@ class UserLessonProgressController extends Controller
                 return $progress->watched == 1 && Carbon::parse($progress->created_at)->between($dayStart, $dayEnd);
             });
 
+         
             // Получаем ID уроков
             $lessonIds = $watchedInDay->pluck('lesson_id')->toArray();
 
             // Считаем общую продолжительность просмотренных уроков
             $totalMinutesWatched = Lesson::whereIn('id', $lessonIds)->sum('duration');
 
+            foreach ($daysOfWeek as $day) {
+                $results[] = [
+                    'day' => $day,
+                    'total_minutes_watched' => $totalMinutesWatched,
+                ];
+            }
             // Обновляем результаты ежедневными данными
             foreach ($results as &$result) {
                 if ($result['day'] == $dayStart->format('l')) {
