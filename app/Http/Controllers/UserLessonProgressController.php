@@ -47,7 +47,7 @@ class UserLessonProgressController extends Controller
             $dayStart = $currentWeekStart->copy()->day($day);
             $dayEnd = $dayStart->copy()->endOfDay();
 
-            // Фильтруем прогресс для текущего дня
+           
             $watchedInDay = $userProgress->filter(function ($progress) use ($dayStart, $dayEnd) {
                 return $progress->completed == 1 && Carbon::parse($progress->created_at)->between($dayStart, $dayEnd);
             });

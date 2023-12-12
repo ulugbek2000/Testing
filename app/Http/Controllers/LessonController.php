@@ -97,7 +97,7 @@ class LessonController extends Controller
      
              $media->setCustomProperty('duration', $durationInSeconds)->save();
              $lesson->content = $media->getUrl();
-            //  $lesson->duration = $media->custom_properties;
+             $lesson->duration = $media->custom_properties;
          }
      
          $lesson->save();
