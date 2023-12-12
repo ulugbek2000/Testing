@@ -48,7 +48,7 @@ class UserLessonProgressController extends Controller
     
         // Сгруппировать уроки по дням недели
         $watchedLessonsByDay = $watchedLessons->groupBy(function ($lesson) {
-            return Carbon::createFromFormat('Y-m-d', $lesson->created_at)->dayOfWeek;
+            return Carbon::createFromFormat('Y-m-d H:i:s', $lesson->created_at)->dayOfWeek;
         });
     
         // Получить общее количество просмотренных минут за каждый день недели
