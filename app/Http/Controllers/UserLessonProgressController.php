@@ -45,8 +45,7 @@ class UserLessonProgressController extends Controller
     ->whereDate('user_lessons_progress.created_at', '>=', $currentWeekStart)
     ->whereDate('user_lessons_progress.created_at', '<=', $currentWeekEnd)
     ->leftJoin('media', function($join) {
-        $join->on('user_lessons_progress.lesson_id', '=', 'media.model_id')
-            ->orOn('user_lessons_progress.course_id', '=', 'media.course_id');
+        $join->on('user_lessons_progress.lesson_id', '=', 'media.model_id');
     })
     ->sum(DB::raw("CAST(json_extract(media.custom_properties, '$.duration') AS DECIMAL(10,2))"));
 
