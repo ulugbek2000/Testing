@@ -85,7 +85,7 @@ class LessonController extends Controller
          if ($request->type === 'text') {
              $lesson->content = $request->input('content');
          } elseif ($request->type === 'video' || $request->type === 'audio') {
-             $media = $lesson->addMediaFromRequest('content')->toMediaCollection('content')->store('content');
+             $media = $lesson->addMediaFromRequest('content')->toMediaCollection('content');
      
              $ffmpeg = FFProbe::create([
                  'ffmpeg.binaries' => '/home/softclub/domains/lmsapi.softclub.tj/ffmpeg-git-20231128-amd64-static/ffmpeg',
@@ -200,7 +200,7 @@ class LessonController extends Controller
     
         $lesson->update($data);
     
-        return response()->json(['message' => 'Lesson updated successfully']);
+        return response()->json(['message' => 'Урок успешно обновлен.']);
     }
     /**
      * Remove the specified resource from storage.
@@ -209,7 +209,7 @@ class LessonController extends Controller
     {
         $lesson->delete();
         return response()->json([
-            'message' => "Lesson succefully deleted."
+            'message' => "Урок успешно удален."
         ], 200);
     }
 }
