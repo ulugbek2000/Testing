@@ -46,7 +46,8 @@ class UserLessonProgressController extends Controller
     ->leftJoin('media', function ($join) {
         $join->on('user_lessons_progress.lesson_id', '=', 'media.model_id');
     })
-    ->sum(DB::raw("CAST(json_extract(media.custom_properties, '$.duration') AS DECIMAL(10,2))"));
+    ->value(DB::raw("SUM(CAST(json_extract(media.custom_properties, '$.duration') AS DECIMAL(10,2))"));
+
 
 
     // Получить список просмотренных уроков за неделю
