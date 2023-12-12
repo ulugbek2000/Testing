@@ -49,7 +49,7 @@ class UserLessonProgressController extends Controller
 
 
             $watchedInDay = $userProgress->filter(function ($progress) use ($dayStart, $dayEnd) {
-                return $progress->completed == 1 && Carbon::parse($progress->created_at)->between($dayStart, $dayEnd);
+                return $progress->completed == 1 && Carbon::createFromFormat('Y-m-d H:i:s', $progress->created_at)->between($dayStart, $dayEnd);
             });
             dd($watchedInDay);
             // Получаем ID уроков
