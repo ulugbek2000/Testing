@@ -52,13 +52,16 @@ class UserLessonProgressController extends Controller
             return Carbon::createFromFormat('Y-m-d H:i:s', $lesson->created_at)->dayOfWeek;
         });
     
-        // Получить общее количество просмотренных минут за каждый день недели
         $results = [];
-        foreach ($watchedLessonsByDay as $day => $lessons) {
-            $totalMinutesWatched = $lessons->flatMap(function ($lesson) {
-                return Media::where('model_id', $lesson->id)->get();
-            })->sum(function ($media) {
-                return optional(json_decode($media->custom_properties))->duration ?? 0;
+
+        // Итерируем с понедельника по воскресенье
+        for ($day = Carbon::MONDAY; $day <= Carbon::SUNDAY; $day++) {
+            $dayName = Carbon::createFromFormat('Y-m-d H:i:s', $currentWeekStart)->startOfWeek()->addDays($day)->format('Y-m-d');
+        
+            $totalMinutesWatched = $watchedLessons->filter(function ($lesson) use ($dayName) {
+                return Carbon::createFromFormat('Y-m-d H:i:s', $lesson->created_at)->isSameDay($dayName);
+            })->sum(function ($lesson) {
+                return optional($lesson->media)->custom_properties ?? 0;
             });
         
             $results[] = [
@@ -66,16 +69,19 @@ class UserLessonProgressController extends Controller
                 'total_minutes_watched' => $totalMinutesWatched,
             ];
         }
-    
-        // Добавить данные недели
+        
         $results[] = [
             'date_range' => $currentWeekStart->format('Y.m.d') . ' - ' . $currentWeekEnd->format('Y.m.d'),
             'total_minutes_watched' => $watchedLessons->sum(function ($lesson) {
                 return optional($lesson->media)->custom_properties ?? 0;
             }),
-        ];        
-    
-        return response()->json($results);
+        ];
+        
+        // Преобразуем результат в нужный формат, например, в JSON
+        $jsonResult = json_encode($results, JSON_PRETTY_PRINT);
+        
+        // Отправляем результат
+        return response()->json($jsonResult);
     }
     
 }
