@@ -96,7 +96,7 @@ class LessonController extends Controller
              $durationInSeconds = $ffmpeg->format($localPath)->get('duration');
      
              $media->setCustomProperty('duration', $durationInSeconds)->save();
-             $lesson->content = $media->getUrl();
+             $lesson->content = $media->getPath();
             //  $lesson->duration = $media->custom_properties;
          }
      
