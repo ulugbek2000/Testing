@@ -40,12 +40,12 @@ class UserLessonProgressController extends Controller
     $currentWeekStart = Carbon::now()->startOfWeek();
     $currentWeekEnd = Carbon::now()->endOfWeek();
 
-    // Получить общее количество просмотренных минут за неделю
-    $totalMinutesWatched = UserLessonsProgress::where('user_id', $user->id)
-        ->whereDate('created_at', '>=', $currentWeekStart)
-        ->whereDate('created_at', '<=', $currentWeekEnd)
-        ->leftJoin('media', 'user_lessons_progress.lesson_media_id', '=', 'media.id') // Пример связывания с таблицей media
-        ->sum('media.custom_properties'); // Используем duration из таблицы media
+    $totalMinutesWatched = UserLessonsProgress::where('user_lessons_progress.user_id', $user->id)
+    ->whereDate('user_lessons_progress.created_at', '>=', $currentWeekStart)
+    ->whereDate('user_lessons_progress.created_at', '<=', $currentWeekEnd)
+    ->leftJoin('media', 'user_lessons_progress.lesson_media_id', '=', 'media.id')
+    ->sum('media.duration');
+
 
     // Получить список просмотренных уроков за неделю
     $watchedLessons = UserLessonsProgress::where('user_id', $user->id)
