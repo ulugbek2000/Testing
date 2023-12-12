@@ -36,40 +36,40 @@ class UserLessonProgressController extends Controller
     public function showActivity()
     {
         $user = Auth::user();
-        $userProgress = UserLessonsProgress::where('user_id', $user->id)->get();
-        // dd($userProgress);
+
         $currentWeekStart = Carbon::now()->startOfWeek();
+        $currentWeekEnd = Carbon::now()->endOfWeek();
 
+        // Получить общее количество просмотренных минут за неделю
+        $totalMinutesWatched = UserLessonsProgress::where('user_id', $user->id)
+            ->whereDate('created_at', '>=', $currentWeekStart)
+            ->whereDate('created_at', '<=', $currentWeekEnd)
+            ->sum('duration');
+
+        // Получить список просмотренных уроков за неделю
+        $watchedLessons = UserLessonsProgress::where('user_id', $user->id)
+            ->whereDate('created_at', '>=', $currentWeekStart)
+            ->whereDate('created_at', '<=', $currentWeekEnd)
+            ->get();
+
+        // Сгруппировать уроки по дням недели
+        $watchedLessonsByDay = $watchedLessons->groupBy(function ($lesson) {
+            return Carbon::createFromFormat('Y-m-d', $lesson->created_at)->dayOfWeek;
+        });
+
+        // Получить общее количество просмотренных минут за каждый день недели
         $results = [];
-        $daysOfWeek = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье'];
-        // Итерируем по дням недели
-        foreach ($daysOfWeek as $day) {
-            $dayStart = $currentWeekStart->copy()->day($day);
-            $dayEnd = $dayStart->copy()->endOfDay();
-
-
-            $watchedInDay = $userProgress->filter(function ($progress) use ($dayStart, $dayEnd) {
-                return $progress->completed == 1 && Carbon::createFromFormat('Y-m-d H:i:s', $progress->created_at)->between($dayStart, $dayEnd);
-            });
-            dd($watchedInDay);
-            // Получаем ID уроков
-            $lessonIds = $watchedInDay->pluck('lesson_id')->toArray();
-            dd($lessonIds);
-
-            // Считаем общую продолжительность просмотренных уроков
-            $totalMinutesWatched = Lesson::whereIn('id', $lessonIds)->sum('duration');
-
-            // Добавляем результаты для текущего дня в массив
+        foreach ($watchedLessonsByDay as $day => $lessons) {
             $results[] = [
                 'day' => $day,
-                'total_minutes_watched' => number_format($totalMinutesWatched, 2), // Округление до двух знаков после запятой
+                'total_minutes_watched' => $lessons->sum('duration'),
             ];
         }
-        // Рассчитываем и добавляем данные недели
-        $weekStartDate = $currentWeekStart->format('Y.m.d');
-        $weekEndDate = $currentWeekStart->copy()->endOfWeek()->format('Y.m.d');
+
+        // Добавить данные недели
         $results[] = [
-            'date_range' => $weekStartDate . ' - ' . $weekEndDate,
+            'date_range' => $currentWeekStart->format('Y.m.d') . ' - ' . $currentWeekEnd->format('Y.m.d'),
+            'total_minutes_watched' => $totalMinutesWatched,
         ];
 
         return response()->json($results);
