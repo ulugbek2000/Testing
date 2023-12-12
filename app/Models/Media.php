@@ -17,6 +17,10 @@ class Media extends BaseMedia implements HasMedia
 {
     use HasFactory, InteractsWithMedia;
 
+    protected $fillable = [
+        'model_id',
+        'custom_properties'
+    ];
     protected static function boot()
     {
         parent::boot();

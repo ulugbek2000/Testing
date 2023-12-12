@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Course;
 use App\Models\Lesson;
+use App\Models\Media;
 use App\Models\User;
 use App\Models\UserLessonsProgress;
 use Carbon\Carbon;
@@ -54,11 +55,15 @@ class UserLessonProgressController extends Controller
         // Получить общее количество просмотренных минут за каждый день недели
         $results = [];
         foreach ($watchedLessonsByDay as $day => $lessons) {
+            $totalMinutesWatched = $lessons->flatMap(function ($lesson) {
+                return Media::where('model_id', $lesson->id)->get();
+            })->sum(function ($media) {
+                return optional(json_decode($media->custom_properties))->duration ?? 0;
+            });
+        
             $results[] = [
                 'day' => $day,
-                'total_minutes_watched' => $lessons->sum(function ($lesson) {
-                    return $lesson->getDurationAtribute;
-                }),
+                'total_minutes_watched' => $totalMinutesWatched,
             ];
         }
     
