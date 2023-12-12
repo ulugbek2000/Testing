@@ -78,10 +78,10 @@ class UserLessonProgressController extends Controller
         ];
         
         // Преобразуем результат в нужный формат, например, в JSON
-        $jsonResult = json_encode($results, JSON_PRETTY_PRINT);
+        // $jsonResult = json_encode($results, JSON_PRETTY_PRINT);
         
         // Отправляем результат
-        return response()->json($jsonResult);
+        return response()->json($results);
     }
     
 }
