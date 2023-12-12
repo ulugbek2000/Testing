@@ -61,7 +61,7 @@ class UserLessonProgressController extends Controller
             // Добавляем результаты для текущего дня в массив
             $results[] = [
                 'day' => $day,
-                'total_minutes_watched' => $totalMinutesWatched,
+                'total_minutes_watched' => number_format($totalMinutesWatched, 2), // Округление до двух знаков после запятой
             ];
         }
         // Рассчитываем и добавляем данные недели
