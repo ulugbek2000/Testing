@@ -54,6 +54,7 @@ class UserLessonProgressController extends Controller
 
             // Получаем ID уроков
             $lessonIds = $watchedInDay->pluck('lesson_id')->toArray();
+            dd($lessonIds);
 
             // Считаем общую продолжительность просмотренных уроков
             $totalMinutesWatched = Lesson::whereIn('id', $lessonIds)->sum('duration');
