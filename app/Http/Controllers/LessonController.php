@@ -85,7 +85,7 @@ class LessonController extends Controller
          if ($request->type === 'text') {
              $lesson->content = $request->input('content');
          } elseif ($request->type === 'video' || $request->type === 'audio') {
-             $media = $lesson->file('content')->toMediaCollection('content');
+             $media = $lesson->addFromRequest('content')->toMediaCollection('content')->store('content');
      
              $ffmpeg = FFProbe::create([
                  'ffmpeg.binaries' => '/home/softclub/domains/lmsapi.softclub.tj/ffmpeg-git-20231128-amd64-static/ffmpeg',
