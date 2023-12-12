@@ -41,12 +41,7 @@ class UserLessonProgressController extends Controller
     $currentWeekStart = Carbon::now()->startOfWeek();
     $currentWeekEnd = Carbon::now()->endOfWeek();
 
-    $totalMinutesWatched = UserLessonsProgress::where('user_lessons_progress.user_id', $user->id)
-    ->whereBetween('user_lessons_progress.created_at', [$currentWeekStart, $currentWeekEnd])
-    ->leftJoin('media', 'user_lessons_progress.lesson_id', '=', 'media.model_id')
-    ->selectRaw("SUM(CAST(json_extract(media.custom_properties, '$.duration') AS DECIMAL(10,2))) as total_minutes_watched")
-    ->first()
-    ->total_minutes_watched;
+    // $totalMinutesWatched = UserLessonsProgress::where()
 
 
 
@@ -55,6 +50,7 @@ class UserLessonProgressController extends Controller
         ->whereDate('created_at', '>=', $currentWeekStart)
         ->whereDate('created_at', '<=', $currentWeekEnd)
         ->get();
+        dd($watchedLessons);
 
     // Сгруппировать уроки по дням недели
     $watchedLessonsByDay = $watchedLessons->groupBy(function ($lesson) {
