@@ -44,8 +44,9 @@ class UserLessonProgressController extends Controller
     $totalMinutesWatched = UserLessonsProgress::where('user_lessons_progress.user_id', $user->id)
     ->whereDate('user_lessons_progress.created_at', '>=', $currentWeekStart)
     ->whereDate('user_lessons_progress.created_at', '<=', $currentWeekEnd)
-    ->leftJoin('media', 'user_lessons_progress.lesson_media_id', '=', 'media.id')
+    ->leftJoin('media', 'user_lessons_progress.lesson_id', '=', 'media.lesson_id') // Замените на lesson_id
     ->sum(DB::raw("CAST(json_extract(media.custom_properties, '$.duration') AS DECIMAL(10,2))"));
+
 
 
     // Получить список просмотренных уроков за неделю
