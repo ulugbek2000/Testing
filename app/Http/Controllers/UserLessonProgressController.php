@@ -44,7 +44,7 @@ class UserLessonProgressController extends Controller
     ->whereDate('user_lessons_progress.created_at', '>=', $currentWeekStart)
     ->whereDate('user_lessons_progress.created_at', '<=', $currentWeekEnd)
     ->leftJoin('media', 'user_lessons_progress.lesson_media_id', '=', 'media.id')
-    ->sum('media.duration');
+    ->sum('media.custom_properties');
 
 
     // Получить список просмотренных уроков за неделю
