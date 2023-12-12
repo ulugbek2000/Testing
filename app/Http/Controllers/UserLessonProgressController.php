@@ -34,44 +34,46 @@ class UserLessonProgressController extends Controller
     }
 
     public function showActivity()
-    {
-        $user = Auth::user();
+{
+    $user = Auth::user();
 
-        $currentWeekStart = Carbon::now()->startOfWeek();
-        $currentWeekEnd = Carbon::now()->endOfWeek();
+    $currentWeekStart = Carbon::now()->startOfWeek();
+    $currentWeekEnd = Carbon::now()->endOfWeek();
 
-        // Получить общее количество просмотренных минут за неделю
-        $totalMinutesWatched = UserLessonsProgress::where('user_id', $user->id)
-            ->whereDate('created_at', '>=', $currentWeekStart)
-            ->whereDate('created_at', '<=', $currentWeekEnd)
-            ->sum('duration');
+    // Получить общее количество просмотренных минут за неделю
+    $totalMinutesWatched = UserLessonsProgress::where('user_id', $user->id)
+        ->whereDate('created_at', '>=', $currentWeekStart)
+        ->whereDate('created_at', '<=', $currentWeekEnd)
+        ->leftJoin('media', 'user_lessons_progress.lesson_media_id', '=', 'media.id') // Пример связывания с таблицей media
+        ->sum('media.custom_properties'); // Используем duration из таблицы media
 
-        // Получить список просмотренных уроков за неделю
-        $watchedLessons = UserLessonsProgress::where('user_id', $user->id)
-            ->whereDate('created_at', '>=', $currentWeekStart)
-            ->whereDate('created_at', '<=', $currentWeekEnd)
-            ->get();
+    // Получить список просмотренных уроков за неделю
+    $watchedLessons = UserLessonsProgress::where('user_id', $user->id)
+        ->whereDate('created_at', '>=', $currentWeekStart)
+        ->whereDate('created_at', '<=', $currentWeekEnd)
+        ->get();
 
-        // Сгруппировать уроки по дням недели
-        $watchedLessonsByDay = $watchedLessons->groupBy(function ($lesson) {
-            return Carbon::createFromFormat('Y-m-d', $lesson->created_at)->dayOfWeek;
-        });
+    // Сгруппировать уроки по дням недели
+    $watchedLessonsByDay = $watchedLessons->groupBy(function ($lesson) {
+        return Carbon::createFromFormat('Y-m-d', $lesson->created_at)->dayOfWeek;
+    });
 
-        // Получить общее количество просмотренных минут за каждый день недели
-        $results = [];
-        foreach ($watchedLessonsByDay as $day => $lessons) {
-            $results[] = [
-                'day' => $day,
-                'total_minutes_watched' => $lessons->sum('duration'),
-            ];
-        }
-
-        // Добавить данные недели
+    // Получить общее количество просмотренных минут за каждый день недели
+    $results = [];
+    foreach ($watchedLessonsByDay as $day => $lessons) {
         $results[] = [
-            'date_range' => $currentWeekStart->format('Y.m.d') . ' - ' . $currentWeekEnd->format('Y.m.d'),
-            'total_minutes_watched' => $totalMinutesWatched,
+            'day' => $day,
+            'total_minutes_watched' => $lessons->sum('duration'), // Здесь также используем duration из таблицы media
         ];
-
-        return response()->json($results);
     }
+
+    // Добавить данные недели
+    $results[] = [
+        'date_range' => $currentWeekStart->format('Y.m.d') . ' - ' . $currentWeekEnd->format('Y.m.d'),
+        'total_minutes_watched' => $totalMinutesWatched,
+    ];
+
+    return response()->json($results);
+}
+
 }
