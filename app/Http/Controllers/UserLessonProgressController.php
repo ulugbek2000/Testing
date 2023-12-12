@@ -9,6 +9,7 @@ use App\Models\UserLessonsProgress;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class UserLessonProgressController extends Controller
 {
@@ -44,7 +45,7 @@ class UserLessonProgressController extends Controller
     ->whereDate('user_lessons_progress.created_at', '>=', $currentWeekStart)
     ->whereDate('user_lessons_progress.created_at', '<=', $currentWeekEnd)
     ->leftJoin('media', 'user_lessons_progress.lesson_media_id', '=', 'media.id')
-    ->sum('media.custom_properties');
+    ->sum(DB::raw("CAST(json_extract(media.custom_properties, '$.duration') AS DECIMAL(10,2))"));
 
 
     // Получить список просмотренных уроков за неделю
