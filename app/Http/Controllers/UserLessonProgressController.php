@@ -53,8 +53,7 @@ class UserLessonProgressController extends Controller
                 return $progress->completed === 1 && Carbon::parse($progress->created_at)->between($dayStart, $dayEnd);
             });
     
-            // dd($watchedInDay);
-    
+            dd($watchedInDay->toArray());    
             $lessonIds = $watchedInDay->pluck('lesson_id')->toArray();
 
             dd($lessonIds);
