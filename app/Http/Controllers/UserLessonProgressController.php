@@ -57,7 +57,7 @@ class UserLessonProgressController extends Controller
                 // Если прогресса нет, пропускаем этот день
                 continue;
             }
-            dd($watchedInDay);
+            // dd($watchedInDay);
     
             $lessonIds = $watchedInDay->pluck('lesson_id')->toArray();
     
