@@ -68,10 +68,13 @@ class UserLessonProgressController extends Controller
                 // Вычисляем общую продолжительность просмотра видео
                 $totalMinutesWatched = $videos->sum(function ($video) {
                     $customProperties = $video->custom_properties;
-                    dd($customProperties);
-                    return is_array($video->custom_properties) && isset($video->custom_properties[0]['duration'])
-                        ? (float)$video->custom_properties[0]['duration']
-                        : 0;
+                
+                    // Проверим, есть ли информация о продолжительности
+                    if (is_array($customProperties) && isset($customProperties['duration'])) {
+                        return (float)$customProperties['duration'];
+                    }
+                
+                    return 0;
                 });
         
                 // Записываем результат для текущего дня
