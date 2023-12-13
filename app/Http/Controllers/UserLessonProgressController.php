@@ -44,16 +44,20 @@ class UserLessonProgressController extends Controller
     
         $results = [];
         $daysOfWeek = ['Понедельник','Вторник','Среда','Четверг','Пятница','Суббота','Воскресенье']; // Числовые представления дней недели
-    
         foreach ($daysOfWeek as $day) {
-            $dayStart = $currentWeekStart->copy()->startOfDay()->next($day);
+            $dayStart = $currentWeekStart->copy()->startOfDay();
+    
+            // Ищем следующий день недели
+            while ($dayStart->format('l') !== $day) {
+                $dayStart->addDay();
+            }
+    
             $dayEnd = $dayStart->copy()->endOfDay();
-        
-            // Найдем все записи прогресса для пользователя в пределах конкретного дня
+    
             $watchedInDay = $userProgress->filter(function ($progress) use ($dayStart, $dayEnd) {
                 $completed = (int)$progress->completed;
                 $progressDate = Carbon::parse($progress->created_at);
-        
+    
                 return $completed === 1 && $progressDate->between($dayStart, $dayEnd);
             });
         
