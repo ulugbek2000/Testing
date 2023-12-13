@@ -57,7 +57,7 @@ class UserLessonProgressController extends Controller
             dd($watchedInDay->toArray());
     
             $lessonIds = $watchedInDay->pluck('lesson_id')->toArray();
-    
+            dd($lessonIds->toArray());
             // Если нет просмотренных уроков, установите $totalMinutesWatched в 0
             $totalMinutesWatched = 0;
     
