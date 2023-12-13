@@ -46,7 +46,7 @@ class UserLessonProgressController extends Controller
         $daysOfWeek = ['Понедельник','Вторник','Среда','Четверг','Пятница','Суббота','Воскресенье']; // Числовые представления дней недели
     
         foreach ($daysOfWeek as $day) {
-            $dayStart = $currentWeekStart->copy()->startOfDay()->addDays($day - 1);
+            $dayStart = $currentWeekStart->copy()->startOfDay()->addDays($day);
             $dayEnd = $dayStart->copy()->endOfDay();
         
             // Найдем все записи прогресса для пользователя в пределах конкретного дня
