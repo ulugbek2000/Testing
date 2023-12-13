@@ -53,9 +53,11 @@ class UserLessonProgressController extends Controller
                 return $progress->completed === 1 && Carbon::parse($progress->created_at)->between($dayStart, $dayEnd);
             });
     
-            dd($watchedInDay);
+            // dd($watchedInDay);
     
             $lessonIds = $watchedInDay->pluck('lesson_id')->toArray();
+
+            dd($lessonIds);
     
             $totalMinutesWatched = Media::whereIn('model_id', $lessonIds)->sum('custom_properties');
     
