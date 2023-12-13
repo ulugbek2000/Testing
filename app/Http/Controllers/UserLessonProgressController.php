@@ -43,22 +43,27 @@ class UserLessonProgressController extends Controller
         $currentWeekStart = Carbon::now()->startOfWeek();
     
         $results = [];
-        $daysOfWeek = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье'];
+        $daysOfWeek = [1, 2, 3, 4, 5, 6, 7]; // Числовые представления дней недели
     
         foreach ($daysOfWeek as $day) {
-            $dayStart = $currentWeekStart->copy()->day($day);
+            $dayStart = $currentWeekStart->copy()->startOfDay()->addDays($day - 1);
             $dayEnd = $dayStart->copy()->endOfDay();
     
             $watchedInDay = $userProgress->filter(function ($progress) use ($dayStart, $dayEnd) {
                 return $progress->completed === 1 && Carbon::parse($progress->created_at)->between($dayStart, $dayEnd);
             });
     
-            dd($watchedInDay->toArray());    
-            $lessonIds = $watchedInDay->pluck('lesson_id')->toArray();
-
-            dd($lessonIds);
+            // Если вы хотите увидеть результат фильтрации для отладки
+            // dd($watchedInDay->toArray());
     
-            $totalMinutesWatched = Media::whereIn('model_id', $lessonIds)->sum('custom_properties');
+            $lessonIds = $watchedInDay->pluck('lesson_id')->toArray();
+    
+            // Если нет просмотренных уроков, установите $totalMinutesWatched в 0
+            $totalMinutesWatched = 0;
+    
+            if (!empty($lessonIds)) {
+                $totalMinutesWatched = Media::whereIn('model_id', $lessonIds)->sum('custom_properties');
+            }
     
             $results[] = [
                 'day' => $day,
@@ -75,6 +80,7 @@ class UserLessonProgressController extends Controller
     
         return response()->json($results);
     }
+    
     
     
 }
