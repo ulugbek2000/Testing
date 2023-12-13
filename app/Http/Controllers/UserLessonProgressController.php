@@ -62,7 +62,9 @@ class UserLessonProgressController extends Controller
             // Если есть просмотренные уроки в текущий день, вычисляем общую продолжительность
             if (!empty($lessonIds)) {
                 $videos = Media::whereIn('model_id', $lessonIds)->get();
-        
+
+                dd($videos->toArray());
+                
                 // Вычисляем общую продолжительность просмотра видео
                 $totalMinutesWatched = $videos->sum(function ($video) {
                     return is_array($video->custom_properties) && isset($video->custom_properties[0]['duration'])
