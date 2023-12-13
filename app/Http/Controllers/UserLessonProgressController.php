@@ -50,14 +50,10 @@ class UserLessonProgressController extends Controller
             $dayEnd = $dayStart->copy()->endOfDay();
     
             $watchedInDay = $userProgress->filter(function ($progress) use ($dayStart, $dayEnd) {
-                return $progress->completed == 1 && Carbon::parse($progress->created_at)->between($dayStart, $dayEnd);
+                return $progress->completed === 1 && Carbon::parse($progress->created_at)->between($dayStart, $dayEnd);
             });
     
-            if ($watchedInDay->isEmpty()) {
-                // Если прогресса нет, пропускаем этот день
-                continue;
-            }
-            // dd($watchedInDay);
+            dd($watchedInDay);
     
             $lessonIds = $watchedInDay->pluck('lesson_id')->toArray();
     
