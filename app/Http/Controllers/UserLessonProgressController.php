@@ -66,9 +66,12 @@ class UserLessonProgressController extends Controller
         
             if (!empty($lessonIds)) {
                 $videos = Media::whereIn('model_id', $lessonIds)->get();
-
+            
                 // Вычисляем общую продолжительность просмотра видео
-                $totalMinutesWatched = $videos->sum('custom_properties');
+                $totalMinutesWatched = $videos->sum(function ($video) {
+                    // Предполагая, что 'custom_properties' содержит продолжительность видео в минутах
+                    return is_array($video->custom_properties) ? $video->custom_properties[0]['duration'] : 0;
+                });
             }
         
             $results[] = [
