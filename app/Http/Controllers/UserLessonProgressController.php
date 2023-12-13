@@ -48,40 +48,41 @@ class UserLessonProgressController extends Controller
         foreach ($daysOfWeek as $day) {
             $dayStart = $currentWeekStart->copy()->startOfDay()->addDays($day - 1);
             $dayEnd = $dayStart->copy()->endOfDay();
-    
+        
             $watchedInDay = $userProgress->filter(function ($progress) use ($dayStart, $dayEnd) {
                 $completed = (int)$progress->completed;
                 $progressDate = Carbon::parse($progress->created_at);
-    
+        
                 return $completed === 1 && $progressDate->between($dayStart, $dayEnd);
             });
-    
+        
             // Если вы хотите увидеть результат фильтрации для отладки
-            dd($watchedInDay->toArray());
-    
+            // dd($watchedInDay->toArray());
+        
             $lessonIds = $watchedInDay->pluck('lesson_id')->toArray();
-    
+        
             // Если нет просмотренных уроков, установите $totalMinutesWatched в 0
             $totalMinutesWatched = 0;
-    
+        
             if (!empty($lessonIds)) {
                 $totalMinutesWatched = Media::whereIn('model_id', $lessonIds)->sum('custom_properties');
             }
-    
+        
             $results[] = [
                 'day' => $day,
                 'total_minutes_watched' => $totalMinutesWatched,
             ];
         }
-    
+        
         $weekStartDate = $currentWeekStart->format('Y.m.d');
         $weekEndDate = $currentWeekStart->copy()->endOfWeek()->format('Y.m.d');
-    
+        
         $results[] = [
             'date_range' => $weekStartDate . ' - ' . $weekEndDate,
         ];
-    
+        
         return response()->json($results);
+        
     }
     
 }
