@@ -71,7 +71,7 @@ class UserLessonProgressController extends Controller
                 
                     // Проверим, есть ли информация о продолжительности
                     if (is_array($customProperties) && isset($customProperties['duration'])) {
-                        return (float)$customProperties['duration'];
+                        return (float)$customProperties['duration']/60;
                     }
                 
                     return 0;
