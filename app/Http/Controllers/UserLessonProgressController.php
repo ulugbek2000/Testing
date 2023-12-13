@@ -69,12 +69,9 @@ class UserLessonProgressController extends Controller
             
                 // Вычисляем общую продолжительность просмотра видео
                 $totalMinutesWatched = $videos->sum(function ($video) {
-                    // Предполагая, что 'custom_properties' содержит JSON-строку
-                    $customProperties = json_decode($video->custom_properties, true);
-            
-                    // Проверяем, что удалось декодировать JSON и что есть ключ 'duration'
-                    return is_array($customProperties) && isset($customProperties['duration'])
-                        ? (float)$customProperties['duration']
+                    // Предполагая, что 'custom_properties' содержит массив с информацией о продолжительности видео
+                    return is_array($video->custom_properties) && isset($video->custom_properties[0]['duration'])
+                        ? (float)$video->custom_properties[0]['duration']
                         : 0;
                 });
             }
