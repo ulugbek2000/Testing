@@ -54,7 +54,7 @@ class UserLessonProgressController extends Controller
             });
     
             // Если вы хотите увидеть результат фильтрации для отладки
-            // dd($watchedInDay->toArray());
+            dd($watchedInDay->toArray());
     
             $lessonIds = $watchedInDay->pluck('lesson_id')->toArray();
     
