@@ -43,7 +43,7 @@ class UserLessonProgressController extends Controller
         $currentWeekStart = Carbon::now()->startOfWeek();
     
         $results = [];
-        $daysOfWeek = [1, 2, 3, 4, 5, 6, 7]; // Числовые представления дней недели
+        $daysOfWeek = ['Понедельник','Вторник','Среда','Четверг','Пятница','Суббота','Воскресенье']; // Числовые представления дней недели
     
         foreach ($daysOfWeek as $day) {
             $dayStart = $currentWeekStart->copy()->startOfDay()->addDays($day - 1);
@@ -71,7 +71,7 @@ class UserLessonProgressController extends Controller
                 
                     // Проверим, есть ли информация о продолжительности
                     if (is_array($customProperties) && isset($customProperties['duration'])) {
-                        return (float)$customProperties['duration']/60;
+                        return (float)$customProperties['duration'];
                     }
                 
                     return 0;
