@@ -49,6 +49,7 @@ class UserLessonProgressController extends Controller
             $dayStart = $currentWeekStart->copy()->startOfDay()->addDays($day - 1);
             $dayEnd = $dayStart->copy()->endOfDay();
         
+            // Найдем все записи прогресса для пользователя в пределах конкретного дня
             $watchedInDay = $userProgress->filter(function ($progress) use ($dayStart, $dayEnd) {
                 $completed = (int)$progress->completed;
                 $progressDate = Carbon::parse($progress->created_at);
@@ -56,32 +57,33 @@ class UserLessonProgressController extends Controller
                 return $completed === 1 && $progressDate->between($dayStart, $dayEnd);
             });
         
-            // Если вы хотите увидеть результат фильтрации для отладки
-            // dd($watchedInDay->toArray());
-        
             $lessonIds = $watchedInDay->pluck('lesson_id')->toArray();
         
-            // Если нет просмотренных уроков, установите $totalMinutesWatched в 0
-            $totalMinutesWatched = 0;
-        
+            // Если есть просмотренные уроки в текущий день, вычисляем общую продолжительность
             if (!empty($lessonIds)) {
                 $videos = Media::whereIn('model_id', $lessonIds)->get();
-            
+        
                 // Вычисляем общую продолжительность просмотра видео
                 $totalMinutesWatched = $videos->sum(function ($video) {
-                    // Предполагая, что 'custom_properties' содержит массив с информацией о продолжительности видео
                     return is_array($video->custom_properties) && isset($video->custom_properties[0]['duration'])
                         ? (float)$video->custom_properties[0]['duration']
                         : 0;
                 });
+        
+                // Записываем результат для текущего дня
+                $results[] = [
+                    'day' => $day,
+                    'total_minutes_watched' => $totalMinutesWatched,
+                ];
+            } else {
+                // Если уроки не просматривались, записываем 0 для текущего дня
+                $results[] = [
+                    'day' => $day,
+                    'total_minutes_watched' => 0,
+                ];
             }
-        
-            $results[] = [
-                'day' => $day,
-                'total_minutes_watched' => $totalMinutesWatched,
-            ];
         }
-        
+                
         $weekStartDate = $currentWeekStart->format('Y.m.d');
         $weekEndDate = $currentWeekStart->copy()->endOfWeek()->format('Y.m.d');
         
