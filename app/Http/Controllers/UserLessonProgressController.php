@@ -35,30 +35,30 @@ class UserLessonProgressController extends Controller
         ]);
     }
 
-      public function showActivity()
+    public function showActivity()
     {
         $user = Auth::user();
         $userProgress = UserLessonsProgress::where('user_id', $user->id)->get();
-    
+
         $currentWeekStart = Carbon::now()->startOfWeek();
-    
+
         $results = [];
-        $daysOfWeek = [1 => 'Понедельник',2 => 'Вторник',3=> 'Среда',4=> 'Четверг',5=> 'Пятница',6=> 'Суббота',7=> 'Воскрасенье']; // Числовые представления дней недели
-    
+        $daysOfWeek = [1 => 'Понедельник', 2 => 'Вторник', 3 => 'Среда', 4 => 'Четверг', 5 => 'Пятница', 6 => 'Суббота', 7 => 'Воскрасенье']; // Числовые представления дней недели
+
         foreach ($daysOfWeek as $day) {
-            $dayStart = $currentWeekStart->copy()->startOfDay()->addDays($day-1);
+            $dayStart = $currentWeekStart->copy()->startOfDay()->next($day );
             $dayEnd = $dayStart->copy()->endOfDay();
-        
+
             // Найдем все записи прогресса для пользователя в пределах конкретного дня
             $watchedInDay = $userProgress->filter(function ($progress) use ($dayStart, $dayEnd) {
                 $completed = (int)$progress->completed;
                 $progressDate = Carbon::parse($progress->created_at);
-        
+
                 return $completed === 1 && $progressDate->between($dayStart, $dayEnd);
             });
-        
+
             $lessonIds = $watchedInDay->pluck('lesson_id')->toArray();
-        // dd($lessonIds);
+            // dd($lessonIds);
             // Если есть просмотренные уроки в текущий день, вычисляем общую продолжительность
             if (!empty($lessonIds)) {
                 $videos = Media::whereIn('model_id', $lessonIds)->get();
@@ -68,15 +68,15 @@ class UserLessonProgressController extends Controller
                 // Вычисляем общую продолжительность просмотра видео
                 $totalMinutesWatched = $videos->sum(function ($video) {
                     $customProperties = $video->custom_properties;
-                
+
                     // Проверим, есть ли информация о продолжительности
                     if (is_array($customProperties) && isset($customProperties['duration'])) {
                         return (float)$customProperties['duration'];
                     }
-                
+
                     return 0;
                 });
-        
+
                 // Записываем результат для текущего дня
                 $results[] = [
                     'day' => $day,
@@ -90,15 +90,14 @@ class UserLessonProgressController extends Controller
                 ];
             }
         }
-                
+
         $weekStartDate = $currentWeekStart->format('Y.m.d');
         $weekEndDate = $currentWeekStart->copy()->endOfWeek()->format('Y.m.d');
-        
+
         $results[] = [
             'date_range' => $weekStartDate . ' - ' . $weekEndDate,
         ];
-        
+
         return response()->json($results);
-        
     }
 }
