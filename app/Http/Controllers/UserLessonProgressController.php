@@ -43,10 +43,23 @@ class UserLessonProgressController extends Controller
         $currentWeekStart = Carbon::now()->startOfWeek();
 
         $results = [];
-        $daysOfWeek = [1, 2, 3, 4, 5, 6, 7]; // Числовые представления дней недели
+        // $daysOfWeek = [1, 2, 3, 4, 5, 6, 7];
+
+        // foreach ($daysOfWeek as $day) {
+        //     $dayStart = $currentWeekStart->copy()->startOfDay()->addDays($day - 1);
+        //     $dayEnd = $dayStart->copy()->endOfDay();
+
+        //     // Найдем все записи прогресса для пользователя в пределах конкретного дня
+        //     $watchedInDay = $userProgress->filter(function ($progress) use ($dayStart, $dayEnd) {
+        //         $completed = (int)$progress->completed;
+        //         $progressDate = Carbon::parse($progress->created_at);
+
+        //         return $completed === 1 && $progressDate->between($dayStart, $dayEnd);
+        //     });
+        $daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
         foreach ($daysOfWeek as $day) {
-            $dayStart = $currentWeekStart->copy()->startOfDay()->addDays($day - 1);
+            $dayStart = $currentWeekStart->copy()->startOfDay()->next($day);
             $dayEnd = $dayStart->copy()->endOfDay();
 
             // Найдем все записи прогресса для пользователя в пределах конкретного дня
@@ -56,6 +69,7 @@ class UserLessonProgressController extends Controller
 
                 return $completed === 1 && $progressDate->between($dayStart, $dayEnd);
             });
+
 
             $lessonIds = $watchedInDay->pluck('lesson_id')->toArray();
             // dd($lessonIds);
