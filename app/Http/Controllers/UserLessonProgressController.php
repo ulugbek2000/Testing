@@ -68,8 +68,12 @@ class UserLessonProgressController extends Controller
             
                 $dayEnd = $dayStart->copy()->endOfDay();
             
-                // Ваш дальнейший код обработки данных
-            }
+                        $watchedInDay = $userProgress->filter(function ($progress) use ($dayStart, $dayEnd) {
+                $completed = (int)$progress->completed;
+                $progressDate = Carbon::parse($progress->created_at);
+
+                return $completed === 1 && $progressDate->between($dayStart, $dayEnd);
+             });
 
 
             $lessonIds = $watchedInDay->pluck('lesson_id')->toArray();
@@ -115,4 +119,5 @@ class UserLessonProgressController extends Controller
 
         return response()->json($results);
     }
+
 }
