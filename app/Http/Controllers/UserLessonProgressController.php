@@ -43,52 +43,33 @@ class UserLessonProgressController extends Controller
         $currentWeekStart = Carbon::now()->startOfWeek();
 
         $results = [];
-        // $daysOfWeek = [1, 2, 3, 4, 5, 6, 7];
+        $daysOfWeek = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье'];
 
-        // foreach ($daysOfWeek as $day) {
-        //     $dayStart = $currentWeekStart->copy()->startOfDay()->addDays($day - 1);
-        //     $dayEnd = $dayStart->copy()->endOfDay();
+        foreach ($daysOfWeek as $day) {
+            $dayStart = $currentWeekStart->copy()->startOfDay();
 
-        //     // Найдем все записи прогресса для пользователя в пределах конкретного дня
-        //     $watchedInDay = $userProgress->filter(function ($progress) use ($dayStart, $dayEnd) {
-        //         $completed = (int)$progress->completed;
-        //         $progressDate = Carbon::parse($progress->created_at);
+            // Ищем следующий день недели
+            while ($dayStart->format('l') !== $day) {
+                $dayStart->addDay();
+            }
 
-        //         return $completed === 1 && $progressDate->between($dayStart, $dayEnd);
-        //     });
-            $daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+            $dayEnd = $dayStart->copy()->endOfDay();
 
-            foreach ($daysOfWeek as $day) {
-                $dayStart = $currentWeekStart->copy()->startOfDay();
-                
-                // Ищем следующий день недели
-                while ($dayStart->format('l') !== $day) {
-                    $dayStart->addDay();
-                }
-            
-                $dayEnd = $dayStart->copy()->endOfDay();
-            
-                        $watchedInDay = $userProgress->filter(function ($progress) use ($dayStart, $dayEnd) {
+            $watchedInDay = $userProgress->filter(function ($progress) use ($dayStart, $dayEnd) {
                 $completed = (int)$progress->completed;
                 $progressDate = Carbon::parse($progress->created_at);
 
                 return $completed === 1 && $progressDate->between($dayStart, $dayEnd);
-             });
+            });
 
 
             $lessonIds = $watchedInDay->pluck('lesson_id')->toArray();
-            // dd($lessonIds);
-            // Если есть просмотренные уроки в текущий день, вычисляем общую продолжительность
             if (!empty($lessonIds)) {
                 $videos = Media::whereIn('model_id', $lessonIds)->get();
-
-                // dd($videos->toArray());
-
-                // Вычисляем общую продолжительность просмотра видео
+dd($videos);
                 $totalMinutesWatched = $videos->sum(function ($video) {
                     $customProperties = $video->custom_properties;
 
-                    // Проверим, есть ли информация о продолжительности
                     if (is_array($customProperties) && isset($customProperties['duration'])) {
                         return (float)$customProperties['duration'];
                     }
@@ -96,13 +77,11 @@ class UserLessonProgressController extends Controller
                     return 0;
                 });
 
-                // Записываем результат для текущего дня
                 $results[] = [
                     'day' => $day,
                     'total_minutes_watched' => $totalMinutesWatched,
                 ];
             } else {
-                // Если уроки не просматривались, записываем 0 для текущего дня
                 $results[] = [
                     'day' => $day,
                     'total_minutes_watched' => 0,
@@ -119,5 +98,4 @@ class UserLessonProgressController extends Controller
 
         return response()->json($results);
     }
-
 }
