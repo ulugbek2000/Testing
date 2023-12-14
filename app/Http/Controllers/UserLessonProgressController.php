@@ -39,8 +39,9 @@ class UserLessonProgressController extends Controller
     {
         $user = Auth::user();
         $userProgress = UserLessonsProgress::where('user_id', $user->id)->get();
-        dd($userProgress);
-        // $currentWeekStart = Carbon::now()->startOfWeek();
+        // dd($userProgress);
+        $currentWeekStart = Carbon::now()->startOfWeek();
+        dd($currentWeekStart);
     
         $results = [];
         $daysOfWeek = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье'];
