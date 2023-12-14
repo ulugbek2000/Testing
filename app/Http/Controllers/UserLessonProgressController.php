@@ -34,53 +34,46 @@ class UserLessonProgressController extends Controller
             'progress_percentage' => $progressPercentage,
         ]);
     }
+    
     public function showActivity()
     {
         $user = Auth::user();
-    
+        $userProgress = UserLessonsProgress::where('user_id', $user->id)->get();
+        dd()
         $currentWeekStart = Carbon::now()->startOfWeek();
-        $currentWeekEnd = Carbon::now()->endOfWeek();
-    
-        // Получить список просмотренных уроков за неделю
-        $watchedLessons = UserLessonsProgress::where('user_id', $user->id)
-            ->whereDate('created_at', '>=', $currentWeekStart)
-            ->whereDate('created_at', '<=', $currentWeekEnd)
-            ->get();
-    
-        // Сгруппировать уроки по дням недели
-        $watchedLessonsByDay = $watchedLessons->groupBy(function ($lesson) {
-            return Carbon::createFromFormat('Y-m-d H:i:s', $lesson->created_at)->dayOfWeek;
-        });
     
         $results = [];
-
-        // Итерируем с понедельника по воскресенье
-        for ($day = Carbon::MONDAY; $day <= Carbon::SUNDAY; $day++) {
-            $dayName = Carbon::createFromFormat('Y-m-d H:i:s', $currentWeekStart)->startOfWeek()->addDays($day)->format('Y-m-d');
-        
-            $totalMinutesWatched = $watchedLessons->filter(function ($lesson) use ($dayName) {
-                return Carbon::createFromFormat('Y-m-d H:i:s', $lesson->created_at)->isSameDay($dayName);
-            })->sum(function ($lesson) {
-                return optional($lesson->media)->custom_properties ?? 0;
+        $daysOfWeek = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье'];
+        // Итерируем по дням недели
+        foreach ($daysOfWeek as $day) {
+            $dayStart = $currentWeekStart->copy()->day($day);
+            $dayEnd = $dayStart->copy()->endOfDay();
+    
+            // Фильтруем прогресс для текущего дня
+            $watchedInDay = $userProgress->filter(function ($progress) use ($dayStart, $dayEnd) {
+                return $progress->completed == 1 && Carbon::parse($progress->created_at)->between($dayStart, $dayEnd);
             });
-        
+    
+            // Получаем ID уроков
+            $lessonIds = $watchedInDay->pluck('lesson_id')->toArray();
+    
+            // Считаем общую продолжительность просмотренных уроков
+            $totalMinutesWatched = Lesson::whereIn('id', $lessonIds)->sum('duration');
+    
+            // Добавляем результаты для текущего дня в массив
             $results[] = [
                 'day' => $day,
                 'total_minutes_watched' => $totalMinutesWatched,
             ];
         }
-        
+    
+        // Рассчитываем и добавляем данные недели
+        $weekStartDate = $currentWeekStart->format('Y.m.d');
+        $weekEndDate = $currentWeekStart->copy()->endOfWeek()->format('Y.m.d');
         $results[] = [
-            'date_range' => $currentWeekStart->format('Y.m.d') . ' - ' . $currentWeekEnd->format('Y.m.d'),
-            'total_minutes_watched' => $watchedLessons->sum(function ($lesson) {
-                return optional($lesson->media)->custom_properties ?? 0;
-            }),
+            'date_range' => $weekStartDate . ' - ' . $weekEndDate,
         ];
-        
-        // Преобразуем результат в нужный формат, например, в JSON
-        // $jsonResult = json_encode($results, JSON_PRETTY_PRINT);
-        
-        // Отправляем результат
+    
         return response()->json($results);
     }
     
