@@ -56,19 +56,20 @@ class UserLessonProgressController extends Controller
 
         //         return $completed === 1 && $progressDate->between($dayStart, $dayEnd);
         //     });
-        $daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+            $daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
-        foreach ($daysOfWeek as $day) {
-            $dayStart = $currentWeekStart->copy()->startOfDay()->next($day);
-            $dayEnd = $dayStart->copy()->endOfDay();
-
-            // Найдем все записи прогресса для пользователя в пределах конкретного дня
-            $watchedInDay = $userProgress->filter(function ($progress) use ($dayStart, $dayEnd) {
-                $completed = (int)$progress->completed;
-                $progressDate = Carbon::parse($progress->created_at);
-
-                return $completed === 1 && $progressDate->between($dayStart, $dayEnd);
-            });
+            foreach ($daysOfWeek as $day) {
+                $dayStart = $currentWeekStart->copy()->startOfDay();
+                
+                // Ищем следующий день недели
+                while ($dayStart->format('l') !== $day) {
+                    $dayStart->addDay();
+                }
+            
+                $dayEnd = $dayStart->copy()->endOfDay();
+            
+                // Ваш дальнейший код обработки данных
+            }
 
 
             $lessonIds = $watchedInDay->pluck('lesson_id')->toArray();
