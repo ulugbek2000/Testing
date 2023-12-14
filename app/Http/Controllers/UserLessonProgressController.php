@@ -66,7 +66,7 @@ class UserLessonProgressController extends Controller
             $lessonIds = $watchedInDay->pluck('lesson_id')->toArray();
             if (!empty($lessonIds)) {
                 $videos = Media::whereIn('model_id', $lessonIds)->get();
-dd($videos);
+// dd($videos);
                 $totalMinutesWatched = $videos->sum(function ($video) {
                     $customProperties = $video->custom_properties;
 
