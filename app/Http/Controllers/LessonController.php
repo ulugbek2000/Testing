@@ -48,26 +48,32 @@ class LessonController extends Controller
 
                 if ($lesson->hasMedia('content')) {
                     $mediaData = DB::table('media')
-                        ->where('model_type', '=', 'App\\Models\\Lesson') 
+                        ->where('model_type', '=', 'App\\Models\\Lesson')
                         ->where('model_id', '=', $lesson->id)
-                        ->select('id', 'custom_properties', )
+                        ->select('id', 'custom_properties',)
                         ->get();
                 }
 
-                // $duration = $media ? $media->getCustomProperty('duration') : null;
+                $firstLesson = $lessons->first();
 
-                $data[] = [
-                    'id' => $lesson->id,
-                    'name' => $lesson->name,
-                    
-                    // 'media' => [$mediaData], 
+                // Подготавливаем данные для первого урока
+                $data = [
+                    'id' => $firstLesson->id,
+                    'name' => $firstLesson->name,
                 ];
+
+                // Для остальных уроков показываем частичную информацию
+                $otherLessons = $lessons->slice(1)->map(function ($lesson) {
+                    return [
+                        'id' => $lesson->id,
+                        'name' => $lesson->name,
+                    ];
+                });
+
+                return response()->json(['data' => array_merge([$data], $otherLessons->toArray())]);
             }
         }
-
-        return response()->json(['data' => $data]);
     }
-
     /**
      * Store a newly created resource in storage.
      */
@@ -199,7 +205,7 @@ class LessonController extends Controller
 
                     $localPath = storage_path("app/public/{$contentPath}");
                     $durationInSeconds = $ffmpeg->format($localPath)->get('duration');
-                    
+
                     $lesson->content = $media->getUrl();
                     // Set custom property on the media, not on the lesson
                     $media->setCustomProperty('duration', $durationInSeconds)->save();
