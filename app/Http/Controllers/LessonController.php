@@ -25,10 +25,6 @@ use App\Models\Media;
 
 class LessonController extends Controller
 {
-
-    /**
-     * Display a listing of the resource.
-     */
     public function index(Topic $topic)
     {
         $lessons = $topic->lessons;
@@ -46,54 +42,28 @@ class LessonController extends Controller
         $data = [];
     
         if ($lessons->isNotEmpty()) {
-            $firstLesson = $lessons->first();
+            foreach ($lessons as $lesson) {
+                $mediaData = [];
     
-            if ($firstLesson && $firstLesson->hasMedia('content')) {
-                $media = $firstLesson->getFirstMedia('content');
-                $mediaData = [
-                    'id' => $media->id,
-                    'custom_properties' => $media->custom_properties,
-                    'original_url' => $media->original_url,
-                ];
+                if ($lesson->hasMedia('content')) {
+                    $media = $lesson->getFirstMedia('content');
+                    $mediaData = [
+                        'id' => $media->id,
+                        'custom_properties' => $media->custom_properties,
+                        'original_url' => $media->original_url,
+                    ];
+                }
     
-                $data = [
-                    'id' => $firstLesson->id,
-                    'name' => $firstLesson->name,
-                    'topic_id' => $firstLesson->topic_id,
-                    'cover' => $firstLesson->cover,
-                    'content' => $firstLesson->content,
-                    'type' => $firstLesson->type,
-                    'media' => [$mediaData], // Include only the required media fields
-                ];
-    
-                return response()->json(['data' => [$data]]);
-            }
-    
-            $data[] = [
-                'id' => $firstLesson->id,
-                'name' => $firstLesson->name,
-                'topic_id' => $firstLesson->topic_id,
-                'cover' => $firstLesson->cover,
-                'content' => $firstLesson->content,
-                'type' => $firstLesson->type,
-            ];
-    
-            // Add information about other lessons
-            foreach ($lessons->slice(1) as $lesson) {
-                $media = $lesson->getFirstMedia('content');
                 $duration = $media ? $media->getCustomProperty('duration') : null;
-    
-                // Include only the required media fields
-                $mediaData = [
-                    'id' => $media->id,
-                    'custom_properties' => $media->custom_properties,
-                    'original_url' => $media->original_url,
-                ];
     
                 $data[] = [
                     'id' => $lesson->id,
                     'name' => $lesson->name,
                     'duration' => $duration,
+                    'topic_id' => $lesson->topic_id,
+                    'cover' => $lesson->cover,
+                    'content' => $lesson->content,
+                    'type' => $lesson->type,
                     'media' => [$mediaData], // Include only the required media fields
                 ];
             }
@@ -101,7 +71,7 @@ class LessonController extends Controller
     
         return response()->json(['data' => $data]);
     }
-
+    
     /**
      * Store a newly created resource in storage.
      */
