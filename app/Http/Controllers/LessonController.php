@@ -47,12 +47,11 @@ class LessonController extends Controller
                 $mediaData = [];
 
                 if ($lesson->hasMedia('content')) {
-                    $mediaData = DB::table('media as m')
-                        ->join('lessons as l', 'm.model_id', '=', 'l.id') 
-                        ->where('l.id', '=', $lesson->id) 
-                        ->select('m.id', 'm.original_url', 'm.custom_properties')
+                    $mediaData = DB::table('media')
+                        ->where('model_type', '=', 'App\\Models\\Lesson') // Уточните, если это необходимо
+                        ->where('model_id', '=', $lesson->id)
+                        ->select('id', 'custom_properties', 'original_url')
                         ->get();
-                        dd($mediaData);
                 }
 
                 // $duration = $media ? $media->getCustomProperty('duration') : null;
