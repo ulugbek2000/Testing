@@ -29,33 +29,33 @@ class LessonController extends Controller
     {
         $lessons = $topic->lessons;
         $user = Auth::user();
-    
+
         if (Auth::check()) {
             $isAdmin = $user->hasRole(UserType::Admin);
             $isSubscribed = $user->isSubscribed($topic->course);
-    
+
             if ($isAdmin || $isSubscribed) {
                 return response()->json(['data' => $lessons]);
             }
         }
-    
+
         $data = [];
-    
+
         if ($lessons->isNotEmpty()) {
             foreach ($lessons as $lesson) {
                 $mediaData = [];
-    
+
                 if ($lesson->hasMedia('content')) {
                     $media = $lesson->getFirstMedia('content');
+                    dd($media); 
                     $mediaData = [
-                        'id' => $media->id,
                         'custom_properties' => $media->custom_properties,
-                        'original_url' => $media->original_url,
+                        'original_url' => $media->original_url
                     ];
                 }
-    
+
                 $duration = $media ? $media->getCustomProperty('duration') : null;
-    
+
                 $data[] = [
                     'id' => $lesson->id,
                     'name' => $lesson->name,
@@ -68,10 +68,10 @@ class LessonController extends Controller
                 ];
             }
         }
-    
+
         return response()->json(['data' => $data]);
     }
-    
+
     /**
      * Store a newly created resource in storage.
      */
