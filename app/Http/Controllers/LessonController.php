@@ -48,7 +48,7 @@ class LessonController extends Controller
 
                 if ($lesson->hasMedia('content')) {
                     $mediaData = DB::table('media')
-                        ->where('model_type', '=', 'App\\Models\\Lesson') // Уточните, если это необходимо
+                        ->where('model_type', '=', 'App\\Models\\Lesson') 
                         ->where('model_id', '=', $lesson->id)
                         ->select('id', 'custom_properties', )
                         ->get();
@@ -59,12 +59,8 @@ class LessonController extends Controller
                 $data[] = [
                     'id' => $lesson->id,
                     'name' => $lesson->name,
-                    // 'duration' => $duration,
-                    'topic_id' => $lesson->topic_id,
-                    'cover' => $lesson->cover,
-                    'content' => $lesson->content,
-                    'type' => $lesson->type,
-                    'media' => [$mediaData], 
+                    
+                    // 'media' => [$mediaData], 
                 ];
             }
         }
@@ -113,7 +109,7 @@ class LessonController extends Controller
 
             $media->setCustomProperty('duration', $durationInSeconds)->save();
             $lesson->content = $media->getUrl();
-            $lesson->duration = $media->custom_properties;
+            // $lesson->duration = $media->custom_properties;
         }
 
         $lesson->save();
@@ -203,7 +199,8 @@ class LessonController extends Controller
 
                     $localPath = storage_path("app/public/{$contentPath}");
                     $durationInSeconds = $ffmpeg->format($localPath)->get('duration');
-
+                    
+                    $lesson->content = $media->getUrl();
                     // Set custom property on the media, not on the lesson
                     $media->setCustomProperty('duration', $durationInSeconds)->save();
                 }
