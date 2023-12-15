@@ -32,7 +32,7 @@ class LessonController extends Controller
     public function index(Topic $topic)
     {
         $lessons = $topic->lessons;
-        
+        dd( $isAdmin = Auth::user()->hasRole('Admin'));
         if (Auth::check()) {
             // Check if the user is an administrator or subscribed to the course
            dd( $isAdmin = Auth::user()->hasRole('Admin'));
