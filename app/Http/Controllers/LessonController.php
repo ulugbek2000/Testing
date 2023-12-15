@@ -49,17 +49,33 @@ class LessonController extends Controller
         if ($topic->lessons->isNotEmpty()) {
             $firstLesson = $lessons->first();
 
-            if ($firstLesson->hasMedia('content')) {
+            if ($firstLesson && $firstLesson->hasMedia('content')) {
                 $media = $firstLesson->getFirstMedia('content');
-                $duration = $media ? $media->getCustomProperty('duration') : null;
-            } else {
-                $duration = null;
+                $mediaData = [
+                    'id' => $media->id,
+                    'custom_properties' => $media->custom_properties,
+                    'original_url' => $media->original_url,
+                ];
+        
+                // Добавьте $mediaData в ваш ответ вместо $media
+                $data = [
+                    'id' => $firstLesson->id,
+                    'name' => $firstLesson->name,
+                    // 'duration' => $duration,
+                    'topic_id' => $firstLesson->topic_id,
+                    'cover' => $firstLesson->cover,
+                    'content' => $firstLesson->content,
+                    'type' => $firstLesson->type,
+                    'media' => $mediaData,
+                ];
+        
+                return response()->json(['data' => [$data]]);
             }
 
             $data[] = [
                 'id' => $firstLesson->id,
                 'name' => $firstLesson->name,
-                'duration' => $duration,
+                // 'duration' => $duration,
                 'topic_id' => $firstLesson->topic_id,
                 'cover' => $firstLesson->cover,
                 'content' => $firstLesson->content,
@@ -70,7 +86,6 @@ class LessonController extends Controller
             // Добавляем информацию о других уроках
             foreach ($lessons->slice(1) as $lesson) {
                 $media = $lesson->getFirstMedia('content');
-                dd($media);
                 $duration = $media ? $media->getCustomProperty('duration') : null;
 
                 $data[] = [
