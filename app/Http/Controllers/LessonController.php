@@ -60,6 +60,10 @@ class LessonController extends Controller
                 $data = [
                     'id' => $firstLesson->id,
                     'name' => $firstLesson->name,
+                    'topic_id' => $firstLesson->topic_id,
+                    'cover' => $firstLesson->cover,
+                    'content' => $firstLesson->content,
+                    'type' => $firstLesson->type,
                 ];
 
                 // Для остальных уроков показываем частичную информацию
