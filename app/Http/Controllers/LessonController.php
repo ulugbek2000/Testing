@@ -50,7 +50,7 @@ class LessonController extends Controller
                     $mediaData = DB::table('media')
                         ->where('model_type', '=', 'App\\Models\\Lesson') // Уточните, если это необходимо
                         ->where('model_id', '=', $lesson->id)
-                        ->select('id', 'custom_properties', 'original_url')
+                        ->select('id', 'custom_properties', )
                         ->get();
                 }
 
