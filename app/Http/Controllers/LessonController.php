@@ -41,6 +41,7 @@ class LessonController extends Controller
 
             foreach ($lessons as $lesson) {
                 $media = $lesson->getFirstMedia('content');
+                dd($media);
                 $duration = $media ? $media->getCustomProperty('duration') : null;
 
                 $data[] = [
@@ -139,7 +140,7 @@ class LessonController extends Controller
                 'updated_at' => $lesson->updated_at,
                 'deleted_at' => $lesson->deleted_at,
             ];
-            return response()->json($data);
+            return response()->json(['data' => $data]);
         }
 
         return abort(403);
