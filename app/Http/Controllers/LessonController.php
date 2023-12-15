@@ -53,8 +53,12 @@ class LessonController extends Controller
                 'id' => $firstLesson->id,
                 'name' => $firstLesson->name,
                 'duration' => $duration,
+                'topic_id' => $firstLesson->topic_id,
+                'cover' => $firstLesson->cover,
+                'content' => $firstLesson->content,
+                'type' => $firstLesson->type,
             ];
-            dd($data);
+            // dd($data);
     
             // Добавляем информацию о других уроках
             foreach ($lessons->slice(1) as $lesson) {
