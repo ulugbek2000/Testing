@@ -54,19 +54,23 @@ class LessonController extends Controller
                 'name' => $firstLesson->name,
                 'duration' => $duration,
             ];
-    $duration1 = new Media();
-            // Добавляем информацию о других уроках без деталей медиа-файлов
+    
+            // Добавляем информацию о других уроках
             foreach ($lessons->slice(1) as $lesson) {
+                $media = $lesson->getFirstMedia('content');
+                $duration = $media ? $media->getCustomProperty('duration') : null;
+    
                 $data[] = [
                     'id' => $lesson->id,
                     'name' => $lesson->name,
-                    'duration' => $duration1->custom_properties,
+                    'duration' => $duration,
                 ];
             }
         }
     
         return response()->json(['data' => $data]);
     }
+    
     
 
     /**
