@@ -82,7 +82,7 @@ class LessonController extends Controller
             foreach ($lessons->slice(1) as $lesson) {
                 $media = $lesson->getFirstMedia('content');
                 $duration = $media ? $media->getCustomProperty('duration') : null;
-dd($duration,$media);
+// dd($duration,$media);
                 $data[] = [
                     'id' => $lesson->id,
                     'name' => $lesson->name,
