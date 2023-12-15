@@ -32,7 +32,11 @@ class LessonController extends Controller
     public function index(Topic $topic)
     {
         $lessons = $topic->lessons;
-        $user = new  User();
+        $user = Auth::user();
+
+    // Check if the user is an administrator or subscribed to the course
+    $isAdmin = $user->hasRole(UserType::Admin);
+    $isSubscribed = $user->isSubscribed($topic->course);
         if (Auth::check()) {
             // Check if the user is an administrator or subscribed to the course
             $isAdmin = $user->hasRole(UserType::Admin);
