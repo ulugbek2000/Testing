@@ -34,14 +34,14 @@ class LessonController extends Controller
         $lessons = $topic->lessons;
         $user = Auth::user();
 
-    // Check if the user is an administrator or subscribed to the course
-    $isAdmin = $user->hasRole(UserType::Admin);
-    $isSubscribed = $user->isSubscribed($topic->course);
+        // Check if the user is an administrator or subscribed to the course
+
         if (Auth::check()) {
-            // Check if the user is an administrator or subscribed to the course
+
             $isAdmin = $user->hasRole(UserType::Admin);
-            $isSubscribed = Auth::user()->isSubscribed($topic->course);
-            dd($isAdmin, $isSubscribed);
+            $isSubscribed = $user->isSubscribed($topic->course);
+
+            // dd($isAdmin, $isSubscribed);
             if ($isAdmin || $isSubscribed) {
                 // Return all lessons if admin or subscribed
                 $lessons = $topic->lessons;
