@@ -32,9 +32,17 @@ class LessonController extends Controller
     public function index(Topic $topic)
     {
         $lessons = $topic->lessons;
-        dd(Auth::check() && Auth::user()->hasRole('Admin') || Auth::user()->isSubscribed($topic->course));
-        if (Auth::check() && Auth::user()->hasRole('Admin') || Auth::user()->isSubscribed($topic->course)) {
-            return response()->json(['data' => $lessons]);
+        
+        if (Auth::check()) {
+            // Check if the user is an administrator or subscribed to the course
+            $isAdmin = Auth::user()->hasRole('Admin');
+            $isSubscribed = Auth::user()->isSubscribed($topic->course);
+    dd($isAdmin,$isSubscribed);
+            if ($isAdmin || $isSubscribed) {
+                // Return all lessons if admin or subscribed
+                $lessons = $topic->lessons;
+                return response()->json(['data' => $lessons]);
+            }
         }
         $data = [];
 
