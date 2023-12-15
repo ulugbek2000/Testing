@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Enums\LessonTypes;
 use App\Enums\UserType;
 use App\Models\Lesson;
+use App\Models\Media as ModelsMedia;
 use App\Models\Topic;
 use App\Models\User;
 use Illuminate\Support\Facades\Validator;
@@ -20,7 +21,7 @@ use FFMpeg\FFMpeg;
 use FFMpeg\Coordinate\TimeCode;
 use getID3;
 use Illuminate\Support\Facades\Log;
-use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use App\Models\Media;
 
 class LessonController extends Controller
 {
@@ -53,13 +54,13 @@ class LessonController extends Controller
                 'name' => $firstLesson->name,
                 'duration' => $duration,
             ];
-    
+    $duration1 = new Media();
             // Добавляем информацию о других уроках без деталей медиа-файлов
             foreach ($lessons->slice(1) as $lesson) {
                 $data[] = [
                     'id' => $lesson->id,
                     'name' => $lesson->name,
-                    'duration' => $media->custom_properties,
+                    'duration' => $duration1->custom_properties,
                 ];
             }
         }
