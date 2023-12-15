@@ -33,22 +33,21 @@ class LessonController extends Controller
     {
         $lessons = $topic->lessons;
         $user = Auth::user();
-
+    
         if (Auth::check()) {
-
             $isAdmin = $user->hasRole(UserType::Admin);
             $isSubscribed = $user->isSubscribed($topic->course);
-
+    
             if ($isAdmin || $isSubscribed) {
-                $lessons = $topic->lessons;
                 return response()->json(['data' => $lessons]);
             }
         }
+    
         $data = [];
-
-        if ($topic->lessons->isNotEmpty()) {
+    
+        if ($lessons->isNotEmpty()) {
             $firstLesson = $lessons->first();
-
+    
             if ($firstLesson && $firstLesson->hasMedia('content')) {
                 $media = $firstLesson->getFirstMedia('content');
                 $mediaData = [
@@ -56,38 +55,34 @@ class LessonController extends Controller
                     'custom_properties' => $media->custom_properties,
                     'original_url' => $media->original_url,
                 ];
-        
-                // Добавьте $mediaData в ваш ответ вместо $media
+    
                 $data = [
                     'id' => $firstLesson->id,
                     'name' => $firstLesson->name,
-                    // 'duration' => $duration,
                     'topic_id' => $firstLesson->topic_id,
                     'cover' => $firstLesson->cover,
                     'content' => $firstLesson->content,
                     'type' => $firstLesson->type,
                     'media' => $mediaData,
                 ];
-        
+    
                 return response()->json(['data' => [$data]]);
             }
-
+    
             $data[] = [
                 'id' => $firstLesson->id,
                 'name' => $firstLesson->name,
-                // 'duration' => $duration,
                 'topic_id' => $firstLesson->topic_id,
                 'cover' => $firstLesson->cover,
                 'content' => $firstLesson->content,
                 'type' => $firstLesson->type,
             ];
-            // dd($data);
-
+    
             // Добавляем информацию о других уроках
             foreach ($lessons->slice(1) as $lesson) {
                 $media = $lesson->getFirstMedia('content');
                 $duration = $media ? $media->getCustomProperty('duration') : null;
-
+    
                 $data[] = [
                     'id' => $lesson->id,
                     'name' => $lesson->name,
@@ -95,9 +90,10 @@ class LessonController extends Controller
                 ];
             }
         }
-
+    
         return response()->json(['data' => $data]);
     }
+    
 
     /**
      * Store a newly created resource in storage.
