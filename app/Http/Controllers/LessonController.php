@@ -35,7 +35,7 @@ class LessonController extends Controller
 
 
         $isAdmin = Auth::check() && Auth::user()->isAdmin();
-
+dd($isAdmin);
         if ($isAdmin || (Auth::check() && Auth::user()->isSubscribed($topic->course))) {
             return response()->json(['data' => $lessons]);
         }
