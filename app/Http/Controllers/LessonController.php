@@ -31,35 +31,42 @@ class LessonController extends Controller
     public function index(Topic $topic)
     {
         $lessons = $topic->lessons;
-        // dd($topic->lessons->isNotEmpty());
-        if (Auth::check() && Auth::user()->isSubscribed($topic->course)) {
-            return response()->json($lessons);
+    
+        if (Auth::check() && Auth::user()->isSubscribed($topic->course)) {    
+            return response()->json(['data' => $lessons]);
         }
-
+    
+        $data = [];
+    
         if ($topic->lessons->isNotEmpty()) {
-            $data = [];
-
-            foreach ($lessons as $lesson) {
-                if ($lesson->hasMedia('content')) {
-                    $media = $lesson->getFirstMedia('content');
-                //  dd($media);
-              
-               
-        
+            $firstLesson = $lessons->first();
+    
+            if ($firstLesson->hasMedia('content')) {
+                $media = $firstLesson->getFirstMedia('content');
                 $duration = $media ? $media->getCustomProperty('duration') : null;
-
+            } else {
+                $duration = null;
+            }
+    
+            $data[] = [
+                'id' => $firstLesson->id,
+                'name' => $firstLesson->name,
+                'duration' => $duration,
+            ];
+    
+            // Добавляем информацию о других уроках без деталей медиа-файлов
+            foreach ($lessons->slice(1) as $lesson) {
                 $data[] = [
                     'id' => $lesson->id,
                     'name' => $lesson->name,
-                    'duration' => $duration,
+                    'duration' => $media->custom_properties,
                 ];
             }
         }
-            return response()->json(['data' => $data]);
-        } else {
-            return response()->json([]);
-        }
+    
+        return response()->json(['data' => $data]);
     }
+    
 
     /**
      * Store a newly created resource in storage.
