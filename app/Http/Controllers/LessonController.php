@@ -42,8 +42,9 @@ class LessonController extends Controller
             foreach ($lessons as $lesson) {
                 if ($lesson->hasMedia('content')) {
                     $media = $lesson->getFirstMedia('content');
+                    dd($media);
                 }
-                dd($media);
+               
         
                 $duration = $media ? $media->getCustomProperty('duration') : null;
 
