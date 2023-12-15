@@ -32,23 +32,23 @@ class LessonController extends Controller
     public function index(Topic $topic)
     {
         $lessons = $topic->lessons;
-    
-        if (Auth::check() && Auth::user()->isSubscribed($topic->course) or UserType::Admin) {    
+
+        if (Auth::check() && (Auth::user()->isSubscribed($topic->course) || Auth::user()->userType == UserType::Admin)) {
             return response()->json(['data' => $lessons]);
         }
-    
+
         $data = [];
-    
+
         if ($topic->lessons->isNotEmpty()) {
             $firstLesson = $lessons->first();
-    
+
             if ($firstLesson->hasMedia('content')) {
                 $media = $firstLesson->getFirstMedia('content');
                 $duration = $media ? $media->getCustomProperty('duration') : null;
             } else {
                 $duration = null;
             }
-    
+
             $data[] = [
                 'id' => $firstLesson->id,
                 'name' => $firstLesson->name,
@@ -59,12 +59,12 @@ class LessonController extends Controller
                 'type' => $firstLesson->type,
             ];
             // dd($data);
-    
+
             // Добавляем информацию о других уроках
             foreach ($lessons->slice(1) as $lesson) {
                 $media = $lesson->getFirstMedia('content');
                 $duration = $media ? $media->getCustomProperty('duration') : null;
-    
+
                 $data[] = [
                     'id' => $lesson->id,
                     'name' => $lesson->name,
@@ -72,11 +72,9 @@ class LessonController extends Controller
                 ];
             }
         }
-    
+
         return response()->json(['data' => $data]);
     }
-    
-    
 
     /**
      * Store a newly created resource in storage.
