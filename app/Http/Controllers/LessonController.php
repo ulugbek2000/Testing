@@ -34,16 +34,12 @@ class LessonController extends Controller
         $lessons = $topic->lessons;
         $user = Auth::user();
 
-        // Check if the user is an administrator or subscribed to the course
-
         if (Auth::check()) {
 
             $isAdmin = $user->hasRole(UserType::Admin);
             $isSubscribed = $user->isSubscribed($topic->course);
 
-            // dd($isAdmin, $isSubscribed);
             if ($isAdmin || $isSubscribed) {
-                // Return all lessons if admin or subscribed
                 $lessons = $topic->lessons;
                 return response()->json(['data' => $lessons]);
             }
@@ -74,6 +70,7 @@ class LessonController extends Controller
             // Добавляем информацию о других уроках
             foreach ($lessons->slice(1) as $lesson) {
                 $media = $lesson->getFirstMedia('content');
+                dd($media);
                 $duration = $media ? $media->getCustomProperty('duration') : null;
 
                 $data[] = [
