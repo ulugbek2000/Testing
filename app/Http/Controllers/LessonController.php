@@ -31,7 +31,7 @@ class LessonController extends Controller
     public function index(Topic $topic)
     {
         $lessons = $topic->lessons;
-        dd($topic->lessons->isNotEmpty());
+        // dd($topic->lessons->isNotEmpty());
         if (Auth::check() && Auth::user()->isSubscribed($topic->course)) {
             return response()->json($lessons);
         }
@@ -40,7 +40,8 @@ class LessonController extends Controller
             $data = [];
 
             foreach ($lessons as $lesson) {
-                $media = $lesson->getFirstMedia('content');
+                if ($lesson->hasMedia('content')) {
+                    $media = $lesson->getFirstMedia('content');
                 dd($media);
                 $duration = $media ? $media->getCustomProperty('duration') : null;
 
