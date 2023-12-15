@@ -22,6 +22,7 @@ use FFMpeg\Coordinate\TimeCode;
 use getID3;
 use Illuminate\Support\Facades\Log;
 use App\Models\Media;
+use Illuminate\Support\Facades\DB;
 
 class LessonController extends Controller
 {
@@ -46,25 +47,24 @@ class LessonController extends Controller
                 $mediaData = [];
 
                 if ($lesson->hasMedia('content')) {
-                    $media = $lesson->getFirstMedia('content');
-                    dd($media); 
-                    $mediaData = [
-                        'custom_properties' => $media->custom_properties,
-                        'original_url' => $media->original_url
-                    ];
+                    $mediaData = DB::table('media as m')
+                        ->join('lessons as l', 'm.model_id', '=', 'l.id') // Подстройте названия столбцов в соответствии с вашей фактической структурой базы данных
+                        ->where('l.id', '=', $lesson->id) // Фильтрация по ID урока
+                        ->select('m.id', 'm.original_url', 'm.custom_properties')
+                        ->get();
                 }
 
-                $duration = $media ? $media->getCustomProperty('duration') : null;
+                // $duration = $media ? $media->getCustomProperty('duration') : null;
 
                 $data[] = [
                     'id' => $lesson->id,
                     'name' => $lesson->name,
-                    'duration' => $duration,
+                    // 'duration' => $duration,
                     'topic_id' => $lesson->topic_id,
                     'cover' => $lesson->cover,
                     'content' => $lesson->content,
                     'type' => $lesson->type,
-                    'media' => [$mediaData], // Include only the required media fields
+                    'media' => $mediaData, 
                 ];
             }
         }
