@@ -157,4 +157,8 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->notifications()->whereNull('read_at');
     }
+    public function isAdmin()
+    {
+        return $this->role === 'Admin'; 
+    }
 }
