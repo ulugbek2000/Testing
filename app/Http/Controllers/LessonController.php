@@ -31,7 +31,7 @@ class LessonController extends Controller
     public function index(Topic $topic)
     {
         $lessons = $topic->lessons;
-
+        dd($lessons);
         if (Auth::check() && Auth::user()->isSubscribed($topic->course)) {
             return response()->json($lessons);
         }
