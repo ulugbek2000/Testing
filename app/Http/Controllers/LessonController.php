@@ -54,6 +54,7 @@ class LessonController extends Controller
                 'name' => $firstLesson->name,
                 'duration' => $duration,
             ];
+            dd($data);
     
             // Добавляем информацию о других уроках
             foreach ($lessons->slice(1) as $lesson) {
