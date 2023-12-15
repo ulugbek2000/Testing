@@ -33,7 +33,7 @@ class LessonController extends Controller
     {
         $lessons = $topic->lessons;
 
-        if (Auth::check() && (Auth::user()->isSubscribed($topic->course) || Auth::user()->userType == UserType::Admin)) {
+        if (Auth::check() && (Auth::user()->isSubscribed($topic->course) || Auth::isAdmin())) {
             return response()->json(['data' => $lessons]);
         }
 
