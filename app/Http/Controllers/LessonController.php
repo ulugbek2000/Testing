@@ -48,10 +48,11 @@ class LessonController extends Controller
 
                 if ($lesson->hasMedia('content')) {
                     $mediaData = DB::table('media as m')
-                        ->join('lessons as l', 'm.model_id', '=', 'l.id') // Подстройте названия столбцов в соответствии с вашей фактической структурой базы данных
-                        ->where('l.id', '=', $lesson->id) // Фильтрация по ID урока
+                        ->join('lessons as l', 'm.model_id', '=', 'l.id') 
+                        ->where('l.id', '=', $lesson->id) 
                         ->select('m.id', 'm.original_url', 'm.custom_properties')
                         ->get();
+                        dd($mediaData);
                 }
 
                 // $duration = $media ? $media->getCustomProperty('duration') : null;
@@ -64,7 +65,7 @@ class LessonController extends Controller
                     'cover' => $lesson->cover,
                     'content' => $lesson->content,
                     'type' => $lesson->type,
-                    'media' => $mediaData, 
+                    'media' => [$mediaData], 
                 ];
             }
         }
