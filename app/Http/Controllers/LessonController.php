@@ -63,7 +63,7 @@ class LessonController extends Controller
                     'cover' => $firstLesson->cover,
                     'content' => $firstLesson->content,
                     'type' => $firstLesson->type,
-                    'media' => $mediaData,
+                    'media' => [$mediaData], // Include only the required media fields
                 ];
     
                 return response()->json(['data' => [$data]]);
@@ -78,22 +78,29 @@ class LessonController extends Controller
                 'type' => $firstLesson->type,
             ];
     
-            // Добавляем информацию о других уроках
+            // Add information about other lessons
             foreach ($lessons->slice(1) as $lesson) {
                 $media = $lesson->getFirstMedia('content');
                 $duration = $media ? $media->getCustomProperty('duration') : null;
-// dd($duration,$media);
+    
+                // Include only the required media fields
+                $mediaData = [
+                    'id' => $media->id,
+                    'custom_properties' => $media->custom_properties,
+                    'original_url' => $media->original_url,
+                ];
+    
                 $data[] = [
                     'id' => $lesson->id,
                     'name' => $lesson->name,
                     'duration' => $duration,
+                    'media' => [$mediaData], // Include only the required media fields
                 ];
             }
         }
     
         return response()->json(['data' => $data]);
     }
-    
 
     /**
      * Store a newly created resource in storage.
