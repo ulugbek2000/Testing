@@ -33,10 +33,15 @@ class LessonController extends Controller
     {
         $lessons = $topic->lessons;
         
-dd(Auth::user()->hasRole('Admin'));
-        if (Auth::check() && (Auth::user()->isSubscribed($topic->course) ||Auth::user()->hasRole('Admin'))) {
-            return response()->json(['data' => $lessons]);
+        if (Auth::check()) {
+            // Check if the user is an administrator or subscribed to the course
+           dd( $isAdmin = Auth::user()->hasRole('Admin'));
+    
+            if ($isAdmin || Auth::user()->isSubscribed($topic->course)) {
+                return response()->json(['data' => $lessons]);
+            }
         }
+      
 
         $data = [];
 
