@@ -55,7 +55,7 @@ class LessonController extends Controller
                 }
 
                 $firstLesson = $lessons->first();
-                dd($firstLesson);
+                // dd($firstLesson);
 
                 // Подготавливаем данные для первого урока
                 $data = [
@@ -75,7 +75,7 @@ class LessonController extends Controller
                     ];
                 });
 
-                return response()->json(['data' => array_merge([$data], $otherLessons->toArray())]);
+                return response()->json(['data' => $firstLesson, $otherLessons]);
             }
         }
     }
