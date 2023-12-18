@@ -55,7 +55,7 @@ class LessonController extends Controller
                 }
 
                 $firstLesson = $lessons->first();
-                dd($firstLesson);
+                // dd($firstLesson);
 
                 // Подготавливаем данные для первого урока
                 $data = [
