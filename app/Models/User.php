@@ -2,8 +2,6 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
-
 use App\Enums\UserType;
 use App\Notifications\ResetPasswordNotification;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -17,10 +15,6 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
 use App\Notifications\VerificationNotification;
 use Illuminate\Auth\Passwords\CanResetPassword;
 
-// use Tymon\JWTAuth\Contracts\JWTSubject;
-
-// use Illuminate\Foundation\Auth\User as Authenticatable;
-// use Laravel\Sanctum\HasApiTokens;
 class User extends Authenticatable implements JWTSubject
 {
     use  HasApiTokens, HasFactory;

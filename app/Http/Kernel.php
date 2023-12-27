@@ -77,7 +77,7 @@ class Kernel extends HttpKernel
         'permission' => \Spatie\Permission\Middlewares\PermissionMiddleware::class,
         'role_or_permission' => \Spatie\Permission\Middlewares\RoleOrPermissionMiddleware::class,
         'auth.custom' => SendTokenToFrontend::class,
-        'admin.api' => \App\Http\Middleware\AdminApiMiddleware::class,
+        // 'admin.api' => \App\Http\Middleware\AdminApiMiddleware::class,
         'access' => RoleMiddleware::class,
         'setLacale' => \App\Http\Middleware\SetLacale::class,
     ];
