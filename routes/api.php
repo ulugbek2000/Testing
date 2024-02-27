@@ -101,8 +101,6 @@ Route::middleware(['jwt.auth'])->group(function () {
         //Пополнение баланс:
         Route::post('admin/balance/deposit', [UserTransactionController::class, 'topUpWallet']);
 
-        // Route::post('password/forgot', [PasswordResetTokenController::class, 'sendCodeReset']);
-        // Route::post('password/reset', [PasswordResetTokenController::class, 'resetPassword']);
 
         Route::get('getStatistics', [StatisticsController::class, 'getStatisticsUser']);
         Route::get('/months/{year}', [StatisticsController::class, 'getResults']);
@@ -213,7 +211,15 @@ Route::middleware(['jwt.auth'])->group(function () {
 
     });
 
-    // Route::group(['prefix' => '{lacale}'], function () {
+    Route::middleware('access:' . implode(',', [UserType::Teacher]))->group(function () {
+
+        Route::get('admin/course', [CourseController::class, 'index']);
+        Route::get('admin/course/{course}', [CourseController::class, 'show']);
+        Route::get('admin/teacherByCourse/{course}', [CourseController::class, 'getTeacherByCourse']);
+   
+    });
+
+
     Route::middleware('access:' . implode(',', [UserType::Student]))->group(function () {
 
         Route::get('student/user/balance', [UserWalletController::class, 'getBalance']);
@@ -261,11 +267,7 @@ Route::middleware(['jwt.auth'])->group(function () {
         Route::get('course/{course}/progress', [UserLessonProgressController::class, 'getprogress']);
 
         // Route::get('/courses/{course}/buyers', [UserWalletController::class,'getCourseBuyers']);
-
-        // Route::post('password/forgot', [PasswordResetTokenController::class, 'sendCodeReset']);
-        // Route::post('password/reset', [PasswordResetTokenController::class, 'resetPassword']);
     });
 
     Route::post('logout', [AuthController::class, 'logout']);
 });
-// });

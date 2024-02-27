@@ -220,11 +220,9 @@ class CourseController extends Controller
         return response()->json(['message' => 'Teachers updated successfully.'], 200);
     }
 
-
-
     public function getTeacherByCourse(Course $course)
     {
-        // Загружаем учителей для данного курса
+  
         $course->load('teachers');
 
         return response()->json($course);
