@@ -19,14 +19,14 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        $user = User::firstOrcreate(
-            [
-                'name' => 'Admin',
-                'email' => 'admin@lms.com',
-                'password' => Hash::make('password')
-            ]
-        );
-        $user->assignRole('admin');
+        $admin = User::firstOrCreate([
+            'name' => 'Admin',
+            'email' => 'admin@lms.com',
+            'password' => bcrypt('password')
+        ]);
+
+        // Назначаем роль администратора
+        $admin->assignRole(UserType::getKey(UserType::Admin));
  
     }
 }
