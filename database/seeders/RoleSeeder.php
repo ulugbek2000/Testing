@@ -17,8 +17,8 @@ class RoleSeeder extends Seeder
      */
     public function run(): void
     {
-        Role::create(['name' => 1, 'guard_name' => config('auth.defaults.guard')]);
-        Role::create(['name' => 2, 'guard_name' => config('auth.defaults.guard')]);
-        Role::create(['name' => 3, 'guard_name' => config('auth.defaults.guard')]);
+        Role::create(['name' => 'admin', 'guard_name' => config('auth.defaults.guard')]);
+        Role::create(['name' => 'teacher', 'guard_name' => config('auth.defaults.guard')]);
+        Role::create(['name' => 'student', 'guard_name' => config('auth.defaults.guard')]);
     }
 }
