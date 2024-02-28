@@ -16,6 +16,7 @@ use App\Models\User;
 use App\Models\UserCourse;
 use Carbon\Carbon;
 use FFMpeg\FFProbe;
+use getID3;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
@@ -87,16 +88,14 @@ class CourseController extends Controller
         // Check if the 'video' file exists in the request
         if ($request->hasFile('video')) {
             // Add media from request
-           $media =  $course->addMediaFromRequest('video')->toMediaCollection('videos');
+            $media =  $course->addMediaFromRequest('video')->toMediaCollection('videos');
 
-            $ffmpeg = FFProbe::create([
-                'ffmpeg.binaries' => '/home/softclub/domains/lmsapi.softclub.tj/ffmpeg-git-20231128-amd64-static/ffmpeg',
-                'ffprobe.binaries' => '/home/softclub/domains/lmsapi.softclub.tj/ffmpeg-git-20231128-amd64-static/ffprobe'
-            ]);
-    
-            $localPath = $media->getPath();
-            $durationInSeconds = $ffmpeg->format($localPath)->get('duration');
-    
+            // Use getID3 to get video duration
+            $getID3 = new getID3();
+            $fileInfo = $getID3->analyze($media->getPath());
+
+            $durationInSeconds = $fileInfo['playtime_seconds'];
+
             $media->setCustomProperty('duration', $durationInSeconds)->save();
             $course->video = $media->getUrl();
             $course->save();
