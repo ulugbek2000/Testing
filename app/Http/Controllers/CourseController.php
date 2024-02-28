@@ -97,7 +97,9 @@ class CourseController extends Controller
             $durationInSeconds = $fileInfo['playtime_seconds'];
 
             $media->setCustomProperty('duration', $durationInSeconds)->save();
-            $course->video = $media->getUrl();
+            $videoPath = $media->getPath();
+            $storagePath = substr($videoPath, strpos($videoPath, '/storage'));
+            $course->video = $storagePath;
             $course->save();
         }
 
@@ -111,6 +113,20 @@ class CourseController extends Controller
         ], 500);
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     
 
 

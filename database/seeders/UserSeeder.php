@@ -26,6 +26,7 @@ class UserSeeder extends Seeder
         ]);
 
         $admin->assignRole(UserType::Admin);
+        
  
     }
 }
