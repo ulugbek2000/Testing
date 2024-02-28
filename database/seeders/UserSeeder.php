@@ -25,8 +25,7 @@ class UserSeeder extends Seeder
             'password' => bcrypt('password')
         ]);
 
-        // Назначаем роль администратора
-        $admin->assignRole(UserType::getKey(UserType::Admin));
+        $admin->assignRole(UserType::getKey(1));
  
     }
 }
