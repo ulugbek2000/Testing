@@ -25,7 +25,7 @@ class UserSeeder extends Seeder
             'password' => bcrypt('password')
         ]);
 
-        $admin->assignRole(UserType::getKey(1));
+        $admin->assignRole(UserType::Admin);
  
     }
 }
