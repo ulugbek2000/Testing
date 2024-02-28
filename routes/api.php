@@ -125,7 +125,7 @@ Route::middleware(['jwt.auth'])->group(function () {
         Route::get('user/{user}', [ProfileController::class, 'getUserById']);
 
         //Start Courses
-        Route::get('admin/courses', [CourseController::class, 'index']);
+        Route::get('admin/course', [CourseController::class, 'index'])->name('admin.course.index');
         Route::get('admin/course/{course}', [CourseController::class, 'show']);
         Route::get('admin/teacherByCourse/{course}', [CourseController::class, 'getTeacherByCourse']);
         Route::post('course', [CourseController::class, 'store']);
