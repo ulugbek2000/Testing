@@ -99,6 +99,7 @@ class CourseController extends Controller
     
             $media->setCustomProperty('duration', $durationInSeconds)->save();
             $course->video = $media->getUrl();
+            $course->save();
         }
 
         return response()->json([
