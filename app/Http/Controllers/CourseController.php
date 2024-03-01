@@ -14,6 +14,7 @@ use App\Models\CourseSkills;
 use App\Models\CourseSubscription;
 use App\Models\User;
 use App\Models\UserCourse;
+use App\Rules\FileOrString;
 use Carbon\Carbon;
 use FFMpeg\FFProbe;
 use getID3;
@@ -131,7 +132,7 @@ class CourseController extends Controller
             'hours_lessons' => 'required|string',
             'short_description' => 'required|string',
             'logo' => 'nullable|file',
-            'video' => 'nullable|mimes:mp4,mov,avi,mpeg,mkv,max:102400',
+            'video' => 'nullable', [new FileOrString],
             'category_id' => 'exists:categories,id',
         ]);
         if ($request->hasFile('logo')) {
