@@ -185,15 +185,6 @@ class CourseController extends Controller
         return response()->json(['message' => $userCourse->wasRecentlyCreated ? "User enrolled to course successfuly." : "User already enrolled!"], 200);
     }
 
-
-
-
-
-
-
-
-
-    
     public function addTeachersToCourse(Request $request, Course $course)
     {
         $teacherIds = $request->input('teacher_ids', []);
