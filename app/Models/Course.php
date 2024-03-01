@@ -25,6 +25,7 @@ class Course extends Model implements HasMedia
         'video',
         'has_certificate',
         'category_id',
+        'is_hidden',
     ];
 
 

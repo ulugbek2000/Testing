@@ -22,6 +22,7 @@ use FFMpeg\Coordinate\TimeCode;
 use getID3;
 use Illuminate\Support\Facades\Log;
 use App\Models\Media;
+use App\Rules\FileOrString;
 use Illuminate\Support\Facades\DB;
 
 class LessonController extends Controller
@@ -87,7 +88,7 @@ class LessonController extends Controller
     {
         $request->validate([
             'topic_id' => 'nullable|integer',
-            'name' => 'string',
+            'name' => 'nullable|string',
             'cover' => 'image|file',
             'duration' => 'nullable',
             'type' => 'required|in:text,video,audio',
@@ -95,35 +96,55 @@ class LessonController extends Controller
         ]);
 
         $lesson = Lesson::create([
-            'topic_id' => $request->topic_id,
-            'name' => $request->name,
-            'type' => $request->type,
+            'topic_id' => $request->input('topic_id'),
+            'name' => $request->input('name'),
+            'type' => $request->input('type')
         ]);
+
+        if ($request->type === 'text') {
+            $lesson->content = $request->input('content');
+        } elseif ($request->type == 'video' || $request->type == 'audio') {
+
+            $media = $lesson->addMediaFromRequest('content')->toMediaCollection('content');
+
+            $getID3 = new getID3();
+            $fileInfo = $getID3->analyze($media->getPath());
+
+            $durationInSeconds = $fileInfo['playtime_seconds'];
+
+            $media->setCustomProperty('duration', $durationInSeconds)->save();
+            $videoPath = $media->getPath();
+            $storagePath = substr($videoPath, strpos($videoPath, '/storage'));
+            $lesson->content = $storagePath;
+            // $lesson->duration = $media->custom_properties;
+            $lesson->save();
+        }
 
         if ($request->hasFile('cover')) {
             $coverPath = $request->file('cover')->store('cover', 'public');
             $lesson->cover = Storage::url($coverPath);
         }
 
-        if ($request->type === 'text') {
-            $lesson->content = $request->input('content');
-        } elseif ($request->type === 'video' || $request->type === 'audio') {
-            $media = $lesson->addMediaFromRequest('content')->toMediaCollection('content');
+        $lesson->save();
 
-            $ffmpeg = FFProbe::create([
-                'ffmpeg.binaries' => '/home/softclub/domains/lmsapi.softclub.tj/ffmpeg-git-20231128-amd64-static/ffmpeg',
-                'ffprobe.binaries' => '/home/softclub/domains/lmsapi.softclub.tj/ffmpeg-git-20231128-amd64-static/ffprobe'
-            ]);
+        // Обновляем информацию в таблице курсов
+        if ($lesson->topic && $lesson->topic->course) {
+            $course = $lesson->topic->course;
+            $course->quantity_lessons = $course->lessons->count();
 
-            $localPath = $media->getPath();
-            $durationInSeconds = $ffmpeg->format($localPath)->get('duration');
+            // Добавляем длительность урока к общей длительности курса
 
-            $media->setCustomProperty('duration', $durationInSeconds)->save();
-            $lesson->content = $media->getUrl();
-            // $lesson->duration = $media->custom_properties;
+            $course->hours_lessons = $course->lessons()
+                ->leftJoin('media', function ($join) {
+                    $join->on('media.model_id', '=', 'lessons.id')
+                        ->where('media.model_type', '=', Lesson::class);
+                })
+                ->where('topics.course_id', $course->id)
+                ->selectRaw('SUM(CASE WHEN media.custom_properties IS NOT NULL THEN JSON_UNQUOTE(JSON_EXTRACT(media.custom_properties, "$.duration")) ELSE 0 END) as total_duration')
+                ->value('total_duration');
+            $course->save();
         }
 
-        $lesson->save();
         return response()->json(['message' => 'Урок успешно создан.']);
     }
 
@@ -176,56 +197,75 @@ class LessonController extends Controller
         $request->validate([
             'topic_id' => 'integer',
             'name' => 'string',
-            'cover' => 'nullable|file',
+            'cover' => ['nullable', new FileOrString],
             'duration' => 'string|nullable',
-            'content' => 'nullable',
+            'content' =>  ['nullable', new FileOrString],
         ]);
 
         $coverPath = $lesson->cover;
-        $contentPath = $lesson->content;
+        $contentPath = $lesson->content; // По умолчанию сохраняем текущий путь к контенту
 
         if ($request->hasFile('cover')) {
-            // Delete old cover file if needed
-            Storage::delete($lesson->cover);
-            // Upload and store new cover file
+            // Удаляем старый файл обложки, если он существует
+            if ($lesson->cover) {
+                Storage::delete($lesson->cover);
+            }
+            // Загружаем и сохраняем новый файл обложки
             $coverPath = $request->file('cover')->store('cover', 'public');
         }
 
-        if ($request->type == LessonTypes::Video || $request->type == LessonTypes::Audio) {
+        if ($request->type === 'video' || $request->type === 'audio') {
             if ($request->hasFile('content')) {
-                // Delete old content file if needed
-                Storage::delete($lesson->content);
-                // Upload and store new content file
-                $contentPath = $request->file('content')->store('content', 'public');
+                // Удаляем старые медиафайлы, если они существуют
+                $lesson->clearMediaCollection('content');
 
-                // Get media associated with the lesson
-                $media = $lesson->getMedia('content')->first();
+                // Загружаем и сохраняем новый контентный файл в медиабиблиотеку
+                $media = $lesson->addMediaFromRequest('content')->toMediaCollection('content');
 
-                if ($media) {
-                    // Calculate and update duration
-                    $ffmpeg = FFProbe::create([
-                        'ffmpeg.binaries' => '/home/softclub/domains/lmsapi.softclub.tj/ffmpeg-git-20231128-amd64-static/ffmpeg',
-                        'ffprobe.binaries' => '/home/softclub/domains/lmsapi.softclub.tj/ffmpeg-git-20231128-amd64-static/ffprobe'
-                    ]);
+                $getID3 = new getID3();
+                $fileInfo = $getID3->analyze($media->getPath());
 
-                    $localPath = storage_path("app/public/{$contentPath}");
-                    $durationInSeconds = $ffmpeg->format($localPath)->get('duration');
+                $durationInSeconds = $fileInfo['playtime_seconds'];
 
-                    $lesson->content = $media->getUrl();
-                    // Set custom property on the media, not on the lesson
-                    $media->setCustomProperty('duration', $durationInSeconds)->save();
-                }
+                // Устанавливаем пользовательское свойство на медиафайле
+                $media->setCustomProperty('duration', $durationInSeconds)->save();
+                $videoPath = $media->getPath();
+                $storagePath = substr($videoPath, strpos($videoPath, '/storage'));
+                $contentPath = $lesson->content = $storagePath;
             }
+        } elseif ($request->type === 'text') {
+            // Если тип урока текстовый, сохраняем текстовое содержимое
+
+            $contentPath =   $lesson->content = $request->input('content');
+            $lesson->save();
+            // Обнуляем путь к контенту, так как его нет
         }
 
         $data = array_merge($request->only(['name', 'type', 'topic_id', 'duration']), [
             'cover' => $coverPath,
-            'content' => $contentPath
+            'content' => $contentPath,
         ]);
 
-        $lesson->update($data);
+        if ($lesson->topic && $lesson->topic->course) {
+            $course = $lesson->topic->course;
+            $course->quantity_lessons = $course->lessons->count();
 
-        return response()->json(['message' => 'Урок успешно обновлен.']);
+            // Добавляем длительность уроков к общей длительности курса
+            $course->hours_lessons = $course->lessons()
+                ->leftJoin('media', function ($join) {
+                    $join->on('media.model_id', '=', 'lessons.id')
+                        ->where('media.model_type', '=', Lesson::class);
+                })
+                ->where('topics.course_id', $course->id)
+                ->selectRaw('SUM(CASE WHEN media.custom_properties IS NOT NULL THEN JSON_UNQUOTE(JSON_EXTRACT(media.custom_properties, "$.duration")) ELSE 0 END) as total_duration')
+                ->value('total_duration');
+
+            $course->save();
+
+            $lesson->update($data);
+
+            return response()->json(['message' => 'Урок успешно обновлен.']);
+        }
     }
     /**
      * Remove the specified resource from storage.

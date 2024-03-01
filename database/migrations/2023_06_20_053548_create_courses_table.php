@@ -17,8 +17,8 @@ return new class extends Migration
                 $table->string('logo')->nullable();
                 $table->string('name');
                 $table->string('slug');
-                $table->string('quantity_lessons');
-                $table->string('hours_lessons');
+                $table->string('quantity_lessons')->nullable();
+                $table->string('hours_lessons')->nullable();
                 $table->text('short_description');
                 $table->string('video')->nullable();
                 $table->boolean('has_certificate')->default(false);

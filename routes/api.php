@@ -136,31 +136,9 @@ Route::middleware(['jwt.auth'])->group(function () {
         Route::post('courses/{course}/add-teachers', [CourseController::class, 'addTeachersToCourse']);
         Route::get('courses/{course}/buyers', [CourseController::class, 'getCourseBuyers']);
         // Route::get('courses/{category}', [CourseController::class, 'getCoursesByCategory']);
+        Route::put('hide-course/{course}', [CourseController::class, 'hideCourse']);
 
         //End Courses
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         
         //Start Topics
         Route::get('admin/course/{course}/topics', [TopicController::class, 'index']);

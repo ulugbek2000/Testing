@@ -184,9 +184,23 @@ class ProfileController extends Controller
         }
     }
 
-    public function getAllStudents()
+    public function getAllStudents(Request $request)
     {
-        $students = User::role(UserType::Student)->with('subscriptions.subscription', 'subscriptions.course')->get();
+        $perPage = $request->input('per_page', 12); // Количество элементов на странице
+        $search = $request->input('search'); // Параметр для поиска
+
+        $query = User::role(UserType::Student)
+            ->with('subscriptions.subscription', 'subscriptions.course');
+
+        // Если есть параметр для поиска, добавляем условия поиска
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%$search%")
+                    ->orWhere('surname', 'like', "%$search%");
+            });
+        }
+
+        $students = $query->paginate($perPage);
 
         $studentData = $students->map(function ($student) {
             return [
@@ -237,9 +251,18 @@ class ProfileController extends Controller
             ];
         });
 
-        return response()->json($studentData);
+        return response()->json([
+            'students' => $studentData,
+            'meta' => [
+                'total' => $students->total(),
+                'per_page' => $students->perPage(),
+                'current_page' => $students->currentPage(),
+                'last_page' => $students->lastPage(),
+                'from' => $students->firstItem(),
+                'to' => $students->lastItem(),
+            ],
+        ]);
     }
-
 
     public function getStudentsSubscription()
     {
@@ -289,7 +312,7 @@ class ProfileController extends Controller
     {
         $teachers = User::whereHas('roles', function ($query) {
             $query->where('id', UserType::Teacher);
-        })->with('userSkills','courses')->get();
+        })->with('userSkills', 'courses')->get();
         return response()->json($teachers);
     }
 
@@ -340,8 +363,7 @@ class ProfileController extends Controller
                         ] : null
                 ];
             });
-    
+
         return response()->json($latestSubscriptions);
     }
-    
 }

@@ -27,31 +27,29 @@ class CourseController extends Controller
 {
     public function index(Request $request)
     {
-        $per_page = $request->per_page ?? 12;
+        // Параметры для пагинации и поиска
+        $perPage = $request->input('per_page', 12);
+        $search = $request->input('search');
 
-        return CourseResource::collection(Course::paginate($per_page));
-    }
+        // Запрос на получение курсов
+        $query = Course::query();
 
-    public function search(Request $request)
-    {
-        $name = $request->input('name');
-
-        if (empty($name)) {
-            return response()->json(['error' => 'Параметр "name" отсутствует или пуст.'], 400);
+        // Если есть параметр для поиска, добавляем условия поиска
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%$search%");
+            });
         }
 
-        $name = strtolower($name);
+        // Добавляем сортировку по дате создания, чтобы показать последний созданный курс
+        $query->latest();
 
-        $courses = Course::whereRaw('LOWER(`name`) LIKE ?', ['%' . $name . '%'])
-            ->whereNull('deleted_at')
-            ->get();
+        // Получаем курсы с пагинацией
+        $courses = CourseResource::collection($query->paginate($perPage));
 
-        if ($courses->isEmpty()) {
-            return response()->json([]);
-        }
-
-        return response()->json(['data' => $courses], 200);
+        return response()->json($courses);
     }
+
 
     /**
      * Store a newly created resource in storage.
@@ -69,110 +67,51 @@ class CourseController extends Controller
             'category_id' => 'required|exists:categories,id',
             'has_certificate' => 'required|boolean',
         ]);
-    
+
         $logo = $request->file('logo')->store('images', 'public');
-    $video = $request->file('video')->store('videos', 'public');
+        $video = $request->file('video')->store('videos', 'public');
 
-    try {
-        $course = Course::create([
-            'logo' => Storage::url($logo),
-            'name' => $request->name,
-            'slug' => $request->slug,
-            'quantity_lessons' => $request->quantity_lessons,
-            'hours_lessons' => $request->hours_lessons,
-            'short_description' => $request->short_description,
-            'has_certificate' => $request->has_certificate,
-            'category_id' => $request->category_id,
-        ]);
+        try {
+            $course = Course::create([
+                'logo' => Storage::url($logo),
+                'name' => $request->name,
+                'slug' => $request->slug,
+                'quantity_lessons' => $request->quantity_lessons,
+                'hours_lessons' => $request->hours_lessons,
+                'short_description' => $request->short_description,
+                'has_certificate' => $request->has_certificate,
+                'category_id' => $request->category_id,
+            ]);
 
-        // Check if the 'video' file exists in the request
-        if ($request->hasFile('video')) {
-            // Add media from request
-            $media =  $course->addMediaFromRequest('video')->toMediaCollection('videos');
+            // Check if the 'video' file exists in the request
+            if ($request->hasFile('video')) {
+                // Add media from request
+                $media =  $course->addMediaFromRequest('video')->toMediaCollection('videos');
 
-            // Use getID3 to get video duration
-            $getID3 = new getID3();
-            $fileInfo = $getID3->analyze($media->getPath());
+                // Use getID3 to get video duration
+                $getID3 = new getID3();
+                $fileInfo = $getID3->analyze($media->getPath());
 
-            $durationInSeconds = $fileInfo['playtime_seconds'];
+                $durationInSeconds = $fileInfo['playtime_seconds'];
 
-            $media->setCustomProperty('duration', $durationInSeconds)->save();
-            $videoPath = $media->getPath();
-            $storagePath = substr($videoPath, strpos($videoPath, '/storage'));
-            $course->video = $storagePath;
-            $course->save();
+                $media->setCustomProperty('duration', $durationInSeconds)->save();
+                $videoPath = $media->getPath();
+                $storagePath = substr($videoPath, strpos($videoPath, '/storage'));
+                $course->video = $storagePath;
+                $course->save();
+            }
+
+            return response()->json([
+                'message' => "Course successfully created.",
+            ], 200);
+        } catch (\Exception $e) {
+            // Return response Json
+            return response()->json([
+                'message' => $e->getMessage(),
+            ], 500);
         }
-
-        return response()->json([
-            'message' => "Course successfully created.",
-        ], 200);
-    } catch (\Exception $e) {
-        // Return response Json
-        return response()->json([
-            'message' => $e->getMessage(),
-        ], 500);
     }
-}
 
-
-
-
-
-
-
-///slkdgjhosdiufgudiячсмячсмячсмячсм
-
-
-
-adadsADa
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-
-
-
-    
-    
     /**
      * Display the specified resource.
      */
@@ -213,7 +152,7 @@ adadsADa
             $videopath = $course->video;
         }
 
-        $data = array_merge($request->only(['name', 'slug', 'short_description', 'quantity_lessons', 'hours_lessons', 'has_certificate','category_id']), [
+        $data = array_merge($request->only(['name', 'slug', 'short_description', 'quantity_lessons', 'hours_lessons', 'has_certificate', 'category_id']), [
             'logo' => $logopath,
             'video' => $videopath,
         ]);
@@ -278,7 +217,7 @@ adadsADa
 
     public function getTeacherByCourse(Course $course)
     {
-  
+
         $course->load('teachers');
 
         return response()->json($course);
@@ -305,5 +244,18 @@ adadsADa
         }
 
         return response()->json(['data' => $categoryWithCourses]);
+    }
+
+    public function hideCourse(Course $course)
+    {
+        if (Auth::user()->hasRole(UserType::Admin)) {
+            // Инвертируем значение поля is_hidden
+            $course->update(['is_hidden' => !$course->is_hidden]);
+
+            // Определяем текстовое сообщение в зависимости от нового состояния
+            $message = $course->is_hidden ? 'Курс успешно скрыт' : 'Курс успешно отображен';
+
+            return response()->json(['message' => $message], 200);
+        }
     }
 }
