@@ -139,9 +139,7 @@ Route::middleware(['jwt.auth'])->group(function () {
         Route::put('hide-course/{course}', [CourseController::class, 'hideCourse']);
 
         //End Courses
-        
-        \
-    \
+
         //Start Topics
         Route::get('admin/course/{course}/topics', [TopicController::class, 'index']);
         Route::get('admin/topic/{topic}', [TopicController::class, 'show']);
@@ -219,7 +217,7 @@ Route::middleware(['jwt.auth'])->group(function () {
     //     Route::get('admin/course', [CourseController::class, 'index']);
     //     Route::get('admin/course/{course}', [CourseController::class, 'show']);
     //     Route::get('admin/teacherByCourse/{course}', [CourseController::class, 'getTeacherByCourse']);
-   
+
     // });
 
 
