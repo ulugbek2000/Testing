@@ -21,7 +21,7 @@ return new class extends Migration
                     $table->id();
                     $table->foreignId('topic_id')->references('id')->on('topics')->onDelete('cascade');
                     $table->string('name');
-                    $table->text('content');
+                    $table->text('content')->nullable();
                     $table->string('cover')->nullable();
                     $table->enum('type',LessonTypes::getValues());
                     $table->timestamps();

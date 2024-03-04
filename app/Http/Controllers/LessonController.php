@@ -31,21 +31,33 @@ class LessonController extends Controller
     {
         $lessons = $topic->lessons;
         $user = Auth::user();
+        $lessonData = [];
 
         if (Auth::check()) {
             $isAdmin = $user->hasRole(UserType::Admin);
-            $isSubscribed = $user->isSubscribed($topic->course);
+            $isSubscribed = $user->isSubscribed();
 
             if ($isAdmin || $isSubscribed) {
+                foreach ($lessons as $lesson) {
+                    $mediaData = [];
+
+                    if ($lesson->hasMedia('content')) {
+                        $mediaData = DB::table('media')
+                            ->where('model_type', '=', 'App\\Models\\Lesson')
+                            ->where('model_id', '=', $lesson->id)
+                            ->select('custom_properties')
+                            ->get();
+                    }
+
+                    
+                }
                 return response()->json(['data' => $lessons]);
             }
         }
 
-        $data = [];
-
         if ($lessons->isNotEmpty()) {
             foreach ($lessons as $lesson) {
-                $mediaData = [];
+                $firstLesson = $lessons->first();
 
                 if ($lesson->hasMedia('content')) {
                     $mediaData = DB::table('media')
@@ -54,19 +66,6 @@ class LessonController extends Controller
                         ->select('id', 'custom_properties',)
                         ->get();
                 }
-
-                $firstLesson = $lessons->first();
-                // dd($firstLesson);
-
-                // Подготавливаем данные для первого урока
-                $data = [
-                    'id' => $firstLesson->id,
-                    'name' => $firstLesson->name,
-                    'topic_id' => $firstLesson->topic_id,
-                    'cover' => $firstLesson->cover,
-                    'content' => $firstLesson->content,
-                    'type' => $firstLesson->type,
-                ];
 
                 // Для остальных уроков показываем частичную информацию
                 $otherLessons = $lessons->slice(1)->map(function ($lesson) {
