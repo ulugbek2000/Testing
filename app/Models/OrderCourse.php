@@ -11,7 +11,7 @@ class OrderCourse extends Model
     protected $fillable = [
         'name',
         'surname',
-        'text',
+        'order',
         'user_id',
     ];
     public function user()

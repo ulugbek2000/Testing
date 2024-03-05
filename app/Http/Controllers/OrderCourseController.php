@@ -14,7 +14,7 @@ class OrderCourseController extends Controller
         $request->validate([
             'name' => 'required|string',
             'surname' => 'required|string',
-            'text' => 'required|string',
+            'order' => 'required|string',
         ]);
     
         // Получаем текущего пользователя
@@ -24,7 +24,7 @@ class OrderCourseController extends Controller
         $orderCourse = new OrderCourse();
         $orderCourse->name = $request->input('name');
         $orderCourse->surname = $request->input('surname');
-        $orderCourse->text = $request->input('text');
+        $orderCourse->order = $request->input('order');
     
         // Связываем заказ с текущим пользователем
         $orderCourse->user()->associate($user);
