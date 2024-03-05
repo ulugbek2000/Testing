@@ -22,7 +22,7 @@ return new class extends Migration
                 $table->text('short_description');
                 $table->string('video')->nullable();
                 $table->boolean('has_certificate')->default(false);
-                $table->foreignId('category_id')->references('id')->on('categories');
+                $table->foreignId('category_id')->references('id')->on('categories')->onDelete('cascade');
                 $table->timestamps();
                 $table->softDeletes();
             });
