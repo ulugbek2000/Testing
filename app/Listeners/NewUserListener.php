@@ -24,7 +24,7 @@ class NewUserListener
     public function handle(object $event): void
     {
         // Assign newly registered user as student
-        $event->user->assignRole(UserType::getKey(UserType::Student));
+        $event->user->assignRole(UserType::Student);
         // TODO create user wallet upon register
         // $event->user->wallet()->create(['wallet' => 0]);
 

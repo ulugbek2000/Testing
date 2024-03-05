@@ -12,6 +12,7 @@ use App\Http\Controllers\CourseCategoryController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\CourseSkillsController;
 use App\Http\Controllers\LessonController;
+use App\Http\Controllers\OrderCourseController;
 use App\Http\Controllers\PasswordResetTokenController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RoleController;
@@ -268,6 +269,8 @@ Route::middleware(['jwt.auth'])->group(function () {
         Route::get('course/{course}/progress', [UserLessonProgressController::class, 'getprogress']);
 
         // Route::get('/courses/{course}/buyers', [UserWalletController::class,'getCourseBuyers']);
+
+        Route::post('order-course', [OrderCourseController::class,'orderCourse']);
     });
 
     Route::post('logout', [AuthController::class, 'logout']);

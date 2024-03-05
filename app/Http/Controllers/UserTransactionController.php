@@ -77,7 +77,6 @@ class UserTransactionController extends Controller
 
         return response()->json(['success' => 'Wallet updated successfully'], 200);
 
-        // $wallet->increment('balance', $request->input('amount'));
     }
 
     public function purchaseCourse(Course $course, Subscription $subscription)
