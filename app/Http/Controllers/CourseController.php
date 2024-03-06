@@ -119,43 +119,57 @@ class CourseController extends Controller
     /**
      * Update the specified resource in storage.
      */
+
     public function update(Request $request, Course $course)
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'slug' => 'required|string|max:255',
+            'slug' => 'nullable|string|max:255',
             'short_description' => 'required|string',
             'logo' => 'nullable|file',
-            'video' => 'nullable', [new FileOrString],
+            'video' => 'nullable|file',
             'category_id' => 'exists:categories,id',
         ]);
+
+        // Обработка логотипа
         if ($request->hasFile('logo')) {
-            // Delete old logo file if needed
             Storage::delete($course->logo);
-            // Upload and store new logo file
-            $logopath = $request->file('logo')->store('images', 'public');
+            $logopath = $request->file('logo')->store('public/images');
+            $logopath = 'storage/' . substr($logopath, strpos($logopath, 'public/') + 7);
         } else {
             $logopath = $course->logo;
         }
-        // Handle video file update
+
+        // Обработка видео
+
         if ($request->hasFile('video')) {
-            // Delete old video file if needed
             Storage::delete($course->video);
-            // Upload and store new video file
-            $videopath = $request->file('video')->store('videos', 'public');
+            $media = $course->addMediaFromRequest('video')->toMediaCollection('videos');
+
+            // Получение длительности видео
+            $getID3 = new getID3();
+            $fileInfo = $getID3->analyze($media->getPath());
+            $durationInSeconds = $fileInfo['playtime_seconds'];
+
+            $media->setCustomProperty('duration', $durationInSeconds)->save();
+
+            $videoPath = $media->getPath();
+            $storagePath = substr($videoPath, strpos($videoPath, '/storage'));
+            $path = $course->video = $storagePath;
         } else {
             $videopath = $course->video;
         }
 
-        $data = array_merge($request->only(['name', 'slug', 'short_description',  'has_certificate', 'category_id']), [
+        $data = array_merge($request->only(['name', 'slug', 'short_description', 'category_id']), [
             'logo' => $logopath,
-            'video' => $videopath,
+            'video' => $path,
         ]);
 
         $course->update($data);
 
-        return response()->json(['message' => 'Course updated successfuly'], 200);
+        return response()->json(['message' => 'Course updated successfully'], 200);
     }
+
     /**
      * Remove the specified resource from storage.
      */

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Enums\LessonTypes;
 use App\Enums\UserType;
 use App\Models\Lesson;
+use App\Models\LessonUser;
 use App\Models\Media as ModelsMedia;
 use App\Models\Topic;
 use App\Models\User;
@@ -233,7 +234,7 @@ class LessonController extends Controller
         } elseif ($request->type === 'text') {
             // Если тип урока текстовый, сохраняем текстовое содержимое
 
-            $contentPath =   $lesson->content = $request->input('content');
+            $contentPath = $lesson->content = $request->input('content');
             $lesson->save();
             // Обнуляем путь к контенту, так как его нет
         }
@@ -276,33 +277,53 @@ class LessonController extends Controller
     }
 
 
-    public function likeLesson(Request $request, Lesson $lesson)
-    {
-        if (!$request->session()->has('liked_' . $lesson->id)) {
-            $lesson->increment('likes');
-            $request->session()->put('liked_' . $lesson->id, true);
-            return response()->json(['message' => 'Lesson liked successfully']);
-        }
-        return response()->json(['message' => 'You have already liked this lesson']);
-    }
 
-    public function dislikeLesson(Request $request, Lesson $lesson)
-    {
-        if (!$request->session()->has('disliked_' . $lesson->id)) {
-            $lesson->increment('dislikes');
-            $request->session()->put('disliked_' . $lesson->id, true);
-            return response()->json(['message' => 'Lesson disliked successfully']);
-        }
-        return response()->json(['message' => 'You have already disliked this lesson']);
-    }
+public function likeLesson(Request $request, Lesson $lesson)
+{
+    $userId = $request->user()->id; // предположим, что у вас есть аутентифицированные пользователи
 
-    public function viewLesson(Request $request, Lesson $lesson)
-    {
-        if (!$request->session()->has('viewed_' . $lesson->id)) {
-            $lesson->increment('views');
-            $request->session()->put('viewed_' . $lesson->id, true);
-            return response()->json(['message' => 'Lesson viewed successfully']);
-        }
-        return response()->json(['message' => 'You have already viewed this lesson']);
+    if (!$lesson->actions()->where('user_id', $userId)->where('action', 'like')->exists()) {
+        $lesson->increment('likes');
+        LessonUser::create([
+            'lesson_id' => $lesson->id,
+            'user_id' => $userId,
+            'action' => 'like',
+        ]);
+        return response()->json(['message' => 'Lesson liked successfully']);
     }
+    return response()->json(['message' => 'You have already liked this lesson']);
+}
+
+public function dislikeLesson(Request $request, Lesson $lesson)
+{
+    $userId = $request->user()->id;
+
+    if (!$lesson->actions()->where('user_id', $userId)->where('action', 'dislike')->exists()) {
+        $lesson->increment('dislikes');
+        LessonUser::create([
+            'lesson_id' => $lesson->id,
+            'user_id' => $userId,
+            'action' => 'dislike',
+        ]);
+        return response()->json(['message' => 'Lesson disliked successfully']);
+    }
+    return response()->json(['message' => 'You have already disliked this lesson']);
+}
+
+public function viewLesson(Request $request, Lesson $lesson)
+{
+    $userId = $request->user()->id;
+
+    if (!$lesson->actions()->where('user_id', $userId)->where('action', 'view')->exists()) {
+        $lesson->increment('views');
+        LessonUser::create([
+            'lesson_id' => $lesson->id,
+            'user_id' => $userId,
+            'action' => 'view',
+        ]);
+        return response()->json(['message' => 'Lesson viewed successfully']);
+    }
+    return response()->json(['message' => 'You have already viewed this lesson']);
+}
+
 }
