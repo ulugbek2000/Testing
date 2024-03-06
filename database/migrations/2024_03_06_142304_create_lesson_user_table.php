@@ -15,7 +15,6 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('lesson_id');
             $table->enum('action', ['like', 'dislike']);
-            $table->integer('views')->default(0); // Добавляем поле для количества просмотров
             $table->timestamps();
             
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
