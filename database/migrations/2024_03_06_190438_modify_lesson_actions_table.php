@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('lesson_actions', function (Blueprint $table) {
+        Schema::table('lesson_user', function (Blueprint $table) {
             // Добавляем поле для количества просмотров
             $table->integer('views')->default(0)->after('action');
         });    }
