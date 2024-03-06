@@ -19,7 +19,10 @@ class Lesson extends Model implements HasMedia
         'name',
         'cover',
         'content',
-        'type'
+        'type',
+        'likes',
+        'dislikes',
+        'views'
     ];
 
     function topic()

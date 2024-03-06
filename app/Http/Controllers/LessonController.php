@@ -48,8 +48,6 @@ class LessonController extends Controller
                             ->select('custom_properties')
                             ->get();
                     }
-
-                    
                 }
                 return response()->json(['data' => $lessons]);
             }
@@ -275,5 +273,36 @@ class LessonController extends Controller
         return response()->json([
             'message' => "Урок успешно удален."
         ], 200);
+    }
+
+
+    public function likeLesson(Request $request, Lesson $lesson)
+    {
+        if (!$request->session()->has('liked_' . $lesson->id)) {
+            $lesson->increment('likes');
+            $request->session()->put('liked_' . $lesson->id, true);
+            return response()->json(['message' => 'Lesson liked successfully']);
+        }
+        return response()->json(['message' => 'You have already liked this lesson']);
+    }
+
+    public function dislikeLesson(Request $request, Lesson $lesson)
+    {
+        if (!$request->session()->has('disliked_' . $lesson->id)) {
+            $lesson->increment('dislikes');
+            $request->session()->put('disliked_' . $lesson->id, true);
+            return response()->json(['message' => 'Lesson disliked successfully']);
+        }
+        return response()->json(['message' => 'You have already disliked this lesson']);
+    }
+
+    public function viewLesson(Request $request, Lesson $lesson)
+    {
+        if (!$request->session()->has('viewed_' . $lesson->id)) {
+            $lesson->increment('views');
+            $request->session()->put('viewed_' . $lesson->id, true);
+            return response()->json(['message' => 'Lesson viewed successfully']);
+        }
+        return response()->json(['message' => 'You have already viewed this lesson']);
     }
 }

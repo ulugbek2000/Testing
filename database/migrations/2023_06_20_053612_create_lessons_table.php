@@ -15,8 +15,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        try {
-            if (!Schema::hasTable('lessons'))
+        
                 Schema::create('lessons', function (Blueprint $table) {
                     $table->id();
                     $table->foreignId('topic_id')->references('id')->on('topics')->onDelete('cascade');
@@ -27,9 +26,7 @@ return new class extends Migration
                     $table->timestamps();
                     $table->softDeletes();
                 });
-        } catch (\Exception $e) {
-            //throw $th;
-        }
+      
     }
 
     /**

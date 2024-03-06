@@ -124,7 +124,7 @@ Route::middleware(['jwt.auth'])->group(function () {
         Route::get('getStudents/subscription', [ProfileController::class, 'getStudentsSubscription']);
         Route::get('getTeachers', [ProfileController::class, 'getAllTeachers']);
         Route::get('user/{user}', [ProfileController::class, 'getUserById']);
-
+        Route::put('update-profile', [ProfileController::class, 'updateProfile']);
         //Start Courses
         Route::get('admin/course', [CourseController::class, 'index'])->name('admin.course.index');
         Route::get('admin/course/{course}', [CourseController::class, 'show']);
@@ -250,6 +250,10 @@ Route::middleware(['jwt.auth'])->group(function () {
         Route::get('student/topic/{topic}/lessons', [LessonController::class, 'index']);
         Route::get('student/lesson/{lesson}', [LessonController::class, 'show']);
 
+        Route::post('lessons/{lesson}/like', [LessonController::class, 'likeLesson']);
+        Route::post('lessons/{lesson}/dislike', [LessonController::class, 'dislikeLesson']);
+        Route::post('lessons/{lesson}/view', [LessonController::class, 'viewLesson']);
+
         //Просмотр информации о подписке:
         Route::get('student/subscription/{subscription}', [SubscriptionController::class, 'show']);
 
@@ -270,7 +274,7 @@ Route::middleware(['jwt.auth'])->group(function () {
 
         // Route::get('/courses/{course}/buyers', [UserWalletController::class,'getCourseBuyers']);
 
-        Route::post('order-course', [OrderCourseController::class,'orderCourse']);
+        Route::post('order-course', [OrderCourseController::class, 'orderCourse']);
     });
 
     Route::post('logout', [AuthController::class, 'logout']);
