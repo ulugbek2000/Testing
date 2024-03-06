@@ -60,9 +60,7 @@ class CourseController extends Controller
         $request->validate([
             'logo' => 'required|file',
             'name' => 'required|string',
-            'slug' => 'required|string|max:255',
-            'quantity_lessons' => 'required',
-            'hours_lessons' => 'required',
+            'slug' => 'nullable|string|max:255',
             'short_description' => 'required',
             'video' => 'required|file',
             'category_id' => 'required|exists:categories,id',
@@ -77,8 +75,6 @@ class CourseController extends Controller
                 'logo' => Storage::url($logo),
                 'name' => $request->name,
                 'slug' => $request->slug,
-                'quantity_lessons' => $request->quantity_lessons,
-                'hours_lessons' => $request->hours_lessons,
                 'short_description' => $request->short_description,
                 'has_certificate' => $request->has_certificate,
                 'category_id' => $request->category_id,
@@ -128,8 +124,6 @@ class CourseController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'slug' => 'required|string|max:255',
-            'quantity_lessons' => 'required|string',
-            'hours_lessons' => 'required|string',
             'short_description' => 'required|string',
             'logo' => 'nullable|file',
             'video' => 'nullable', [new FileOrString],
@@ -153,7 +147,7 @@ class CourseController extends Controller
             $videopath = $course->video;
         }
 
-        $data = array_merge($request->only(['name', 'slug', 'short_description', 'quantity_lessons', 'hours_lessons', 'has_certificate', 'category_id']), [
+        $data = array_merge($request->only(['name', 'slug', 'short_description',  'has_certificate', 'category_id']), [
             'logo' => $logopath,
             'video' => $videopath,
         ]);

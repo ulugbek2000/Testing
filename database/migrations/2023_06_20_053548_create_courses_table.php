@@ -16,7 +16,7 @@ return new class extends Migration
                 $table->id();
                 $table->string('logo')->nullable();
                 $table->string('name');
-                $table->string('slug');
+                $table->string('slug')->nullable();
                 $table->string('quantity_lessons')->nullable();
                 $table->string('hours_lessons')->nullable();
                 $table->text('short_description');

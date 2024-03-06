@@ -36,20 +36,18 @@ class CategoryController extends Controller
         $request->validate([
             'title' => 'required|string',
         ]);
-    
+
         // Создайте новую категорию
-        $category = Category::create([
+        Category::create([
             'title' => $request->title,
         ]);
-    
-        // Присоедините категорию к пользователю через связь
-        $user->courseCategories()->attach($category->id);
-    
+
+
         return response()->json([
             'message' => 'Category successfully created.'
         ], 200);
     }
-    
+
 
     /**
      * Display the specified resource.
