@@ -11,8 +11,8 @@ class LessonUser extends Model
     protected $fillable = [
         'user_id',
         'lesson_id',
-        'like',
-        'dislike',
-        'view'
+        'likes',
+        'dislikes',
+        'views'
     ];
 }

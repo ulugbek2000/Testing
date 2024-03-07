@@ -290,7 +290,7 @@ class LessonController extends Controller
             LessonUser::create([
                 'lesson_id' => $lesson->id,
                 'user_id' => $userId,
-                'liked' => 1,
+                'likes' => 1,
             ]);
             return response()->json(['message' => 'Lesson liked successfully']);
         }
@@ -312,7 +312,7 @@ class LessonController extends Controller
             LessonUser::create([
                 'lesson_id' => $lesson->id,
                 'user_id' => $userId,
-                'disliked' => 1,
+                'dislikes' => 1,
             ]);
             return response()->json(['message' => 'Lesson disliked successfully']);
         }
@@ -336,7 +336,7 @@ class LessonController extends Controller
             LessonUser::create([
                 'lesson_id' => $lesson->id,
                 'user_id' => $userId,
-                'view' => 1,
+                'views' => 1,
             ]);
             return response()->json(['message' => 'Lesson viewed successfully']);
         }
