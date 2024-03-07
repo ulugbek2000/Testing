@@ -152,15 +152,15 @@ class User extends Authenticatable implements JWTSubject
             'completed' => true
         ]);
     
-        if ($userLessonProgress->wasRecentlyCreated) {
             // Если запись была только что создана, инкрементируем views
             $lesson->increment('views');
-            LessonUser::create([
+            $lesson->save();
+            $lessonUser = LessonUser::create([
                 'lesson_id' => $lesson->id,
                 'user_id' => $this->id,
                 'views' => 1,
             ]);
-        }
+            $lessonUser->save();
     }
     
 
