@@ -170,15 +170,6 @@ class User extends Authenticatable implements JWTSubject
                 'user_id' => $this->id,
                 'views' => 1,
             ]);
-        }elseif($existingLessonUser->views == 0){
-            $lesson->increment('views');
-            $lesson->save();
-
-            LessonUser::create([
-                'lesson_id' => $lesson->id,
-                'user_id' => $this->id,
-                'views' => 1,
-            ]);
         }
     }
 
