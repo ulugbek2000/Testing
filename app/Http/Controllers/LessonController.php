@@ -276,54 +276,80 @@ class LessonController extends Controller
         ], 200);
     }
 
+    public function likeLesson(Request $request, Lesson $lesson)
+    {
+        $userId = $request->user()->id;
 
+        // Проверяем, лайкал ли пользователь уже этот урок
+        $existingAction = LessonUser::where('lesson_id', $lesson->id)
+            ->where('user_id', $userId)
+            ->where('action', 'like')
+            ->exists();
 
-public function likeLesson(Request $request, Lesson $lesson)
-{
-    $userId = $request->user()->id; // предположим, что у вас есть аутентифицированные пользователи
+        if (!$existingAction) {
+            // Если пользователь еще не лайкал урок, увеличиваем количество лайков и создаем запись об этом действии
+            $lesson->increment('likes');
+            LessonUser::create([
+                'lesson_id' => $lesson->id,
+                'user_id' => $userId,
+                'action' => 'like',
+            ]);
+            return response()->json(['message' => 'Lesson liked successfully']);
+        }
 
-    if (!$lesson->actions()->where('user_id', $userId)->where('action', 'like')->exists()) {
-        $lesson->increment('likes');
-        LessonUser::create([
-            'lesson_id' => $lesson->id,
-            'user_id' => $userId,
-            'action' => 'like',
-        ]);
-        return response()->json(['message' => 'Lesson liked successfully']);
+        return response()->json(['message' => 'You have already liked this lesson']);
     }
-    return response()->json(['message' => 'You have already liked this lesson']);
-}
 
-public function dislikeLesson(Request $request, Lesson $lesson)
-{
-    $userId = $request->user()->id;
+    public function dislikeLesson(Request $request, Lesson $lesson)
+    {
+        $userId = $request->user()->id;
 
-    if (!$lesson->actions()->where('user_id', $userId)->where('action', 'dislike')->exists()) {
-        $lesson->increment('dislikes');
-        LessonUser::create([
-            'lesson_id' => $lesson->id,
-            'user_id' => $userId,
-            'action' => 'dislike',
-        ]);
-        return response()->json(['message' => 'Lesson disliked successfully']);
+        // Проверяем, дизлайкал ли пользователь уже этот урок
+        $existingAction = LessonUser::where('lesson_id', $lesson->id)
+            ->where('user_id', $userId)
+            ->where('action', 'dislike')
+            ->exists();
+
+        if (!$existingAction) {
+            // Если пользователь еще не дизлайкал урок, увеличиваем количество дизлайков и создаем запись об этом действии
+            $lesson->increment('dislikes');
+            LessonUser::create([
+                'lesson_id' => $lesson->id,
+                'user_id' => $userId,
+                'action' => 'dislike',
+            ]);
+            return response()->json(['message' => 'Lesson disliked successfully']);
+        }
+
+        return response()->json(['message' => 'You have already disliked this lesson']);
     }
-    return response()->json(['message' => 'You have already disliked this lesson']);
-}
 
-public function viewLesson(Request $request, Lesson $lesson)
-{
-    $userId = $request->user()->id;
 
-    if (!$lesson->actions()->where('user_id', $userId)->where('action', 'view')->exists()) {
-        $lesson->increment('views');
-        LessonUser::create([
-            'lesson_id' => $lesson->id,
-            'user_id' => $userId,
-            'action' => 'view',
-        ]);
-        return response()->json(['message' => 'Lesson viewed successfully']);
+
+    public function viewLesson(Request $request, Lesson $lesson)
+    {
+        $userId = $request->user()->id;
+
+        // Check if the user has already viewed the lesson
+        $existingAction = LessonUser::where('lesson_id', $lesson->id)
+            ->where('user_id', $userId)
+            ->where('action', 'view')
+            ->exists();
+
+        if (!$existingAction) {
+            // If the user hasn't viewed the lesson yet, increment the views count
+            $lesson->increment('views');
+
+            // Create a new LessonAction record to track the view action
+            LessonUser::create([
+                'lesson_id' => $lesson->id,
+                'user_id' => $userId,
+                'action' => 'view',
+            ]);
+
+            return response()->json(['message' => 'Lesson viewed successfully']);
+        }
+
+        return response()->json(['message' => 'You have already viewed this lesson']);
     }
-    return response()->json(['message' => 'You have already viewed this lesson']);
-}
-
 }
