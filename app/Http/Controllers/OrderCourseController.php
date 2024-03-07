@@ -15,8 +15,8 @@ class OrderCourseController extends Controller
         $user = Auth::user();
 
         if ($user->hasRole(UserType::Admin)) {
-            $orders = OrderCourse::get();
-            return response()->json(['Заявки'=>$orders], 200);
+            $orders = OrderCourse::paginate(12);
+            return response()->json(['Заявки' => $orders], 200);
         }
     }
 
@@ -46,5 +46,10 @@ class OrderCourseController extends Controller
 
         // Возвращаем успешный ответ
         return response()->json(['msg' => 'Курс успешно заказан'], 200);
+    }
+    function destroy(OrderCourse $orderCourse)
+    {
+        $orderCourse->delete();
+        return response()->json(['msg' => 'Заявка успешно удален']);
     }
 }

@@ -213,7 +213,8 @@ Route::middleware(['jwt.auth'])->group(function () {
         //End Category
 
         //Application course
-        Route::get('get-application', [OrderCourseController::class, 'getApplicationCourse']);
+        Route::get('applications', [OrderCourseController::class, 'getApplicationCourse']);
+        Route::delete('application/{orderCourse}', [OrderCourseController::class, 'destroy']);
 
         Route::get('admin/comments', [CommentController::class, 'index']);
         Route::delete('comment/{comment}', [CommentController::class, 'destroy']);
@@ -281,7 +282,7 @@ Route::middleware(['jwt.auth'])->group(function () {
         // Route::get('/courses/{course}/buyers', [UserWalletController::class,'getCourseBuyers']);
 
         Route::post('application-course', [OrderCourseController::class, 'applicationCourse']);
-        
+
         //Комментарии
         Route::get('student/comments', [CommentController::class, 'index']);
         Route::post('comment/post', [CommentController::class, 'store']);

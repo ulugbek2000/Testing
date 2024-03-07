@@ -36,7 +36,7 @@ class LessonController extends Controller
 
         if (Auth::check()) {
             $isAdmin = $user->hasRole(UserType::Admin);
-            $isSubscribed = $user->isSubscribed();
+            $isSubscribed = $user->isSubscribed($topic->course);
 
             if ($isAdmin || $isSubscribed) {
                 foreach ($lessons as $lesson) {
