@@ -145,24 +145,34 @@ class User extends Authenticatable implements JWTSubject
 
     function addProgressCourse(Lesson $lesson)
     {
-        $userLessonProgress = UserLessonsProgress::firstOrCreate([
+        UserLessonsProgress::firstOrCreate([
             'user_id' => $this->id,
             'lesson_id' => $lesson->id,
             'course_id' => $lesson->topic->course->id,
             'completed' => true
         ]);
-    
-            // Если запись была только что создана, инкрементируем views
+        // Если запись была только что создана, инкрементируем views и сохраняем урок
+
+
+
+        // Проверяем, существует ли запись пользователя для данного урока в таблице LessonUser
+        $existingLessonUser = LessonUser::where('lesson_id', $lesson->id)
+            ->where('user_id', $this->id)
+            ->first();
+
+        if (!$existingLessonUser) {
+            // Если запись не существует, создаем ее и увеличиваем счетчик просмотров
             $lesson->increment('views');
             $lesson->save();
-            $lessonUser = LessonUser::create([
+            LessonUser::create([
                 'lesson_id' => $lesson->id,
                 'user_id' => $this->id,
                 'views' => 1,
             ]);
-            $lessonUser->save();
+        }
     }
-    
+
+
 
     public function sendPasswordResetNotification($token)
     {
