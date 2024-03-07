@@ -49,7 +49,7 @@ class TopicController extends Controller
             ], 200);
         } catch (\Exception $e) {
             //Return response Json
-            return response()->json([], 500);
+            return response()->json([$e->getMessage()], 500);
         }
     }
 
