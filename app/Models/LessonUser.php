@@ -13,5 +13,6 @@ class LessonUser extends Model
         'lesson_id',
         'like',
         'dislike',
+        'view'
     ];
 }
