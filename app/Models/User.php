@@ -151,6 +151,7 @@ class User extends Authenticatable implements JWTSubject
             'course_id' => $lesson->topic->course->id,
             'completed' => true
         ]);
+      
     }
 
     public function sendPasswordResetNotification($token)

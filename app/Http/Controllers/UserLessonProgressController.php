@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Course;
 use App\Models\Lesson;
+use App\Models\LessonUser;
 use App\Models\Media;
 use App\Models\User;
 use App\Models\UserLessonsProgress;
@@ -17,6 +18,21 @@ class UserLessonProgressController extends Controller
     function watched(Lesson $lesson)
     {
         $user = Auth::user();
+
+        $existingAction = LessonUser::where('lesson_id', $lesson->id)
+        ->where('user_id', $user->id)
+        ->exists();
+
+    if (!$existingAction) {
+        // Если пользователь еще не просматривал урок, увеличиваем количество просмотров и создаем запись об этом действии
+        $lesson->increment('views');
+        LessonUser::create([
+            'lesson_id' => $lesson->id,
+            'user_id' => $user->id,
+            'views' => 1,
+        ]);
+        return response()->json(['message' => 'Lesson viewed successfully']);
+    }
 
         $user->addProgressCourse($lesson);
     }

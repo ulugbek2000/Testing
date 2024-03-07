@@ -211,6 +211,9 @@ Route::middleware(['jwt.auth'])->group(function () {
         Route::delete('category/{category}', [CategoryController::class, 'destroy']);
         //End Category
 
+        //Application course
+        Route::get('get-application',[OrderCourseController::class,'getApplicationCourse']);
+
     });
 
     // Route::middleware('access:' . implode(',', [UserType::Teacher]))->group(function () {
@@ -252,7 +255,6 @@ Route::middleware(['jwt.auth'])->group(function () {
 
         Route::post('lessons/{lesson}/like', [LessonController::class, 'likeLesson']);
         Route::post('lessons/{lesson}/dislike', [LessonController::class, 'dislikeLesson']);
-        Route::post('lessons/{lesson}/view', [LessonController::class, 'viewLesson']);
 
         //Просмотр информации о подписке:
         Route::get('student/subscription/{subscription}', [SubscriptionController::class, 'show']);
@@ -274,7 +276,7 @@ Route::middleware(['jwt.auth'])->group(function () {
 
         // Route::get('/courses/{course}/buyers', [UserWalletController::class,'getCourseBuyers']);
 
-        Route::post('order-course', [OrderCourseController::class, 'orderCourse']);
+        Route::post('application-course', [OrderCourseController::class, 'applicationCourse']);
     });
 
     Route::post('logout', [AuthController::class, 'logout']);
