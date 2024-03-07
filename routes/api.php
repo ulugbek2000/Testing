@@ -7,6 +7,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BalanceController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CategoryCourseController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\CourseCategoryCaontroller;
 use App\Http\Controllers\CourseCategoryController;
 use App\Http\Controllers\CourseController;
@@ -212,8 +213,11 @@ Route::middleware(['jwt.auth'])->group(function () {
         //End Category
 
         //Application course
-        Route::get('get-application',[OrderCourseController::class,'getApplicationCourse']);
+        Route::get('get-application', [OrderCourseController::class, 'getApplicationCourse']);
 
+        Route::get('admin/comments', [CommentController::class, 'index']);
+        Route::delete('comment/{comment}', [CommentController::class, 'destroy']);
+        Route::put('comment/{comment}', [CommentController::class, 'hideComment']);
     });
 
     // Route::middleware('access:' . implode(',', [UserType::Teacher]))->group(function () {
@@ -277,6 +281,10 @@ Route::middleware(['jwt.auth'])->group(function () {
         // Route::get('/courses/{course}/buyers', [UserWalletController::class,'getCourseBuyers']);
 
         Route::post('application-course', [OrderCourseController::class, 'applicationCourse']);
+        
+        //Комментарии
+        Route::get('student/comments', [CommentController::class, 'index']);
+        Route::post('comment/post', [CommentController::class, 'store']);
     });
 
     Route::post('logout', [AuthController::class, 'logout']);

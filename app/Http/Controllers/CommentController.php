@@ -15,47 +15,19 @@ class CommentController extends Controller
     {
         $user = Auth::user();
 
-        $commentsQuery = Comment::with(['lesson.topic.course', 'user'])
+        $commentsQuery = Comment::with(['lesson'])
             ->orderBy('created_at', 'desc');
-            if (Auth::user()->hasRole(UserType::Admin)) {
-                // Если пользователь администратор, не применяем условие is_hidden
-            } else {
-                // Если пользователь не администратор, выбираем только не скрытые комментарии
-                $commentsQuery->where('is_hidden', false);
-            }
-        
-            if ($request->has('name')) {
-                $name = $request->input('name');
-                $commentsQuery->whereHas('user', function ($query) use ($name) {
-                    $query->where('name', 'like', "%$name%")
-                          ->orWhere('surname', 'like', "%$name%");
-                });
-            }
-
-        if ($request->has('date')) {
-            $date = $request->input('date');
-            $commentsQuery->whereDate('created_at', $date);
+        if (Auth::user()->hasRole(UserType::Admin)) {
+            // Если пользователь администратор, не применяем условие is_hidden
+        } else {
+            // Если пользователь не администратор, выбираем только не скрытые комментарии
+            $commentsQuery->where('is_hidden', false);
         }
 
         $per_page = $request->per_page ?? 12;
         $comments = $commentsQuery->paginate($per_page);
 
-        return response()->json([
-            'comments' => CommentResource::collection($comments),
-            'meta' => [
-                'current_page' => $comments->currentPage(),
-                'from' => $comments->firstItem(),
-                'last_page' => $comments->lastPage(),
-                'links' => [
-                    'previous' => $comments->previousPageUrl(),
-                    'next' => $comments->nextPageUrl(),
-                ],
-                'path' => $comments->path(),
-                'per_page' => $comments->perPage(),
-                'to' => $comments->lastItem(),
-                'total' => $comments->total()
-            ]
-        ]);
+        return response()->json(['comments' => CommentResource::collection($comments),]);
     }
 
     public function store(Request $request)
@@ -79,7 +51,6 @@ class CommentController extends Controller
                 $comment->save();
                 return response()->json(['comment' => $comment]);
             }
-        
         }
     }
 

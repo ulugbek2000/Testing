@@ -19,21 +19,6 @@ class UserLessonProgressController extends Controller
     {
         $user = Auth::user();
 
-        $existingAction = LessonUser::where('lesson_id', $lesson->id)
-        ->where('user_id', $user->id)
-        ->exists();
-
-    if (!$existingAction) {
-        // Если пользователь еще не просматривал урок, увеличиваем количество просмотров и создаем запись об этом действии
-        $lesson->increment('views');
-        LessonUser::create([
-            'lesson_id' => $lesson->id,
-            'user_id' => $user->id,
-            'views' => 1,
-        ]);
-        return response()->json(['message' => 'Lesson viewed successfully']);
-    }
-
         $user->addProgressCourse($lesson);
     }
 
@@ -82,7 +67,7 @@ class UserLessonProgressController extends Controller
             $lessonIds = $watchedInDay->pluck('lesson_id')->toArray();
             if (!empty($lessonIds)) {
                 $videos = Media::whereIn('model_id', $lessonIds)->get();
-// dd($videos);
+                // dd($videos);
                 $totalMinutesWatched = $videos->sum(function ($video) {
                     $customProperties = $video->custom_properties;
 
