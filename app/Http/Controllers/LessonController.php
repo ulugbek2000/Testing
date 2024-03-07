@@ -275,54 +275,51 @@ class LessonController extends Controller
             'message' => "Урок успешно удален."
         ], 200);
     }
-
     public function likeLesson(Request $request, Lesson $lesson)
     {
         $userId = $request->user()->id;
-
+    
         // Проверяем, лайкал ли пользователь уже этот урок
-        $existingAction = LessonUser::where('lesson_id', $lesson->id)
+        $existingLike = LessonUser::where('lesson_id', $lesson->id)
             ->where('user_id', $userId)
-            ->where('action', 'like')
             ->exists();
-
-        if (!$existingAction) {
+    
+        if (!$existingLike) {
             // Если пользователь еще не лайкал урок, увеличиваем количество лайков и создаем запись об этом действии
             $lesson->increment('likes');
             LessonUser::create([
                 'lesson_id' => $lesson->id,
                 'user_id' => $userId,
-                'action' => 'like',
+                'liked' => 1,
             ]);
             return response()->json(['message' => 'Lesson liked successfully']);
         }
-
+    
         return response()->json(['message' => 'You have already liked this lesson']);
     }
-
     public function dislikeLesson(Request $request, Lesson $lesson)
     {
         $userId = $request->user()->id;
-
+    
         // Проверяем, дизлайкал ли пользователь уже этот урок
-        $existingAction = LessonUser::where('lesson_id', $lesson->id)
+        $existingDislike = LessonUser::where('lesson_id', $lesson->id)
             ->where('user_id', $userId)
-            ->where('action', 'dislike')
             ->exists();
-
-        if (!$existingAction) {
+    
+        if (!$existingDislike) {
             // Если пользователь еще не дизлайкал урок, увеличиваем количество дизлайков и создаем запись об этом действии
             $lesson->increment('dislikes');
             LessonUser::create([
                 'lesson_id' => $lesson->id,
                 'user_id' => $userId,
-                'action' => 'dislike',
+                'disliked' => 1,
             ]);
             return response()->json(['message' => 'Lesson disliked successfully']);
         }
-
+    
         return response()->json(['message' => 'You have already disliked this lesson']);
     }
+    
 
     public function viewLesson(Request $request, Lesson $lesson)
     {

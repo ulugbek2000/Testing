@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('lesson_user', function (Blueprint $table) {
+        Schema::create('lesson_users', function (Blueprint $table) {
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('lesson_id');
             $table->enum('action', ['like', 'dislike']);
