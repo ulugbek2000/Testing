@@ -282,7 +282,7 @@ class LessonController extends Controller
         // Проверяем, лайкал ли пользователь уже этот урок
         $existingLike = LessonUser::where('lesson_id', $lesson->id)
             ->where('user_id', $userId)
-            ->exists();
+            ->first();
     
         if (!$existingLike) {
             // Если пользователь еще не лайкал урок, увеличиваем количество лайков и создаем запись об этом действии
@@ -293,10 +293,16 @@ class LessonController extends Controller
                 'likes' => 1,
             ]);
             return response()->json(['message' => 'Lesson liked successfully']);
+        } elseif ($existingLike->likes == 1) {
+            // Если пользователь уже лайкал урок, то отменяем его лайк и уменьшаем количество лайков
+            $existingLike->delete();
+            $lesson->decrement('likes');
+            return response()->json(['message' => 'Lesson like cancelled successfully']);
         }
     
         return response()->json(['message' => 'You have already liked this lesson']);
     }
+    
     public function dislikeLesson(Request $request, Lesson $lesson)
     {
         $userId = $request->user()->id;
