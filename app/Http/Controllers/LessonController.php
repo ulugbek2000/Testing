@@ -324,29 +324,23 @@ class LessonController extends Controller
         return response()->json(['message' => 'You have already disliked this lesson']);
     }
 
-
-
     public function viewLesson(Request $request, Lesson $lesson)
     {
         $userId = $request->user()->id;
 
-        // Check if the user has already viewed the lesson
+        // Проверяем, просматривал ли пользователь уже этот урок
         $existingAction = LessonUser::where('lesson_id', $lesson->id)
             ->where('user_id', $userId)
-            ->where('action', 'view')
             ->exists();
 
         if (!$existingAction) {
-            // If the user hasn't viewed the lesson yet, increment the views count
+            // Если пользователь еще не просматривал урок, увеличиваем количество просмотров и создаем запись об этом действии
             $lesson->increment('views');
-
-            // Create a new LessonAction record to track the view action
             LessonUser::create([
                 'lesson_id' => $lesson->id,
                 'user_id' => $userId,
-                'action' => 'view',
+                'view' => 1,
             ]);
-
             return response()->json(['message' => 'Lesson viewed successfully']);
         }
 
