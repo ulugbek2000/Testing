@@ -158,14 +158,13 @@ class User extends Authenticatable implements JWTSubject
         // Проверяем, существует ли запись пользователя для данного урока в таблице LessonUser
         $existingLessonUser = LessonUser::where('lesson_id', $lesson->id)
             ->where('user_id', $this->id)
-            ->where('views'<1)
             ->first();
-            dd($existingLessonUser);
 
-        if (!$existingLessonUser) {
-            // Если запись не существует, создаем ее и увеличиваем счетчик просмотров
+        if (!$existingLessonUser || $existingLessonUser->views == 0) {
+            // Если запись не существует, создаем ее и устанавливаем views в 1
             $lesson->increment('views');
             $lesson->save();
+
             LessonUser::create([
                 'lesson_id' => $lesson->id,
                 'user_id' => $this->id,
