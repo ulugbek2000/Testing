@@ -222,7 +222,7 @@ Route::middleware(['jwt.auth'])->group(function () {
         Route::put('comment/{comment}', [CommentController::class, 'hideComment']);
     });
 
-    Route::middleware(['access:' . (UserType::Teacher || UserType::Admin)])->group(function () {
+    Route::middleware(['access:' . implode(UserType::Student || UserType::Admin)])->group(function () {
 
         Route::get('admin/course', [CourseController::class, 'index'])->name('admin.course.index');
         Route::get('admin/course/{course}', [CourseController::class, 'show']);
