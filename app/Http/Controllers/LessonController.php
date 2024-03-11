@@ -270,11 +270,22 @@ class LessonController extends Controller
      */
     public function destroy(Lesson $lesson)
     {
+        $course = $lesson->topic->course;
+    
+        // Удаляем урок
         $lesson->delete();
+    
+        // Обновляем количество уроков в курсе
+        if ($course) {
+            $course->quantity_lessons = $course->lessons()->count();
+            $course->save();
+        }
+    
         return response()->json([
             'message' => "Урок успешно удален."
         ], 200);
     }
+    
     public function likeLesson(Request $request, Lesson $lesson)
     {
         $userId = $request->user()->id;

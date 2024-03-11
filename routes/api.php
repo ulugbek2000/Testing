@@ -126,19 +126,20 @@ Route::middleware(['jwt.auth'])->group(function () {
         Route::get('getTeachers', [ProfileController::class, 'getAllTeachers']);
         Route::get('user/{user}', [ProfileController::class, 'getUserById']);
         Route::put('update-profile', [ProfileController::class, 'updateProfile']);
+        
         //Start Courses
-        Route::get('admin/course', [CourseController::class, 'index'])->name('admin.course.index');
-        Route::get('admin/course/{course}', [CourseController::class, 'show']);
-        Route::get('admin/teacherByCourse/{course}', [CourseController::class, 'getTeacherByCourse']);
-        Route::post('course', [CourseController::class, 'store']);
-        Route::put('course/{course}', [CourseController::class, 'update']);
-        Route::delete('course/{course}', [CourseController::class, 'destroy']);
-        Route::post('enroll/{course}/{user}', [CourseController::class, 'enroll']);
-        Route::get('course/{course}/teacher', [CourseController::class, 'getTeacherInCourse']);
-        Route::post('courses/{course}/add-teachers', [CourseController::class, 'addTeachersToCourse']);
-        Route::get('courses/{course}/buyers', [CourseController::class, 'getCourseBuyers']);
-        // Route::get('courses/{category}', [CourseController::class, 'getCoursesByCategory']);
-        Route::put('hide-course/{course}', [CourseController::class, 'hideCourse']);
+        // Route::get('admin/course', [CourseController::class, 'index'])->name('admin.course.index');
+        // Route::get('admin/course/{course}', [CourseController::class, 'show']);
+        // Route::get('admin/teacherByCourse/{course}', [CourseController::class, 'getTeacherByCourse']);
+        // Route::post('course', [CourseController::class, 'store']);
+        // Route::put('course/{course}', [CourseController::class, 'update']);
+        // Route::delete('course/{course}', [CourseController::class, 'destroy']);
+        // Route::post('enroll/{course}/{user}', [CourseController::class, 'enroll']);
+        // Route::get('course/{course}/teacher', [CourseController::class, 'getTeacherInCourse']);
+        // Route::post('courses/{course}/add-teachers', [CourseController::class, 'addTeachersToCourse']);
+        // Route::get('courses/{course}/buyers', [CourseController::class, 'getCourseBuyers']);
+        // // Route::get('courses/{category}', [CourseController::class, 'getCoursesByCategory']);
+        // Route::put('hide-course/{course}', [CourseController::class, 'hideCourse']);
 
         //End Courses
 
@@ -221,15 +222,32 @@ Route::middleware(['jwt.auth'])->group(function () {
         Route::put('comment/{comment}', [CommentController::class, 'hideComment']);
     });
 
-    // Route::middleware('access:' . implode(',', [UserType::Teacher]))->group(function () {
+    Route::middleware(['access:' . (UserType::Teacher ?: UserType::Admin)])->group(function () {
 
-    //     Route::get('admin/course', [CourseController::class, 'index']);
-    //     Route::get('admin/course/{course}', [CourseController::class, 'show']);
-    //     Route::get('admin/teacherByCourse/{course}', [CourseController::class, 'getTeacherByCourse']);
+        Route::get('admin/course', [CourseController::class, 'index'])->name('admin.course.index');
+        Route::get('admin/course/{course}', [CourseController::class, 'show']);
+        Route::get('admin/teacherByCourse/{course}', [CourseController::class, 'getTeacherByCourse']);
+        Route::post('course', [CourseController::class, 'store']);
+        Route::put('course/{course}', [CourseController::class, 'update']);
+        Route::delete('course/{course}', [CourseController::class, 'destroy']);
+        Route::post('enroll/{course}/{user}', [CourseController::class, 'enroll']);
+        Route::get('course/{course}/teacher', [CourseController::class, 'getTeacherInCourse']);
+        Route::post('courses/{course}/add-teachers', [CourseController::class, 'addTeachersToCourse']);
+        Route::get('courses/{course}/buyers', [CourseController::class, 'getCourseBuyers']);
+        Route::put('hide-course/{course}', [CourseController::class, 'hideCourse']);
 
-    // });
+    });
 
 
+  
+  
+  
+  
+  
+  
+  
+  
+  
     Route::middleware('access:' . implode(',', [UserType::Student]))->group(function () {
 
         Route::get('student/user/balance', [UserWalletController::class, 'getBalance']);

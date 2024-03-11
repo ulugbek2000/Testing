@@ -126,8 +126,8 @@ class CourseController extends Controller
             'name' => 'required|string|max:255',
             'slug' => 'nullable|string|max:255',
             'short_description' => 'required|string',
-            'logo' => 'nullable|file',
-            'video' => 'nullable|file',
+            'logo' => ['nullable', new FileOrString],
+            'video' => ['nullable', new FileOrString],
             'category_id' => 'exists:categories,id',
         ]);
 
@@ -157,7 +157,7 @@ class CourseController extends Controller
             $storagePath = substr($videoPath, strpos($videoPath, '/storage'));
             $path = $course->video = $storagePath;
         } else {
-            $videopath = $course->video;
+            $path = $course->video;
         }
 
         $data = array_merge($request->only(['name', 'slug', 'short_description', 'category_id']), [
