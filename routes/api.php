@@ -126,7 +126,7 @@ Route::middleware(['jwt.auth'])->group(function () {
         Route::get('getTeachers', [ProfileController::class, 'getAllTeachers']);
         Route::get('user/{user}', [ProfileController::class, 'getUserById']);
         Route::put('update-profile', [ProfileController::class, 'updateProfile']);
-
+        
         //Start Courses
         // Route::get('admin/course', [CourseController::class, 'index'])->name('admin.course.index');
         // Route::get('admin/course/{course}', [CourseController::class, 'show']);
@@ -222,7 +222,7 @@ Route::middleware(['jwt.auth'])->group(function () {
         Route::put('comment/{comment}', [CommentController::class, 'hideComment']);
     });
 
-    Route::middleware(['access:' . implode(UserType::Student || UserType::Admin)])->group(function () {
+    Route::middleware(['access:' . UserType::Teacher, 'access:' . UserType::Admin])->group(function () {
 
         Route::get('admin/course', [CourseController::class, 'index'])->name('admin.course.index');
         Route::get('admin/course/{course}', [CourseController::class, 'show']);
