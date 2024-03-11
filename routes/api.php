@@ -100,6 +100,9 @@ Route::middleware(['jwt.auth'])->group(function () {
 
     Route::middleware(['access:' . UserType::Admin])->group(function () {
 
+        Route::put('user/{user}/block', [AuthController::class, 'blockUser']);
+
+
         //Пополнение баланс:
         Route::post('admin/balance/deposit', [UserTransactionController::class, 'topUpWallet']);
 

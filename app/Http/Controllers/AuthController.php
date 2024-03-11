@@ -58,6 +58,16 @@ class AuthController extends Controller
         }
     }
 
+    public function blockUser(User $user)
+    {
+        $user->is_blocked = !$user->is_blocked;
+        $user->save();
+
+        $status = $user->is_blocked ? 'заблокировано' : 'разблокировано';
+
+        return response()->json(['message' => "Пользователь успешно $status"], 200);
+    }
+
     protected function respondWithToken($token)
     {
         return response()->json([
@@ -111,19 +121,19 @@ class AuthController extends Controller
         $request->validate([
             'password' => ['required', 'string', 'min:8', 'regex:/^(?=.*[0-9])(?=.*[a-zA-Z]).*$/', 'confirmed'],
         ], $this->validationMessages());
-    
+
         $user = Auth::user();
-    
+
         if (!Hash::check($request->old_password, $user->password)) {
             return response()->json(['error' => 'Старый пароль неверен'], 422);
         }
-    
+
         // Обновляем пароль пользователя
         $user->update(['password' => bcrypt($request->password)]);
-    
+
         return response()->json(['message' => 'Пароль успешно изменен'], 200);
     }
-    
+
     private function validationMessages()
     {
         return [
@@ -131,5 +141,4 @@ class AuthController extends Controller
             'password.regex' => 'Пароль должен содержать как минимум одну букву и одну цифру.',
         ];
     }
-    
 }
