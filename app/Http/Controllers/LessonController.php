@@ -280,6 +280,7 @@ class LessonController extends Controller
         // Обновляем количество уроков в курсе
         if ($course) {
             $course->quantity_lessons = $course->lessons()->count();
+            $course->hours_lessons = $course->lessons()->count(); 
             $course->save();
         }
     
