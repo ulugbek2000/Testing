@@ -273,6 +273,8 @@ class LessonController extends Controller
         $course = $lesson->topic->course;
     
         // Удаляем урок
+        $lesson->userLessonProgress()->delete();
+
         $lesson->delete();
     
         // Обновляем количество уроков в курсе

@@ -40,6 +40,11 @@ class Lesson extends Model implements HasMedia
         return $this->hasMany(Comment::class);
     }
 
+    public function userLessonProgress()
+    {
+        return $this->hasMany(UserLessonsProgress::class);
+    }
+
     function getDurationAttribute()
     {
         $media = $this->getMedia('content')->first();
