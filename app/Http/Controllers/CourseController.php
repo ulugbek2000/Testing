@@ -46,9 +46,9 @@ class CourseController extends Controller
         $query->latest();
 
         // Получаем курсы с пагинацией
-        $courses = CourseResource::collection($query->paginate($perPage));
+        return  CourseResource::collection($query->paginate($perPage));
 
-        return response()->json($courses);
+         
     }
 
 

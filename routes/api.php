@@ -129,18 +129,18 @@ Route::middleware(['jwt.auth'])->group(function () {
         Route::get('getTeachers', [ProfileController::class, 'getAllTeachers']);
         Route::get('user/{user}', [ProfileController::class, 'getUserById']);
         Route::put('update-profile', [ProfileController::class, 'updateProfile']);
-        
+
         //Start Courses
         // Route::get('admin/course', [CourseController::class, 'index'])->name('admin.course.index');
         // Route::get('admin/course/{course}', [CourseController::class, 'show']);
-        // Route::get('admin/teacherByCourse/{course}', [CourseController::class, 'getTeacherByCourse']);
+        Route::get('admin/teacherByCourse/{course}', [CourseController::class, 'getTeacherByCourse']);
         // Route::post('course', [CourseController::class, 'store']);
         // Route::put('course/{course}', [CourseController::class, 'update']);
         // Route::delete('course/{course}', [CourseController::class, 'destroy']);
-        // Route::post('enroll/{course}/{user}', [CourseController::class, 'enroll']);
-        // Route::get('course/{course}/teacher', [CourseController::class, 'getTeacherInCourse']);
-        // Route::post('courses/{course}/add-teachers', [CourseController::class, 'addTeachersToCourse']);
-        // Route::get('courses/{course}/buyers', [CourseController::class, 'getCourseBuyers']);
+        Route::post('enroll/{course}/{user}', [CourseController::class, 'enroll']);
+        Route::get('course/{course}/teacher', [CourseController::class, 'getTeacherInCourse']);
+        Route::post('courses/{course}/add-teachers', [CourseController::class, 'addTeachersToCourse']);
+        Route::get('courses/{course}/buyers', [CourseController::class, 'getCourseBuyers']);
         // // Route::get('courses/{category}', [CourseController::class, 'getCoursesByCategory']);
         // Route::put('hide-course/{course}', [CourseController::class, 'hideCourse']);
 
@@ -154,13 +154,14 @@ Route::middleware(['jwt.auth'])->group(function () {
         Route::delete('topic/{topic}', [TopicController::class, 'destroy']);
         //End Topics
 
-        //Start Lessons
-        Route::get('admin/topic/{topic}/lessons', [LessonController::class, 'index']);
-        Route::get('admin/lesson/{lesson}', [LessonController::class, 'show']);
-        Route::post('lesson', [LessonController::class, 'store']);
-        Route::put('lesson/{lesson}', [LessonController::class, 'update']);
-        Route::delete('lesson/{lesson}', [LessonController::class, 'destroy']);
-        //End Lessons
+        //  Start Lessons
+        // Route::get('admin/topic/{topic}/lessons', [LessonController::class, 'index']);
+        // Route::get('admin/lesson/{lesson}', [LessonController::class, 'show']);
+        // Route::post('lesson', [LessonController::class, 'store']);
+        // Route::put('lesson/{lesson}', [LessonController::class, 'update']);
+        // Route::delete('lesson/{lesson}', [LessonController::class, 'destroy']);
+        //End Lessons 
+
 
         //Start CourseSkills
         Route::get('admin/course/{course}/skill', [CourseSkillsController::class, 'index']);
@@ -229,28 +230,43 @@ Route::middleware(['jwt.auth'])->group(function () {
 
         Route::get('admin/course', [CourseController::class, 'index'])->name('admin.course.index');
         Route::get('admin/course/{course}', [CourseController::class, 'show']);
-        Route::get('admin/teacherByCourse/{course}', [CourseController::class, 'getTeacherByCourse']);
+        // Route::get('admin/teacherByCourse/{course}', [CourseController::class, 'getTeacherByCourse']);
         Route::post('course', [CourseController::class, 'store']);
         Route::put('course/{course}', [CourseController::class, 'update']);
         Route::delete('course/{course}', [CourseController::class, 'destroy']);
-        Route::post('enroll/{course}/{user}', [CourseController::class, 'enroll']);
-        Route::get('course/{course}/teacher', [CourseController::class, 'getTeacherInCourse']);
-        Route::post('courses/{course}/add-teachers', [CourseController::class, 'addTeachersToCourse']);
-        Route::get('courses/{course}/buyers', [CourseController::class, 'getCourseBuyers']);
+        // Route::post('enroll/{course}/{user}', [CourseController::class, 'enroll']);
+        // Route::get('course/{course}/teacher', [CourseController::class, 'getTeacherInCourse']);
+        // Route::post('courses/{course}/add-teachers', [CourseController::class, 'addTeachersToCourse']);
+        // Route::get('courses/{course}/buyers', [CourseController::class, 'getCourseBuyers']);
         Route::put('hide-course/{course}', [CourseController::class, 'hideCourse']);
+
+        //Start Topics
+        Route::get('admin/course/{course}/topics', [TopicController::class, 'index']);
+        Route::get('admin/topic/{topic}', [TopicController::class, 'show']);
+        Route::post('topic', [TopicController::class, 'store']);
+        Route::put('topic/{topic}', [TopicController::class, 'update']);
+        Route::delete('topic/{topic}', [TopicController::class, 'destroy']);
+        //End Topics
+
+        //Start Lessons
+        Route::get('admin/topic/{topic}/lessons', [LessonController::class, 'index']);
+        Route::get('admin/lesson/{lesson}', [LessonController::class, 'show']);
+        Route::post('lesson', [LessonController::class, 'store']);
+        Route::put('lesson/{lesson}', [LessonController::class, 'update']);
+        Route::delete('lesson/{lesson}', [LessonController::class, 'destroy']);
+        //End Lessons
+
+        //Start SubscriptionCourse
+        Route::get('admin/course/{course}/subscriptions', [SubscriptionController::class, 'index']);
+        Route::get('admin/subscription/{subscription}', [SubscriptionController::class, 'show']);
+        Route::post('subscription', [SubscriptionController::class, 'store']);
+        Route::put('subscription/{subscription_id}', [SubscriptionController::class, 'update']);
+        Route::delete('subscription/{subscription}', [SubscriptionController::class, 'destroy']);
+        //End SubscriptionCourse
 
     });
 
 
-  
-  
-  
-  
-  
-  
-  
-  
-  
     Route::middleware('access:' . implode(',', [UserType::Student]))->group(function () {
 
         Route::get('student/user/balance', [UserWalletController::class, 'getBalance']);

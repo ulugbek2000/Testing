@@ -179,9 +179,6 @@ class ProfileController extends Controller
 
         return response()->json(['message' => 'The files skills are updated successfully.']);
 
-        if ($user->hasRole(!UserType::Admin)) {
-            return response()->json(['error' => 'Access denied'], 403);
-        }
     }
 
     public function getAllStudents(Request $request)
