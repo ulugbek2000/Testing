@@ -273,7 +273,7 @@ class LessonController extends Controller
         $course = $lesson->topic->course;
         
         // Получаем длительность удаляемого урока
-        $durationToRemove = optional($lesson->media)->getCustomProperty('duration') ?? 0;
+        $durationToRemove = $lesson->media->sum('custom_properties->duration') ?? 0;
         
         // Удаляем связанные данные из user_lessons_progress
         $lesson->userLessonProgress()->delete();
@@ -300,6 +300,7 @@ class LessonController extends Controller
             'message' => "Урок успешно удален."
         ], 200);
     }
+    
     
     
     
