@@ -273,7 +273,7 @@ class LessonController extends Controller
         $course = $lesson->topic->course;
         
         // Получаем длительность удаляемого урока
-        $durationToRemove = $lesson->duration ?? 0;
+        $durationToRemove = optional($lesson->media)->getCustomProperty('duration') ?? 0;
         
         // Удаляем связанные данные из user_lessons_progress
         $lesson->userLessonProgress()->delete();
@@ -283,21 +283,24 @@ class LessonController extends Controller
         
         // Обновляем количество уроков и общее время в курсе
         if ($course) {
-            $course->quantity_lessons = $course->lessons()->count();
-            
-            // Вычисляем общее время уроков в курсе
-            $totalDuration = $course->lessons()->sum('duration');
-            
-            // Обновляем общее время курса за вычетом длительности удаленного урока
-            $course->hours_lessons = max(0, $totalDuration - $durationToRemove);
-            
-            $course->save();
+            $course->update([
+                'quantity_lessons' => $course->lessons()->count(),
+                'hours_lessons' => max(0, $course->lessons()
+                    ->leftJoin('media', function ($join) {
+                        $join->on('media.model_id', '=', 'lessons.id')
+                            ->where('media.model_type', '=', Lesson::class);
+                    })
+                    ->where('topics.course_id', $course->id)
+                    ->sum(DB::raw('JSON_UNQUOTE(JSON_EXTRACT(media.custom_properties, "$.duration"))')) - $durationToRemove
+                ),
+            ]);
         }
         
         return response()->json([
             'message' => "Урок успешно удален."
         ], 200);
     }
+    
     
     
     public function likeLesson(Request $request, Lesson $lesson)
