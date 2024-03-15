@@ -13,14 +13,14 @@ class UserRoleController extends Controller
     public function getUsers(Request $request)
     {
         $user = Auth::user();
-
+        
         // Проверяем, имеет ли пользователь роль администратора
         if ($user->hasRole(UserType::Admin)) {
             $perPage = $request->input('per_page', 12);
-
+    
             $users = User::paginate($perPage);
             $userCollection = UserResource::collection($users);
-
+    
             $transformedUsers = $userCollection->map(function ($user) {
                 $role = $user->roles->first();
                 return [
@@ -31,7 +31,7 @@ class UserRoleController extends Controller
                     'role' => $role ? $role->id : null,
                 ];
             });
-
+    
             return response()->json([
                 'users' => $transformedUsers,
                 'meta' => [
@@ -45,7 +45,7 @@ class UserRoleController extends Controller
             ]);
         }
     }
-    
+
     public function updateUserRole(Request $request, User $user, $roleId)
     {
         $adminUser = Auth::user();
