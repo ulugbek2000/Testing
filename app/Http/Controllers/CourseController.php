@@ -47,8 +47,6 @@ class CourseController extends Controller
 
         // Получаем курсы с пагинацией
         return  CourseResource::collection($query->paginate($perPage));
-
-         
     }
 
 
@@ -58,11 +56,11 @@ class CourseController extends Controller
     public function store(Request $request, Category $category)
     {
         $request->validate([
-            'logo' => 'required|file',
+            'logo' => ['nullable', new FileOrString],
             'name' => 'required|string',
             'slug' => 'nullable|string|max:255',
             'short_description' => 'required',
-            'video' => 'required|file',
+            'video' => ['nullable', new FileOrString],
             'category_id' => 'required|exists:categories,id',
             'has_certificate' => 'required|boolean',
         ]);
@@ -109,6 +107,9 @@ class CourseController extends Controller
         }
     }
 
+
+
+
     /**
      * Display the specified resource.
      */
@@ -119,7 +120,6 @@ class CourseController extends Controller
     /**
      * Update the specified resource in storage.
      */
-
     public function update(Request $request, Course $course)
     {
         $request->validate([
