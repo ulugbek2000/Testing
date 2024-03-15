@@ -324,7 +324,7 @@ class ProfileController extends Controller
         $teachers = User::whereHas('roles', function ($query) {
             $query->where('id', UserType::Teacher);
         })->with('userSkills', 'courses')->paginate($perPage);
-        $teacherCollection = USerResource::collection($teachers);
+        $teacherCollection = UserResource::collection($teachers);
         return response()->json([
             'teachers' => $teacherCollection,
             'meta' => [
