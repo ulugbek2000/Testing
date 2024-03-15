@@ -15,7 +15,7 @@ class UserRoleController extends Controller
         $user = Auth::user();
       
         if ($user->hasRole(UserType::Admin)) {
-            $per_page = $request->per_page ?? 12;
+            $per_page = $request->input('per_page', 12);
 
             $users = User::paginate($per_page);
             $userCollection = UserResource::collection($users);
