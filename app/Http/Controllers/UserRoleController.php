@@ -20,7 +20,7 @@ class UserRoleController extends Controller
             $perPage = $request->input('per_page', 12);
     
             $users = User::paginate($perPage);
-            $userCollection = UserResourceUserResource::collection($users);
+            $userCollection = UserResource::collection($users);
     
             $transformedUsers = $userCollection->map(function ($user) {
                 $role = $user->roles->first();
