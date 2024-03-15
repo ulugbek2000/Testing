@@ -10,14 +10,15 @@ use Illuminate\Support\Facades\Auth;
 
 class UserRoleController extends Controller
 {
-    public function getAllUsers(Request $request)
+    public function getUsers(Request $request)
     {
         $user = Auth::user();
-      
-        if ($user->hasRole(UserType::Admin)) {
-            $per_page = $request->input('per_page', 12);
 
-            $users = User::paginate($per_page);
+        // Проверяем, имеет ли пользователь роль администратора
+        if ($user->hasRole(UserType::Admin)) {
+            $perPage = $request->input('per_page', 12);
+
+            $users = User::paginate($perPage);
             $userCollection = UserResource::collection($users);
 
             $transformedUsers = $userCollection->map(function ($user) {
@@ -31,28 +32,38 @@ class UserRoleController extends Controller
                 ];
             });
 
-            return $transformedUsers;
+            return response()->json([
+                'users' => $transformedUsers,
+                'meta' => [
+                    'total' => $users->total(),
+                    'per_page' => $users->perPage(),
+                    'current_page' => $users->currentPage(),
+                    'last_page' => $users->lastPage(),
+                    'from' => $users->firstItem(),
+                    'to' => $users->lastItem(),
+                ],
+            ]);
         }
     }
-
+    
     public function updateUserRole(Request $request, User $user, $roleId)
     {
         $adminUser = Auth::user();
         if (!$adminUser->hasRole(UserType::Admin)) {
             return response()->json(['error' => 'Unauthorized.'], 403);
         }
-    
+
         // Проверяем, является ли переданный ID роли допустимым
         if (!in_array($roleId, UserType::getValues())) {
-            return response()->json(['error' => 'Invalid role id'] ,422);
+            return response()->json(['error' => 'Invalid role id'], 422);
         }
-    
+
         // Remove existing roles before assigning the new one
         $user->roles()->detach();
-    
+
         // Assign the new role
         $user->assignRole($roleId);
-    
+
         return response()->json(['message' => 'User role updated successfully.']);
     }
 }

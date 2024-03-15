@@ -178,7 +178,6 @@ class ProfileController extends Controller
         $currentSkills = UserSkills::where('user_id', $user->id)->whereNotIn('skills', $uploadedSkillNames)->delete();
 
         return response()->json(['message' => 'The files skills are updated successfully.']);
-
     }
 
     public function getAllStudents(Request $request)
@@ -265,14 +264,14 @@ class ProfileController extends Controller
     public function getStudentsSubscription(Request $request)
     {
         $perPage = $request->input('per_page', 12); // Количество элементов на странице
-    
+
         $subscriptions = UserSubscription::with([
             'user:id,name,surname,photo,phone',
             'subscription:id,name,price,duration,duration_type',
             'subscription.description',
             'course:id,name,slug,quantity_lessons,hours_lessons,short_description,video,has_certificate,logo',
         ])->select('id', 'user_id', 'subscription_id', 'course_id', 'deleted_at', 'created_at')->paginate($perPage);
-    
+
         $filteredSubscriptions = $subscriptions->map(function ($subscription) {
             return [
                 'id' => $subscription->id,
@@ -303,7 +302,7 @@ class ProfileController extends Controller
                     : null
             ];
         })->toArray();
-    
+
         return response()->json([
             'subscriptions' => $filteredSubscriptions,
             'meta' => [
@@ -316,15 +315,26 @@ class ProfileController extends Controller
             ],
         ]);
     }
-    
 
 
-    public function getAllTeachers()
+
+    public function getAllTeachers(Request $request)
     {
+        $perPage = $request->input('per_page', 12);
         $teachers = User::whereHas('roles', function ($query) {
             $query->where('id', UserType::Teacher);
-        })->with('userSkills', 'courses')->paginate(12);
-        return response()->json($teachers);
+        })->with('userSkills', 'courses')->paginate($perPage);
+        return response()->json([
+            'teachers' => $teachers,
+            'meta' => [
+                'total' => $teachers->total(),
+                'per_page' => $teachers->perPage(),
+                'current_page' => $teachers->currentPage(),
+                'last_page' => $teachers->lastPage(),
+                'from' => $teachers->firstItem(),
+                'to' => $teachers->lastItem(),
+            ],
+        ]);
     }
 
     public function getUserById(User $user)
