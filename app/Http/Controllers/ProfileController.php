@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\UserType;
-use App\Http\Resources\USerResource;
+use App\Http\Resources\UserResource;
 use App\Http\Resources\UserResource\UserResource as UserResourceUserResource;
 use App\Models\Course;
 use App\Models\Role;
