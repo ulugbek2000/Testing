@@ -34,6 +34,7 @@ class UserResource extends JsonResource
             'phone' => $this->phone,
             'gender' => $this->gender,
             'deleted_at' => $this->deleted_at,
+            'is_block' => $this->is_block,
         ];
     }
 }
