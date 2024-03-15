@@ -299,8 +299,7 @@ class LessonController extends Controller
         return response()->json([
             'message' => "Урок успешно удален."
         ], 200);
-    }
-    
+    }  
     
     
     

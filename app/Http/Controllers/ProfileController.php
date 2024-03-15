@@ -262,15 +262,17 @@ class ProfileController extends Controller
         ]);
     }
 
-    public function getStudentsSubscription()
+    public function getStudentsSubscription(Request $request)
     {
+        $perPage = $request->input('per_page', 12); // Количество элементов на странице
+    
         $subscriptions = UserSubscription::with([
             'user:id,name,surname,photo,phone',
             'subscription:id,name,price,duration,duration_type',
             'subscription.description',
             'course:id,name,slug,quantity_lessons,hours_lessons,short_description,video,has_certificate,logo',
-        ])->select('id', 'user_id', 'subscription_id', 'course_id', 'deleted_at', 'created_at')->get();
-
+        ])->select('id', 'user_id', 'subscription_id', 'course_id', 'deleted_at', 'created_at')->paginate($perPage);
+    
         $filteredSubscriptions = $subscriptions->map(function ($subscription) {
             return [
                 'id' => $subscription->id,
@@ -301,16 +303,27 @@ class ProfileController extends Controller
                     : null
             ];
         })->toArray();
-
-        return response()->json($filteredSubscriptions);
+    
+        return response()->json([
+            'subscriptions' => $filteredSubscriptions,
+            'meta' => [
+                'total' => $subscriptions->total(),
+                'per_page' => $subscriptions->perPage(),
+                'current_page' => $subscriptions->currentPage(),
+                'last_page' => $subscriptions->lastPage(),
+                'from' => $subscriptions->firstItem(),
+                'to' => $subscriptions->lastItem(),
+            ],
+        ]);
     }
+    
 
 
     public function getAllTeachers()
     {
         $teachers = User::whereHas('roles', function ($query) {
             $query->where('id', UserType::Teacher);
-        })->with('userSkills', 'courses')->get();
+        })->with('userSkills', 'courses')->paginate(12);
         return response()->json($teachers);
     }
 
