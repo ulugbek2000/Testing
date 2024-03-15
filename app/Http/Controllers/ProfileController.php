@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Enums\UserType;
 use App\Http\Resources\USerResource;
+use App\Http\Resources\UserResource\UserResource as UserResourceUserResource;
 use App\Models\Course;
 use App\Models\Role;
 use App\Models\User;
@@ -324,7 +325,7 @@ class ProfileController extends Controller
         $teachers = User::whereHas('roles', function ($query) {
             $query->where('id', UserType::Teacher);
         })->with('userSkills', 'courses')->paginate($perPage);
-        $teacherCollection = UserResource::collection($teachers);
+        $teacherCollection = UserResourceUserResource::collection($teachers);
         return response()->json([
             'teachers' => $teacherCollection,
             'meta' => [

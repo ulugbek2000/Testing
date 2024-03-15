@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Enums\UserType;
 use App\Http\Resources\UserResource;
+use App\Http\Resources\UserResource\UserResource as UserResourceUserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -19,7 +20,7 @@ class UserRoleController extends Controller
             $perPage = $request->input('per_page', 12);
     
             $users = User::paginate($perPage);
-            $userCollection = UserResource::collection($users);
+            $userCollection = UserResourceUserResource::collection($users);
     
             $transformedUsers = $userCollection->map(function ($user) {
                 $role = $user->roles->first();
