@@ -333,9 +333,21 @@ class ProfileController extends Controller
     public function getAllTeachers(Request $request)
     {
         $perPage = $request->input('per_page', 12);
-        $teachers = User::whereHas('roles', function ($query) {
+        $search = $request->input('search');
+    
+        $query = User::whereHas('roles', function ($query) {
             $query->where('id', UserType::Teacher);
-        })->with('userSkills', 'courses')->paginate($perPage);
+        })->with('userSkills', 'courses');
+    
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%$search%")
+                    ->orWhere('surname', 'like', "%$search%");
+            });
+        }
+    
+        $teachers = $query->paginate($perPage);
+        
         $teacherCollection = UserResource::collection($teachers);
         return response()->json([
             'teachers' => $teacherCollection,
@@ -349,6 +361,7 @@ class ProfileController extends Controller
             ],
         ]);
     }
+    
 
     public function getUserById(User $user)
     {
