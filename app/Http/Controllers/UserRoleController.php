@@ -12,40 +12,54 @@ use Illuminate\Support\Facades\Auth;
 class UserRoleController extends Controller
 {
     public function getUsers(Request $request)
-    {
-        $user = Auth::user();
+{
+    $user = Auth::user();
+
+    // Проверяем, имеет ли пользователь роль администратора
+    if ($user->hasRole(UserType::Admin)) {
+        $perPage = $request->input('per_page', 12);
+        $search = $request->input('search');
+
+        // Получаем пользователей с учетом пагинации
+        $query = User::query();
         
-        // Проверяем, имеет ли пользователь роль администратора
-        if ($user->hasRole(UserType::Admin)) {
-            $perPage = $request->input('per_page', 12);
-    
-            $users = User::paginate($perPage);
-            $userCollection = UserResource::collection($users);
-    
-            $transformedUsers = $userCollection->map(function ($user) {
-                $role = $user->roles->first();
-                return [
-                    'id' => $user['id'],
-                    'name' => $user['name'],
-                    'surname' => $user['surname'],
-                    'phone' => $user['phone'],
-                    'role' => $role ? $role->id : null,
-                ];
+        // Применяем фильтрацию, если есть параметр поиска
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%$search%")
+                    ->orWhere('surname', 'like', "%$search%");
             });
-    
-            return response()->json([
-                'users' => $transformedUsers,
-                'meta' => [
-                    'total' => $users->total(),
-                    'per_page' => $users->perPage(),
-                    'current_page' => $users->currentPage(),
-                    'last_page' => $users->lastPage(),
-                    'from' => $users->firstItem(),
-                    'to' => $users->lastItem(),
-                ],
-            ]);
         }
+        
+        $users = $query->paginate($perPage);
+        
+        // Преобразуем пользователей в нужный формат
+        $transformedUsers = $users->map(function ($user) {
+            $role = $user->roles->first();
+            return [
+                'id' => $user->id,
+                'name' => $user->name,
+                'surname' => $user->surname,
+                'phone' => $user->phone,
+                'role' => $role ? $role->id : null,
+            ];
+        });
+
+        // Возвращаем ответ в формате JSON с данными пользователей и метаданными
+        return response()->json([
+            'users' => $transformedUsers,
+            'meta' => [
+                'total' => $users->total(),
+                'per_page' => $users->perPage(),
+                'current_page' => $users->currentPage(),
+                'last_page' => $users->lastPage(),
+                'from' => $users->firstItem(),
+                'to' => $users->lastItem(),
+            ],
+        ]);
     }
+}
+
 
     public function updateUserRole(Request $request, User $user, $roleId)
     {

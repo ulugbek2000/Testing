@@ -265,14 +265,24 @@ class ProfileController extends Controller
     public function getStudentsSubscription(Request $request)
     {
         $perPage = $request->input('per_page', 12); // Количество элементов на странице
-
-        $subscriptions = UserSubscription::with([
+        $search = $request->input('search');
+    
+        $query = UserSubscription::with([
             'user:id,name,surname,photo,phone',
             'subscription:id,name,price,duration,duration_type',
             'subscription.description',
             'course:id,name,slug,quantity_lessons,hours_lessons,short_description,video,has_certificate,logo',
-        ])->select('id', 'user_id', 'subscription_id', 'course_id', 'deleted_at', 'created_at')->paginate($perPage);
-
+        ])->select('id', 'user_id', 'subscription_id', 'course_id', 'deleted_at', 'created_at');
+    
+        if ($search) {
+            $query->whereHas('user', function ($q) use ($search) {
+                $q->where('name', 'like', "%$search%")
+                    ->orWhere('surname', 'like', "%$search%");
+            });
+        }
+    
+        $subscriptions = $query->paginate($perPage);
+    
         $filteredSubscriptions = $subscriptions->map(function ($subscription) {
             return [
                 'id' => $subscription->id,
@@ -303,7 +313,7 @@ class ProfileController extends Controller
                     : null
             ];
         })->toArray();
-
+    
         return response()->json([
             'subscriptions' => $filteredSubscriptions,
             'meta' => [
@@ -316,6 +326,7 @@ class ProfileController extends Controller
             ],
         ]);
     }
+    
 
 
 
