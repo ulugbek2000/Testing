@@ -21,28 +21,28 @@ class AuthController extends Controller
 {
     public function login(Request $request)
     {
-
         $validator = Validator::make($request->all(), [
             'email_or_phone' => 'required|string',
             'password' => 'required|string|min:8',
         ]);
-
+    
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
         }
-
-
+    
         $credentials = $request->only('email_or_phone', 'password');
-
-        $field = filter_var($credentials['email_or_phone'], FILTER_VALIDATE_EMAIL) ? 'email' : 'phone';
-
+    
+        $isPhoneLogin = filter_var($credentials['email_or_phone'], FILTER_VALIDATE_EMAIL) ? false : true;
+    
+        $field = $isPhoneLogin ? 'phone' : 'email';
+    
         if (Auth::attempt([$field => $credentials['email_or_phone'], 'password' => $credentials['password']])) {
             $user = Auth::user();
             $role = $user->roles()->first()->id;
-
+    
             $isPhoneVerified = $user->phone_verified_at != null;
             $isEmailVerified = $user->email_verified_at != null;
-
+    
             // Создайте пользовательские данные для токена
             $customClaims = [
                 'user_type' => $role,
@@ -51,10 +51,10 @@ class AuthController extends Controller
                 'email' => $user->email,
                 'name' => $user->name,
             ];
-
+    
             // Создайте JWT токен с пользовательскими данными
             $token = JWTAuth::claims($customClaims)->fromUser($user);
-
+    
             return response([
                 'token' => $token,
             ]);
@@ -62,6 +62,7 @@ class AuthController extends Controller
             return response()->json(['message' => 'Неверные пароль или телефон'], 401);
         }
     }
+    
 
     public function blockUser(User $user)
     {
