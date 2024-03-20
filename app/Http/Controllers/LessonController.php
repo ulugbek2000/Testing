@@ -82,70 +82,57 @@ class LessonController extends Controller
      * Store a newly created resource in storage.
      */
 
-    public function store(Request $request)
-    {
-        $request->validate([
-            'topic_id' => 'nullable|integer',
-            'name' => 'nullable|string',
-            'cover' => 'image|file',
-            'duration' => 'nullable',
-            'type' => 'required|in:text,video,audio',
-            'content' => $request->input('type') === 'text' ? 'required|string' : 'required|file',
-        ]);
-
-        $lesson = Lesson::create([
-            'topic_id' => $request->input('topic_id'),
-            'name' => $request->input('name'),
-            'type' => $request->input('type')
-        ]);
-
-        if ($request->type === 'text') {
-            $lesson->content = $request->input('content');
-        } elseif ($request->type == 'video' || $request->type == 'audio') {
-
-            $media = $lesson->addMediaFromRequest('content')->toMediaCollection('content');
-
-            $getID3 = new getID3();
-            $fileInfo = $getID3->analyze($media->getPath());
-
-            $durationInSeconds = $fileInfo['playtime_seconds'];
-
-            $media->setCustomProperty('duration', $durationInSeconds)->save();
-            $videoPath = $media->getPath();
-            $storagePath = substr($videoPath, strpos($videoPath, '/storage'));
-            $lesson->content = $storagePath;
-            // $lesson->duration = $media->custom_properties;
-            $lesson->save();
-        }
-
-        if ($request->hasFile('cover')) {
-            $coverPath = $request->file('cover')->store('cover', 'public');
-            $lesson->cover = Storage::url($coverPath);
-        }
-
-        $lesson->save();
-
-        // Обновляем информацию в таблице курсов
-        if ($lesson->topic && $lesson->topic->course) {
-            $course = $lesson->topic->course;
-            $course->quantity_lessons = $course->lessons->count();
-
-            // Добавляем длительность урока к общей длительности курса
-
-            $course->hours_lessons = $course->lessons()
-                ->leftJoin('media', function ($join) {
-                    $join->on('media.model_id', '=', 'lessons.id')
-                        ->where('media.model_type', '=', Lesson::class);
-                })
-                ->where('topics.course_id', $course->id)
-                ->selectRaw('SUM(CASE WHEN media.custom_properties IS NOT NULL THEN JSON_UNQUOTE(JSON_EXTRACT(media.custom_properties, "$.duration")) ELSE 0 END) as total_duration')
-                ->value('total_duration');
-            $course->save();
-        }
-
-        return response()->json(['message' => 'Урок успешно создан.']);
-    }
-
+     public function store(Request $request)
+     {
+         $request->validate([
+             'topic_id' => 'nullable|integer',
+             'name' => 'nullable|string',
+             'cover' => 'image|file',
+             'duration' => 'nullable',
+             'type' => 'required|in:text,video,audio',
+             'content' => 'nullable|url|string', // Валидация для URL
+         ]);
+     
+         $lesson = Lesson::create([
+             'topic_id' => $request->input('topic_id'),
+             'name' => $request->input('name'),
+             'type' => $request->input('type')
+         ]);
+     
+         if ($request->type === 'text') {
+             $lesson->content = $request->input('content');
+         } elseif ($request->type == 'video' || $request->type == 'audio') {
+             // Сохраняем ссылку на видео
+             $lesson->content = $request->input('content');
+         }
+     
+         if ($request->hasFile('cover')) {
+             $coverPath = $request->file('cover')->store('cover', 'public');
+             $lesson->cover = Storage::url($coverPath);
+         }
+     
+         $lesson->save();
+     
+         // Обновляем информацию в таблице курсов
+         if ($lesson->topic && $lesson->topic->course) {
+             $course = $lesson->topic->course;
+             $course->quantity_lessons = $course->lessons->count();
+     
+             // Добавляем длительность урока к общей длительности курса
+             $course->hours_lessons = $course->lessons()
+                 ->leftJoin('media', function ($join) {
+                     $join->on('media.model_id', '=', 'lessons.id')
+                         ->where('media.model_type', '=', Lesson::class);
+                 })
+                 ->where('topics.course_id', $course->id)
+                 ->selectRaw('SUM(CASE WHEN media.custom_properties IS NOT NULL THEN JSON_UNQUOTE(JSON_EXTRACT(media.custom_properties, "$.duration")) ELSE 0 END) as total_duration')
+                 ->value('total_duration');
+             $course->save();
+         }
+     
+         return response()->json(['message' => 'Урок успешно создан.']);
+     }
+     
 
 
     /**
@@ -193,62 +180,49 @@ class LessonController extends Controller
     public function update(Request $request, Lesson $lesson)
     {
         $request->validate([
-            'topic_id' => 'integer',
-            'name' => 'string',
-            'cover' => ['nullable', new FileOrString],
-            'duration' => 'string|nullable',
-            'content' =>  ['nullable', new FileOrString],
+            'topic_id' => 'nullable|integer',
+            'name' => 'nullable|string',
+            'cover' => 'nullable|image|file',
+            'duration' => 'nullable',
+            'type' => 'required|in:text,video,audio',
+            'content' => 'nullable|url|string', // Валидация для URL
         ]);
-
-        $coverPath = $lesson->cover;
-        $contentPath = $lesson->content; // По умолчанию сохраняем текущий путь к контенту
-
+    
+        // Проверяем, изменился ли тип урока
+        if ($request->has('type') && $request->type !== $lesson->type) {
+            // Если тип урока изменился, удаляем старое содержимое
+            if ($lesson->type === 'video' || $lesson->type === 'audio') {
+                // Удаление старого медиафайла, если он существует
+                $lesson->clearMediaCollection('content');
+            }
+        }
+    
+        $data = [
+            'topic_id' => $request->input('topic_id', $lesson->topic_id),
+            'name' => $request->input('name', $lesson->name),
+            'type' => $request->input('type', $lesson->type),
+            'content' => $request->input('content', $lesson->content),
+        ];
+    
+        // Если загружена новая обложка
         if ($request->hasFile('cover')) {
-            // Удаляем старый файл обложки, если он существует
+            // Удаляем старую обложку, если она существует
             if ($lesson->cover) {
                 Storage::delete($lesson->cover);
             }
-            // Загружаем и сохраняем новый файл обложки
+            // Сохраняем новую обложку
             $coverPath = $request->file('cover')->store('cover', 'public');
+            $data['cover'] = Storage::url($coverPath);
         }
-
-        if ($request->type === 'video' || $request->type === 'audio') {
-            if ($request->hasFile('content')) {
-                // Удаляем старые медиафайлы, если они существуют
-                $lesson->clearMediaCollection('content');
-
-                // Загружаем и сохраняем новый контентный файл в медиабиблиотеку
-                $media = $lesson->addMediaFromRequest('content')->toMediaCollection('content');
-
-                $getID3 = new getID3();
-                $fileInfo = $getID3->analyze($media->getPath());
-
-                $durationInSeconds = $fileInfo['playtime_seconds'];
-
-                // Устанавливаем пользовательское свойство на медиафайле
-                $media->setCustomProperty('duration', $durationInSeconds)->save();
-                $videoPath = $media->getPath();
-                $storagePath = substr($videoPath, strpos($videoPath, '/storage'));
-                $contentPath = $lesson->content = $storagePath;
-            }
-        } elseif ($request->type === 'text') {
-            // Если тип урока текстовый, сохраняем текстовое содержимое
-
-            $contentPath = $lesson->content = $request->input('content');
-            $lesson->save();
-            // Обнуляем путь к контенту, так как его нет
-        }
-
-        $data = array_merge($request->only(['name', 'type', 'topic_id', 'duration']), [
-            'cover' => $coverPath,
-            'content' => $contentPath,
-        ]);
-
+    
+        $lesson->update($data);
+    
+        // Обновляем информацию в таблице курсов
         if ($lesson->topic && $lesson->topic->course) {
             $course = $lesson->topic->course;
             $course->quantity_lessons = $course->lessons->count();
-
-            // Добавляем длительность уроков к общей длительности курса
+    
+            // Добавляем длительность урока к общей длительности курса
             $course->hours_lessons = $course->lessons()
                 ->leftJoin('media', function ($join) {
                     $join->on('media.model_id', '=', 'lessons.id')
@@ -257,14 +231,12 @@ class LessonController extends Controller
                 ->where('topics.course_id', $course->id)
                 ->selectRaw('SUM(CASE WHEN media.custom_properties IS NOT NULL THEN JSON_UNQUOTE(JSON_EXTRACT(media.custom_properties, "$.duration")) ELSE 0 END) as total_duration')
                 ->value('total_duration');
-
             $course->save();
-
-            $lesson->update($data);
-
-            return response()->json(['message' => 'Урок успешно обновлен.']);
         }
+    
+        return response()->json(['message' => 'Урок успешно обновлен.']);
     }
+    
     /**
      * Remove the specified resource from storage.
      */

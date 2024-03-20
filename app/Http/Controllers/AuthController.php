@@ -39,10 +39,15 @@ class AuthController extends Controller
         if (Auth::attempt([$field => $credentials['email_or_phone'], 'password' => $credentials['password']])) {
             $user = Auth::user();
             $role = $user->roles()->first()->id;
+
+            $isPhoneVerified = $user->phone_verified_at != null;
+            $isEmailVerified = $user->email_verified_at != null;
+
             // Создайте пользовательские данные для токена
             $customClaims = [
                 'user_type' => $role,
-                'is_phone_verified' => $user->phone_verified_at != null,
+                'is_phone_verified' => $isPhoneVerified,
+                'is_email_verified' => $isEmailVerified,
                 'email' => $user->email,
                 'name' => $user->name,
             ];
