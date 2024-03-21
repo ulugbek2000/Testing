@@ -18,10 +18,12 @@ class PasswordResetTokenController extends Controller
 
     public function sendCodeReset(Request $request)
     {
-        $request->validate(['phone' => 'required|string']);
-
-        $user = User::where('phone', $request->phone)->first();
-
+        if ($request->has('email')) {
+            $user = User::where('email', $request->email)->first();
+        } elseif ($request->has('phone')) {
+            $user = User::where('phone', $request->phone)->first();
+        }
+    
         if (!$user) {
             return response()->json(['message' => 'Номер телефона не авторизован'], 404);
         }

@@ -22,6 +22,7 @@ use App\Http\Controllers\SmsController;
 use App\Http\Controllers\StatisticsController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\TopicController;
+use App\Http\Controllers\TranslationController;
 use App\Http\Controllers\UserLessonProgressController;
 use App\Http\Controllers\UserRoleController;
 use App\Http\Controllers\UsersController;
@@ -52,7 +53,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 
-Route::middleware(['admin.api'])->group(function () {
+Route::middleware(
+    ['admin.api'])->group(function () {
 });
 
 //Auth Routes
@@ -94,7 +96,7 @@ Route::get('categories', [CategoryController::class, 'index']);
 
 Route::get('category/{category}', [CategoryController::class, 'show']);
 
-
+Route::post('/translate', [TranslationController::class, 'translate']);
 
 Route::middleware(['jwt.auth'])->group(function () {
 
