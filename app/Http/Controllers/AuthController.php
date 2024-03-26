@@ -112,6 +112,7 @@ class AuthController extends Controller
         $customClaims = [
             'user_type' => $role,
             'is_phone_verified' => $user->phone_verified_at != null,
+            'is_email_verified' => $user->email_verified_at != null,
         ];
 
         // Создаем новый JWT токен с обновленными пользовательскими данными

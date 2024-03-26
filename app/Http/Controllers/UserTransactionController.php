@@ -29,15 +29,21 @@ class UserTransactionController extends Controller
     public function topUpWallet(Request $request)
     {
         $request->validate([
-            'phone' => 'required|string',
+            'phone' => 'nullable|string',
+            'email' => 'nullable|email',
             'wallet' => 'required|numeric|min:0.01',
         ]);
+        if ($request->has('phone')) {
+            $phone = $request->input('phone');
+        } elseif ($request->has('email')) {
+            $email = $request->input('email');
+        }
 
-        $phone = $request->input('phone');
         $newWallet = $request->input('wallet');
 
         // Найдите пользователя по номеру телефона
-        $user = User::where('phone', $phone)->first();
+        $user = User::where('phone', $phone)->orWhere('email', $email)
+            ->first();
 
         if (!$user) {
             return response()->json(['error' => 'User not found'], 404);
@@ -76,7 +82,6 @@ class UserTransactionController extends Controller
         $userWallet->save();
 
         return response()->json(['success' => 'Wallet updated successfully'], 200);
-
     }
 
     public function purchaseCourse(Course $course, Subscription $subscription)
