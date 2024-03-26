@@ -101,27 +101,31 @@ class AuthController extends Controller
         $user = Auth::user();
         $role = $user->roles()->first()->id;
         $verificationCode = $request->input('verification');
-
-        // Проверяем верификацию и устанавливаем phone_verified_at, если успешно
-        if ($user->verifyCode($verificationCode)) {
-            $user->phone_verified_at = now(); // Устанавливаем phone_verified_at
+    
+        // Проверяем, была ли верифицирована по телефону или по электронной почте
+        $verificationType = $user->phone ? 'phone' : 'email';
+    
+        // Проверяем верификацию и устанавливаем соответствующий атрибут
+        if ($user->verifyCode($verificationCode, $verificationType)) {
+            $user->{$verificationType.'_verified_at'} = now(); // Устанавливаем соответствующий атрибут
             $user->save(); // Сохраняем изменения в базе данных
         }
-
+    
         // Обновляем значение is_phone_verified в $customClaims
         $customClaims = [
             'user_type' => $role,
             'is_phone_verified' => $user->phone_verified_at != null,
             'is_email_verified' => $user->email_verified_at != null,
         ];
-
+    
         // Создаем новый JWT токен с обновленными пользовательскими данными
         $token = JWTAuth::claims($customClaims)->fromUser($user);
-
-        return $user->phone_verified_at != null
+    
+        return $user->{$verificationType.'_verified_at'} != null
             ? response()->json(['message' => 'Проверка завершена', 'token' => $token], 200)
             : response()->json(['message' => 'Проверка не удалась'], 406);
     }
+    
 
     public function changePassword(Request $request)
     {

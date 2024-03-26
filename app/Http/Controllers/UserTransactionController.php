@@ -57,15 +57,6 @@ class UserTransactionController extends Controller
 
         $userWallet = $user->wallet;
 
-        // Проверяем, существует ли объект баланса
-        if (!$userWallet) {
-            // Если объект баланса отсутствует, создаем новый
-            $userWallet = new UserWallet();
-            $userWallet->wallet = 0; // Устанавливаем начальный баланс
-            $userWallet->user()->associate($user); // Связываем с пользователем
-            $userWallet->save(); // Сохраняем баланс
-        }
-
         $transaction = new UserTransaction();
         $transaction->wallet_id = $userWallet->id; // Связываем транзакцию с кошельком
         $transaction->amount = $newWallet;

@@ -119,19 +119,24 @@ class User extends Authenticatable implements JWTSubject
         'password' => 'hashed',
     ];
 
-    function verifyCode($code)
+    function verifyCode($code, $type)
     {
         $notification = $this->unreadNotifications()->where('type', 'App\Notifications\VerificationNotification')->latest()->first();
 
         $result = ($notification && array_key_exists('verification', $notification->data) && $notification->data['verification'] == $code) ? true : false;
 
         if ($result) {
-            $this->update(['phone_verified_at' => now()]);
+            if ($type === 'phone') {
+                $this->update(['phone_verified_at' => now()]);
+            } elseif ($type === 'email') {
+                $this->update(['email_verified_at' => now()]);
+            }
         }
 
         $result && $notification->markAsRead();
         return $result;
     }
+
 
     function phoneVerified(): bool
     {
