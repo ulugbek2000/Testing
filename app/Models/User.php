@@ -95,7 +95,8 @@ class User extends Authenticatable implements JWTSubject
     {
         return [
             'user_type' => $this->roles()->first()->id, // Получение роли пользователя
-            'is_phone_verified' => $this->phone_verified_at != null, // Проверка статуса верификации телефона
+            'is_phone_verified' => $this->phone_verified_at != null, 
+            'is_email_verified' => $this->email_verified_at != null, 
         ];
     }
 

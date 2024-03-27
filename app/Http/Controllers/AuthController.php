@@ -104,8 +104,7 @@ class AuthController extends Controller
     
         // Проверяем, была ли верифицирована по телефону или по электронной почте
         $verificationType = $user->phone ? 'phone' : 'email';
-        dd($verificationType);
-    
+          
         // Проверяем верификацию и устанавливаем соответствующий атрибут
         if ($user->verifyCode($verificationCode, $verificationType)) {
             $user->{$verificationType.'_verified_at'} = now(); // Устанавливаем соответствующий атрибут

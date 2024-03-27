@@ -115,14 +115,9 @@ class RegisterController extends Controller
         $this->validator($request->all())->validate();
         $user = $this->create($request->all());
         event(new Registered($user));
-        // $token = Auth::login($user);
+        $token = Auth::login($user);
         $user->roles()->first()->id;
-        $customClaims = [
-            'user_type' => $user->user_type,
-            'is_phone_verified' => false, // предположим, что пользователь еще не подтвердил номер телефона
-            'is_email_verified' => false, // предположим, что пользователь еще не подтвердил номер телефона
-        ];
-        $token = JWTAuth::claims($customClaims)->fromUser($user);
+       
   
         // dd($p, $token);
         return response()->json([
