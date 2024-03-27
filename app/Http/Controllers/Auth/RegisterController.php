@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rules\Password;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class RegisterController extends Controller
 {
@@ -115,7 +116,13 @@ class RegisterController extends Controller
         $user = $this->create($request->all());
         event(new Registered($user));
         $token = Auth::login($user);
-        $user->roles()->first()->id;
+        // $user->roles()->first()->id;
+        $customClaims = [
+            'user_type' => $user->user_type,
+            'is_phone_verified' => false, // предположим, что пользователь еще не подтвердил номер телефона
+            'is_email_verified' => false, // предположим, что пользователь еще не подтвердил номер телефона
+        ];
+        JWTAuth::payload($customClaims);
         // dd($p, $token);
         return response()->json([
             'token' => $token,
