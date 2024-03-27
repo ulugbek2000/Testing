@@ -144,6 +144,11 @@ class User extends Authenticatable implements JWTSubject
         return $this->phone_verified_at != null;
     }
 
+    function emailVerified(): bool
+    {
+        return $this->email_verified_at != null;
+    }
+
     function isSubscribed(Course $course)
     {
         return  $this->subscriptions()

@@ -16,7 +16,7 @@ class RoleMiddleware
      */
     public function handle(Request $request, Closure $next, ...$args): Response
     {
-        if($args == UserType::Student && !$request->user()->phoneVerified())
+        if($args == UserType::Student && !$request->user()->phoneVerified() || !$request->user()->emailVerified())
             return abort(403, 'Verification required');
         if($request->user()->hasAnyRole($args))
             return $next($request);
