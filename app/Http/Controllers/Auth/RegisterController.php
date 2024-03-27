@@ -122,7 +122,7 @@ class RegisterController extends Controller
             'is_phone_verified' => false, // предположим, что пользователь еще не подтвердил номер телефона
             'is_email_verified' => false, // предположим, что пользователь еще не подтвердил номер телефона
         ];
-        JWTAuth::payload($customClaims);
+        JWTAuth::factory()->customClaims($customClaims)->make();
         // dd($p, $token);
         return response()->json([
             'token' => $token,
