@@ -113,6 +113,7 @@ class RegisterController extends Controller
     {
         $this->validator($request->all())->validate();
         $user = $this->create($request->all());
+        dd($user);
         event(new Registered($user));
         $token = Auth::login($user);
         $user->roles()->first()->id;
