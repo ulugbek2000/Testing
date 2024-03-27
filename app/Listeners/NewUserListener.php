@@ -7,6 +7,7 @@ use App\Notifications\VerificationNotification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Facades\Log;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class NewUserListener
 {
@@ -31,6 +32,16 @@ class NewUserListener
         // Send sms verification notification
         $verificationNumber = rand(1000, 9999);
         $event->user->notify(new VerificationNotification($verificationNumber));
+
+        $customClaims = [
+            'user_type' => $event->user->user_type,
+            'is_phone_verified' => false, // предположим, что пользователь еще не подтвердил номер телефона
+            'is_email_verified' => false, // предположим, что пользователь еще не подтвердил номер телефона
+        ];
+
+        // Получаем текущий JWT-токен пользователя
+        $token = JWTAuth::fromUser($event->user, $customClaims);
+        // Можно также добавить другие пользовательские поля здесь
 
     }
 }
