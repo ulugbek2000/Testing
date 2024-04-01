@@ -40,11 +40,11 @@ class OrderCourseController extends Controller
         $orderCourse->save();
 
         // Возвращаем успешный ответ
-        return response()->json(['msg' => 'Курс успешно заказан'], 200);
+        return response()->json(['message' => 'Спасибо ваша заявка принята'], 200);
     }
     function destroy(OrderCourse $orderCourse)
     {
         $orderCourse->delete();
-        return response()->json(['msg' => 'Заявка успешно удален']);
+        return response()->json(['message' => 'Заявка успешно удален']);
     }
 }
