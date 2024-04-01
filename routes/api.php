@@ -96,6 +96,8 @@ Route::get('categories', [CategoryController::class, 'index']);
 
 Route::get('category/{category}', [CategoryController::class, 'show']);
 
+Route::post('application-course', [OrderCourseController::class, 'applicationCourse']);
+
 Route::post('/translate', [TranslationController::class, 'translate']);
 
 Route::middleware(['jwt.auth'])->group(function () {
@@ -320,8 +322,6 @@ Route::middleware(['jwt.auth'])->group(function () {
         Route::get('course/{course}/progress', [UserLessonProgressController::class, 'getprogress']);
 
         // Route::get('/courses/{course}/buyers', [UserWalletController::class,'getCourseBuyers']);
-
-        Route::post('application-course', [OrderCourseController::class, 'applicationCourse']);
 
         //Комментарии
         Route::get('student/comments', [CommentController::class, 'index']);

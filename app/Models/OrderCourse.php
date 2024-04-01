@@ -12,7 +12,6 @@ class OrderCourse extends Model
         'name',
         'surname',
         'order',
-        'user_id',
     ];
     public function user()
     {

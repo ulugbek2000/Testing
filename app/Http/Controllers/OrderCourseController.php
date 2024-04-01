@@ -29,17 +29,12 @@ class OrderCourseController extends Controller
             'order' => 'required|string',
         ]);
 
-        // Получаем текущего пользователя
-        $user = Auth::user();
-
         // Создаем новый заказ
         $orderCourse = new OrderCourse();
         $orderCourse->name = $request->input('name');
         $orderCourse->surname = $request->input('surname');
         $orderCourse->order = $request->input('order');
 
-        // Связываем заказ с текущим пользователем
-        $orderCourse->user()->associate($user);
 
         // Сохраняем заказ в базе данных
         $orderCourse->save();

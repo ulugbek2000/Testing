@@ -16,7 +16,6 @@ return new class extends Migration
             $table->string('name');
             $table->string('surname');
             $table->text('order');
-            $table->foreignId('user_id')->references('id')->on('users')->cascadeOnDelete()->cascadeOnUpdate();
             $table->timestamps();
         });
     }
