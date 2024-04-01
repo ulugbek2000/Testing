@@ -61,7 +61,7 @@ class UserTransactionController extends Controller
         // Сохраняем изменения
         $userWallet->save();
 
-        return response()->json(['success' => 'Wallet updated successfully'], 200);
+        return response()->json(['message' => 'Wallet updated successfully'], 200);
     }
 
     public function purchaseCourse(Course $course, Subscription $subscription)
