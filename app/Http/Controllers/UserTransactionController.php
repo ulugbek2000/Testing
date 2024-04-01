@@ -26,31 +26,20 @@ class UserTransactionController extends Controller
         ], 200);
     }
 
-    public function topUpWallet(Request $request)
+    public function topUpWallet(Request $request, User $user)
     {
         $request->validate([
-            'phone' => 'nullable|string',
-            'email' => 'nullable|email',
             'wallet' => 'required|numeric|min:0.01',
         ]);
-        if ($request->has('phone')) {
-            $phone = $request->input('phone');
-        } elseif ($request->has('email')) {
-            $email = $request->input('email');
-        }
-
         $newWallet = $request->input('wallet');
 
-        // Найдите пользователя по номеру телефона
-        $user = User::where('phone', $phone)->orWhere('email', $email)
-            ->first();
 
         if (!$user) {
-            return response()->json(['error' => 'User not found'], 404);
+            return response()->json(['error' => 'Пользователь не найден'], 404);
         }
 
         if ($newWallet <= 0) {
-            return response()->json(['error' => 'Invalid amount'], 400);
+            return response()->json(['error' => 'Недопустимая сумма'], 400);
         }
 
         // Получаем объект баланса пользователя

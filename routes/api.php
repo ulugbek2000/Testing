@@ -106,9 +106,10 @@ Route::middleware(['jwt.auth'])->group(function () {
 
         Route::put('user/{user}/block', [AuthController::class, 'blockUser']);
 
+        Route::get('user/balance/{user}', [UserWalletController::class, 'getBalance'])->name('user.user.getBalance');
 
         //Пополнение баланс:
-        Route::post('admin/balance/deposit', [UserTransactionController::class, 'topUpWallet']);
+        Route::post('balance-deposit/{user}', [UserTransactionController::class, 'topUpWallet']);
 
 
         Route::get('getStatistics', [StatisticsController::class, 'getStatisticsUser']);
