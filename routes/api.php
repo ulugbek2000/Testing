@@ -260,6 +260,7 @@ Route::middleware(['jwt.auth'])->group(function () {
         Route::post('lesson', [LessonController::class, 'store']);
         Route::put('lesson/{lesson}', [LessonController::class, 'update']);
         Route::delete('lesson/{lesson}', [LessonController::class, 'destroy']);
+        Route::put('/update-lesson-order', [LessonController::class, 'updateOrder']);
         //End Lessons
 
         //Start SubscriptionCourse

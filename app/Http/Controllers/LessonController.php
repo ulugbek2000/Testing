@@ -30,18 +30,18 @@ class LessonController extends Controller
 {
     public function index(Topic $topic)
     {
-        $lessons = $topic->lessons;
+        $lessons = $topic->lessons()->orderBy('order')->get();
         $user = Auth::user();
         $lessonData = [];
-
+    
         if (Auth::check()) {
             $isAdmin = $user->hasRole(UserType::Admin);
             $isSubscribed = $user->isSubscribed($topic->course);
-
+    
             if ($isAdmin || $isSubscribed) {
                 foreach ($lessons as $lesson) {
                     $mediaData = [];
-
+    
                     if ($lesson->hasMedia('content')) {
                         $mediaData = DB::table('media')
                             ->where('model_type', '=', 'App\\Models\\Lesson')
@@ -53,11 +53,11 @@ class LessonController extends Controller
                 return response()->json(['data' => $lessons]);
             }
         }
-
+    
         if ($lessons->isNotEmpty()) {
             foreach ($lessons as $lesson) {
                 $firstLesson = $lessons->first();
-
+    
                 if ($lesson->hasMedia('content')) {
                     $mediaData = DB::table('media')
                         ->where('model_type', '=', 'App\\Models\\Lesson')
@@ -65,7 +65,7 @@ class LessonController extends Controller
                         ->select('id', 'custom_properties',)
                         ->get();
                 }
-
+    
                 // Для остальных уроков показываем частичную информацию
                 $otherLessons = $lessons->slice(1)->map(function ($lesson) {
                     return [
@@ -73,11 +73,12 @@ class LessonController extends Controller
                         'name' => $lesson->name,
                     ];
                 });
-
+    
                 return response()->json(['data' => array_merge([$firstLesson], $otherLessons->toArray())]);
             }
         }
     }
+    
     /**
      * Store a newly created resource in storage.
      */
@@ -236,6 +237,27 @@ class LessonController extends Controller
     
         return response()->json(['message' => 'Урок успешно обновлен.']);
     }
+
+    public function updateOrder(Request $request)
+    {
+        $data = $request->validate([
+            'lesson_ids' => 'required|array',
+            'lesson_ids.*' => 'required|integer',
+        ]);
+    
+        foreach ($data['lesson_ids'] as $index => $lessonId) {
+            $lesson = Lesson::findOrFail($lessonId);
+            $lesson->update(['order' => $index + 1]); 
+        }
+    
+        Lesson::where('order', '>=', $index + 1)
+            ->whereNotIn('id', $data['lesson_ids']) 
+            ->increment('order');
+    
+        return response()->json(['success' => true], 200);
+    }
+    
+
     
     /**
      * Remove the specified resource from storage.
