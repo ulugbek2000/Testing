@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\UserType;
 use App\Models\Course;
 use App\Models\Topic;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class TopicController extends Controller
 {
@@ -14,10 +16,42 @@ class TopicController extends Controller
      * Display a listing of the resource.
      */
 
+    // public function index(Course $course)
+    // {
+    //     $topics = $course->topics;
+    //     return response()->json($topics);
+    // }
+
+
     public function index(Course $course)
     {
         $topics = $course->topics;
-        return response()->json($topics);
+        $lessons = collect();
+
+        foreach ($topics as $topic) {
+            $lessons = $lessons->merge($topic->lessons);
+        }
+
+        $user = Auth::user();
+
+        if (Auth::check()) {
+            $isAdmin = $user->hasRole(UserType::Admin);
+
+            if ($isAdmin) {
+                foreach ($lessons as $lesson) {
+                    
+                    if ($lesson->hasMedia('content')) {
+                        $mediaData = DB::table('media')
+                            ->where('model_type', '=', 'App\\Models\\Lesson')
+                            ->where('model_id', '=', $lesson->id)
+                            ->select('custom_properties')
+                            ->get()
+                            ->pluck('custom_properties');
+                    }
+                }
+                return response()->json(['data' => $topics]);
+            }
+        }
     }
 
 
