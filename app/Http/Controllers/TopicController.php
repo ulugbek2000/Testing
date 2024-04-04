@@ -26,11 +26,7 @@ class TopicController extends Controller
     public function index(Course $course)
     {
         $topics = $course->topics;
-        $lessons = collect();
 
-        foreach ($topics as $topic) {
-            $lessons = $lessons->merge($topic->lessons);
-        }
 
         $user = Auth::user();
 
@@ -38,6 +34,13 @@ class TopicController extends Controller
             $isAdmin = $user->hasRole(UserType::Admin);
 
             if ($isAdmin) {
+
+                $lessons = collect();
+
+                foreach ($topics as $topic) {
+                    $lessons = $lessons->merge($topic->lessons);
+                }
+
                 foreach ($lessons as $lesson) {
 
                     if ($lesson->hasMedia('content')) {
