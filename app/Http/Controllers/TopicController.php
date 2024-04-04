@@ -25,25 +25,20 @@ class TopicController extends Controller
 
     public function index(Course $course)
     {
-        $topics = $course->topics;
-
-
         $user = Auth::user();
-        $isStudent = $user->hasRole(UserType::Student);
-        $guest = Auth::guest();
-        if (Auth::check()) {
+    
+        if ($user) {
             $isAdmin = $user->hasRole(UserType::Admin);
-
+            $isStudent = $user->hasRole(UserType::Student);
+    
             if ($isAdmin) {
-
                 $lessons = collect();
-
-                foreach ($topics as $topic) {
+    
+                foreach ($course->topics as $topic) {
                     $lessons = $lessons->merge($topic->lessons);
                 }
-
+    
                 foreach ($lessons as $lesson) {
-
                     if ($lesson->hasMedia('content')) {
                         $mediaData = DB::table('media')
                             ->where('model_type', '=', 'App\\Models\\Lesson')
@@ -51,16 +46,20 @@ class TopicController extends Controller
                             ->select('custom_properties')
                             ->get()
                             ->pluck('custom_properties');
+                        // Делайте что-то с $mediaData
                     }
                 }
-                return response()->json(['data' => $topics]);
+                
+                return response()->json(['data' => $course->topics]);
+            } elseif ($isStudent) {
+                return response()->json(['data' => $course->topics]);
             }
-        } else if (Auth::check()) {
-            if ($isStudent || $guest) {
-                return response()->json($topics);
-            }
+        } else {
+            // Гость
+            return response()->json(['data' => $course->topics]);
         }
     }
+    
 
 
     /**
