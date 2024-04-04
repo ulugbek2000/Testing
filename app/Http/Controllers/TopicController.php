@@ -16,7 +16,7 @@ class TopicController extends Controller
      * Display a listing of the resource.
      */
 
-    // public function index(Course $course)
+    // public function ind(Course $course)
     // {
     //     $topics = $course->topics;
     //     return response()->json($topics);
@@ -39,7 +39,7 @@ class TopicController extends Controller
 
             if ($isAdmin) {
                 foreach ($lessons as $lesson) {
-                    
+
                     if ($lesson->hasMedia('content')) {
                         $mediaData = DB::table('media')
                             ->where('model_type', '=', 'App\\Models\\Lesson')
@@ -51,6 +51,8 @@ class TopicController extends Controller
                 }
                 return response()->json(['data' => $topics]);
             }
+        } else {
+            return response()->json($topics);
         }
     }
 
