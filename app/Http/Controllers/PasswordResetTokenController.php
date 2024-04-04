@@ -23,7 +23,7 @@ class PasswordResetTokenController extends Controller
         } elseif ($request->has('phone')) {
             $user = User::where('phone', $request->phone)->first();
         }
-    
+
         if (!$user) {
             return response()->json(['message' => 'Номер телефона не авторизован'], 404);
         }
@@ -43,6 +43,7 @@ class PasswordResetTokenController extends Controller
 
         ], $this->validationMessages());
 
+
         $user = User::whereHas('unreadNotifications', function ($query) use ($request) {
             $query->where('type', 'App\Notifications\VerificationNotification')
                 ->whereJsonContains('data->verification', (int)$request->verification)
@@ -50,10 +51,10 @@ class PasswordResetTokenController extends Controller
         })->first();
 
 
-        if (!$user || !$user->verifyCode($request->verification)) {
+        if (!$user || !$user->verifyCode($request->verification, $user->phone ? 'phone' : 'email')) {
             return response()->json(['error' => 'Неверный код подтверждения'], 422);
         }
-                    
+
         $user->update(['password' => bcrypt($request->password)]);
 
         return response()->json(['message' => 'Пароль успешно изменен'], 200);

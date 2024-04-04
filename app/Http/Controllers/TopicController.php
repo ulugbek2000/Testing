@@ -12,32 +12,22 @@ use Illuminate\Support\Facades\DB;
 
 class TopicController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-
-    // public function ind(Course $course)
-    // {
-    //     $topics = $course->topics;
-    //     return response()->json($topics);
-    // }
-
 
     public function index(Course $course)
     {
         $user = Auth::user();
-    
+
         if ($user) {
             $isAdmin = $user->hasRole(UserType::Admin);
             $isStudent = $user->hasRole(UserType::Student);
-    
+
             if ($isAdmin) {
                 $lessons = collect();
-    
+
                 foreach ($course->topics as $topic) {
                     $lessons = $lessons->merge($topic->lessons);
                 }
-    
+
                 foreach ($lessons as $lesson) {
                     if ($lesson->hasMedia('content')) {
                         $mediaData = DB::table('media')
@@ -49,7 +39,7 @@ class TopicController extends Controller
                         // Делайте что-то с $mediaData
                     }
                 }
-                
+
                 return response()->json(['data' => $course->topics]);
             } elseif ($isStudent) {
                 return response()->json(['data' => $course->topics]);
@@ -59,7 +49,6 @@ class TopicController extends Controller
             return response()->json(['data' => $course->topics]);
         }
     }
-    
 
 
     /**

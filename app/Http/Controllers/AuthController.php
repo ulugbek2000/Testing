@@ -102,7 +102,6 @@ class AuthController extends Controller
         $role = $user->roles()->first()->id;
         $verificationCode = $request->input('verification');
     
-        // Проверяем, была ли верифицирована по телефону или по электронной почте
         $verificationType = $user->phone ? 'phone' : 'email';
           
         // Проверяем верификацию и устанавливаем соответствующий атрибут
