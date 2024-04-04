@@ -29,7 +29,8 @@ class TopicController extends Controller
 
 
         $user = Auth::user();
-
+        $isStudent = $user->hasRole(UserType::Student);
+        $guest = Auth::guest();
         if (Auth::check()) {
             $isAdmin = $user->hasRole(UserType::Admin);
 
@@ -54,8 +55,10 @@ class TopicController extends Controller
                 }
                 return response()->json(['data' => $topics]);
             }
-        } else {
-            return response()->json($topics);
+        } else if (Auth::check()) {
+            if ($isStudent || $guest) {
+                return response()->json($topics);
+            }
         }
     }
 
