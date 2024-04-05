@@ -28,11 +28,9 @@ class TopicController extends Controller
                     $lessons = $lesson_collect->merge($topic->lessons);
                 }
 
-               $lessons_sort = $lessons->sortBy('order');
-            //    dd($lessons_sort);
-
-                foreach ($lessons_sort as $lesson) {
+                foreach ($lessons as $lesson) {
                     if ($lesson->hasMedia('content')) {
+                        $lessons_sort = $lesson->sortBy('order');
                         $mediaData = DB::table('media')
                             ->where('model_type', '=', 'App\\Models\\Lesson')
                             ->where('model_id', '=', $lesson->id)
