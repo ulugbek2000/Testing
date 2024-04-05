@@ -28,9 +28,11 @@ class TopicController extends Controller
                     $lessons = $lessons->merge($topic->lessons);
                 }
 
-                $lessons = $lessons->sortBy('order')->values()->all();
+                $sortedLessons = $lessons->sortBy(function ($lesson) use ($course) {
+                    return $course->lessons->pluck('id')->search($lesson->id);
+                })->values()->all();
 
-                foreach ($lessons as $lesson) {
+                foreach ($sortedLessons as $lesson) {
                     if ($lesson->hasMedia('content')) {
                         $mediaData = DB::table('media')
                             ->where('model_type', '=', 'App\\Models\\Lesson')
@@ -38,7 +40,6 @@ class TopicController extends Controller
                             ->select('custom_properties')
                             ->get()
                             ->pluck('custom_properties');
-                        // Делайте что-то с $mediaData
                     }
                 }
 
