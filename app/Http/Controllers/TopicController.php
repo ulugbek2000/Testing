@@ -28,7 +28,7 @@ class TopicController extends Controller
                     $lessons = $lessons->merge($topic->lessons);
                 }
 
-                $lessons = $lessons->sortBy('order');
+                $lessons = $lessons->orderBy('order');
 
                 foreach ($lessons as $lesson) {
                     if ($lesson->hasMedia('content')) {
