@@ -29,9 +29,9 @@ class TopicController extends Controller
                 }
 
                $lessons_sort = $lessons->sortBy('order');
-               dd($lessons_sort);
+            //    dd($lessons_sort);
 
-                foreach ($lessons as $lesson) {
+                foreach ($lessons_sort as $lesson) {
                     if ($lesson->hasMedia('content')) {
                         $mediaData = DB::table('media')
                             ->where('model_type', '=', 'App\\Models\\Lesson')
