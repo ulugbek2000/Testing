@@ -28,20 +28,17 @@ class TopicController extends Controller
                     $lessons = $lessons->merge($topic->lessons);
                 }
 
-                $lessons = $lessons->sortBy('order')->values()->all();
+                $data = [];
 
-                foreach ($lessons as $lesson) {
-                    if ($lesson->hasMedia('content')) {
-                        $mediaData = DB::table('media')
-                            ->where('model_type', '=', 'App\\Models\\Lesson')
-                            ->where('model_id', '=', $lesson->id)
-                            ->select('custom_properties')
-                            ->get()
-                            ->pluck('custom_properties');
-                    }
+                foreach ($course->topics as $topic) {
+                    $topicData = $topic->toArray();
+                    $topicData['lessons'] = $topic->lessons()->orderBy('order')->get()->toArray();
+                    $data[] = $topicData;
                 }
 
-                return response()->json(['data' => $course->topics]);
+
+
+                return response()->json(['data' => $data]);
             } elseif ($isStudent) {
                 return response()->json(['data' => $course->topics]);
             }
