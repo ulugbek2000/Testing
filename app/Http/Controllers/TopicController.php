@@ -28,6 +28,8 @@ class TopicController extends Controller
                     $lessons = $lessons->merge($topic->lessons);
                 }
 
+                $lessons = $lessons->sortBy('order');
+
                 foreach ($lessons as $lesson) {
                     if ($lesson->hasMedia('content')) {
                         $mediaData = DB::table('media')
