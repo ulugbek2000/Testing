@@ -22,15 +22,16 @@ class TopicController extends Controller
             $isStudent = $user->hasRole(UserType::Student);
 
             if ($isAdmin) {
-                $lesson_collect = collect();
+                $lessons = collect();
 
                 foreach ($course->topics as $topic) {
-                    $lessons = $lesson_collect->merge($topic->lessons);
+                    $lessons = $lessons->merge($topic->lessons);
                 }
+
+                $lessons = $lessons->sortBy('order')->values()->all();
 
                 foreach ($lessons as $lesson) {
                     if ($lesson->hasMedia('content')) {
-                        $lessons_sort = $lesson->sortBy('order');
                         $mediaData = DB::table('media')
                             ->where('model_type', '=', 'App\\Models\\Lesson')
                             ->where('model_id', '=', $lesson->id)
@@ -45,7 +46,6 @@ class TopicController extends Controller
                 return response()->json(['data' => $course->topics]);
             }
         } else {
-            // Гость
             return response()->json(['data' => $course->topics]);
         }
     }
