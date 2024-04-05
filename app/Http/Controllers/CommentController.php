@@ -18,9 +18,7 @@ class CommentController extends Controller
         $commentsQuery = Comment::with(['lesson'])
             ->orderBy('created_at', 'desc');
         if (Auth::user()->hasRole(UserType::Admin)) {
-            // Если пользователь администратор, не применяем условие is_hidden
         } else {
-            // Если пользователь не администратор, выбираем только не скрытые комментарии
             $commentsQuery->where('is_hidden', false);
         }
 
