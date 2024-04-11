@@ -141,7 +141,6 @@ class LessonController extends Controller
      */
     public function show(Lesson $lesson)
     {
-        // dd();
         if (Auth::check() && Auth::user()->isSubscribed($lesson->topic->course) or UserType::Admin) {
             return response()->json([
                 'id' => $lesson->id,

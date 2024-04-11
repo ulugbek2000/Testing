@@ -197,7 +197,6 @@ class CourseController extends Controller
     {
         $teacherIds = $request->input('teacher_ids', []);
 
-        // Получите идентификаторы текущих учителей курса
         $currentTeacherIds = $course->users()
             ->whereHas('roles', function ($query) {
                 $query->where('id', UserType::Teacher);
