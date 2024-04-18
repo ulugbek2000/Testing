@@ -30,7 +30,7 @@ class TopicController extends Controller
 
                 $data = [
                     
-                    'topics' => [$course->name]
+                    'topics' => $course->name
                 ];
 
                 foreach ($course->topics as $topic) {
