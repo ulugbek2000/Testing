@@ -6,13 +6,13 @@ use App\Broadcasting\SmsChannel;
 use App\SmsMessage;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Mail\Mailable;
+use Illuminate\Mail\Mailer;
 use Illuminate\Mail\Message;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Notifications\Notification;
-use Illuminate\Support\Facades\Mail;
 use OsonSMS\SMSGateway\SMSGateway;
+use Illuminate\Support\Facades\Mail;
 
 class VerificationNotification extends Notification
 {
@@ -42,13 +42,23 @@ class VerificationNotification extends Notification
     /**
      * Get the mail representation of the notification.
      */
-    public function toMail(object $notifiable): Message
+    // public function toMail(object $notifiable): MailMessage
+    // {
+    //     return (new MailMessage)
+    //                 ->greeting('Здавствуйте')
+    //                 ->line($this->message)
+    //                 ->salutation('С наилучшими пожеланиями');
+    // }
+
+
+    public function toMail($notifiable): Message
     {
-        return (new Message())
-                    ->greeting('Здавствуйте')
-                    ->line($this->message)
-                    ->salutation('С наилучшими пожеланиями');
+        return Mailer::mailer()->to($notifiable)
+            ->greeting('Здравствуйте')
+            ->line($this->message)
+            ->salutation('С наилучшими пожеланиями');
     }
+
 
     /**
      * Get the array representation of the notification.
