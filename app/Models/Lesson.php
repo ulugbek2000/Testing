@@ -48,18 +48,18 @@ class Lesson extends Model implements HasMedia
         return $this->hasMany(UserLessonsProgress::class);
     }    
 
-    function getDurationAttribute()
-    {
-        $media = $this->getMedia('content')->first();
+    // function getDurationAttribute()
+    // {
+    //     $media = $this->getMedia('content')->first();
 
-        return $media ? $media->getCustomProperty('duration') ?? 0 : 0;
-    }
+    //     return $media ? $media->getCustomProperty('duration') ?? 0 : 0;
+    // }
 
 
-    public function registerMediaCollections(): void
-    {
-        $this->addMediaCollection('content');
-    }
+    // public function registerMediaCollections(): void
+    // {
+    //     $this->addMediaCollection('content');
+    // }
 
     // public function registerMediaConversions(Media $media = null): void
     // {
