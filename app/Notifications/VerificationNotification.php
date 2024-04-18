@@ -6,6 +6,7 @@ use App\Broadcasting\SmsChannel;
 use App\SmsMessage;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Mail\Mailable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Notifications\Notification;
@@ -40,9 +41,9 @@ class VerificationNotification extends Notification
     /**
      * Get the mail representation of the notification.
      */
-    public function toMail(object $notifiable): Mail
+    public function toMail(object $notifiable): Mailable
     {
-        return (new Mail)
+        return (new Mailable)
                     ->greeting('Здавствуйте')
                     ->line($this->message)
                     ->salutation('С наилучшими пожеланиями');
