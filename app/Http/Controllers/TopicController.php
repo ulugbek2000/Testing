@@ -32,6 +32,7 @@ class TopicController extends Controller
 
                 foreach ($course->topics as $topic) {
                     $topicData = $topic->toArray();
+                    $topicData['course_name'] = $course->name; 
                     $topicData['lessons'] = $topic->lessons()->orderBy('order')->get()->toArray();
                     $data[] = $topicData;
                 }
