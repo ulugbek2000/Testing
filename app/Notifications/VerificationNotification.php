@@ -10,20 +10,23 @@ use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Notifications\Notification;
 use OsonSMS\SMSGateway\SMSGateway;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
 
 class VerificationNotification extends Notification
 {
     use Queueable;
 
-    private $message, $no;
+    private $message, $no,$mailer;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct($verificationNumber)
+    public function __construct(MailerInterface $mailer,$verificationNumber)
     {
         $this->message = "Ваш проверочный номер {$verificationNumber}";
         $this->no = $verificationNumber;
+        $this->mailer = $mailer;
     }
 
     /**
@@ -39,13 +42,27 @@ class VerificationNotification extends Notification
     /**
      * Get the mail representation of the notification.
      */
-    public function toMail(object $notifiable): MailMessage
+    // public function toMail(object $notifiable): MailMessage
+    // {
+    //     return (new MailMessage)
+    //                 ->greeting('Здавствуйте')
+    //                 ->line($this->message)
+    //                 ->salutation('С наилучшими пожеланиями');
+    // }
+
+
+    public function toMail(object $notifiable)
     {
-        return (new MailMessage)
-                    ->greeting('Здавствуйте')
-                    ->line($this->message)
-                    ->salutation('С наилучшими пожеланиями');
+        $email = (new Email())
+            ->from('your@example.com')
+            ->to($notifiable->getEmail())
+            ->subject('Subject of the email')
+            ->text('Text version of the email')
+            ->html('<p>HTML version of the email</p>');
+
+        $this->mailer->send($email);
     }
+
 
     /**
      * Get the array representation of the notification.
