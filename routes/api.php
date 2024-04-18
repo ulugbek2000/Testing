@@ -153,11 +153,11 @@ Route::middleware(['jwt.auth'])->group(function () {
         //End Courses
 
         //Start Topics
-        Route::get('admin/course/{course}/topics', [TopicController::class, 'index']);
-        Route::get('admin/topic/{topic}', [TopicController::class, 'show']);
-        Route::post('topic', [TopicController::class, 'store']);
-        Route::put('topic/{topic}', [TopicController::class, 'update']);
-        Route::delete('topic/{topic}', [TopicController::class, 'destroy']);
+        // Route::get('admin/course/{course}/topics', [TopicController::class, 'index']);
+        // Route::get('admin/topic/{topic}', [TopicController::class, 'show']);
+        // Route::post('topic', [TopicController::class, 'store']);
+        // Route::put('topic/{topic}', [TopicController::class, 'update']);
+        // Route::delete('topic/{topic}', [TopicController::class, 'destroy']);
         //End Topics
 
         //  Start Lessons

@@ -9,6 +9,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Facades\Mail;
 use OsonSMS\SMSGateway\SMSGateway;
 
 class VerificationNotification extends Notification
@@ -39,9 +40,9 @@ class VerificationNotification extends Notification
     /**
      * Get the mail representation of the notification.
      */
-    public function toMail(object $notifiable): MailMessage
+    public function toMail(object $notifiable): Mail
     {
-        return (new MailMessage)
+        return (new Mail)
                     ->greeting('Здавствуйте')
                     ->line($this->message)
                     ->salutation('С наилучшими пожеланиями');

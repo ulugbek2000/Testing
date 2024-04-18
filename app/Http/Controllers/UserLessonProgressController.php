@@ -12,6 +12,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Spatie\MediaLibrary\MediaCollections\Models\Media as ModelsMedia;
 
 class UserLessonProgressController extends Controller
 {
@@ -49,7 +50,6 @@ class UserLessonProgressController extends Controller
         foreach ($daysOfWeek as $day) {
             $dayStart = $currentWeekStart->copy()->startOfDay();
 
-            // Ищем следующий день недели
             while ($dayStart->format('l') !== $day) {
                 $dayStart->addDay();
             }
@@ -66,17 +66,8 @@ class UserLessonProgressController extends Controller
 
             $lessonIds = $watchedInDay->pluck('lesson_id')->toArray();
             if (!empty($lessonIds)) {
-                $videos = Media::whereIn('model_id', $lessonIds)->get();
-                // dd($videos);
-                $totalMinutesWatched = $videos->sum(function ($video) {
-                    $customProperties = $video->custom_properties;
-
-                    if (is_array($customProperties) && isset($customProperties['duration'])) {
-                        return (float)$customProperties['duration'];
-                    }
-
-                    return 0;
-                });
+                $lessons = Lesson::whereIn('id', $lessonIds)->get();
+                $totalMinutesWatched = $lessons->sum('duration');
 
                 $results[] = [
                     'day' => $day,

@@ -164,14 +164,13 @@ class LessonController extends Controller
             'cover' => 'nullable|image|file',
             'duration' => 'nullable',
             'type' => 'required|in:text,video,audio',
-            'content' => 'nullable|url|string', // Валидация для URL
+            'content' => 'nullable|url|string',
+            'duration' => 'nullable|string',
+            'file_name' => 'nullable|string',
         ]);
 
-        // Проверяем, изменился ли тип урока
         if ($request->has('type') && $request->type !== $lesson->type) {
-            // Если тип урока изменился, удаляем старое содержимое
             if ($lesson->type === 'video' || $lesson->type === 'audio') {
-                // Удаление старого медиафайла, если он существует
                 $lesson->clearMediaCollection('content');
             }
         }
@@ -181,6 +180,8 @@ class LessonController extends Controller
             'name' => $request->input('name', $lesson->name),
             'type' => $request->input('type', $lesson->type),
             'content' => $request->input('content', $lesson->content),
+            'duration' => $request->input('duration', $lesson->duration),
+            'file_name' => $request->input('file_name', $lesson->file_name),
         ];
 
         // Если загружена новая обложка
@@ -201,14 +202,9 @@ class LessonController extends Controller
             $course = $lesson->topic->course;
             $course->quantity_lessons = $course->lessons->count();
 
-            // Добавляем длительность урока к общей длительности курса
             $course->hours_lessons = $course->lessons()
-                ->leftJoin('media', function ($join) {
-                    $join->on('media.model_id', '=', 'lessons.id')
-                        ->where('media.model_type', '=', Lesson::class);
-                })
-                ->where('topics.course_id', $course->id)
-                ->selectRaw('SUM(CASE WHEN media.custom_properties IS NOT NULL THEN JSON_UNQUOTE(JSON_EXTRACT(media.custom_properties, "$.duration")) ELSE 0 END) as total_duration')
+                ->where('topic_id', $lesson->topic_id)
+                ->selectRaw('SUM(CASE WHEN duration IS NOT NULL THEN duration ELSE 0 END) as total_duration')
                 ->value('total_duration');
             $course->save();
         }
@@ -235,8 +231,6 @@ class LessonController extends Controller
         return response()->json(['success' => true], 200);
     }
 
-
-
     /**
      * Remove the specified resource from storage.
      */
@@ -244,28 +238,22 @@ class LessonController extends Controller
     {
         $course = $lesson->topic->course;
 
-        // Получаем длительность удаляемого урока
-        $durationToRemove = $lesson->media->sum('custom_properties->duration') ?? 0;
+        if (isset($lesson->duration)) {
+            $durationToRemove = $lesson->duration;
+        } else {
+            $durationToRemove = 0;
+        }
 
-        // Удаляем связанные данные из user_lessons_progress
         $lesson->userLessonProgress()->delete();
 
-        // Удаляем урок
         $lesson->delete();
 
-        // Обновляем количество уроков и общее время в курсе
         if ($course) {
             $course->update([
                 'quantity_lessons' => $course->lessons()->count(),
                 'hours_lessons' => max(
                     0,
-                    $course->lessons()
-                        ->leftJoin('media', function ($join) {
-                            $join->on('media.model_id', '=', 'lessons.id')
-                                ->where('media.model_type', '=', Lesson::class);
-                        })
-                        ->where('topics.course_id', $course->id)
-                        ->sum(DB::raw('JSON_UNQUOTE(JSON_EXTRACT(media.custom_properties, "$.duration"))')) - $durationToRemove
+                    $course->lessons()->where('topics.course_id', $course->id)->sum('duration') - $durationToRemove
                 ),
             ]);
         }

@@ -158,9 +158,6 @@ class User extends Authenticatable implements JWTSubject
             'course_id' => $lesson->topic->course->id,
             'completed' => true
         ]);
-        // Если запись была только что создана, инкрементируем views и сохраняем урок
-
-
 
         // Проверяем, существует ли запись пользователя для данного урока в таблице LessonUser
         $existingLessonUser = LessonUser::where('lesson_id', $lesson->id)
