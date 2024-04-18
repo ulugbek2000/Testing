@@ -28,16 +28,18 @@ class TopicController extends Controller
                     $lessons = $lessons->merge($topic->lessons);
                 }
 
-                $data = [];
+                $data = [
+                    'course_name' => $course->name,
+                    'topics' => []
+                ];
 
                 foreach ($course->topics as $topic) {
                     $topicData = $topic->toArray();
-                    $topicData['course_name'] = $course->name; 
                     $topicData['lessons'] = $topic->lessons()->orderBy('order')->get()->toArray();
-                    $data[] = $topicData;
+                    $data['topics'][] = $topicData;
                 }
 
-                
+
                 return response()->json(['data' => $data]);
             } elseif ($isStudent) {
                 return response()->json(['data' => $course->topics]);
