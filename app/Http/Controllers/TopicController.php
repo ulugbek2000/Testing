@@ -29,8 +29,8 @@ class TopicController extends Controller
                 }
 
                 $data = [
-                    'course_name' => $course->name,
-                    'topics' => []
+                    
+                    'topics' => [$course->name]
                 ];
 
                 foreach ($course->topics as $topic) {
