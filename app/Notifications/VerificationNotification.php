@@ -17,16 +17,15 @@ class VerificationNotification extends Notification
 {
     use Queueable;
 
-    private $message, $no,$mailer;
+    private $message, $no;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct(MailerInterface $mailer,$verificationNumber)
+    public function __construct($verificationNumber)
     {
         $this->message = "Ваш проверочный номер {$verificationNumber}";
         $this->no = $verificationNumber;
-        $this->mailer = $mailer;
     }
 
     /**
@@ -51,16 +50,16 @@ class VerificationNotification extends Notification
     // }
 
 
-    public function toMail(object $notifiable)
+    public function toMail($notifiable)
     {
         $email = (new Email())
             ->from('your@example.com')
             ->to($notifiable->getEmail())
-            ->subject('Subject of the email')
-            ->text('Text version of the email')
-            ->html('<p>HTML version of the email</p>');
+            ->subject('Проверочный номер')
+            ->text($this->message)
+            ->html("<p>{$this->message}</p>");
 
-        $this->mailer->send($email);
+        return $email;
     }
 
 
