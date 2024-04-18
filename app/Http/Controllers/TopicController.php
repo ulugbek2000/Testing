@@ -29,14 +29,13 @@ class TopicController extends Controller
                 }
 
                 $data = [
-                    
-                    'topics' => $course->name
+                    'course_name' => $course->name,
+                    'topics' => []
                 ];
-
                 foreach ($course->topics as $topic) {
                     $topicData = $topic->toArray();
                     $topicData['lessons'] = $topic->lessons()->orderBy('order')->get()->toArray();
-                    $data['topics'] = $topicData;
+                    $data['topics'][] = $topicData;
                 }
 
 
