@@ -55,7 +55,9 @@ class AuthController extends Controller
             // Создайте JWT токен с пользовательскими данными
             $token = JWTAuth::claims($customClaims)->fromUser($user);
     
-            return $this->respondWithToken($token);
+            return response([
+                'token' => $token,
+            ]);
         } else {
             return response()->json(['message' => 'Неверные пароль или телефон'], 401);
         }

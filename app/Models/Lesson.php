@@ -23,7 +23,9 @@ class Lesson extends Model implements HasMedia
         'likes',
         'dislikes',
         'views',
-        'order'
+        'order',
+        'duration',
+        'file_name',
     ];
 
     function topic()
@@ -44,15 +46,7 @@ class Lesson extends Model implements HasMedia
     public function userLessonProgress()
     {
         return $this->hasMany(UserLessonsProgress::class);
-    }
-
-
-
-
-
-
-
-    
+    }    
 
     function getDurationAttribute()
     {
