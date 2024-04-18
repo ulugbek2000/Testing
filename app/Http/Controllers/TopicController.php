@@ -36,12 +36,8 @@ class TopicController extends Controller
                     $data[] = $topicData;
                 }
 
-                $courseData = [
-                    'name' => $course->name,
-                    'topics' => $data
-                ];
-
-                return response()->json(['data' => $courseData]);
+                
+                return response()->json(['data' => $data]);
             } elseif ($isStudent) {
                 return response()->json(['data' => $course->topics]);
             }
