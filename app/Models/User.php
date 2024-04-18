@@ -100,6 +100,12 @@ class User extends Authenticatable implements JWTSubject
         ];
     }
 
+    public function getEmail()
+    {
+        return $this->email; // Предполагается, что адрес электронной почты пользователя хранится в свойстве 'email'
+    }
+
+
     /**
      * The attributes that should be hidden for serialization.
      *
