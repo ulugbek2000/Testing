@@ -54,13 +54,14 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 
 Route::middleware(
-    ['admin.api'])->group(function () {
+    ['admin.api']
+)->group(function () {
 });
 
 //Auth Routes
 Auth::routes([
     'register' => true,
-
+    'verify' => true,
     'login' => false,
     'logout' => false
 ]);
