@@ -15,7 +15,7 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
 use App\Notifications\VerificationNotification;
 use Illuminate\Auth\Passwords\CanResetPassword;
 
-class User extends Authenticatable implements JWTSubject, MustVerifyEmail
+class User extends Authenticatable implements JWTSubject
 {
     use  HasApiTokens, HasFactory;
 

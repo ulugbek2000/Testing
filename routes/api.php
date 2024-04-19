@@ -61,7 +61,7 @@ Route::middleware(
 //Auth Routes
 Auth::routes([
     'register' => true,
-    'verify' => true,
+    // 'verify' => true,
     'login' => false,
     'logout' => false
 ]);
