@@ -45,7 +45,6 @@ class VerificationNotification extends Notification
     {
         return (new MailMessage)
                     ->greeting('Здавствуйте')
-                    ->to($notifiable->email)
                     ->line($this->message)
                     ->salutation('С наилучшими пожеланиями');
     }
