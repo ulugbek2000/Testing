@@ -99,12 +99,7 @@ class User extends Authenticatable implements JWTSubject
             'is_email_verified' => $this->email_verified_at != null, 
         ];
     }
-
-    public function getEmail()
-    {
-        return $this->email; // Предполагается, что адрес электронной почты пользователя хранится в свойстве 'email'
-    }
-
+    
 
     /**
      * The attributes that should be hidden for serialization.

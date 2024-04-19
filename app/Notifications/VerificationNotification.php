@@ -41,27 +41,13 @@ class VerificationNotification extends Notification
     /**
      * Get the mail representation of the notification.
      */
-    // public function toMail(object $notifiable): MailMessage
-    // {
-    //     return (new MailMessage)
-    //                 ->greeting('Здавствуйте')
-    //                 ->line($this->message)
-    //                 ->salutation('С наилучшими пожеланиями');
-    // }
-
-
-    public function toMail($notifiable)
+    public function toMail(object $notifiable): MailMessage
     {
-        $email = (new Email())
-            ->from('your@example.com')
-            ->to($notifiable->getEmail())
-            ->subject('Проверочный номер')
-            ->text($this->message)
-            ->html("<p>{$this->message}</p>");
-
-        return $email;
+        return (new MailMessage)
+                    ->greeting('Здавствуйте')
+                    ->line($this->message)
+                    ->salutation('С наилучшими пожеланиями');
     }
-
 
     /**
      * Get the array representation of the notification.
