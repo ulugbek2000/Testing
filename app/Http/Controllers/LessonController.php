@@ -200,9 +200,9 @@ class LessonController extends Controller
         // Обновляем информацию в таблице курсов
         if ($lesson->topic && $lesson->topic->course) {
             $course = $lesson->topic->course;
-            $course->quantity_lessons = $course->lessons->count();
+            $course->quantity_lessons = $course->topics->lessons->count();
 
-            $course->hours_lessons = $course->lessons()
+            $course->hours_lessons = $course->topics->lessons()
                 ->where('topic_id', $lesson->topic_id)
                 ->selectRaw('SUM(CASE WHEN duration IS NOT NULL THEN duration ELSE 0 END) as total_duration')
                 ->value('total_duration');
