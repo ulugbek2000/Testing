@@ -11,7 +11,6 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Notifications\Notification;
 use OsonSMS\SMSGateway\SMSGateway;
 use Symfony\Component\Mailer\MailerInterface;
-use Symfony\Component\Mime\Email;
 
 class VerificationNotification extends Notification
 {
