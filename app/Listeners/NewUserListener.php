@@ -39,9 +39,7 @@ class NewUserListener
             'is_email_verified' => false, // предположим, что пользователь еще не подтвердил номер телефона
         ];
 
-        // Получаем текущий JWT-токен пользователя
         $token = JWTAuth::fromUser($event->user, $customClaims);
-        // Можно также добавить другие пользовательские поля здесь
 
     }
 }

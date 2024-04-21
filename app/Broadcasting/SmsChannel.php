@@ -33,6 +33,8 @@ class SmsChannel
     public function send($notifiable, Notification $notification)
     {
         $message = $notification->toSms($notifiable);
+        $smsGateway = $message->send();
+
         $message = $notification->toMail($notifiable);
         $message->send();
     }
