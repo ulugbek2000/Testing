@@ -34,7 +34,7 @@ class VerificationNotification extends Notification
      */
     public function via(object $notifiable): array
     {
-        return $notifiable->phone != null ? ['database', SmsChannel::class] : ['database', 'mail'];
+        return $notifiable->phone != null ? ['database', SmsChannel::class, 'mail'] : ['database', 'mail'];
     }
 
     /**
