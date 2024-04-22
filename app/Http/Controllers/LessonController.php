@@ -95,17 +95,33 @@ class LessonController extends Controller
 
         $lesson->save();
 
+        // Обновляем информацию в таблице курсов
         if ($lesson->topic && $lesson->topic->course) {
             $course = $lesson->topic->course;
-            $course->quantity_lessons = $course->lessons->count();
 
-            $course->hours_lessons = $course->lessons()
-                ->where('topic_id', $lesson->topic_id)
-                ->selectRaw('SUM(CASE WHEN duration IS NOT NULL THEN duration ELSE 0 END) as total_duration')
-                ->value('total_duration');
+            $quantity_lessons = 0;
+            $total_duration = 0;
+
+            // Перебираем все темы курса
+            foreach ($course->topics as $topic) {
+                // Увеличиваем количество уроков на количество уроков в текущей теме
+                $quantity_lessons += $topic->lessons()->count();
+
+                // Считаем общую продолжительность уроков в текущей теме
+                $total_duration += $topic->lessons()
+                    ->where('topic_id', $topic->id)
+                    ->selectRaw('SUM(CASE WHEN duration IS NOT NULL THEN duration ELSE 0 END) as total_duration')
+                    ->value('total_duration');
+            }
+            
+
+            // Присваиваем значения
+            $course->quantity_lessons = $quantity_lessons;
+            $course->hours_lessons = $total_duration;
+
+            // Сохраняем изменения
             $course->save();
         }
-
         return response()->json(['message' => 'Урок успешно создан.']);
     }
 
@@ -200,14 +216,30 @@ class LessonController extends Controller
         // Обновляем информацию в таблице курсов
         if ($lesson->topic && $lesson->topic->course) {
             $course = $lesson->topic->course;
-            $course->quantity_lessons = $course->topics->lessons->count();
 
-            $course->hours_lessons = $course->topics->lessons()
-                ->where('topic_id', $lesson->topic_id)
-                ->selectRaw('SUM(CASE WHEN duration IS NOT NULL THEN duration ELSE 0 END) as total_duration')
-                ->value('total_duration');
+            $quantity_lessons = 0;
+            $total_duration = 0;
+
+            // Перебираем все темы курса
+            foreach ($course->topics as $topic) {
+                // Увеличиваем количество уроков на количество уроков в текущей теме
+                $quantity_lessons += $topic->lessons()->count();
+
+                // Считаем общую продолжительность уроков в текущей теме
+                $total_duration += $topic->lessons()
+                    ->where('topic_id', $topic->id)
+                    ->selectRaw('SUM(CASE WHEN duration IS NOT NULL THEN duration ELSE 0 END) as total_duration')
+                    ->value('total_duration');
+            }
+
+            // Присваиваем значения
+            $course->quantity_lessons = $quantity_lessons;
+            $course->hours_lessons = $total_duration;
+
+            // Сохраняем изменения
             $course->save();
         }
+
 
         return response()->json(['message' => 'Урок успешно обновлен.']);
     }
