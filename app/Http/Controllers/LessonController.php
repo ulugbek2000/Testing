@@ -155,7 +155,7 @@ class LessonController extends Controller
                 ], 200);
             } else {
                 $currentLessonOrder = $lesson->order;
-                $previousLessonOrder = $currentLessonOrder - 1;
+                $previousLessonOrder = max(1, $currentLessonOrder - 1); 
                 $previousLessonCompleted = in_array($previousLessonOrder, $completedLessonIds);
                 dd($currentLessonOrder, $previousLessonOrder, $previousLessonCompleted);
                 if ($previousLessonCompleted) {
