@@ -67,7 +67,7 @@ class UserTransactionController extends Controller
     public function purchaseCourse(Course $course, Subscription $subscription)
     {
         $user = Auth::user();
-        $previousSubscription = $user->subscriptions()->where('course_id', $course->id)->where('subscription_id', $subscription->id)->first();
+        $previousSubscription = $user->subscriptions()->where('course_id', $course->id)->where('subscription_id', $subscription->id)->where('deleted_at', '<', now())->first();
 
         if ($previousSubscription) {
             return response()->json(['message' => 'Уже подписан на этот пакет'], 200);

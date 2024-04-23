@@ -138,38 +138,14 @@ Route::middleware(['jwt.auth'])->group(function () {
         Route::put('update-profile', [ProfileController::class, 'updateProfile']);
 
         //Start Courses
-        // Route::get('admin/course', [CourseController::class, 'index'])->name('admin.course.index');
-        // Route::get('admin/course/{course}', [CourseController::class, 'show']);
         Route::get('admin/teacherByCourse/{course}', [CourseController::class, 'getTeacherByCourse']);
-        // Route::post('course', [CourseController::class, 'store']);
-        // Route::put('course/{course}', [CourseController::class, 'update']);
-        // Route::delete('course/{course}', [CourseController::class, 'destroy']);
         Route::post('enroll/{course}/{user}', [CourseController::class, 'enroll']);
         Route::get('course/{course}/teacher', [CourseController::class, 'getTeacherInCourse']);
         Route::post('courses/{course}/add-teachers', [CourseController::class, 'addTeachersToCourse']);
         Route::get('courses/{course}/buyers', [CourseController::class, 'getCourseBuyers']);
         // // Route::get('courses/{category}', [CourseController::class, 'getCoursesByCategory']);
         // Route::put('hide-course/{course}', [CourseController::class, 'hideCourse']);
-
-        //End Courses
-
-        //Start Topics
-        // Route::get('admin/course/{course}/topics', [TopicController::class, 'index']);
-        // Route::get('admin/topic/{topic}', [TopicController::class, 'show']);
-        // Route::post('topic', [TopicController::class, 'store']);
-        // Route::put('topic/{topic}', [TopicController::class, 'update']);
-        // Route::delete('topic/{topic}', [TopicController::class, 'destroy']);
-        //End Topics
-
-        //  Start Lessons
-        // Route::get('admin/topic/{topic}/lessons', [LessonController::class, 'index']);
-        // Route::get('admin/lesson/{lesson}', [LessonController::class, 'show']);
-        // Route::post('lesson', [LessonController::class, 'store']);
-        // Route::put('lesson/{lesson}', [LessonController::class, 'update']);
-        // Route::delete('lesson/{lesson}', [LessonController::class, 'destroy']);
-        //End Lessons 
-
-
+        
         //Start CourseSkills
         Route::get('admin/course/{course}/skill', [CourseSkillsController::class, 'index']);
         Route::post('skill', [CourseSkillsController::class, 'store']);
