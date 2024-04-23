@@ -138,9 +138,8 @@ class LessonController extends Controller
         $user = Auth::user();
         if (Auth::check() && ($user->isSubscribed($lesson->topic->course) || Auth::user()->hasRole(UserType::Admin))) {
             $completedLessonIds = $user->completedLessons()->pluck('lesson_id')->toArray();
-dd($completedLessonIds);
+            // dd($completedLessonIds);
             if (empty($completedLessonIds)) {
-                // Если пользователь еще не просматривал уроки, разрешить доступ к первому уроку
                 return response()->json([
                     'id' => $lesson->id,
                     'name' => $lesson->name,
@@ -155,13 +154,11 @@ dd($completedLessonIds);
                     'deleted_at' => $lesson->deleted_at,
                 ], 200);
             } else {
-                // Проверяем, завершен ли предыдущий урок
                 $currentLessonOrder = $lesson->order;
                 $previousLessonOrder = $currentLessonOrder - 1;
                 $previousLessonCompleted = in_array($previousLessonOrder, $completedLessonIds);
-
+                dd($currentLessonOrder, $previousLessonOrder, $previousLessonCompleted);
                 if ($previousLessonCompleted) {
-                    // Если предыдущий урок завершен, разрешить доступ к текущему уроку
                     return response()->json([
                         'id' => $lesson->id,
                         'name' => $lesson->name,
