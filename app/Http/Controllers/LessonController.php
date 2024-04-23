@@ -38,10 +38,10 @@ class LessonController extends Controller
             $isSubscribed = $user->isSubscribed($topic->course);
 
             if ($isAdmin || $isSubscribed) {
-                $completedLessonIds = $user->completedLessons()->pluck('lesson_id')->toArray();
-                $availableLessons = $topic->lessons()->whereNotIn('id', $completedLessonIds)->orderBy('order')->get();
+                // $completedLessonIds = $user->completedLessons()->pluck('lesson_id')->toArray();
+                // $availableLessons = $topic->lessons()->whereNotIn('id', $completedLessonIds)->orderBy('order')->get();
 
-                return response()->json(['data' => $availableLessons]);
+                return response()->json(['data' => $lessons]);
             }
         }
 
