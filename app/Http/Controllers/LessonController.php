@@ -133,54 +133,109 @@ class LessonController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Lesson $lesson)
-    {
-        $user = Auth::user();
-        if (Auth::check() && ($user->isSubscribed($lesson->topic->course) || $user->hasRole(UserType::Admin))) {
-            $completedLessonIds = $user->completedLessons()->pluck('lesson_id')->toArray();
 
-            // Проверяем, завершен ли предыдущий урок
-            $currentLessonOrder = $lesson->order;
-            dd($currentLessonOrder);
-            $previousLessonOrder = max(1, $currentLessonOrder - 1);
-            $previousLessonCompleted = in_array($previousLessonOrder, $completedLessonIds);
+     public function show(Lesson $lesson)
+     {
+         $user = Auth::user();
+     
+         if (Auth::check() && ($user->isSubscribed($lesson->topic->course) || $user->hasRole(UserType::Admin))) {
+             $completedLessonIds = $user->completedLessons()->pluck('lesson_id')->toArray();
+     
+             // Проверяем, завершен ли предыдущий урок
+             $currentLessonOrder = $lesson->order;
+             $previousLessonOrder = max(1, $currentLessonOrder - 1);
+             $previousLessonCompleted = in_array($previousLessonOrder, $completedLessonIds);
+     
+             // Если предыдущий урок завершен или это первый урок в курсе
+             if ($previousLessonCompleted || $lesson->topic->course->isFirstLesson($lesson)) {
+                 return response()->json([
+                     'id' => $lesson->id,
+                     'name' => $lesson->name,
+                     'content' => $lesson->content,
+                     'duration' => $lesson->duration,
+                     'cover' => $lesson->cover,
+                     'type' => $lesson->type,
+                     'file_name' => $lesson->file_name,
+                     'duration' => $lesson->duration,
+                     'created_at' => $lesson->created_at,
+                     'updated_at' => $lesson->updated_at,
+                     'deleted_at' => $lesson->deleted_at,
+                 ], 200);
+             } else {
+                 // Для незавершенных предыдущих уроков возвращаем просто информацию о текущем уроке
+                 return response()->json([
+                     'id' => $lesson->id,
+                     'name' => $lesson->name,
+                     'content' => $lesson->content,
+                     'duration' => $lesson->duration,
+                     'cover' => $lesson->cover,
+                     'type' => $lesson->type,
+                     'file_name' => $lesson->file_name,
+                     'duration' => $lesson->duration,
+                     'created_at' => $lesson->created_at,
+                     'updated_at' => $lesson->updated_at,
+                     'deleted_at' => $lesson->deleted_at,
+                 ]);
+             }
+         }
+     
+         // Если пользователь не авторизован или не имеет доступа к уроку, можно вернуть другой код состояния или другую информацию об ошибке.
+         return abort(403); // В случае, если предыдущий урок не был просмотрен
+     }
+     
 
-            // Если предыдущий урок завершен или это первый урок в курсе
-            if ($previousLessonCompleted || $lesson->topic->course->isFirstLesson($lesson)) {
-                return response()->json([
-                    'id' => $lesson->id,
-                    'name' => $lesson->name,
-                    'content' => $lesson->content,
-                    'duration' => $lesson->duration,
-                    'cover' => $lesson->cover,
-                    'type' => $lesson->type,
-                    'file_name' => $lesson->file_name,
-                    'duration' => $lesson->duration,
-                    'created_at' => $lesson->created_at,
-                    'updated_at' => $lesson->updated_at,
-                    'deleted_at' => $lesson->deleted_at,
-                ], 200);
-            } else if (!Auth::check() || Auth::check() &&  $lesson->topic->course->isFirstLesson($lesson)) {
 
-                $data[] = [
-                    'id' => $lesson->id,
-                    'name' => $lesson->name,
-                    'content' => $lesson->content,
-                    'duration' => $lesson->duration,
-                    'cover' => $lesson->cover,
-                    'type' => $lesson->type,
-                    'file_name' => $lesson->file_name,
-                    'duration' => $lesson->duration,
-                    'created_at' => $lesson->created_at,
-                    'updated_at' => $lesson->updated_at,
-                    'deleted_at' => $lesson->deleted_at,
-                ];
-                return response()->json(['data' => $data]);
-            }
 
-            return abort(403);
-        }
-    }
+
+
+
+    // public function show(Lesson $lesson)
+    // {
+    //     $user = Auth::user();
+    //     if (Auth::check() && ($user->isSubscribed($lesson->topic->course) || $user->hasRole(UserType::Admin))) {
+    //         $completedLessonIds = $user->completedLessons()->pluck('lesson_id')->toArray();
+
+    //         // Проверяем, завершен ли предыдущий урок
+    //         $currentLessonOrder = $lesson->order;
+    //         $previousLessonOrder = max(1, $currentLessonOrder - 1);
+    //         $previousLessonCompleted = in_array($previousLessonOrder, $completedLessonIds);
+
+    //         // Если предыдущий урок завершен или это первый урок в курсе
+    //         if ($previousLessonCompleted || $lesson->topic->course->isFirstLesson($lesson)) {
+    //             return response()->json([
+    //                 'id' => $lesson->id,
+    //                 'name' => $lesson->name,
+    //                 'content' => $lesson->content,
+    //                 'duration' => $lesson->duration,
+    //                 'cover' => $lesson->cover,
+    //                 'type' => $lesson->type,
+    //                 'file_name' => $lesson->file_name,
+    //                 'duration' => $lesson->duration,
+    //                 'created_at' => $lesson->created_at,
+    //                 'updated_at' => $lesson->updated_at,
+    //                 'deleted_at' => $lesson->deleted_at,
+    //             ], 200);
+    //         } else if (!Auth::check() || Auth::check() &&  $lesson->topic->course->isFirstLesson($lesson)) {
+
+    //             $data[] = [
+    //                 'id' => $lesson->id,
+    //                 'name' => $lesson->name,
+    //                 'content' => $lesson->content,
+    //                 'duration' => $lesson->duration,
+    //                 'cover' => $lesson->cover,
+    //                 'type' => $lesson->type,
+    //                 'file_name' => $lesson->file_name,
+    //                 'duration' => $lesson->duration,
+    //                 'created_at' => $lesson->created_at,
+    //                 'updated_at' => $lesson->updated_at,
+    //                 'deleted_at' => $lesson->deleted_at,
+    //             ];
+    //             return response()->json(['data' => $data]);
+    //         }
+
+    //         return abort(403);
+    //     }
+    // }
 
 
     /**
