@@ -40,7 +40,7 @@ class LessonController extends Controller
             if ($isAdmin || $isSubscribed) {
                 $completedLessonIds = $user->completedLessons()->pluck('lesson_id')->toArray();
                 $availableLessons = $topic->lessons()->whereNotIn('id', $completedLessonIds)->orderBy('order')->get();
-                
+
                 return response()->json(['data' => $availableLessons]);
             }
         }
@@ -116,7 +116,7 @@ class LessonController extends Controller
                     ->selectRaw('SUM(CASE WHEN duration IS NOT NULL THEN duration ELSE 0 END) as total_duration')
                     ->value('total_duration');
             }
-            
+
 
             // Присваиваем значения
             $course->quantity_lessons = $quantity_lessons;
@@ -138,15 +138,9 @@ class LessonController extends Controller
         $user = Auth::user();
         if (Auth::check() && ($user->isSubscribed($lesson->topic->course) || Auth::user()->hasRole(UserType::Admin))) {
             $completedLessonIds = $user->completedLessons()->pluck('lesson_id')->toArray();
-        // dd($completedLessonIds);
-            $currentLessonOrder = $lesson->order;
-        
-            $previousLessonOrder = $currentLessonOrder - 1;
-        
-            $previousLessonCompleted = in_array($previousLessonOrder, $completedLessonIds);
-        // dd($previousLessonCompleted);
-        
-            if ($previousLessonCompleted) {
+
+            if (empty($completedLessonIds)) {
+                // Если пользователь еще не просматривал уроки, разрешить доступ к первому уроку
                 return response()->json([
                     'id' => $lesson->id,
                     'name' => $lesson->name,
@@ -159,29 +153,49 @@ class LessonController extends Controller
                     'created_at' => $lesson->created_at,
                     'updated_at' => $lesson->updated_at,
                     'deleted_at' => $lesson->deleted_at,
-                    'completed' => in_array($lesson->id, $completedLessonIds),
                 ], 200);
-            } 
+            } else {
+                // Проверяем, завершен ли предыдущий урок
+                $currentLessonOrder = $lesson->order;
+                $previousLessonOrder = $currentLessonOrder - 1;
+                $previousLessonCompleted = in_array($previousLessonOrder, $completedLessonIds);
 
-          } else if (!Auth::check() || Auth::check() &&  $lesson->topic->course->isFirstLesson($lesson)) {
+                if ($previousLessonCompleted) {
+                    // Если предыдущий урок завершен, разрешить доступ к текущему уроку
+                    return response()->json([
+                        'id' => $lesson->id,
+                        'name' => $lesson->name,
+                        'content' => $lesson->content,
+                        'duration' => $lesson->duration,
+                        'cover' => $lesson->cover,
+                        'type' => $lesson->type,
+                        'file_name' => $lesson->file_name,
+                        'duration' => $lesson->duration,
+                        'created_at' => $lesson->created_at,
+                        'updated_at' => $lesson->updated_at,
+                        'deleted_at' => $lesson->deleted_at,
+                    ], 200);
+                } else if (!Auth::check() || Auth::check() &&  $lesson->topic->course->isFirstLesson($lesson)) {
 
-            $data[] = [
-                'id' => $lesson->id,
-                'name' => $lesson->name,
-                'content' => $lesson->content,
-                'duration' => $lesson->duration,
-                'cover' => $lesson->cover,
-                'type' => $lesson->type,
-                'file_name' => $lesson->file_name,
-                'duration' => $lesson->duration,
-                'created_at' => $lesson->created_at,
-                'updated_at' => $lesson->updated_at,
-                'deleted_at' => $lesson->deleted_at,
-            ];
-            return response()->json(['data' => $data]);
+                    $data[] = [
+                        'id' => $lesson->id,
+                        'name' => $lesson->name,
+                        'content' => $lesson->content,
+                        'duration' => $lesson->duration,
+                        'cover' => $lesson->cover,
+                        'type' => $lesson->type,
+                        'file_name' => $lesson->file_name,
+                        'duration' => $lesson->duration,
+                        'created_at' => $lesson->created_at,
+                        'updated_at' => $lesson->updated_at,
+                        'deleted_at' => $lesson->deleted_at,
+                    ];
+                    return response()->json(['data' => $data]);
+                }
+
+                return abort(403);
+            }
         }
-
-        return abort(403);
     }
 
     /**
