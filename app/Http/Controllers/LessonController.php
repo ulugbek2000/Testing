@@ -144,6 +144,7 @@ class LessonController extends Controller
             $previousLessonOrder = $currentLessonOrder - 1;
         
             $previousLessonCompleted = in_array($previousLessonOrder, $completedLessonIds);
+        dd($previousLessonCompleted);
         
             if ($previousLessonCompleted) {
                 return response()->json([
@@ -162,7 +163,7 @@ class LessonController extends Controller
                 ], 200);
             } 
 
-          }else if (!Auth::check() || Auth::check() &&  $lesson->topic->course->isFirstLesson($lesson)) {
+          } else if (!Auth::check() || Auth::check() &&  $lesson->topic->course->isFirstLesson($lesson)) {
 
             $data[] = [
                 'id' => $lesson->id,
