@@ -135,23 +135,34 @@ class LessonController extends Controller
      */
     public function show(Lesson $lesson)
     {
-        if (Auth::check() && Auth::user()->isSubscribed($lesson->topic->course) or UserType::Admin) {
-            return response()->json([
-                'id' => $lesson->id,
-                'name' => $lesson->name,
-                'content' => $lesson->content,
-                'duration' => $lesson->duration,
-                'cover' => $lesson->cover,
-                'type' => $lesson->type,
-                'file_name' => $lesson->file_name,
-                'duration' => $lesson->duration,
-                'created_at' => $lesson->created_at,
-                'updated_at' => $lesson->updated_at,
-                'deleted_at' => $lesson->deleted_at,
-            ], 200);
-        }
+        $user = Auth::user();
+        if (Auth::check() && ($user->isSubscribed($lesson->topic->course) || Auth::user()->hasRole(UserType::Admin))) {
+            $completedLessonIds = $user->completedLessons()->pluck('lesson_id')->toArray();
+        dd($completedLessonIds);
+            $currentLessonOrder = $lesson->order;
+        
+            $previousLessonOrder = $currentLessonOrder - 1;
+        
+            $previousLessonCompleted = in_array($previousLessonOrder, $completedLessonIds);
+        
+            if ($previousLessonCompleted) {
+                return response()->json([
+                    'id' => $lesson->id,
+                    'name' => $lesson->name,
+                    'content' => $lesson->content,
+                    'duration' => $lesson->duration,
+                    'cover' => $lesson->cover,
+                    'type' => $lesson->type,
+                    'file_name' => $lesson->file_name,
+                    'duration' => $lesson->duration,
+                    'created_at' => $lesson->created_at,
+                    'updated_at' => $lesson->updated_at,
+                    'deleted_at' => $lesson->deleted_at,
+                    'completed' => in_array($lesson->id, $completedLessonIds),
+                ], 200);
+            } 
 
-        if (!Auth::check() || Auth::check() &&  $lesson->topic->course->isFirstLesson($lesson)) {
+          }else if (!Auth::check() || Auth::check() &&  $lesson->topic->course->isFirstLesson($lesson)) {
 
             $data[] = [
                 'id' => $lesson->id,
