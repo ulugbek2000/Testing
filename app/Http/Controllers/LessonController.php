@@ -136,11 +136,12 @@ class LessonController extends Controller
     public function show(Lesson $lesson)
     {
         $user = Auth::user();
-        if (Auth::check() && ($user->isSubscribed($lesson->topic->course) || Auth::user()->hasRole(UserType::Admin))) {
+        if (Auth::check() && ($user->isSubscribed($lesson->topic->course) || $user->hasRole(UserType::Admin))) {
             $completedLessonIds = $user->completedLessons()->pluck('lesson_id')->toArray();
 
             // Проверяем, завершен ли предыдущий урок
             $currentLessonOrder = $lesson->order;
+            dd($currentLessonOrder);
             $previousLessonOrder = max(1, $currentLessonOrder - 1);
             $previousLessonCompleted = in_array($previousLessonOrder, $completedLessonIds);
 
