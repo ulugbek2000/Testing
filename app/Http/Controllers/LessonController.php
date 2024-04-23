@@ -138,7 +138,7 @@ class LessonController extends Controller
         $user = Auth::user();
         if (Auth::check() && ($user->isSubscribed($lesson->topic->course) || Auth::user()->hasRole(UserType::Admin))) {
             $completedLessonIds = $user->completedLessons()->pluck('lesson_id')->toArray();
-
+dd($completedLessonIds);
             if (empty($completedLessonIds)) {
                 // Если пользователь еще не просматривал уроки, разрешить доступ к первому уроку
                 return response()->json([
