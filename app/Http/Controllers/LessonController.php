@@ -157,7 +157,7 @@ class LessonController extends Controller
                 $currentLessonOrder = $lesson->order;
                 $previousLessonOrder = max(1, $currentLessonOrder - 1); 
                 $previousLessonCompleted = in_array($previousLessonOrder, $completedLessonIds);
-                dd($currentLessonOrder, $previousLessonOrder, $previousLessonCompleted);
+                // dd($currentLessonOrder, $previousLessonOrder, $previousLessonCompleted);
                 if ($previousLessonCompleted) {
                     return response()->json([
                         'id' => $lesson->id,
