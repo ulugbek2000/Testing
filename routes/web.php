@@ -18,11 +18,13 @@ use Illuminate\Support\Facades\Route;
 
 // Auth::routes();
 
-Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('/', function () {
+    return 'good!';
+});
 Route::get('/logs', [\Rap2hpoutre\LaravelLogViewer\LogViewerController::class, 'index']);
 
 Route::get('/endpoints', function (){
-    $routeCollection = Illuminate\Support\Facades\Route::getRoutes(); 
+    $routeCollection = Illuminate\Support\Facades\Route::getRoutes();
 
     foreach ($routeCollection as $value) {
         echo $value->getName();
