@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+########################### PHP ###########
+  php_omuzgor:
+    build:
+      context: ./docker/php
+      dockerfile: Dockerfile
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    container_name: php_omuzgor
+    volumes:
+      - ./:/var/www/omuzgor
+      - ./docker/php/custom.ini:/usr/local/etc/php/conf.d/custom.ini
+
+    working_dir: /var/www/omuzgor
+    networks:
+      - omuzgor_network
+
+########### SERVER ########################
+#
+  nginx_omuzgor:
+    image: nginx:latest
+    container_name: nginx_omuzgor
+    ports:
+      - "8084:80"
+    volumes:
+      - ./:/var/www/omuzgor
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - ./docker/nginx/logs:/var/log/nginx;
+    depends_on:
+      - php_omuzgor
+    networks:
+      - omuzgor_network
+
+############################## Data Base ###########
+  mysql_omuzgor:
+      image: mysql
+      container_name: mysql_omuzgor
+      ports:
+          - "3306:3306"
+      environment:
+          - MYSQL_ROOT_PASSWORD=root
+          - MYSQL_DB=omuzgor_db
+      restart: unless-stopped
+      volumes:
+          - ./docker/mysql/data:/var/lib/mysql
+      networks:
+          - omuzgor_network
+      expose:
+          - 3306
+
+networks:
+  omuzgor_network:
+    external: true
