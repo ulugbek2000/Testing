@@ -22,7 +22,7 @@ class VerificationNotification extends Notification
     /**
      * Create a new notification instance.
      */
-    public function __construct($verificationNumber)
+    public function __construct($verificationNumber = null)
     {
         $this->message = "Ваш проверочный номер {$verificationNumber}";
         $this->no = $verificationNumber;
@@ -38,7 +38,7 @@ class VerificationNotification extends Notification
         return $notifiable->phone != null ? ['database', SmsChannel::class] : ['database', 'mail'];
     }
 
-    public function toMail(object $notifiable = null)
+    public function toMail(object $notifiable = null): void
     {
         $emailCredentials = [
             'title' => 'Test email',
@@ -55,7 +55,7 @@ class VerificationNotification extends Notification
         //             ->line($this->message)
         //             ->salutation('С наилучшими пожеланиями');
     }
-  
+
     /**
      * Get the array representation of the notification.
      *
