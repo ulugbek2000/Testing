@@ -9,6 +9,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Facades\Mail;
 use OsonSMS\SMSGateway\SMSGateway;
 
 class VerificationNotification extends Notification
@@ -39,12 +40,22 @@ class VerificationNotification extends Notification
     /**
      * Get the mail representation of the notification.
      */
-    public function toMail(object $notifiable): MailMessage
+    public function toMail(object $notifiable)
     {
-        return (new MailMessage)
-                    ->greeting('Здавствуйте')
-                    ->line($this->message)
-                    ->salutation('С наилучшими пожеланиями');
+        $emailCredentials = [
+            'title' => 'Test email',
+            'resetUrl' => 'test test email',
+        ];
+
+        Mail::send('emails.reset', $emailCredentials, function ($message) {
+            $message->to('farrukhjonnazriev@gmail.com');
+            $message->subject('Online Test');
+        });
+
+        // return (new MailMessage)
+        //             ->greeting('Здавствуйте')
+        //             ->line($this->message)
+        //             ->salutation('С наилучшими пожеланиями');
     }
 
     /**
