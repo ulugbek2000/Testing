@@ -58,6 +58,7 @@ Route::middleware(
 )->group(function () {
 });
 
+
 //Auth Routes
 Auth::routes([
     'register' => true,

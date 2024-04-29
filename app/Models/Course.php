@@ -46,8 +46,48 @@ class Course extends Model implements HasMedia
             ->whereHas('roles', function ($query) {
                 $query->where('id', UserType::Teacher);
             })->with('userSkills');
-    }
+    }    
 
+    public function getPreviousLesson($lesson)
+    {
+        if ($lesson->topic->course->isFirstLesson($lesson)) {
+            return $lesson;
+        }
+    
+        $previousTopic = $this->topics()
+            ->whereHas('lessons', function ($query) use ($lesson) {
+                $query->where('id', '<', $lesson->id);
+            })
+            ->with(['lessons' => function ($query) use ($lesson) {
+                $query->where('id', '<', $lesson->id)
+                    ->orderBy('id', 'desc')
+                    ->take(1);
+            }])
+            ->orderBy('id', 'desc')
+            ->first();
+    
+        if (!$previousTopic) {
+            return null; 
+        }
+    
+        $previousLesson = $previousTopic->lessons->first();
+   
+        if (!$previousLesson) {
+            return null;
+        }
+    
+        $userProgress = UserLessonsProgress::where('user_id', auth()->id())
+                                            ->where('lesson_id', $previousLesson->id)
+                                            ->where('completed', true)
+                                            ->exists();
+    
+        if ($userProgress) {
+            return $previousLesson;
+        } else {
+            return null; 
+        }
+    }
+    
 
     public function users()
     {

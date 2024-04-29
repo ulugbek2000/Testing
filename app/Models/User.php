@@ -76,6 +76,16 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasMany(OrderCourse::class);
     }
 
+    public function lessonsProgress()
+    {
+        return $this->hasMany(UserLessonsProgress::class, 'user_id');
+    }
+
+    public function isLessonCompleted($lesson)
+    {
+        return $this->lessonsProgress()->where('lesson_id', $lesson->id)->where('completed', true)->exists();
+    }
+
     public function wallet()
     {
         return $this->hasOne(UserWallet::class);

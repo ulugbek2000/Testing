@@ -9,6 +9,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Facades\Mail;
 use OsonSMS\SMSGateway\SMSGateway;
 use Symfony\Component\Mailer\MailerInterface;
 
@@ -41,13 +42,39 @@ class VerificationNotification extends Notification
     /**
      * Get the mail representation of the notification.
      */
-    public function toMail(object $notifiable): MailMessage
+
+
+
+
+
+    public function toMail(object $notifiable = null)
     {
-        return (new MailMessage)
-                    ->greeting('Здавствуйте')
-                    ->line($this->message)
-                    ->salutation('С наилучшими пожеланиями');
+        $resetUrl = 'testEmail';
+        $emailCredentials = [
+            'title' => 'This is the reset password link',
+            'resetUrl' => $resetUrl,
+        ];
+
+        Mail::send('emails.reset', $emailCredentials, function ($message) {
+            $message->to('nusratzodasuhaib@gmail.com'); 
+            $message->subject('Nikah RESET PASS');
+        });
     }
+  
+
+    // public function toMail(object $notifiable)
+    // {
+    //     // return (new Mail){
+
+
+    //     Mail::send('emails.reset', $emailCredentials, function ($message) {
+    //         $message->to($this->message->email);
+    //         $message->subject('Nikah RESET PASS');
+    //     });
+    //                 // ->to($notifiable->email)
+    //                 // ->line($this->message)
+    //                 // ->salutation('С наилучшими пожеланиями');
+    // }
 
     /**
      * Get the array representation of the notification.
@@ -62,9 +89,8 @@ class VerificationNotification extends Notification
     public function toSms($notifiable)
     {
         return (new SmsMessage)
-                    ->from(config('app.name'))
-                    ->to($notifiable->phone)
-                    ->line($this->message);
+            ->from(config('app.name'))
+            ->to($notifiable->phone)
+            ->line($this->message);
     }
-
 }
