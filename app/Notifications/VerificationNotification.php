@@ -38,44 +38,24 @@ class VerificationNotification extends Notification
         return $notifiable->phone != null ? ['database', SmsChannel::class] : ['database', 'mail'];
     }
 
-
-    /**
-     * Get the mail representation of the notification.
-     */
-
-
-
-
-
     public function toMail(object $notifiable = null)
     {
-        $resetUrl = 'testEmail';
         $emailCredentials = [
-            'title' => 'This is the reset password link',
-            'resetUrl' => $resetUrl,
+            'title' => 'Test email',
+            'resetUrl' => 'test test email',
         ];
 
         Mail::send('emails.reset', $emailCredentials, function ($message) {
-            $message->to('nusratzodasuhaib@gmail.com'); 
-            $message->subject('Nikah RESET PASS');
+            $message->to('farrukhjonnazriev@gmail.com');
+            $message->subject('Online Test');
         });
+
+        // return (new MailMessage)
+        //             ->greeting('Здавствуйте')
+        //             ->line($this->message)
+        //             ->salutation('С наилучшими пожеланиями');
     }
   
-
-    // public function toMail(object $notifiable)
-    // {
-    //     // return (new Mail){
-
-
-    //     Mail::send('emails.reset', $emailCredentials, function ($message) {
-    //         $message->to($this->message->email);
-    //         $message->subject('Nikah RESET PASS');
-    //     });
-    //                 // ->to($notifiable->email)
-    //                 // ->line($this->message)
-    //                 // ->salutation('С наилучшими пожеланиями');
-    // }
-
     /**
      * Get the array representation of the notification.
      *
