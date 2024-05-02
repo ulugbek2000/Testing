@@ -13,7 +13,7 @@
 - php artisan db:seed
 
 on docker:
-- git clone https://github.com/nusratzoda/LMS-Service.git
+- git clone https://github.com/ulugbek2000/lms
 - cd LMS-Service
 - docker-compose run --rm php_omuzgor composer install
 - docker-compose run --rm php_omuzgor php artisan migrate
