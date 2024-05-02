@@ -8,7 +8,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class UserWallet extends Model
 {
-    use HasFactory,SoftDeletes;
+    use HasFactory;
+    use SoftDeletes;
     protected $fillable = [
         'wallet'
     ];
@@ -16,7 +17,8 @@ class UserWallet extends Model
     {
         return $this->belongsTo(User::class);
     }
-    public function transactions(){
+    public function transactions()
+    {
         return $this->hasMany(UserTransaction::class);
     }
 }

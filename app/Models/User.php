@@ -17,9 +17,11 @@ use Illuminate\Auth\Passwords\CanResetPassword;
 
 class User extends Authenticatable implements JWTSubject
 {
-    use  HasApiTokens, HasFactory;
-
-    use Notifiable, HasRoles, CanResetPassword;
+    use  HasApiTokens;
+    use HasFactory;
+    use Notifiable;
+    use HasRoles;
+    use CanResetPassword;
 
     protected $table = 'users';
 
@@ -110,11 +112,11 @@ class User extends Authenticatable implements JWTSubject
     {
         return [
             'user_type' => $this->roles()->first()->id, // Получение роли пользователя
-            'is_phone_verified' => $this->phone_verified_at != null, 
-            'is_email_verified' => $this->email_verified_at != null, 
+            'is_phone_verified' => $this->phone_verified_at != null,
+            'is_email_verified' => $this->email_verified_at != null,
         ];
     }
-    
+
 
     /**
      * The attributes that should be hidden for serialization.
